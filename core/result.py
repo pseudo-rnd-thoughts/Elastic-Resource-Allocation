@@ -13,13 +13,17 @@ from core.server import Server
 class Result(object):
     """Generic results class"""
 
-    def __init__(self, algorithm_name: str, jobs: List[Job],  servers: List[Server]):
+    def __init__(self, algorithm_name: str, jobs: List[Job],  servers: List[Server], show_money: bool = False):
         self.algorithm_name = algorithm_name
 
+        self.show_money = show_money
+
         self.total_utility = sum(sum(job.utility for job in server.allocated_jobs) for server in servers)
-        self.percentage_total_utility = sum(job.utility for job in jobs if job.running_server) / sum(job.utility
-                                                                                                     for job in jobs)
+        self.percentage_total_utility = sum(job.utility for job in jobs if job.running_server) / \
+            sum(job.utility for job in jobs)
         self.percentage_jobs_allocated = sum(1 for job in jobs if job.running_server) / len(jobs)
+
+        self.total_price = sum(job.price for job in jobs)
 
     def print(self, servers: List[Server]):
         """
@@ -27,12 +31,18 @@ class Result(object):
         :param servers: The list of servers
         """
         print("Algorithm {}".format(self.algorithm_name))
-        print("Total utility: {}, Percentage utility: {:.3f}, percentage jobs: {:.3f}\n"
-              .format(self.total_utility, self.percentage_total_utility, self.percentage_jobs_allocated))
+        if self.show_money:
+            print("Total money: {}, percentage jobs: {.3f}\n".format(self.total_price, self.percentage_jobs_allocated))
+        else:
+            print("Total utility: {}, Percentage utility: {:.3f}, percentage jobs: {:.3f}\n"
+                  .format(self.total_utility, self.percentage_total_utility, self.percentage_jobs_allocated))
 
         for server in servers:
-            print("Server - {}:  Utility - {}"
-                  .format(server.name, sum(job.utility for job in server.allocated_jobs)))
+            if self.show_money:
+                print("Server - {}:  Money - {}".format(server.name, sum(job.price for job in server.allocated_jobs)))
+            else:
+                print("Server - {}:  Utility - {}".format(server.name,
+                                                          sum(job.utility for job in server.allocated_jobs)))
             print("\tStorage used: {:.3f}"
                   .format(sum(job.loading_speed for job in server.allocated_jobs) / server.max_storage))
             print("\tComputation used: {:.3f}"
@@ -54,7 +64,7 @@ class AlgorithmResults(object):
     where the mean and standard deviation of the result's utility, percentage utility and percentage jobs
     """
 
-    def __init__(self, results: List[Result]):
+    def __init__(self, results: List[Result], optimal_results: List[Result]):
         self.algorithm_name = results[0].algorithm_name
 
         self.utility = (float(result.total_utility) for result in results)
@@ -62,11 +72,11 @@ class AlgorithmResults(object):
         self.percentage_jobs = (float(result.percentage_jobs_allocated) for result in results)
 
         self.mean_utility = np.mean([result.total_utility for result in results])
-        self.std_utility = np.std([result.total_utility for result in results])
+        self.std_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
         self.mean_percentage_utility = np.mean([result.percentage_total_utility for result in results])
-        self.std_percentage_utility = np.std([result.percentage_total_utility for result in results])
+        self.std_percentage_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
         self.mean_percentage_jobs = np.mean([result.percentage_jobs_allocated for result in results])
-        self.std_percentage_jobs = np.std([result.percentage_jobs_allocated for result in results])
+        self.std_percentage_jobs = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
 
 
 def print_job_values(job_values: List[Tuple[Job, float]]):

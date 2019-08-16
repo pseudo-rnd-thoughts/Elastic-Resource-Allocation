@@ -1,14 +1,13 @@
 """Bid policy functions"""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from math import exp
 from typing import Tuple, Generator
 
 from core.job import Job
 from core.server import Server
-
-from docplex.mp.model import Model
 
 Speed = int
 

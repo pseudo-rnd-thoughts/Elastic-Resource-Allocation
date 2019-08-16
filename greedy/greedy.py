@@ -40,7 +40,7 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
         if allocated_server:
             value, (s, w, r) = resource_allocation_policy.allocate(job, allocated_server)
             job.allocate(s, w, r, allocated_server)
-            allocated_server.allocate_job(s, w, r, job)
+            allocated_server.allocate_job(job)
 
             # Print the job allocation
             if job_allocation_debug:

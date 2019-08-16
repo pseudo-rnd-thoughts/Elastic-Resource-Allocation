@@ -38,18 +38,20 @@ class Server(object):
                                                       for w in range(1, self.available_computation + 1)
                                                       for r in range(1, self.available_bandwidth - s + 1))
 
-    def allocate_job(self, loading_speed: int, compute_speed: int, sending_speed: int, job: Job):
+    def allocate_job(self, job: Job):
         """
         Updates the server attributes for when it is allocated within jobs
-        :param loading_speed: The loading speed
-        :param compute_speed: The compute speed
-        :param sending_speed: The sending speed
         :param job: The job being allocated
         """
+        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0
+        assert self.available_storage >= job.required_storage
+        assert self.available_computation >= job.compute_speed
+        assert self.available_bandwidth >= job.loading_speed + job.sending_speed
+
         self.allocated_jobs.append(job)
         self.available_storage -= job.required_storage
-        self.available_computation -= compute_speed
-        self.available_bandwidth -= loading_speed + sending_speed
+        self.available_computation -= job.compute_speed
+        self.available_bandwidth -= job.loading_speed + job.sending_speed
 
         self.total_price += job.price
 

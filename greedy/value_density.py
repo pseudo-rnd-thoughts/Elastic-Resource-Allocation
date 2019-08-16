@@ -3,6 +3,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from math import exp
+from random import random
 
 from core.job import Job
 
@@ -88,8 +89,20 @@ class UtilityDeadlinePerResource(ValueDensity):
         return job.utility * job.deadline / self.resource_func.evaluate(job)
 
 
+class Random(ValueDensity):
+    """Random number generator"""
+
+    def __init__(self):
+        super().__init__("random")
+
+    def evaluate(self, job: Job) -> float:
+        """Value density function"""
+        return random()
+
+
 # Functions you actually want to use
 policies = [
     UtilityPerResources(),
-    UtilityDeadlinePerResource()
+    UtilityDeadlinePerResource(),
+    Random()
 ]

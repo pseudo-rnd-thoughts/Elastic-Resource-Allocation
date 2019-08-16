@@ -3,7 +3,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from math import exp
-from random import random
+from random import choice
 from typing import List, Optional
 
 from core.job import Job
@@ -76,9 +76,17 @@ class Random(ServerSelectionPolicy):
     def __init__(self):
         super().__init__("Random")
 
+    def select(self, job: Job, servers: List[Server]) -> Optional[Server]:
+        """Selects the server"""
+        runnable_servers = [server for server in servers if server.can_run(job)]
+        if runnable_servers:
+            return choice(runnable_servers)
+        else:
+            return None
+
     def value(self, job: Job, server: Server) -> float:
-        """Server Selection Value"""
-        return random()
+        """Value function"""
+        raise NotImplementedError("Value function not implemented")
 
 
 policies = (
