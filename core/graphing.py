@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import List, Dict
 
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -11,6 +12,9 @@ import seaborn as sns
 from core.job import Job
 from core.result import Result, AlgorithmResults
 from core.server import Server
+from core.model import ModelDist
+
+matplotlib.rcParams['font.family'] = "monospace"
 
 
 # noinspection DuplicatedCode
@@ -72,11 +76,11 @@ def plot_server_jobs_allocations(servers: List[Server]):
                                   for job in allocated_jobs] for server in servers],
                                 index=server_names, columns=job_names)
 
-    dfall = [storage_df, compute_df, bandwidth_df]
+    df_all = [storage_df, compute_df, bandwidth_df]
     labels = ['storage', 'compute', 'bandwidth']
     title = 'Server Job allocations'
 
-    plot_server_results(dfall, title, labels)
+    plot_allocation_results(df_all, title, labels)
 
 
 def plot_algorithms_results(results: List[Result]):
@@ -115,7 +119,7 @@ def plot_repeat_algorithm_results(results: List[AlgorithmResults]):
     print(df)
 
     g = sns.FacetGrid(df, row='measure', height=2.5, aspect=4, sharey=False)
-    g.map(sns.barplot, 'algorithm name', 'value', orient='h', ci=95)
+    g.map(sns.boxplot, 'algorithm name', 'value', orient='h', ci=95)
     plt.show()
 
 
@@ -147,6 +151,7 @@ def plot_auction_result(servers: List[Server], name: str):
     """
     Plots the server jobs allocations
     :param servers: A list of servers to plot
+    :param name: For the auction name
     """
     server_names = [server.name for server in servers]
     allocated_jobs = [job for server in servers for job in server.allocated_jobs]
@@ -161,33 +166,33 @@ def plot_auction_result(servers: List[Server], name: str):
                                   if job in server.allocated_jobs else 0
                                   for job in allocated_jobs] for server in servers],
                                 index=server_names, columns=job_names)
-    price_df = pd.DataFrame([[job.price/server.total_price if job in server.allocated_jobs else 0
+    price_df = pd.DataFrame([[job.price/server.revenue if job in server.allocated_jobs else 0
                               for job in allocated_jobs] for server in servers],
                             index=server_names, columns=job_names)
     print(price_df)
 
-    dfall = [storage_df, compute_df, bandwidth_df, price_df]
+    df_all = [storage_df, compute_df, bandwidth_df, price_df]
     labels = ['storage', 'compute', 'bandwidth', 'price']
     title = '{} Auction Allocation'.format(name)
 
-    plot_server_results(dfall, title, labels)
+    plot_allocation_results(df_all, title, labels)
 
 
-def plot_server_results(dfall: List[pd.DataFrame], title: str, labels: List[str]):
+def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str]):
     """
     PLots the server results
-    :param dfall: A list of Dataframes to plot
+    :param df_all: A list of Dataframes to plot
     :param title: The titel
     :param labels: The labels
     """
     hatching = '/'
 
-    n_df = len(dfall)
-    n_col = len(dfall[0].columns)
-    n_ind = len(dfall[0].index)
+    n_df = len(df_all)
+    n_col = len(df_all[0].columns)
+    n_ind = len(df_all[0].index)
     axe = plt.subplot(111)
 
-    for df in dfall:  # for each data frame
+    for df in df_all:  # for each data frame
         axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
 
     h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
@@ -199,7 +204,7 @@ def plot_server_results(dfall: List[pd.DataFrame], title: str, labels: List[str]
                 rect.set_width(1 / float(n_df + 1))
 
     axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
-    axe.set_xticklabels(dfall[0].index, rotation=0)
+    axe.set_xticklabels(df_all[0].index, rotation=0)
     axe.set_title(title)
     axe.set_xlabel("Servers")
 
@@ -213,3 +218,54 @@ def plot_server_results(dfall: List[pd.DataFrame], title: str, labels: List[str]
         plt.legend(n, labels, loc=[1.01, 0.1])
     axe.add_artist(l1)
     plt.show()
+
+
+def plot_auction_price_convergence(auctions_prices: Dict[str, List[float]], vcg_price: float):
+    """
+    Plots the auction price as it convergence
+    :param auctions_prices: A dictionary of auction prices with auction name
+    :param vcg_price:  The vcg price
+    """
+    max_iterations = max(len(auction_prices) for auction_prices in auctions_prices.values())
+    data = [[auction, pos, auction_price]
+            for auction, auction_prices in auctions_prices.items() for pos, auction_price in enumerate(auction_prices)]
+    for pos in range(max_iterations):
+        data.append(['vcg', pos, vcg_price])
+    df = pd.DataFrame(data, columns=['auction name', 'time', 'price'])
+
+    sns.lineplot('time', 'price', hue='auction name', data=df)
+    plt.show()
+
+
+# noinspection DuplicatedCode
+def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10):
+    """
+    Plots the job distribution of a list of models
+    :param model_dists: A list of model distributions
+    :param repeats: The number of repeats
+    """
+    data = [[model_dist.name.split(",")[0], job.required_storage, job.required_computation, job.required_results_data,
+             job.utility, job.deadline]
+            for model_dist in model_dists for _ in range(repeats) for job in model_dist.create()[0]]
+    df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data', 'Utility', 'Deadline'])
+    wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
+    wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
+    sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+    plt.show()
+
+
+# noinspection DuplicatedCode
+def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
+    """
+    Plots the server distribution of a list of models
+    :param model_dists: A list of model distributions
+    :param repeats: The number of repeats
+    """
+    data = [[model_dist.name.split(",")[0], server.max_storage, server.max_computation, server.max_bandwidth]
+            for model_dist in model_dists for _ in range(repeats) for server in model_dist.create()[1]]
+    df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data'])
+    wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
+    wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
+    sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+    plt.show()
+

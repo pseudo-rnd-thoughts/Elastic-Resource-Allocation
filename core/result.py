@@ -72,11 +72,14 @@ class AlgorithmResults(object):
         self.percentage_jobs = (float(result.percentage_jobs_allocated) for result in results)
 
         self.mean_utility = np.mean([result.total_utility for result in results])
-        self.std_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
+        self.std_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+                                   for result, optimal in zip(results, optimal_results)])
         self.mean_percentage_utility = np.mean([result.percentage_total_utility for result in results])
-        self.std_percentage_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
+        self.std_percentage_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+                                              for result, optimal in zip(results, optimal_results)])
         self.mean_percentage_jobs = np.mean([result.percentage_jobs_allocated for result in results])
-        self.std_percentage_jobs = np.std([result.percentage_total_utility - optimal.percentage_total_utility for result, optimal in zip(results, optimal_results)])
+        self.std_percentage_jobs = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+                                           for result, optimal in zip(results, optimal_results)])
 
 
 def print_job_values(job_values: List[Tuple[Job, float]]):

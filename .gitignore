@@ -125,4 +125,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-!/.idea/
+/.idea/*
+
+# Latex
+/report/static_resource_allocation.aux
+/report/static_resource_allocation.bbl
+/report/static_resource_allocation.blg
+/report/static_resource_allocation.synctex.gz
+/report/static_resource_allocation.log

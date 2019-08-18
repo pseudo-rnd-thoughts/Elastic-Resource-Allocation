@@ -23,7 +23,7 @@ class ServerSelectionPolicy(ABC):
         :param servers: The list of servers
         :return: The selected server
         """
-        return max(((server, self.value(job, server)) for server in servers if server.can_run(job)),
+        return min(((server, self.value(job, server)) for server in servers if server.can_run(job)),
                    key=lambda sv: sv[1], default=[None])[0]
 
     @abstractmethod
@@ -41,7 +41,7 @@ class SumResources(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self):
-        super().__init__("Resources Sum")
+        super().__init__("Sum")
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -52,7 +52,7 @@ class ProductResources(ServerSelectionPolicy):
     """The product of a server's available resources"""
 
     def __init__(self):
-        super().__init__("Resources Product")
+        super().__init__("Product")
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -63,7 +63,7 @@ class SumExpResource(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self):
-        super().__init__("Resources Exponential Sum")
+        super().__init__("Exponential Sum")
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -95,3 +95,5 @@ policies = (
     SumExpResource(),
     Random()
 )
+
+max_name_length = max(len(policy.name) for policy in policies)

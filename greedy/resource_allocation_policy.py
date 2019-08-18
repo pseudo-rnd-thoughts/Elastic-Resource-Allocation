@@ -61,7 +61,7 @@ class SumPercentage(ResourceAllocationPolicy):
     """The sum of percentage"""
 
     def __init__(self):
-        super().__init__("Sum of server percentage usage")
+        super().__init__("Percentage Sum")
 
     def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
                            sending_speed: Speed) -> float:
@@ -75,7 +75,7 @@ class SumExpPercentage(ResourceAllocationPolicy):
     """The sum of exponential percentages"""
 
     def __init__(self):
-        super().__init__("Sum of exponential server percentage usage")
+        super().__init__("Expo percentage sum")
 
     def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
                            sending_speed: Speed) -> float:
@@ -89,7 +89,7 @@ class SumSpeeds(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
     def __init__(self):
-        super().__init__("Sum of resource speeds")
+        super().__init__("Sum of speeds")
 
     def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
                            sending_speed: Speed) -> float:
@@ -102,3 +102,5 @@ policies = (
     SumExpPercentage(),
     SumSpeeds()
 )
+
+max_name_length = max(len(policy.name) for policy in policies)

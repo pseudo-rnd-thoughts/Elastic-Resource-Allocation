@@ -1,13 +1,14 @@
 """Custom auction by Mark and Seb"""
 
 from __future__ import annotations
-from typing import List, Tuple, Dict
+
 from random import choice
+from typing import List, Dict
+
+from docplex.cp.model import CpoModel
 
 from core.job import Job
 from core.server import Server
-
-from docplex.cp.model import CpoModel
 
 
 def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_results: bool = False):
@@ -45,14 +46,14 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
     model_solution = model.solve()
 
     max_server_profit = model_solution.get_objective_values()[0]
-    job_price = server.total_price - max_server_profit + epsilon
+    job_price = server.revenue - max_server_profit + epsilon
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
     allocation = {job: model_solution.get_value(allocated) for job, allocated in allocation.items()}
     if debug_results:
         print("Sever: {} - Max server profit: {}, prior server total price: {} therefore job price: {}"
-              .format(server.name, model_solution.get_objective_values()[0], server.total_price, job_price))
+              .format(server.name, model_solution.get_objective_values()[0], server.revenue, job_price))
 
     return job_price, loading, compute, sending, allocation, server, jobs
 
@@ -94,19 +95,22 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
                 print("Job {} is unallocated to server {}".format(job.name, allocation[job], server.name))
 
     if debug_result:
-        print("Server {}'s total price: {}".format(server.name, server.total_price))
+        print("Server {}'s total price: {}".format(server.name, server.revenue))
 
 
-def custom_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5, debug_allocation: bool = False):
+def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
+                          debug_allocation: bool = False, debug_results: bool = False) -> List[float]:
     """
     A custom auction created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param epsilon: For the evaluate job price increase
     :param debug_allocation: Debug the allocation process
+    :param debug_results: Debugs the results
+    :return: A list of prices at each iteration
     """
     unallocated_jobs = jobs.copy()
-    iterations = 0
+    iteration_price: List[float] = []
     while len(unallocated_jobs):
         job = choice(unallocated_jobs)
 
@@ -126,10 +130,14 @@ def custom_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5, deb
 
         if debug_allocation:
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
-        iterations += 1
+        iteration_price.append(sum(server.revenue for server in servers))
 
-    print("It is finished, number of iterations: {} with social welfare: {}"
-          .format(iterations, sum(server.total_price for server in servers)))
-    for server in servers:
-        print("Server {}: total revenue - {}".format(server.name, server.total_price))
-        print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price) for job in server.allocated_jobs])))
+    if debug_results:
+        print("It is finished, number of iterations: {} with social welfare: {}"
+              .format(len(iteration_price), sum(server.revenue for server in servers)))
+        for server in servers:
+            print("Server {}: total revenue - {}".format(server.name, server.revenue))
+            print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
+                                                  for job in server.allocated_jobs])))
+
+    return iteration_price

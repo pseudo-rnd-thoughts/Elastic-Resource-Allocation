@@ -6,9 +6,9 @@ from typing import List
 from core.job import Job
 from core.result import Result, print_job_values, print_job_allocation
 from core.server import Server
-from greedy.resource_allocation_policy import ResourceAllocationPolicy
-from greedy.server_selection_policy import ServerSelectionPolicy
-from greedy.value_density import ValueDensity
+from greedy.resource_allocation_policy import ResourceAllocationPolicy, max_name_length as resource_name_length
+from greedy.server_selection_policy import ServerSelectionPolicy, max_name_length as server_selection_name_length
+from greedy.value_density import ValueDensity, max_name_length as value_density_name_length
 
 
 def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: ValueDensity,
@@ -46,5 +46,7 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
             if job_allocation_debug:
                 print_job_allocation(job, allocated_server, s, w, r)
 
-    return Result("{}, {}, {}".format(value_density.name, server_selection_policy.name,
-                                      resource_allocation_policy.name), jobs, servers)
+    algorithm_name = "{:<{}}|{:^{}}|{:>{}}".format(value_density.name, value_density_name_length,
+                                                   server_selection_policy.name, server_selection_name_length,
+                                                   resource_allocation_policy.name, resource_name_length)
+    return Result(algorithm_name, jobs, servers)

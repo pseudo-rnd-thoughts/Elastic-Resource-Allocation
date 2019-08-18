@@ -86,7 +86,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
                 r = model_solution.get_value(sending_speeds[job])
                 job.allocate(s, w, r, server)
                 server.allocate_job(job)
-    return Result("Cplex", jobs, servers)
+    return Result("Optimal", jobs, servers)
 
 
 def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int = 300, debug_time: bool = False) -> Result:
