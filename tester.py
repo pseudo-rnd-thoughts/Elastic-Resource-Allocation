@@ -4,6 +4,8 @@ from __future__ import annotations
 from typing import List, Dict, Tuple
 from time import time
 
+from tqdm import tqdm
+
 import core.graphing as graphing
 from core.job import Job
 from core.model import load_dist, reset_model, ModelDist
@@ -13,9 +15,9 @@ from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies, ResourceAllocationPolicy, SumSpeeds, max_name_length as resource_name_length
 from greedy.server_selection_policy import policies as server_selection_policies, ServerSelectionPolicy, SumResources, max_name_length as server_selection_name_length
 from greedy.value_density import policies as value_densities, ValueDensity, UtilityPerResources, max_name_length as value_density_name_length
-from optimal.optimal import optimal_algorithm
 from auction.vcg import vcg_auction
 from auction.iterative_vcg import iterative_vcg_auction
+from optimal.optimal import optimal_algorithm
 from optimal.mp_optimal import optimal_mp_algorithm, modified_cp_optimal_algorithm, modified_mp_optimal_algorithm
 
 
@@ -115,7 +117,7 @@ def repeat_test(model_generator: ModelDist, _value_densities: List[ValueDensity]
     :param debug_repeat_results: To debug the repeat results
     """
     model_repeat_results: List[List[Result]] = []
-    for repeat in range(num_repeats):
+    for _ in tqdm(range(num_repeats)):
         jobs, servers = model_generator.create()
         model_results = multi_policy_test(jobs, servers, _value_densities, _server_selection_policies,
                                           _resource_allocation_policies,
@@ -143,12 +145,11 @@ def multi_model_test(model_generators: List[ModelDist], _value_densities: List[V
     """
     Multiple model test
     :param model_generators: A list of model generators
-    :param _value_densities:
-    :param _server_selection_policies:
-    :param _resource_allocation_policies:
-    :param num_repeats:
-    :param run_optimal_algorithm:
-    :return:
+    :param _value_densities: A list of value densities
+    :param _server_selection_policies: A list of server selection policies
+    :param _resource_allocation_policies: A list of resource allocation policies
+    :param num_repeats: The number of model repeats
+    :param run_optimal_algorithm: If to run the optimal algorithm as well
     """
     model_algorithm_tests: Dict[str, List[AlgorithmResults]] = {}
     for model_generator in model_generators:
@@ -186,7 +187,7 @@ def test_auction_convergence(jobs: List[Job], servers: List[Server], epsilons: L
         reset_model(jobs, servers)
 
     print("Running vcg")
-    vcg_auction(jobs, servers)
+    vcg_auction(jobs, servers, debug_running=True)
     vcg_price = sum(server.revenue for server in servers)
 
     graphing.plot_auction_price_convergence(auctions_prices, vcg_price)
@@ -246,20 +247,18 @@ if __name__ == "__main__":
     print("Multi Policy Greedy test")
     multi_policy_test(_jobs, _servers, value_densities, server_selection_policies, resource_allocation_policies,
                       run_optimal_algorithm=True)
-
+    """
     print("Repeat Greed Test")
-    repeat_test(basic_model_dist, [value_densities[0]], [server_selection_policies[0]],
-                [resource_allocation_policies[0]], run_optimal_algorithm=True)
-
+    #repeat_test(basic_model_dist, value_densities, server_selection_policies,
+    #            resource_allocation_policies, run_optimal_algorithm=True, num_repeats=50)
+    """
     print("Multi Model testing")
     bs_dist_name, bs_job_dist, bs_server_dist = load_dist("../models/big_small.model")
     multi_model_test([ModelDist(bs_dist_name, bs_job_dist, num_jobs, bs_server_dist, num_servers)
                       for num_jobs, num_servers in ((11, 2), (15, 3), (25, 4), (35, 5))],
                      value_densities, server_selection_policies, resource_allocation_policies,
                      run_optimal_algorithm=True)
-    """
 
-    """
     print("Testing vcg auction")
     vcg_auction(_jobs, _servers)
     graphing.plot_auction_result(_servers, 'vcg')
@@ -269,9 +268,10 @@ if __name__ == "__main__":
     custom_auction(_jobs, _servers)
     graphing.plot_auction_result(_servers, 'custom')
 
+	"""
+    
     test_auction_convergence(_jobs, _servers, [1, 2, 3, 5, 7, 10])
-    """
-
+    
     basic_dist_name, basic_job_dist, basic_server_dist = load_dist("models/basic.model")
     basic_model_dist = ModelDist(basic_dist_name, basic_job_dist, 10, basic_server_dist, 10)
 
@@ -280,3 +280,5 @@ if __name__ == "__main__":
 
     graphing.plot_job_distribution([basic_model_dist, bs_model_dist])
     graphing.plot_server_distribution([basic_model_dist, bs_model_dist])
+    
+    optimal_mp_algorithm(_jobs, _servers)

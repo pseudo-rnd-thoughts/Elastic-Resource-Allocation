@@ -37,10 +37,9 @@ In the new section, we will describe the problem case and how we generated a mod
 There are J jobs, indexed with $ j = 1,\dots,J $ and I servers, indexed with $ i = 1,\dots,I $.
 \begin{itemize}
     \item $ x_{i,j} \in \{0, 1\}$ indicates whether the job $j$ was done on server $i$
-    The rate at which the server resources are used for each job
-    \item $ s_{i,j} $ the rate of the program loaded (MB/s)
+    \item $ s_{i,j} $ the rate that the program is loaded at (MB/s)
     \item $ w_{i,j} $ the rate of computation (TFlop/s)
-    \item $ r_{i,j} $ the rate of sending the results data (MB/s)
+    \item $ r_{i,j} $ the rate that the result's data is sent back (MB/s)
 \end{itemize}
 
 \subsection{Constants}\label{subsec:constants}
@@ -63,7 +62,6 @@ Job - j
 \begin{align}
     max \sum_{j=1}^{J} U_j x_{i,j} && \forall i = 1,\dots,I
 \end{align}
-s.t.
 
 \subsection{Constraints}\label{subsec:constraints}
 Job to server allocation
@@ -101,7 +99,7 @@ Resource usage
     0 \le r_{i,j} && \forall i = 1,\dots,I; j = 1,\dots,J
 \end{align}
 
-\subsection{Problem Case Explaination}\label{subsec:problem-case-explaination}
+\subsection{Problem Case Explanation}\label{subsec:problem-case-explanation}
 \begin{itemize}
     \item Equation 1 is the objective function that maximises the sum of the job utility for jobs completed.
     \item Equation 2 and 3 enforce that a job is only done on a single server.
@@ -127,7 +125,16 @@ Resource usage
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{../results/greedy_allocation.png}
-    \caption{Server and jobs allocation}
+    \caption{Example allocation}
+\end{figure}
+
+\subsection{Model creation}\label{subsec:model-creation}
+To create each of the jobs and servers we choose a mean and standard deviation for each attribute that is then used to generate a random number from a normal distribution.
+We normalise the value generated to make it an integer and the max of 1 and the value to make sure it is greater than zero.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{../results/server_jobs_distributions.png}
+    \caption{Example Distributions}
 \end{figure}
 
 \section{Greedy Algorithm}\label{sec:greedy-algorithm}
@@ -156,13 +163,20 @@ for job, _ in job_values:
 \end{lstlisting}
 
 \section{Greedy Example}\label{sec:greedy-example}
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{../results/repeat_algorithms.png}
+    \includegraphics[width=1\linewidth]{../results/greedy_algorithms.png}
     \caption{Algorithm Results}
 \end{figure}
 
-\begin{figure}
+%% TODO redo graph
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{../results/repeat_greedy_algorithms.png}
+    \caption{Repeat Algorithm Results}
+\end{figure}
+
+\begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=1\linewidth, height=5cm]{../results/greedy_allocation.png}
         \caption{Example Greedy Allocation}
@@ -174,14 +188,14 @@ for job, _ in job_values:
     \caption{Example jobs and servers}
 \end{figure}
 
-\section{Auction Idea}\label{sec:auction-idea}
+\section{Auctions}\label{sec:auction-idea}
 The main idea was that currently most job work out how much resources that they require to run and so bid for that amount of required results however in doing this they are unaware of other jobs and their requirements. Therefore there is both a competition and cooperation involved we believe that can increase the total social welfare for everyone if people work together while in the mean time allowing the job to not give away its utility as in VCG auctions.
 In real life then server will want to payed to the work that it does however to do this is not easy as the server allocate the resource price dynamically and as a job may not want to reveal its utility.
 We have created an iterative VCG auction.
 
 \subsection{Auction algorithm}\label{subsec:auction-algorithm}
 \begin{lstlisting}[language=Python]
-unallocated_jobs = jobs.copy()
+unallocated_jobs = jobs
 while len(unallocated_jobs):
     job = choice(unallocated_jobs)
 
@@ -197,7 +211,7 @@ while len(unallocated_jobs):
             unallocated_jobs.remove(job)
 \end{lstlisting}
 \section{Auction Results}\label{sec:auction-results}
-\begin{figure}
+\begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=1\linewidth, height=5cm]{../results/vcg_auction.png}
         \caption{Example VCG Allocation}
@@ -208,5 +222,12 @@ while len(unallocated_jobs):
     \end{subfigure}
     \caption{Example of auction results}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth, height=5cm]{../results/auction_convergence.png}
+    \caption{Auction Convergence}
+\end{figure}
+
 
 \end{document}

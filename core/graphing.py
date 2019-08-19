@@ -80,7 +80,7 @@ def plot_server_jobs_allocations(servers: List[Server]):
     labels = ['storage', 'compute', 'bandwidth']
     title = 'Server Job allocations'
 
-    plot_allocation_results(df_all, title, labels)
+    plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
 
 
 def plot_algorithms_results(results: List[Result]):
@@ -116,10 +116,9 @@ def plot_repeat_algorithm_results(results: List[AlgorithmResults]):
             for result in results for percentage_jobs in result.percentage_jobs]
 
     df = pd.DataFrame(data, columns=['algorithm name', 'measure', 'value'])
-    print(df)
-
-    g = sns.FacetGrid(df, row='measure', height=2.5, aspect=4, sharey=False)
-    g.map(sns.boxplot, 'algorithm name', 'value', orient='h', ci=95)
+    
+    sns.barplot(y='algorithm name', x='value', col='measure',
+                cut=0, height=6, aspect=0.1, data=df, orient='h', sharex=False)
     plt.show()
 
 
@@ -175,15 +174,17 @@ def plot_auction_result(servers: List[Server], name: str):
     labels = ['storage', 'compute', 'bandwidth', 'price']
     title = '{} Auction Allocation'.format(name)
 
-    plot_allocation_results(df_all, title, labels)
+    plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
 
 
-def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str]):
+def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str], x_label: str, y_label: str):
     """
     PLots the server results
     :param df_all: A list of Dataframes to plot
     :param title: The titel
     :param labels: The labels
+    :param x_label: The x label
+    :param y_label: The y label
     """
     hatching = '/'
 
@@ -206,7 +207,8 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
     axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
     axe.set_xticklabels(df_all[0].index, rotation=0)
     axe.set_title(title)
-    axe.set_xlabel("Servers")
+    axe.set_xlabel(x_label)
+    axe.set_ylabel(y_label)
 
     # Add invisible data to add another legend
     n = []

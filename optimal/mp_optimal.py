@@ -12,6 +12,7 @@ from core.server import Server
 def optimal_mp_algorithm(jobs: List[Job], servers: List[Server]):
     """
     An implementation of cplex mp with the current problem case
+    !!! THIS ALGORITHM DOESNT WORK !!!
     :param jobs: A list of jobs
     :param servers: A list of servers
     """
