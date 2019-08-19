@@ -103,7 +103,7 @@ def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
     :param servers:
     :return:
     """
-    model = CpoModel("Modified MP Optimal")
+    model = CpoModel("Modified CP Optimal")
 
     communication_speeds, compute_speeds, server_job_allocation = {}, {}, {}
 

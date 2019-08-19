@@ -132,9 +132,16 @@ Resource usage
 To create each of the jobs and servers we choose a mean and standard deviation for each attribute that is then used to generate a random number from a normal distribution.
 We normalise the value generated to make it an integer and the max of 1 and the value to make sure it is greater than zero.
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{../results/server_jobs_distributions.png}
-    \caption{Example Distributions}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=1\linewidth, height=5cm]{../results/job_distribution.png}
+        \caption{Example job distribution}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=1\linewidth, height=5cm]{../results/server_distribution.png}
+        \caption{Example Server distribution}
+    \end{subfigure}
+
+    \caption{Example jobs and servers distribution}
 \end{figure}
 
 \section{Greedy Algorithm}\label{sec:greedy-algorithm}
@@ -217,15 +224,21 @@ while len(unallocated_jobs):
         \caption{Example VCG Allocation}
     \end{subfigure}
     \begin{subfigure}{0.5\textwidth}
-        \includegraphics[width=1\linewidth, height=5cm]{../results/custom_auction.png}
+        \includegraphics[width=1\linewidth, height=5cm]{../results/iterative_vcg_auction.png}
         \caption{Example Custom Allocation}
     \end{subfigure}
     \caption{Example of auction results}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth, height=5cm]{../results/auction_convergence.png}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=1\linewidth, height=5cm]{../results/auction_price_convergence.png}
+        \caption{Auction Price Convergence}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=1\linewidth, height=5cm]{../results/auction_utility_convergence.png}
+        \caption{Auction Utility Convergence}
+    \end{subfigure}
     \caption{Auction Convergence}
 \end{figure}
 

@@ -12,7 +12,8 @@ class Server(object):
     Server object with a name and resources allocated
     """
 
-    revenue: float = 0  # This is the total price of the jobs allocated
+    revenue: float = 0  # This is the total price of the job's allocated
+    utility: float = 0  # This is the total utility of the job's allocated
 
     def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int):
         self.name: str = name
@@ -54,14 +55,17 @@ class Server(object):
         self.available_bandwidth -= job.loading_speed + job.sending_speed
 
         self.revenue += job.price
+        self.utility += job.utility
 
     def reset_allocations(self):
         """
         Resets the allocation information
         """
         self.allocated_jobs = []
+
         self.available_storage = self.max_storage
         self.available_computation = self.max_computation
         self.available_bandwidth = self.max_bandwidth
 
         self.revenue = 0
+        self.utility = 0

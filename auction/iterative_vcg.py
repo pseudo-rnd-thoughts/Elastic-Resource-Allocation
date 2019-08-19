@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from random import choice
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from docplex.cp.model import CpoModel
 
@@ -99,7 +99,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 
 def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
-                          debug_allocation: bool = False, debug_results: bool = False) -> List[float]:
+                          debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
     A custom auction created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
@@ -111,6 +111,8 @@ def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int =
     """
     unallocated_jobs = jobs.copy()
     iteration_price: List[float] = []
+    iteration_utility: List[float] = []
+
     while len(unallocated_jobs):
         job = choice(unallocated_jobs)
 
@@ -130,7 +132,9 @@ def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int =
 
         if debug_allocation:
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
+
         iteration_price.append(sum(server.revenue for server in servers))
+        iteration_utility.append(sum(server.utility for server in servers))
 
     if debug_results:
         print("It is finished, number of iterations: {} with social welfare: {}"
@@ -140,4 +144,4 @@ def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int =
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return iteration_price
+    return iteration_price, iteration_utility

@@ -222,20 +222,29 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
     plt.show()
 
 
-def plot_auction_price_convergence(auctions_prices: Dict[str, List[float]], vcg_price: float):
+def plot_auction_convergence(auctions_utilities: Dict[str, List[float]], auctions_prices: Dict[str, List[float]],
+                             vcg_utility: float, vcg_price: float):
     """
-    Plots the auction price as it convergence
+    Plots the auction utility and revenue as it convergence
+    :param auctions_utilities: A dictionary of auction utility with auction name
     :param auctions_prices: A dictionary of auction prices with auction name
+    :param vcg_utility: The vcg utility
     :param vcg_price:  The vcg price
     """
     max_iterations = max(len(auction_prices) for auction_prices in auctions_prices.values())
-    data = [[auction, pos, auction_price]
-            for auction, auction_prices in auctions_prices.items() for pos, auction_price in enumerate(auction_prices)]
-    for pos in range(max_iterations):
-        data.append(['vcg', pos, vcg_price])
-    df = pd.DataFrame(data, columns=['auction name', 'time', 'price'])
 
-    sns.lineplot('time', 'price', hue='auction name', data=df)
+    data = [['price', auction, pos, auction_price] for auction, auction_prices in auctions_prices.items()
+            for pos, auction_price in enumerate(auction_prices)] + \
+           [['utility', auction, pos, auction_utility] for auction, auction_utilities in auctions_utilities.items()
+            for pos, auction_utility in enumerate(auction_utilities)]
+
+    for pos in range(max_iterations):
+        data.append(['price', 'vcg', pos, vcg_price])
+        data.append(['utility', 'vcg', pos, vcg_utility])
+    df = pd.DataFrame(data, columns=['measure', 'auction name', 'time', 'utility'])
+
+    sns.lineplot('time', 'utility', hue='auction name', data=df, row='measure')
+    plt.title("Auction Utility Convergence")
     plt.show()
 
 
@@ -253,6 +262,7 @@ def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10):
     wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
     sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+    plt.title("Job Distribution")
     plt.show()
 
 
@@ -269,5 +279,6 @@ def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
     sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+    plt.title("Server Distribution")
     plt.show()
 

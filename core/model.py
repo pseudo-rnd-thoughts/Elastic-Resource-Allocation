@@ -144,13 +144,13 @@ def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
         name, num_job_dists, _ = lines[0].split(" ")
 
         for pos, line in enumerate(lines[1:int(num_job_dists) + 1]):
-            name, probability, \
+            job_name, probability, \
                 storage_mean, storage_sd,\
                 computation_mean, computation_sd,\
                 results_data_mean, results_data_sd, \
                 utility_mean, utility_sd,\
                 deadline_mean, deadline_sd = line.split(" ")
-            job_dists.append(JobDist(name, float(probability),
+            job_dists.append(JobDist(job_name, float(probability),
                                      float(storage_mean), float(storage_sd),
                                      float(computation_mean), float(computation_sd),
                                      float(results_data_mean), float(results_data_sd),
@@ -158,11 +158,11 @@ def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
                                      float(deadline_mean), float(deadline_sd)))
 
         for pos, line in enumerate(lines[int(num_job_dists) + 1:]):
-            name, probability, \
+            server_name, probability, \
                 storage_mean, storage_sd, \
                 computation_mean, computation_sd, \
                 results_data_mean, results_data_sd = line.split(" ")
-            server_dists.append(ServerDist(name, float(probability),
+            server_dists.append(ServerDist(server_name, float(probability),
                                            float(storage_mean), float(storage_sd),
                                            float(computation_mean), float(computation_sd),
                                            float(results_data_mean), float(results_data_sd)))

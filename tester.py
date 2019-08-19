@@ -12,9 +12,12 @@ from core.model import load_dist, reset_model, ModelDist
 from core.result import Result, AlgorithmResults, print_repeat_results
 from core.server import Server
 from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import policies as resource_allocation_policies, ResourceAllocationPolicy, SumSpeeds, max_name_length as resource_name_length
-from greedy.server_selection_policy import policies as server_selection_policies, ServerSelectionPolicy, SumResources, max_name_length as server_selection_name_length
-from greedy.value_density import policies as value_densities, ValueDensity, UtilityPerResources, max_name_length as value_density_name_length
+from greedy.resource_allocation_policy import policies as resource_allocation_policies, ResourceAllocationPolicy, \
+    SumSpeeds, max_name_length as resource_name_length
+from greedy.server_selection_policy import policies as server_selection_policies, ServerSelectionPolicy, SumResources, \
+    max_name_length as server_selection_name_length
+from greedy.value_density import policies as value_densities, ValueDensity, UtilityPerResources, \
+    max_name_length as value_density_name_length
 from auction.vcg import vcg_auction
 from auction.iterative_vcg import iterative_vcg_auction
 from optimal.optimal import optimal_algorithm
@@ -172,12 +175,18 @@ def test_auction_convergence(jobs: List[Job], servers: List[Server], epsilons: L
     :param epsilons: A list of epsilon values being tested
     :param debug_prices: Debugs the server prices for each epsilon
     """
-    auctions_prices = {}
+    auctions_utility = {}
+    auctions_price = {}
+
     server_prices: Dict[Tuple[Server, int], float] = {}
     job_prices: Dict[Tuple[Job, int], float] = {}
+
     for epsilon in epsilons:
         print("Running iterative vcg with e={}".format(epsilon))
-        auctions_prices[str(epsilon)] = iterative_vcg_auction(jobs, servers, epsilon=epsilon)
+        price, utility = iterative_vcg_auction(jobs, servers, epsilon=epsilon)
+
+        auctions_utility[str(epsilon)] = utility
+        auctions_price[str(epsilon)] = price
 
         for server in servers:
             server_prices[(server, epsilon)] = server.revenue
@@ -187,10 +196,11 @@ def test_auction_convergence(jobs: List[Job], servers: List[Server], epsilons: L
         reset_model(jobs, servers)
 
     print("Running vcg")
-    vcg_auction(jobs, servers, debug_running=True)
+    vcg_auction(jobs, servers, debug_running=True, debug_time=True)
+    vcg_utility = sum(server.utility for server in servers)
     vcg_price = sum(server.revenue for server in servers)
 
-    graphing.plot_auction_price_convergence(auctions_prices, vcg_price)
+    graphing.plot_auction_convergence(auctions_utility, auctions_price, vcg_utility, vcg_price)
 
     if debug_prices:
         print("{:<10}|{}".format("Auction", "|".join([server.name for server in servers] + [job.name for job in jobs])))
@@ -226,7 +236,7 @@ def test_modified_optimal(jobs: List[Job], servers: List[Server]):
 
 if __name__ == "__main__":
     basic_dist_name, basic_job_dist, basic_server_dist = load_dist("models/basic.model")
-    basic_model_dist = ModelDist(basic_dist_name, basic_job_dist, 15, basic_server_dist, 2)
+    basic_model_dist = ModelDist(basic_dist_name, basic_job_dist, 10, basic_server_dist, 2)
 
     _jobs, _servers = basic_model_dist.create()
     """
@@ -234,7 +244,7 @@ if __name__ == "__main__":
     graphing.plot_jobs(_jobs)
     graphing.plot_servers(_servers)
     print("Testing the greedy algorithm")
-    greedy_test(_jobs, _servers, UtilityPerResources(), SumResources(), SumSpeeds())
+    greedy_test(_jobs, _servers, UtilityPerResources(), Su mResources(), SumSpeeds())
     graphing.plot_server_jobs_allocations(_servers)
     
     test_value_density_policies(_jobs, _servers, value_densities)
@@ -247,11 +257,11 @@ if __name__ == "__main__":
     print("Multi Policy Greedy test")
     multi_policy_test(_jobs, _servers, value_densities, server_selection_policies, resource_allocation_policies,
                       run_optimal_algorithm=True)
-    """
+
     print("Repeat Greed Test")
-    #repeat_test(basic_model_dist, value_densities, server_selection_policies,
-    #            resource_allocation_policies, run_optimal_algorithm=True, num_repeats=50)
-    """
+    repeat_test(basic_model_dist, value_densities, server_selection_policies,
+               resource_allocation_policies, run_optimal_algorithm=True, num_repeats=50)
+
     print("Multi Model testing")
     bs_dist_name, bs_job_dist, bs_server_dist = load_dist("../models/big_small.model")
     multi_model_test([ModelDist(bs_dist_name, bs_job_dist, num_jobs, bs_server_dist, num_servers)
@@ -267,11 +277,11 @@ if __name__ == "__main__":
     print("\nTesting custom auction")
     custom_auction(_jobs, _servers)
     graphing.plot_auction_result(_servers, 'custom')
+    """
 
-	"""
-    
     test_auction_convergence(_jobs, _servers, [1, 2, 3, 5, 7, 10])
-    
+
+    """
     basic_dist_name, basic_job_dist, basic_server_dist = load_dist("models/basic.model")
     basic_model_dist = ModelDist(basic_dist_name, basic_job_dist, 10, basic_server_dist, 10)
 
@@ -280,5 +290,4 @@ if __name__ == "__main__":
 
     graphing.plot_job_distribution([basic_model_dist, bs_model_dist])
     graphing.plot_server_distribution([basic_model_dist, bs_model_dist])
-    
-    optimal_mp_algorithm(_jobs, _servers)
+    """
