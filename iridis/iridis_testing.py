@@ -4,7 +4,7 @@ from tqdm import tqdm
 import json
 from time import time
 
-from core.model import reset_model, ModelDist, load_dist
+from ..core.model import reset_model, ModelDist, load_dist
 
 from optimal.optimal import optimal_algorithm
 
