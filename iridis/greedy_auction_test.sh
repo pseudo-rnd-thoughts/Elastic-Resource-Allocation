@@ -13,5 +13,5 @@ PYTHONPATH=$PYTHONPATH:~/cloud_allocation/
 
 #Run <executable_name> from the working directory
 echo "Running test"
-python iridis_testing.py
+python iridis/iridis_testing.py
 echo "Complete"
