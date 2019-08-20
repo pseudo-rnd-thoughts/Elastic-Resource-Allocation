@@ -8,7 +8,8 @@
 #Change to the directory that the job was submitted from
 cd ~/cloud_allocation
 
-module load conda
+module load conda/4.4.0
+source activate env
 PYTHONPATH=$PYTHONPATH:~/cloud_allocation/
 
 #Run <executable_name> from the working directory
