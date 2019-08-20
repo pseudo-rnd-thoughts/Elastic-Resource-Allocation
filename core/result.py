@@ -120,7 +120,7 @@ def print_repeat_results(results: List[AlgorithmResults]):
     print("Algorithm Results")
     print("  Utility   | Percent Utility | Percent Jobs | Name")
     print(" Mean | Std |   Mean   | Std  |  Mean  | Std | ")
-    for result in results:
+    for result in ordered_results:
         print("{:6f}|{:5f}|{:10f}|{:6f}|{:6f}|{:5f}|{}"
               .format(result.mean_utility, result.std_utility,
                       result.mean_percentage_utility, result.std_percentage_utility,

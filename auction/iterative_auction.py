@@ -98,10 +98,10 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
 
-def iterative_vcg_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
-                          debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
+def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
+                      debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
-    A custom auction created by Seb Stein and Mark Towers
+    A iterative auction created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param epsilon: For the evaluate job price increase

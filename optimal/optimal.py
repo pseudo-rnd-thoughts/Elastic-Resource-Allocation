@@ -77,13 +77,10 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     :return: A results
     """
     start = time()
-    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=5)
+    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01)
     end = time()
     if debug_time:
         print("Time Taken: {}".format(end - start))
-        
-    if end-start > 4.5:
-        return None
     
     for job in jobs:
         for server in servers:

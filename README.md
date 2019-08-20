@@ -1,2 +1,3 @@
-# excel_internship
-Excel Internship
+# Excel Internship
+Excel Internship researching into cloud resource allocation
+

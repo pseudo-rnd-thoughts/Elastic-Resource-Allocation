@@ -15,7 +15,7 @@ import core.graphing as graphing
 from optimal.optimal import optimal_algorithm
 
 from greedy.greedy import greedy_algorithm
-from greedy.matrix_greedy import matrix_greedy
+from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy.resource_allocation_policy import ResourceAllocationPolicy
 from greedy.server_selection_policy import ServerSelectionPolicy
 from greedy.value_density import ValueDensity
@@ -23,7 +23,9 @@ from greedy.value_density import ValueDensity
 from greedy.resource_allocation_policy import SumSpeeds as BestResourceAllocation
 from greedy.value_density import UtilityDeadlinePerResource as BestValueDensity
 from greedy.server_selection_policy import SumResources as BestServerSelection
-from greedy.matrix_greedy import policies as matrix_policies
+from greedy_matrix.matrix_policy import SumServerUsage as BestMatrixPolicy
+
+from greedy_matrix.matrix_policy import policies as matrix_policies
 
 
 def run_greedy(jobs: List[Job], servers: List[Server], value_density: ValueDensity,
@@ -41,26 +43,26 @@ def run_greedy(jobs: List[Job], servers: List[Server], value_density: ValueDensi
     result.print(servers)
 
 
-def run_matrix_greedy(dist: ModelDist, repeat = 100):
+def run_matrix_greedy(dist: ModelDist, repeat=100):
     data = []
-
+    
     while len(data) < 3 * repeat:
         jobs, servers = dist.create()
-    
+        
         optimal_result = optimal_algorithm(jobs, servers)
         if optimal_result is None:
             continue
         optimal_utility = optimal_result.total_utility
         data.append(['optimal', optimal_utility, 0])
         reset_model(jobs, servers)
-    
+        
         for matrix_policy in matrix_policies:
             matrix_result = matrix_greedy(jobs, servers, matrix_policy)
             matrix_utility = matrix_result.total_utility
             matrix_difference = optimal_utility - matrix_utility
             data.append([matrix_policy.name + 'matrix', matrix_utility, matrix_difference])
             reset_model(jobs, servers)
-    
+        
         greedy_result = greedy_algorithm(jobs, servers, BestValueDensity(), BestServerSelection(),
                                          BestResourceAllocation())
         greedy_utility = greedy_result.total_utility
@@ -69,10 +71,10 @@ def run_matrix_greedy(dist: ModelDist, repeat = 100):
 
 
 def greedy_multi_policy(jobs: List[Job], servers: List[Server], _value_densities: List[ValueDensity],
-                      _server_selection_policies: List[ServerSelectionPolicy],
-                      _resource_allocation_policies: List[ResourceAllocationPolicy],
-                      run_optimal_algorithm: bool = False, run_matrix_greedy_algorithm: bool = False,
-                      plot_results: bool = True, algorithm_result_debug: bool = False) -> List[Result]:
+                        _server_selection_policies: List[ServerSelectionPolicy],
+                        _resource_allocation_policies: List[ResourceAllocationPolicy],
+                        run_optimal_algorithm: bool = False, run_matrix_greedy_algorithm: bool = False,
+                        plot_results: bool = True, algorithm_result_debug: bool = False) -> List[Result]:
     """
     Runs through a multi policy greedy algorithm test that loops through all of the policy permutations to test with
     :param jobs: A list of jobs
@@ -94,24 +96,24 @@ def greedy_multi_policy(jobs: List[Job], servers: List[Server], _value_densities
                                           value_density, server_selection_policy, resource_allocation_policy)
                 if algorithm_result_debug:
                     result.print(servers)
-
+                
                 results.append(result)
                 reset_model(jobs, servers)
-
+    
     if run_optimal_algorithm:
         results.append(optimal_algorithm(jobs, servers))
     if run_matrix_greedy_algorithm:
-        results.append(matrix_greedy(jobs, servers))
+        results.append(matrix_greedy(jobs, servers, BestMatrixPolicy()))
     if plot_results:
         graphing.plot_algorithms_results(results)
     return results
 
 
 def repeat_greedy(model_generator: ModelDist, _value_densities: List[ValueDensity],
-                _server_selection_policies: List[ServerSelectionPolicy],
-                _resource_allocation_policies: List[ResourceAllocationPolicy],
-                num_repeats: int = 5, run_optimal_algorithm: bool = False, plot_repeat_results: bool = True,
-                debug_repeat_results: bool = False) -> List[AlgorithmResults]:
+                  _server_selection_policies: List[ServerSelectionPolicy],
+                  _resource_allocation_policies: List[ResourceAllocationPolicy],
+                  num_repeats: int = 5, run_optimal_algorithm: bool = False, plot_repeat_results: bool = True,
+                  debug_repeat_results: bool = False) -> List[AlgorithmResults]:
     """
     Repeats greedy test
     :param model_generator: A model generator function
@@ -130,25 +132,25 @@ def repeat_greedy(model_generator: ModelDist, _value_densities: List[ValueDensit
                                             _resource_allocation_policies,
                                             run_optimal_algorithm=run_optimal_algorithm, plot_results=False)
         model_repeat_results.append(model_results)
-
+    
     algorithm_results = [
         AlgorithmResults([model_repeat_results[repeat][algorithm] for repeat in range(num_repeats)],
                          model_repeat_results[-1])
         for algorithm in range(len(model_repeat_results[0]))
     ]
-
+    
     if debug_repeat_results:
         print_repeat_results(algorithm_results)
     if plot_repeat_results:
         graphing.plot_repeat_algorithm_results(algorithm_results)
-
+    
     return algorithm_results
 
 
 def greedy_multi_model(model_generators: List[ModelDist], _value_densities: List[ValueDensity],
-                     _server_selection_policies: List[ServerSelectionPolicy],
-                     _resource_allocation_policies: List[ResourceAllocationPolicy],
-                     num_repeats=5, run_optimal_algorithm: bool = False):
+                       _server_selection_policies: List[ServerSelectionPolicy],
+                       _resource_allocation_policies: List[ResourceAllocationPolicy],
+                       num_repeats=5, run_optimal_algorithm: bool = False):
     """
     Multiple model test
     :param model_generators: A list of model generators
@@ -161,10 +163,10 @@ def greedy_multi_model(model_generators: List[ModelDist], _value_densities: List
     model_algorithm_tests: Dict[str, List[AlgorithmResults]] = {}
     for model_generator in model_generators:
         model_algorithm_tests[model_generator.name] = repeat_greedy(model_generator, _value_densities,
-                                                                  _server_selection_policies,
-                                                                  _resource_allocation_policies,
-                                                                  num_repeats=num_repeats,
-                                                                  run_optimal_algorithm=run_optimal_algorithm,
-                                                                  plot_repeat_results=False)
-
+                                                                    _server_selection_policies,
+                                                                    _resource_allocation_policies,
+                                                                    num_repeats=num_repeats,
+                                                                    run_optimal_algorithm=run_optimal_algorithm,
+                                                                    plot_repeat_results=False)
+    
     graphing.plot_multi_models_results(model_algorithm_tests)

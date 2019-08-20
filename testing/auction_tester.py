@@ -7,7 +7,7 @@ from core.job import Job
 from core.server import Server
 from core.model import reset_model
 
-from auction.iterative_vcg import iterative_vcg_auction
+from auction.iterative_auction import iterative_auction
 from auction.vcg import vcg_auction
 
 import core.graphing as graphing
@@ -29,7 +29,7 @@ def auction_convergence(jobs: List[Job], servers: List[Server], epsilons: List[i
 
     for epsilon in epsilons:
         print("Running iterative vcg with e={}".format(epsilon))
-        price, utility = iterative_vcg_auction(jobs, servers, epsilon=epsilon)
+        price, utility = iterative_auction(jobs, servers, epsilon=epsilon)
 
         auctions_utility[str(epsilon)] = utility
         auctions_price[str(epsilon)] = price

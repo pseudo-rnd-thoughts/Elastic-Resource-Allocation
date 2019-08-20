@@ -1,0 +1,50 @@
+The problem case layed out below is a multi multi-dimensional 0-1 knapsacking variation which has been shown to be NP-Hard to solve.
+Therefore while a solution can be found through integer programming, it is extremely slow to do and become impossible to solve for
+problem cases with more than 15 jobs and 3 servers on a regular computers. \\
+This means that to calculate the optimal solution, with full knowledge, then a greedy algorithm must be developed.
+To do this, I have created two greedy algorithm that are compared and explained below. \\
+
+\subsection{Greedy implementation}\label{subsec:greedy-implementation}
+The first algorithm is a three stage process where the jobs are sorted on how good they are based on a metric like the
+ratio of utility to resource's required. For each jobs, a server is selected for the jobs to run on based on the another metric
+like which server has the least resources available. Resources are then allocated to a job based on a third value policy
+like the percentage of the available resource that the allocated resources would use. \\
+This allows for a large amount of experimentation due to the number of permutations that exists for different policies of
+the different stages however any errors are propagated through the system more easily and the job value doesnt change has
+the server's resources are allocated off. \\
+Below is the algorithm used to generate the solution written in python with a large number of policies available to try. \\
+\begin{lstlisting}[language=Python]
+job_values = sorted(((job, value_density.evaluate(job)) for job in jobs), key=lambda jv: jv[1], reverse=True)
+
+# Loop through all of the job in order of values
+for job, _ in job_values:
+    # Allocate the server using the allocation policy function
+    allocated_server = server_selection_policy.select(job, servers)
+
+    # If an optimal server is found then calculate the resource allocation policy
+    if allocated_server:
+        value, (s, w, r) = resource_allocation_policy.allocate(job, allocated_server)
+        job.allocate(s, w, r, allocated_server)
+        allocated_server.allocate_job(s, w, r, job)
+\end{lstlisting}
+
+\subsection{Matrix Greedy implementation}\label{subsec:matrix-greedy-implementation}
+The second algorithm is significantly simpler as it only uses a single policy and hopes to prevent many of the possible
+problems found with the first algorithm. I believe that it will be easier to prove any approximations of the algorithm
+with this version due to having a single policy compared to three of the last version. \\
+This algorithm works by thinking about the resource allocation first instead of last and so for each job and server
+the best resource allocation is found using a metric like the product of the job utility and the percentage of the server
+available resources after allocation. This is then used to generate a matrix of jobs and servers allocation with the value
+being the value of the best resource allocation for the job and server. From this matrix then the max value is found of this
+with the job then being allocated to the server and the job removed from the matrix. This is iteratively done updating each
+time till all of the jobs are allocated or none of the jobs can be allocated. \\
+Due to this simplification with only a single policy, I believe that this should make the algorithm better however as the
+policy must include the job utility and some function of the server available resources and the resource speed this is
+less simple to do. Therefore this is something I am still experimenting with and to prove if any \epsilon approximations are possible.
+
+\begin{lstlisting}[language=Python]
+%% TODO
+\end{lstlisting}
+
+\subsection{Greedy algorithms results}\label{subsec:greedy-algorithms-results}
+%% TODO

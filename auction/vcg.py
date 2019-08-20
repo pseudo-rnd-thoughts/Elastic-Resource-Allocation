@@ -6,11 +6,13 @@ from typing import List, Dict, Tuple
 from core.job import Job
 from core.server import Server
 from core.model import reset_model
+from core.result import Result
+
 from optimal.optimal import optimal_algorithm
 
 
 def vcg_auction(jobs: List[Job], servers: List[Server],
-                debug_running: bool = False, debug_time: bool = False, debug_results: bool = False):
+                debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Result:
     """
     Implementation of a VCG auction
     :param jobs: A list of jobs
@@ -69,3 +71,4 @@ def vcg_auction(jobs: List[Job], servers: List[Server],
         job.allocate(s, w, r, server, price=job_prices[job])
         server.allocate_job(job)
 
+    return Result('vcg', jobs, servers)
