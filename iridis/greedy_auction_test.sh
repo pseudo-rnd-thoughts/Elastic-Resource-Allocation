@@ -6,7 +6,12 @@
 #PBS -m ae -M mt5g17@soton.ac.uk
 
 #Change to the directory that the job was submitted from
-cd $PBS_O_WORKDIR
+cd ~/cloud_allocation
+
+module load conda
+PYTHONPATH=$PYTHONPATH:~/cloud_allocation/
 
 #Run <executable_name> from the working directory
+echo "Running test"
 python iridis_testing.py
+echo "Complete"

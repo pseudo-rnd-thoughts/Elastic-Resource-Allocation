@@ -4,22 +4,22 @@ from tqdm import tqdm
 import json
 from time import time
 
-from ..core.model import reset_model, ModelDist, load_dist
+from core.model import reset_model, ModelDist, load_dist
 
-from ..optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_algorithm
 
 # Greedy Algorithms test
-from ..greedy.greedy import greedy_algorithm
-from ..greedy_matrix.matrix_greedy import matrix_greedy
+from greedy.greedy import greedy_algorithm
+from greedy_matrix.matrix_greedy import matrix_greedy
 
-from ..greedy.value_density import policies as value_densities
-from ..greedy.server_selection_policy import policies as server_selection_policies
-from ..greedy.resource_allocation_policy import policies as resource_allocation_policies
-from ..greedy_matrix.matrix_policy import policies as matrix_policies
+from greedy.value_density import policies as value_densities
+from greedy.server_selection_policy import policies as server_selection_policies
+from greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy_matrix.matrix_policy import policies as matrix_policies
 
 # Auctions test
-from ..auction.vcg import vcg_auction
-from ..auction.iterative_auction import iterative_auction
+from auction.vcg import vcg_auction
+from auction.iterative_auction import iterative_auction
 
 
 def greedy_test(repeats=10):
