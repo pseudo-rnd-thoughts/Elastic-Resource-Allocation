@@ -5,6 +5,10 @@ from typing import List, Dict, Tuple
 from time import time
 
 from tqdm import tqdm
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
 import core.graphing as graphing
 from core.job import Job
@@ -13,15 +17,16 @@ from core.result import Result, AlgorithmResults, print_repeat_results
 from core.server import Server
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies, ResourceAllocationPolicy, \
-    SumSpeeds, max_name_length as resource_name_length
-from greedy.server_selection_policy import policies as server_selection_policies, ServerSelectionPolicy, SumResources, \
-    max_name_length as server_selection_name_length
-from greedy.value_density import policies as value_densities, ValueDensity, UtilityPerResources, \
-    max_name_length as value_density_name_length
+    SumSpeeds as best_resource_allocation_policy, max_name_length as resource_name_length
+from greedy.server_selection_policy import policies as server_selection_policies, ServerSelectionPolicy, \
+    SumExpResource as best_server_selection_policy, max_name_length as server_selection_name_length
+from greedy.value_density import policies as value_densities, ValueDensity, \
+    UtilityDeadlinePerResource as best_value_density, max_name_length as value_density_name_length
 from auction.vcg import vcg_auction
 from auction.iterative_vcg import iterative_vcg_auction
 from optimal.optimal import optimal_algorithm
 from optimal.mp_optimal import optimal_mp_algorithm, modified_cp_optimal_algorithm, modified_mp_optimal_algorithm
+from greedy.matrix_greedy import matrix_greedy, policies as matrix_policies
 
 
 def greedy_test(jobs: List[Job], servers: List[Server], value_density: ValueDensity,
@@ -70,8 +75,8 @@ def test_value_density_policies(jobs: List[Job], servers: List[Server], policies
 def multi_policy_test(jobs: List[Job], servers: List[Server], _value_densities: List[ValueDensity],
                       _server_selection_policies: List[ServerSelectionPolicy],
                       _resource_allocation_policies: List[ResourceAllocationPolicy],
-                      run_optimal_algorithm: bool = False, plot_results: bool = True,
-                      algorithm_result_debug: bool = False) -> List[Result]:
+                      run_optimal_algorithm: bool = False, run_matrix_greedy_algorithm: bool = False,
+                      plot_results: bool = True, algorithm_result_debug: bool = False) -> List[Result]:
     """
     Runs through a multi policy greedy algorithm test that loops through all of the policy permutations to test with
     :param jobs: A list of jobs
@@ -79,7 +84,8 @@ def multi_policy_test(jobs: List[Job], servers: List[Server], _value_densities: 
     :param _value_densities: A list of value density classes
     :param _server_selection_policies: A list of server allocation policy classes
     :param _resource_allocation_policies: A list of resource allocation policy classes
-    :param run_optimal_algorithm: Runs the optimal algorithm as well
+    :param run_optimal_algorithm: Runs the optimal algorithm
+    :param run_matrix_greedy_algorithm: Run the matrix greedy algorithm
     :param plot_results: If to plot the results
     :param algorithm_result_debug: If to print the algorithm results
     :return: A list of results
@@ -98,6 +104,8 @@ def multi_policy_test(jobs: List[Job], servers: List[Server], _value_densities: 
 
     if run_optimal_algorithm:
         results.append(optimal_algorithm(jobs, servers))
+    if run_matrix_greedy_algorithm:
+        results.append(matrix_greedy(jobs, servers))
     if plot_results:
         graphing.plot_algorithms_results(results)
     return results
@@ -106,7 +114,7 @@ def multi_policy_test(jobs: List[Job], servers: List[Server], _value_densities: 
 def repeat_test(model_generator: ModelDist, _value_densities: List[ValueDensity],
                 _server_selection_policies: List[ServerSelectionPolicy],
                 _resource_allocation_policies: List[ResourceAllocationPolicy],
-                num_repeats=5, run_optimal_algorithm: bool = False, plot_repeat_results: bool = True,
+                num_repeats: int = 5, run_optimal_algorithm: bool = False, plot_repeat_results: bool = True,
                 debug_repeat_results: bool = False) -> List[AlgorithmResults]:
     """
     Repeats greedy test
@@ -234,6 +242,36 @@ def test_modified_optimal(jobs: List[Job], servers: List[Server]):
     print("CP Optimal {}, Time taken {}".format(model_solution.get_objective_value(), end - start))
 
 
+def test_matrix_greedy(dist: ModelDist, repeat=100):
+    data = []
+
+    while len(data) < 3*repeat:
+        jobs, servers = dist.create()
+
+        optimal_result = optimal_algorithm(jobs, servers)
+        if optimal_result is None:
+            continue
+        optimal_utility = optimal_result.total_utility
+        data.append(['optimal', optimal_utility, 0])
+        reset_model(jobs, servers)
+        
+        for matrix_policy in matrix_policies:
+            matrix_result = matrix_greedy(jobs, servers, matrix_policy)
+            matrix_utility = matrix_result.total_utility
+            matrix_difference = optimal_utility - matrix_utility
+            data.append([matrix_policy.name + 'matrix', matrix_utility, matrix_difference])
+            reset_model(jobs, servers)
+        
+        greedy_result = greedy_algorithm(jobs, servers, best_value_density(), best_server_selection_policy(),
+                                         best_resource_allocation_policy())
+        greedy_utility = greedy_result.total_utility
+        greedy_difference = optimal_utility - greedy_utility
+        data.append(['greedy', greedy_utility, greedy_difference])
+        
+    df = pd.DataFrame(data, columns=['algorithm', 'utility', 'difference'])
+    sns.barplot(x='algorithm', y='utility', data=df)
+    
+    
 if __name__ == "__main__":
     basic_dist_name, basic_job_dist, basic_server_dist = load_dist("models/basic.model")
     basic_model_dist = ModelDist(basic_dist_name, basic_job_dist, 10, basic_server_dist, 2)
@@ -256,12 +294,13 @@ if __name__ == "__main__":
     
     print("Multi Policy Greedy test")
     multi_policy_test(_jobs, _servers, value_densities, server_selection_policies, resource_allocation_policies,
-                      run_optimal_algorithm=True)
-
+                      run_optimal_algorithm=True, run_matrix_greedy_algorithm=True)
+                      
     print("Repeat Greed Test")
     repeat_test(basic_model_dist, value_densities, server_selection_policies,
-               resource_allocation_policies, run_optimal_algorithm=True, num_repeats=50)
-
+                resource_allocation_policies,
+                run_optimal_algorithm=True,  num_repeats=50)
+                
     print("Multi Model testing")
     bs_dist_name, bs_job_dist, bs_server_dist = load_dist("../models/big_small.model")
     multi_model_test([ModelDist(bs_dist_name, bs_job_dist, num_jobs, bs_server_dist, num_servers)
@@ -279,7 +318,7 @@ if __name__ == "__main__":
     graphing.plot_auction_result(_servers, 'custom')
     """
 
-    test_auction_convergence(_jobs, _servers, [1, 2, 3, 5, 7, 10])
+    #test_auction_convergence(_jobs, _servers, [1, 2, 3, 5, 7, 10])
 
     """
     basic_dist_name, basic_job_dist, basic_server_dist = load_dist("models/basic.model")
@@ -291,3 +330,5 @@ if __name__ == "__main__":
     graphing.plot_job_distribution([basic_model_dist, bs_model_dist])
     graphing.plot_server_distribution([basic_model_dist, bs_model_dist])
     """
+    
+    test_matrix_greedy(basic_model_dist)

@@ -62,7 +62,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
 def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loading_speeds: Dict[Job, CpoVariable],
                     compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
                     server_job_allocation: Dict[Tuple[Job, Server], CpoVariable],
-                    time_limit, debug_time: bool = False) -> Result:
+                    time_limit, debug_time: bool = True) -> Result:
     """
     Runs the cplex model
     :param model: The model to run
@@ -77,10 +77,13 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     :return: A results
     """
     start = time()
-    model_solution: CpoSolveResult = model.solve(log_output=None)
+    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=5)
     end = time()
     if debug_time:
         print("Time Taken: {}".format(end - start))
+        
+    if end-start > 4.5:
+        return None
     
     for job in jobs:
         for server in servers:

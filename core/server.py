@@ -33,8 +33,10 @@ class Server(object):
         :param job: The job to test
         """
         return self.available_storage >= job.required_storage and self.available_computation >= 1 \
-            and self.available_bandwidth >= 2 and any(job.required_storage / s + job.required_computation / w +
-                                                      job.required_results_data / r <= job.deadline
+            and self.available_bandwidth >= 2 and any(job.required_storage * w * r +
+                                                      s * job.required_computation * r +
+                                                      s * w * job.required_results_data <=
+                                                      job.deadline * s * w * r
                                                       for s in range(1, self.available_bandwidth + 1)
                                                       for w in range(1, self.available_computation + 1)
                                                       for r in range(1, self.available_bandwidth - s + 1))
@@ -52,7 +54,7 @@ class Server(object):
         self.allocated_jobs.append(job)
         self.available_storage -= job.required_storage
         self.available_computation -= job.compute_speed
-        self.available_bandwidth -= job.loading_speed + job.sending_speed
+        self.available_bandwidth -= (job.loading_speed + job.sending_speed)
 
         self.revenue += job.price
         self.utility += job.utility
