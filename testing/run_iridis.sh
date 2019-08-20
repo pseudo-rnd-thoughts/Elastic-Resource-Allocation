@@ -6,7 +6,7 @@
 #PBS -m ae -M mt5g17@soton.ac.uk
 
 #Change to the directory that the job was submitted from
-cd /lyceum/mt5g17/cloud_allocation/testing
+cd $PBS_O_WORKDIR
 
 #Run <executable_name> from the working directory
-./run_iridis.sh
+python iridis_testing.py
