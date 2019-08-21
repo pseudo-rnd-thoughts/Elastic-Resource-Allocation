@@ -41,7 +41,9 @@ def greedy_test(repeats=5):
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
     
-    for _ in range(repeats):
+    for x in range(repeats):
+        print("Model {}".format(x))
+
         jobs, servers = model_dist.create()
         result = {}
         
@@ -80,7 +82,9 @@ def auction_price(repeats=5):
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
     
-    for _ in range(repeats):
+    for x in range(repeats):
+        print("Model {}".format(x))
+
         jobs, servers = model_dist.create()
         results = {}
         
@@ -103,6 +107,9 @@ def auction_price(repeats=5):
 
 
 if __name__ == "__main__":
+    print("Long test")
     long_test()
+    print("Greedy Test")
     greedy_test()
+    print("Auction Test")
     auction_price()
