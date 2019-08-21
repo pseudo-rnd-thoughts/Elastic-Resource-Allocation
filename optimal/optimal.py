@@ -1,7 +1,7 @@
 """Optimal solution through mixed integer programming"""
 
 from __future__ import annotations
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from time import time
 
 from core.job import Job
@@ -11,6 +11,7 @@ from core.server import Server
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.config import context
+from docplex.cp.solution import SOLVE_STATUS_OPTIMAL
 
 context.log_output = None
 
@@ -62,7 +63,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
 def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loading_speeds: Dict[Job, CpoVariable],
                     compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
                     server_job_allocation: Dict[Tuple[Job, Server], CpoVariable],
-                    time_limit, debug_time: bool = True) -> Result:
+                    force_stop: bool = False, time_limit: int = 500, debug_time: bool = True) -> Optional[Result]:
     """
     Runs the cplex model
     :param model: The model to run
@@ -72,15 +73,22 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     :param compute_speeds: A dictionary of the compute speeds
     :param sending_speeds: A dictionary of the sending speeds
     :param server_job_allocation: A dictionary of the servers and jobs to binary variable
+    :param force_stop: What to do if the cplex ends at time limit
     :param time_limit: The time limit
     :param debug_time: Print the time taken
     :return: A results
     """
-    start = time()
-    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01)
-    end = time()
-    if debug_time:
-        print("Time Taken: {}".format(end - start))
+    
+    if force_stop:
+        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, time_limit=time_limit)
+        if model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+            return None
+    else:
+        start = time()
+        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01)
+        end = time()
+        if debug_time:
+            print("Time Taken: {}".format(end - start))
     
     for job in jobs:
         for server in servers:
@@ -93,12 +101,13 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     return Result("Optimal", jobs, servers)
 
 
-def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int = 300,
-                      debug_time: bool = False) -> Result:
+def optimal_algorithm(jobs: List[Job], servers: List[Server],
+                      force_stop: bool = False, time_limit: int = 500, debug_time: bool = False) -> Result:
     """
     Runs the optimal algorithm solution
     :param jobs: A list of jobs
     :param servers: A list of servers
+    :param force_stop:
     :param time_limit: The time limit to solve
     :param debug_time: If to print the time taken
     :return: The result from optimal solution
@@ -106,4 +115,4 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int = 
     model, loading_speeds, compute_speeds, sending_speed, server_job_allocation = generate_model(jobs, servers)
     
     return run_cplex_model(model, jobs, servers, loading_speeds, compute_speeds, sending_speed, server_job_allocation,
-                           time_limit, debug_time=debug_time)
+                           force_stop, time_limit, debug_time=debug_time)

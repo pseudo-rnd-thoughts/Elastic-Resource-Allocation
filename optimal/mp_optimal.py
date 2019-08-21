@@ -63,6 +63,8 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
     model = Model("Modified MP Optimal")
 
     communication_speeds, compute_speeds, server_job_allocation = {}, {}, {}
+    max_communication_speed = max(server.max_bandwidth for server in servers)
+    max_compute_speed = max(server.max_computation for server in servers)
 
     for job in jobs:
         communication_speeds[job] = model.continuous_var(lb=0, name="Job {} communication speed".format(job.name))
@@ -70,27 +72,27 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
 
         # Same problem of variable are not allowed as denominator
         # model.add((job.required_storage + job.required_results_data) / communication_speeds[job] +
-        #           job.required_computation / compute_speeds[job] <= job.deadline)
+        #     job.required_computation / compute_speeds[job] <= job.deadline)
         model.add((job.required_storage + job.required_results_data) * compute_speeds[job] +
                   job.required_computation * communication_speeds[job] <=
                   job.deadline * communication_speeds[job] * communication_speeds[job])
-
+        
         for server in servers:
             server_job_allocation[(server, job)] = model.binary_var(name="Job {} allocation to server {}"
                                                                     .format(job.name, server.name))
-
+            
+            model.add(communication_speeds[job] <= server_job_allocation[(server, job)] * max_communication_speed)
+            model.add(compute_speeds[job] <= server_job_allocation[(server, job)] * max_compute_speed)
+            
         model.add(sum(server_job_allocation[(server, job)] for server in servers) <= 1)
-
+        
     for server in servers:
-        model.add(sum(job.required_storage * server_job_allocation[(server, job)]
-                      for job in jobs) <= server.max_storage)
-        model.add(sum(compute_speeds[job] * server_job_allocation[(server, job)]
-                      for job in jobs) <= server.max_computation)
-        model.add(sum(communication_speeds[job] * server_job_allocation[(server, job)]
-                      for job in jobs) <= server.max_bandwidth)
+        model.add(sum(job.required_storage * server_job_allocation[(server, job)] for job in jobs) <= server.max_storage)
+        model.add(sum(compute_speeds[job] for job in jobs) <= server.max_computation)
+        model.add(sum(communication_speeds[job] for job in jobs) <= server.max_bandwidth)
 
     model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
-
+    
     model.print_information()
     model_solution = model.solve()
     return model_solution

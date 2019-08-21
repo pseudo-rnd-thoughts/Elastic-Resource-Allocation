@@ -22,18 +22,7 @@ from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy_matrix.matrix_policy import policies as matrix_policies
 
 
-def long_test():
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
-
-    jobs, servers = model_dist.create()
-
-    start = time()
-    result = optimal_algorithm(jobs, servers)
-    print("Time taken: {}".format(time() - start))
-
-
-def greedy_test(repeats=5):
+def greedy_test(repeats=50):
     """Greedy tests"""
     data = []
     optimal_time_taken = []
@@ -48,7 +37,9 @@ def greedy_test(repeats=5):
         result = {}
         
         start = time()
-        optimal_result = optimal_algorithm(jobs, servers)
+        optimal_result = optimal_algorithm(jobs, servers, force_stop=True)
+        if optimal_result is None:
+            continue
         optimal_time_taken.append(time() - start)
         result['Optimal'] = optimal_result.total_utility
         reset_model(jobs, servers)
@@ -107,9 +98,7 @@ def auction_price(repeats=5):
 
 
 if __name__ == "__main__":
-    print("Long test")
-    long_test()
     print("Greedy Test")
     greedy_test()
-    print("Auction Test")
-    auction_price()
+    # print("Auction Test")
+    # auction_price()
