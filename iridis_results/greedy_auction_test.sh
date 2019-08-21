@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#PBS –l walltime=16:00:00
-#PBS –l nodes=1:ppn=16
+#PBS -l walltime=16:00:00
+#PBS -l nodes=1:ppn=16
 #PBS -m ae -M mt5g17@soton.ac.uk
 
 #Change to the directory that the job was submitted from
