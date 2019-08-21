@@ -11,6 +11,8 @@ cd ~/cloud_allocation/
 module load conda/4.4.0
 source activate env37
 
+module load cplex/12.7.1
+
 #Run <executable_name> from the working directory
 echo "Running test"
 python iridis_testing.py
