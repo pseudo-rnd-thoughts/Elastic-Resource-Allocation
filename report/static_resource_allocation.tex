@@ -27,19 +27,22 @@
 \maketitle
 
 \section{Problem Statement}\label{sec:problem-statement}
-In prior research into resource pricing for resource allocation within cloud computing, job's considered have had fixed resource requirements that server's must fulfill.
-However in this research we consider job's that have requirements that must be fulfill with a deadline so that the resource allocation must allow the deadline consider to be true.
-We have then developed a greedy algorithm to solve the problem to maximise the social welfare where the total utility is known of each jobs.
-However in real life then server's that run the job would want to be payed to run a job so we have developed new auction. \\
-In the new section, we will describe the problem case and how we generated a model. \\
+In prior research into resource pricing for resource allocation within cloud computing, job's considered have had
+fixed resource requirements that job's owner would then request from a cloud service. However this could result in
+different job's fighting over a single resource instead of sharing the resource fairly.
+In this research we consider job's that have requirements that must be fulfill with a deadline allowing the
+cloud services the ability to dynamically allocate resources depended how the usage of it's resources from other jobs
+and share resources more effectively. We have then developed a greedy algorithm to solve the problem to maximise the
+social welfare where the utility is known of each jobs. However in real life, server's that run a job would want
+to be payed to run a job so we have developed an iterative auction. \\
 
 \section{Problem Case}\label{sec:problem-case}
-\input{/problem-case}
+\input{problem-case.tex}
 
 \section{Greedy Algorithm}\label{sec:greedy-algorithm}
-\input{/greedy-algorithm.tex}
+\input{greedy-algorithm.tex}
 
 \section{Auctions}\label{sec:auction-idea}
-\input{/auctions.tex}
+\input{auctions.tex}
 
 \end{document}

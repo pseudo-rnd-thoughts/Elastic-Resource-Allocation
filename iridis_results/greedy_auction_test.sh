@@ -1,5 +1,4 @@
 #!/bin/bash
-# Example Bash Script to execute <executable_name> on batch
 
 #PBS –l walltime=16:00:00
 #PBS –l nodes=1:ppn=16
@@ -13,7 +12,6 @@ source activate env37
 
 module load cplex/12.7.1
 
-#Run <executable_name> from the working directory
 echo "Running test"
 python iridis_testing.py
 echo "Complete"

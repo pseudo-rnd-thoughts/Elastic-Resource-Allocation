@@ -1,7 +1,7 @@
 """Tests to run on Southampton's Iridis 4 supercomputer"""
 
 from __future__ import annotations
-from tqdm import tqdm
+
 import json
 from time import time
 
@@ -9,29 +9,39 @@ from core.model import reset_model, ModelDist, load_dist
 
 from optimal.optimal import optimal_algorithm
 
-# Greedy Algorithms test
-from greedy.greedy import greedy_algorithm
-from greedy_matrix.matrix_greedy import matrix_greedy
-
-from greedy.value_density import policies as value_densities
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
-from greedy_matrix.matrix_policy import policies as matrix_policies
-
 # Auctions test
 from auction.vcg import vcg_auction
 from auction.iterative_auction import iterative_auction
 
+# Greedy Algorithms test
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy.server_selection_policy import policies as server_selection_policies
+from greedy.value_density import policies as value_densities
+from greedy_matrix.matrix_greedy import matrix_greedy
+from greedy_matrix.matrix_policy import policies as matrix_policies
 
-def greedy_test(repeats=10):
+
+def long_test():
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
+
+    jobs, servers = model_dist.create()
+
+    start = time()
+    result = optimal_algorithm(jobs, servers)
+    print("Time taken: {}".format(time() - start))
+
+
+def greedy_test(repeats=5):
     """Greedy tests"""
     data = []
     optimal_time_taken = []
     
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
     
-    for _ in tqdm(range(repeats)):
+    for _ in range(repeats):
         jobs, servers = model_dist.create()
         result = {}
         
@@ -57,9 +67,10 @@ def greedy_test(repeats=10):
 
     with open('greedy_results.txt', 'w') as outfile:
         json.dump(data, outfile)
+    print(data)
     
 
-def auction_price(repeats=10):
+def auction_price(repeats=5):
     """Auction price testing"""
     epsilons = (1, 2, 3, 5, 7, 10)
     
@@ -67,9 +78,9 @@ def auction_price(repeats=10):
     vcg_time_taken = []
     
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
     
-    for _ in tqdm(range(repeats)):
+    for _ in range(repeats):
         jobs, servers = model_dist.create()
         results = {}
         
@@ -88,8 +99,10 @@ def auction_price(repeats=10):
         
     with open('auction_results.txt', 'w') as outfile:
         json.dump(data, outfile)
+    print(data)
 
 
 if __name__ == "__main__":
+    long_test()
     greedy_test()
     auction_price()

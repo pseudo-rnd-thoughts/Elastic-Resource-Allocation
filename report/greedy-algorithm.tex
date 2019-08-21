@@ -40,11 +40,37 @@ with the job then being allocated to the server and the job removed from the mat
 time till all of the jobs are allocated or none of the jobs can be allocated. \\
 Due to this simplification with only a single policy, I believe that this should make the algorithm better however as the
 policy must include the job utility and some function of the server available resources and the resource speed this is
-less simple to do. Therefore this is something I am still experimenting with and to prove if any \epsilon approximations are possible.
+less simple to do. Therefore this is something I am still experimenting with and to prove if any $\epsilon$ approximations are possible.
 
 \begin{lstlisting}[language=Python]
-%% TODO
+def allocate_resources(job: Job, server: Server, value_policy: MatrixPolicy):
+    return max(((value_policy.evaluate(job, server, s, w, r), s, w, r)
+                for s in range(1, server.available_bandwidth + 1)
+                for w in range(1, server.available_computation + 1)
+                for r in range(1, server.available_bandwidth - s + 1)
+                if job.required_storage * w * r + s * job.required_computation * r +
+                s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
+
+
+def matrix_greedy(jobs: List[Job], servers: List[Server], value_policy: MatrixPolicy):
+    unallocated_jobs = jobs
+    while unallocated_jobs:
+        value_matrix = []
+        for job in unallocated_jobs:
+            for server in servers:
+                if server.can_run(job):
+                    value, s, w, r = allocate_resources(job, server, value_policy)
+                    value_matrix.append((value, job, server, s, w, r))
+
+        if value_matrix:
+            value, job, server, s, w, r = max(value_matrix, key=lambda x: x[0])
+            job.allocate(s, w, r, server)
+            server.allocate_job(job)
+            unallocated_jobs.remove(job)
+        else:
+            break
 \end{lstlisting}
 
 \subsection{Greedy algorithms results}\label{subsec:greedy-algorithms-results}
 %% TODO
+Results

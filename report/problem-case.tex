@@ -88,8 +88,9 @@ Resource usage
 \end{figure}
 
 \subsection{Model creation}\label{subsec:model-creation}
-To create each of the jobs and servers we choose a mean and standard deviation for each attribute that is then used to generate a random number from a normal distribution.
-We normalise the value generated to make it an integer and check that the value is greater than zero.
+To create each of the jobs and servers we choose a mean and standard deviation for each attribute that is then
+used to generate a random number from a normal distribution.
+We normalise the value generated to make it an integer and check that the value is greater than zero. \\
 
 \begin{tabu} to 1\textwidth { | X[l] | X[l] | X[l] | X[l] | X[l] | X[l] | }
 \hline
@@ -97,7 +98,7 @@ Job Attribute & Mean & Std & Server Attribute & Mean & Std \\
 \hline
 Storage & 10 & 4 & Storage & 45 & 10 \\
 \hline
-Computation & 15 & 5 & Computation & 30 & 5 \\
+Compute & 15 & 5 & Compute & 30 & 5 \\
 \hline
 Results data & 5 & 4 & Bandwidth & 40 & 5 \\
 \hline
@@ -107,6 +108,7 @@ Deadline & 15 & 4 & & & \\
 \hline
 \end{tabu}
 
+%% Todo Redo, Plot job and server
 \begin{figure}[H]
     \begin{subfigure}{0.5\textwidth}
         \includegraphics[width=1\linewidth, height=5cm]{../results/job_distribution.png}
