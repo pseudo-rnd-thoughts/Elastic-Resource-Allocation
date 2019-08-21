@@ -12,6 +12,4 @@ source activate env37
 
 module load cplex/12.7.1
 
-echo "Running test"
 python iridis_testing.py
-echo "Complete"
