@@ -28,7 +28,7 @@ def greedy_test(repeats=10):
     data = []
     optimal_time_taken = []
     
-    model_name, job_dist, server_dist = load_dist('../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
     
     for _ in tqdm(range(repeats)):
@@ -66,7 +66,7 @@ def auction_price(repeats=10):
     data = []
     vcg_time_taken = []
     
-    model_name, job_dist, server_dist = load_dist('../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
     
     for _ in tqdm(range(repeats)):

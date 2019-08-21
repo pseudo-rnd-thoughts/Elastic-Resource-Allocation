@@ -9,7 +9,7 @@
 cd ~/cloud_allocation/
 
 module load conda/4.4.0
-source activate env
+source activate env37
 
 #Run <executable_name> from the working directory
 echo "Running test"

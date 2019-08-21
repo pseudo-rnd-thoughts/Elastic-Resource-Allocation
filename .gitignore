@@ -131,15 +131,3 @@ dmypy.json
 /report/static_resource_allocation.blg
 /report/static_resource_allocation.synctex.gz
 /report/static_resource_allocation.log
-
-
-!/.idea/vcs.xml
-!/.idea/inspectionProfiles/
-!/.idea/dictionaries/
-!/.idea/workspace.xml
-!/.idea/
-!/.idea/excel_internship.iml
-!/.idea/runConfigurations/
-!/.idea/misc.xml
-!/.idea/modules.xml
-!/.idea/other.xml
