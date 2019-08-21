@@ -6,13 +6,12 @@
 #PBS -m ae -M mt5g17@soton.ac.uk
 
 #Change to the directory that the job was submitted from
-cd ~/cloud_allocation
+cd ~/cloud_allocation/
 
 module load conda/4.4.0
 source activate env
-PYTHONPATH=$PYTHONPATH:~/cloud_allocation/
 
 #Run <executable_name> from the working directory
 echo "Running test"
-python iridis/iridis_testing.py
+python iridis_testing.py
 echo "Complete"
