@@ -11,15 +11,12 @@ from auction.vcg import vcg_auction
 from auction.iterative_auction import iterative_auction
 
 
-def auction_price(repeats=5):
+def auction_price(model_dist, repeats=50):
     """Auction price testing"""
     epsilons = (1, 2, 3, 5, 7, 10)
 
     data = []
     vcg_time_taken = []
-
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
 
     for x in range(repeats):
         print("Model {}".format(x))
@@ -49,4 +46,7 @@ def auction_price(repeats=5):
 
 if __name__ == "__main__":
     print("Auction Test")
-    auction_price()
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
+    for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (100, 20), (150, 25)):
+        model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+        auction_price(model_dist)

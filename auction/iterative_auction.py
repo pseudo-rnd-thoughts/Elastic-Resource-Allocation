@@ -43,7 +43,7 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
 
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
-    model_solution = model.solve()
+    model_solution = model.solve(TimeLimit=15)
 
     max_server_profit = model_solution.get_objective_values()[0]
     job_price = server.revenue - max_server_profit + epsilon
