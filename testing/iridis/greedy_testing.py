@@ -17,13 +17,10 @@ from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy_matrix.matrix_policy import policies as matrix_policies
 
 
-def greedy_test(repeats=1000):
+def greedy_test(model_dist, name, repeats=200):
     """Greedy tests"""
     data = []
     optimal_time_taken = []
-    
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
     
     for x in range(repeats):
         print("Model number of {}".format(x))
@@ -31,13 +28,11 @@ def greedy_test(repeats=1000):
         jobs, servers = model_dist.create()
         results = {}
         
-        start = time()
         optimal_result = optimal_algorithm(jobs, servers, time_limit=15)
         if optimal_result is None:
             print("No feasible solution found")
             continue
-
-        optimal_time_taken.append(time() - start)
+        
         results['Optimal'] = optimal_result.total_utility
         reset_model(jobs, servers)
         
@@ -57,11 +52,15 @@ def greedy_test(repeats=1000):
 
         print(results)
 
-    with open('greedy_results.txt', 'w') as outfile:
+    with open('greedy_results_{}.txt'.format(name), 'w') as outfile:
         json.dump(data, outfile)
     print(data)
 
 
 if __name__ == "__main__":
-    print("Greedy Test")
-    greedy_test()
+    print("Greedy Testing")
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
+    for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (100, 20), (150, 25)):
+        model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+
+        greedy_test(model_dist, 'Jobs {} servers {}'.format(num_jobs, num_servers))
