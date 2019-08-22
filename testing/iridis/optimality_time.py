@@ -13,6 +13,9 @@ def time_test(model: CpoModel, time: int):
     print("Solving for model with {} minutes".format(time//60))
     model_solution = model.solve(TimeLimit=time)
     model_solution.print_solution()
+    print("Objective bounds: {}".format(model_solution.get_objective_bounds()))
+    print("Objective gaps: {}".format(model_solution.get_objective_gaps()))
+    print("Objective values: {}".format(model_solution.get_objective_values()))
     print("\n")
 
 
