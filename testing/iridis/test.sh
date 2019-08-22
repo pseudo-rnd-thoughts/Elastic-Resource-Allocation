@@ -12,5 +12,8 @@ source activate env37
 
 module load cplex/12.7.1
 
-cmd='python -m testing.iridis.$1'
+cmd="python -m testing.iridis.$file"
+echo $cmd
 eval $cmd
+
+# Example script: qsub -v file="optimality_test" test.sh

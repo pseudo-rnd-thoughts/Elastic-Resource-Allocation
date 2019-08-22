@@ -32,9 +32,7 @@ def greedy_test(repeats=50):
         result = {}
         
         start = time()
-        optimal_result = optimal_algorithm(jobs, servers, force_stop=True)
-        if optimal_result is None:
-            continue
+        optimal_result = optimal_algorithm(jobs, servers, time_limit=60*5)
         optimal_time_taken.append(time() - start)
         result['Optimal'] = optimal_result.total_utility
         reset_model(jobs, servers)

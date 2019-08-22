@@ -8,11 +8,13 @@ from docplex.cp.model import CpoModel
 from core.job import Job
 from core.server import Server
 
+from core.model import load_dist, ModelDist
+
 
 def optimal_mp_algorithm(jobs: List[Job], servers: List[Server]):
     """
     An implementation of cplex mp with the current problem case
-    !!! THIS ALGORITHM DOESNT WORK !!!
+    !!! THIS ALGORITHM WOULDNT WORK !!!
     :param jobs: A list of jobs
     :param servers: A list of servers
     """
@@ -74,8 +76,8 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
         # model.add((job.required_storage + job.required_results_data) / communication_speeds[job] +
         #     job.required_computation / compute_speeds[job] <= job.deadline)
         model.add((job.required_storage + job.required_results_data) * compute_speeds[job] +
-                  job.required_computation * communication_speeds[job] <=
-                  job.deadline * communication_speeds[job] * communication_speeds[job])
+                  job.required_computation * communication_speeds[job] -
+                  job.deadline * communication_speeds[job] * communication_speeds[job] <= 0)
         
         for server in servers:
             server_job_allocation[(server, job)] = model.binary_var(name="Job {} allocation to server {}"
@@ -140,3 +142,11 @@ def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
     model_solution = model.solve()
 
     return model_solution
+
+
+if __name__ == "__main__":
+    model_name, job_dist, server_dist = load_dist('../models/basic.model')
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
+
+    jobs, servers = model_dist.create()
+    modified_mp_optimal_algorithm(jobs, servers)

@@ -85,10 +85,11 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
             return None
     else:
         start = time()
-        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01)
+        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
         end = time()
         if debug_time:
             print("Time Taken: {}".format(end - start))
+        model_solution.print_solution()
     
     for job in jobs:
         for server in servers:
@@ -115,4 +116,4 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server],
     model, loading_speeds, compute_speeds, sending_speed, server_job_allocation = generate_model(jobs, servers)
     
     return run_cplex_model(model, jobs, servers, loading_speeds, compute_speeds, sending_speed, server_job_allocation,
-                           force_stop, time_limit, debug_time=debug_time)
+                           force_stop, time_limit, debug_time)
