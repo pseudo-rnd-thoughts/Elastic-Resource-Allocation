@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from random import choice
 from typing import List, Dict, Tuple
+from math import inf
 
 from docplex.cp.model import CpoModel
+from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
 
 from core.job import Job
 from core.server import Server
@@ -44,6 +46,8 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     model_solution = model.solve(TimeLimit=15)
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+        return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
     job_price = server.revenue - max_server_profit + epsilon

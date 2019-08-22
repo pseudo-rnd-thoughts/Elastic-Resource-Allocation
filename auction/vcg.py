@@ -1,7 +1,7 @@
 """Implementation of an VCG auction"""
 
 from __future__ import annotations
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 
 from core.job import Job
 from core.server import Server
@@ -12,7 +12,7 @@ from optimal.optimal import optimal_algorithm
 
 
 def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
-                debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Result:
+                debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auction
     :param jobs: A list of jobs
@@ -25,6 +25,8 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
     if debug_running:
         print("Finding optimal")
     optimal_solution = optimal_algorithm(jobs, servers, time_limit=time, debug_time=debug_time)
+    if optimal_solution is None:
+        return None
     if debug_results:
         print("Optimal total utility: {}".format(optimal_solution.total_utility))
 
@@ -47,6 +49,8 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
         if debug_running:
             print("Solving for without job {}".format(job.name))
         optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time, debug_time=debug_time)
+        if optimal_prime is None:
+            return None
         job_cost = (optimal_solution.total_utility - job.utility) - optimal_prime.total_utility
         if debug_results:
             print("Job {}: £{:.1f}, Utility: {} ".format(job.name, job_cost, job.utility))
@@ -61,6 +65,8 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
         if debug_running:
             print("Solving for without server {}".format(server.name))
         optimal_prime = optimal_algorithm(jobs, servers_prime, time_limit=time, debug_time=debug_time)
+        if optimal_prime is None:
+            return None
         server_transfer = optimal_solution.total_utility - optimal_prime.total_utility
         if debug_results:
             print("Server {}: £{:.1f}".format(server.name, server_transfer))

@@ -53,6 +53,3 @@ if __name__ == "__main__":
 
             time_test(model, 60 * 15)
             reset_model(jobs, servers)
-
-            time_test(model, 60 * 60)
-            reset_model(jobs, servers)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from time import time
+from tqdm import tqdm
 
 from core.model import reset_model, ModelDist, load_dist
 
@@ -16,31 +16,34 @@ def auction_price(model_dist, name, repeats=50):
     epsilons = (1, 2, 3, 5, 7, 10)
 
     data = []
-    vcg_time_taken = []
 
-    for x in range(repeats):
-        print("Model {}".format(x))
-
+    for _ in tqdm(range(repeats)):
         jobs, servers = model_dist.create()
         results = {}
 
-        start = time()
         vcg_result = vcg_auction(jobs, servers, 15)
-        vcg_time_taken.append(time() - start)
+        if vcg_result is None:
+            print("VCG result fail")
+            continue
         results['vcg'] = (vcg_result.total_utility, vcg_result.total_price)
         reset_model(jobs, servers)
 
         for epsilon in epsilons:
-            iterative_prices, iterative_utilities = iterative_auction(jobs, servers)
+            iterative_result = iterative_auction(jobs, servers)
+            if iterative_result is None:
+                print("Iterative result fail")
+                continue
+
+            iterative_prices, iterative_utilities = iterative_result
             results['iterative ' + str(epsilon)] = (iterative_utilities[-1], iterative_prices[-1])
             reset_model(jobs, servers)
 
+        # print(results)
         data.append(results)
-
-        print(results)
 
     with open('auction_results_{}.txt'.format(name), 'w') as outfile:
         json.dump(data, outfile)
+    print("Model {} results".format(name))
     print(data)
 
 
