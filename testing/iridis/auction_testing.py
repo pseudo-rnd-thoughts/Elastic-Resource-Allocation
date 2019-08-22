@@ -11,7 +11,7 @@ from auction.vcg import vcg_auction
 from auction.iterative_auction import iterative_auction
 
 
-def auction_price(model_dist, repeats=50):
+def auction_price(model_dist, name, repeats=50):
     """Auction price testing"""
     epsilons = (1, 2, 3, 5, 7, 10)
 
@@ -39,7 +39,7 @@ def auction_price(model_dist, repeats=50):
 
         print(results)
 
-    with open('auction_results.txt', 'w') as outfile:
+    with open('auction_results_{}.txt'.format(name), 'w') as outfile:
         json.dump(data, outfile)
     print(data)
 
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (100, 20), (150, 25)):
         model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
-        auction_price(model_dist)
+        auction_price(model_dist, 'Job {} server {}'.format(num_jobs, num_servers))

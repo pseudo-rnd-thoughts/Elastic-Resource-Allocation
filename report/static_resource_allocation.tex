@@ -27,14 +27,15 @@
 \maketitle
 
 \section{Problem Statement}\label{sec:problem-statement}
-In prior research into resource pricing for resource allocation within cloud computing, job's considered have had
-fixed resource requirements that job's owner would then request from a cloud service. However this could result in
-different job's fighting over a single resource instead of sharing the resource fairly.
-In this research we consider job's that have requirements that must be fulfill with a deadline allowing the
-cloud services the ability to dynamically allocate resources depended how the usage of it's resources from other jobs
-and share resources more effectively. We have then developed a greedy algorithm to solve the problem to maximise the
-social welfare where the utility is known of each jobs. However in real life, server's that run a job would want
-to be payed to run a job so we have developed an iterative auction. \\
+In prior research into resource pricing for cloud based resource allocation, the jobs considered have had
+fixed resource requirements that could then be requested from a cloud provider. However this could result in
+different job's fighting over a single resource instead of sharing the resource fairly due to the lack of knowledge of each other.
+In this research we consider jobs that have requirements that are constrainted by a deadline allowing the
+cloud services the ability to dynamically allocate resources depended how the usage of it's resources by other jobs
+and allowing resources to be shared more effectively. We have also developed a greedy algorithm to that finds near-optimals
+of problem cases to maximise the social welfare where there it total knowledge. However in real life, two problems arise of
+servers wished to be fairly payed for the work it does and jobs may be want to reveals their job utility.
+To solve these problems we have created an iterative auction that we compare to VCG auctions.
 
 \section{Problem Case}\label{sec:problem-case}
 \input{problem-case.tex}

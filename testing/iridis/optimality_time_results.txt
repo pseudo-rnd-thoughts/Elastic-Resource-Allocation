@@ -1,0 +1,71 @@
+ Running PBS prologue script on green0527
+
+ ===============================================================================
+ Job started on Thu Aug 22 14:36:53 BST 2019
+
+ JOB ID: 7452564.blue101
+ JOB NAME: test.sh
+ Num Hosts: 1
+ Num Tasks: 16
+ Nodes used: 
+ green0527
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+python -m testing.iridis.optimality_time
+Solving for model with 0 minutes
+-------------------------------------------------------------------------------
+Model constraints: 39, variables: integer: 90, interval: 0, sequence: 0
+Solve status: Feasible, Fail status: SearchStoppedByLimit
+Solve time: 10.01 sec
+-------------------------------------------------------------------------------
+Objective values: (637,)
+Objective values: (637,)
+
+
+Solving for model with 1 minutes
+-------------------------------------------------------------------------------
+Model constraints: 39, variables: integer: 90, interval: 0, sequence: 0
+Solve status: Feasible, Fail status: SearchStoppedByLimit
+Solve time: 60.02 sec
+-------------------------------------------------------------------------------
+Objective values: (637,)
+Objective values: (637,)
+
+
+Solving for model with 5 minutes
+-------------------------------------------------------------------------------
+Model constraints: 39, variables: integer: 90, interval: 0, sequence: 0
+Solve status: Feasible, Fail status: SearchStoppedByLimit
+Solve time: 300.05 sec
+-------------------------------------------------------------------------------
+Objective values: (637,)
+Objective values: (637,)
+
+
+Solving for model with 15 minutes
+-------------------------------------------------------------------------------
+Model constraints: 39, variables: integer: 90, interval: 0, sequence: 0
+Solve status: Feasible, Fail status: SearchStoppedByLimit
+Solve time: 900.15 sec
+-------------------------------------------------------------------------------
+Objective values: (637,)
+Objective values: (637,)
+
+
+Solving for model with 60 minutes
+-------------------------------------------------------------------------------
+Model constraints: 39, variables: integer: 90, interval: 0, sequence: 0
+Solve status: Feasible, Fail status: SearchStoppedByLimit
+Solve time: 3600.56 sec
+-------------------------------------------------------------------------------
+Objective values: (637,)
+Objective values: (637,)
+
+ ===============================================================================
+ Job finished at Thu Aug 22 15:58:18 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=16,nodes=1:ppn=16,pmem=4000mb,walltime=16:00:00
+Used resource limits are cput=01:39:16,mem=132144kb,vmem=1994636kb,walltime=01:21:25

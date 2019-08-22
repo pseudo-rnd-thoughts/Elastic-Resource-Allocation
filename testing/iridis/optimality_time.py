@@ -37,21 +37,22 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (100, 20), (150, 25)):
         model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+        
+        for repeat in range(10):
+            jobs, servers = model_dist.create()
+            model, _, _, _, _ = generate_model(jobs, servers)
 
-        jobs, servers = model_dist.create()
-        model, _, _, _, _ = generate_model(jobs, servers)
+            time_test(model, 10)
+            reset_model(jobs, servers)
 
-        time_test(model, 10)
-        reset_model(jobs, servers)
+            time_test(model, 60)
+            reset_model(jobs, servers)
 
-        time_test(model, 60)
-        reset_model(jobs, servers)
+            time_test(model, 60 * 5)
+            reset_model(jobs, servers)
 
-        time_test(model, 60 * 5)
-        reset_model(jobs, servers)
+            time_test(model, 60 * 15)
+            reset_model(jobs, servers)
 
-        time_test(model, 60 * 15)
-        reset_model(jobs, servers)
-
-        time_test(model, 60 * 60)
-        reset_model(jobs, servers)
+            time_test(model, 60 * 60)
+            reset_model(jobs, servers)
