@@ -1,1 +1,0 @@
-"""Iridis module"""

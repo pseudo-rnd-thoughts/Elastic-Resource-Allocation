@@ -12,4 +12,5 @@ source activate env37
 
 module load cplex/12.7.1
 
-python iridis_testing.py
+cmd='python -m testing.iridis.$1'
+eval $cmd
