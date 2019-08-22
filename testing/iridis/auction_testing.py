@@ -19,7 +19,7 @@ def auction_price(repeats=5):
     vcg_time_taken = []
 
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
 
     for x in range(repeats):
         print("Model {}".format(x))
@@ -28,7 +28,7 @@ def auction_price(repeats=5):
         results = {}
 
         start = time()
-        vcg_result = vcg_auction(jobs, servers)
+        vcg_result = vcg_auction(jobs, servers, 15)
         vcg_time_taken.append(time() - start)
         results['vcg'] = (vcg_result.total_utility, vcg_result.total_price)
         reset_model(jobs, servers)

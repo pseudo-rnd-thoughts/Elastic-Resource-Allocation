@@ -11,19 +11,20 @@ from core.result import Result
 from optimal.optimal import optimal_algorithm
 
 
-def vcg_auction(jobs: List[Job], servers: List[Server],
+def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
                 debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Result:
     """
     Implementation of a VCG auction
     :param jobs: A list of jobs
     :param servers: A list of servers
+    :param time: The time to run the optimal for
     :param debug_running: Debug what is being calculated
     :param debug_time: Debug how long the allocation took to calculate
     :param debug_results: Debug the results for each job and server
     """
     if debug_running:
         print("Finding optimal")
-    optimal_solution = optimal_algorithm(jobs, servers, debug_time=debug_time)
+    optimal_solution = optimal_algorithm(jobs, servers, time_limit=time, debug_time=debug_time)
     if debug_results:
         print("Optimal total utility: {}".format(optimal_solution.total_utility))
 
@@ -45,7 +46,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server],
 
         if debug_running:
             print("Solving for without job {}".format(job.name))
-        optimal_prime = optimal_algorithm(jobs_prime, servers, debug_time=debug_time)
+        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time, debug_time=debug_time)
         job_cost = (optimal_solution.total_utility - job.utility) - optimal_prime.total_utility
         if debug_results:
             print("Job {}: £{:.1f}, Utility: {} ".format(job.name, job_cost, job.utility))
@@ -59,7 +60,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server],
 
         if debug_running:
             print("Solving for without server {}".format(server.name))
-        optimal_prime = optimal_algorithm(jobs, servers_prime, debug_time=debug_time)
+        optimal_prime = optimal_algorithm(jobs, servers_prime, time_limit=time, debug_time=debug_time)
         server_transfer = optimal_solution.total_utility - optimal_prime.total_utility
         if debug_results:
             print("Server {}: £{:.1f}".format(server.name, server_transfer))

@@ -17,23 +17,24 @@ from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy_matrix.matrix_policy import policies as matrix_policies
 
 
-def greedy_test(repeats=50):
+def greedy_test(repeats=1000):
     """Greedy tests"""
     data = []
     optimal_time_taken = []
     
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 2)
+    model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
     
     for x in range(repeats):
-        print("Model {}".format(x))
+        print("Model number of {}".format(x))
 
         jobs, servers = model_dist.create()
         results = {}
         
         start = time()
-        optimal_result = optimal_algorithm(jobs, servers, time_limit=60*5)
+        optimal_result = optimal_algorithm(jobs, servers, time_limit=15)
         if optimal_result is None:
+            print("No feasible solution found")
             continue
 
         optimal_time_taken.append(time() - start)

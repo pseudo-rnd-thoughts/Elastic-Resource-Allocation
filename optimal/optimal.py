@@ -84,14 +84,26 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
         if model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
             return None
     else:
-        start = time()
         model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
-        end = time()
-        if debug_time:
-            print("Time Taken: {}".format(end - start))
-        model_solution.print_solution()
-        if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
-            return None
+
+    if debug_time:
+        print(u"Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
+                                                          model_solution.get_fail_status()))
+        s = model_solution.get_search_status()
+        if s:
+            print(u"Search status: " + str(s), end="")
+            s = model_solution.get_stop_cause()
+            if s:
+                print(u", stop cause: " + str(s), end="")
+            print(u"\n")
+
+        # Print solve time
+        print(u"Solve time: " + str(round(model_solution.get_solve_time(), 2)) + " sec\n")
+        print("Objective values: {}".format(model_solution.get_objective_values()))
+        print("\n")
+    
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+        return None
 
     for job in jobs:
         for server in servers:
