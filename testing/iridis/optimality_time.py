@@ -20,7 +20,7 @@ def time_test(model: CpoModel, time: int):
 
 
 if __name__ == "__main__":
-    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
 
     jobs, servers = model_dist.create()

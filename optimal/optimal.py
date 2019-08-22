@@ -11,7 +11,7 @@ from core.server import Server
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.config import context
-from docplex.cp.solution import SOLVE_STATUS_OPTIMAL
+from docplex.cp.solution import SOLVE_STATUS_OPTIMAL, SOLVE_STATUS_UNKNOWN
 
 context.log_output = None
 
@@ -90,7 +90,9 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
         if debug_time:
             print("Time Taken: {}".format(end - start))
         model_solution.print_solution()
-    
+        if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+            return None
+
     for job in jobs:
         for server in servers:
             if model_solution.get_value(server_job_allocation[(job, server)]):
