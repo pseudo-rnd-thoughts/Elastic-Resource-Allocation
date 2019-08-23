@@ -30,8 +30,7 @@ def auction_price(model_dist, name, repeats=50):
         reset_model(jobs, servers)
 
         for epsilon in epsilons:
-            iterative_prices, iterative_utilities = iterative_auction(jobs, servers, 20)
-            iterative_result = iterative_auction(jobs, servers)
+            iterative_result = iterative_auction(jobs, servers, 30)
             if iterative_result is None:
                 print("Iterative result fail")
                 continue
@@ -50,8 +49,8 @@ def auction_price(model_dist, name, repeats=50):
 
 
 if __name__ == "__main__":
-    num_jobs = sys.argv[1]
-    num_servers = sys.argv[2]
+    num_jobs = int(sys.argv[1])
+    num_servers = int(sys.argv[2])
     print("Auction Test for Jobs {} Servers {} ".format(num_jobs, num_servers))
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)

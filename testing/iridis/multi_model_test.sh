@@ -8,5 +8,7 @@ if [ ${#args[@]} == 1 ]; then
 fi
 
 for (( pos = 1; pos < ${#args[@]}; pos+=2 )); do
-    cmd="qsub -v file=$script num_jobs=${args[i]} num_servers=${args[i+1]} run_file.sh"
+    cmd="qsub -v file='$script',num_jobs='${args[pos]}',num_servers='${args[pos+1]}' run_file.sh"
+    echo $cmd
+    eval $cmd
 done

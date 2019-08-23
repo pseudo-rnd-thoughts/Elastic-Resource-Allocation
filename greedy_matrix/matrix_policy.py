@@ -60,7 +60,6 @@ class SumExp3ServerPercentage(MatrixPolicy):
 policies = (
     SumServerUsage(),
     SumServerPercentage(),
-    ProductServerPercentage(),
     SumExpServerPercentage(),
     SumExp3ServerPercentage()
 )

@@ -58,8 +58,8 @@ def greedy_test(model_dist, name, repeats=200):
 
 
 if __name__ == "__main__":
-    num_jobs = sys.argv[1]
-    num_servers = sys.argv[2]
+    num_jobs = int(sys.argv[1])
+    num_servers = int(sys.argv[2])
     print("Greedy Test for Jobs {} Servers {} ".format(num_jobs, num_servers))
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
