@@ -7,8 +7,8 @@ from tqdm import tqdm
 
 from core.model import reset_model, ModelDist, load_dist
 
-from auction.vcg import vcg_auction
-from auction.iterative_auction import iterative_auction
+from auctions.vcg import vcg_auction
+from auctions.iterative_auction import iterative_auction
 
 
 def auction_price(model_dist, name, repeats=50):

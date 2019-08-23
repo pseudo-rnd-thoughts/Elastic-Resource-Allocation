@@ -1,4 +1,4 @@
-"""Implementation of an VCG auction"""
+"""Implementation of an VCG auctions"""
 
 from __future__ import annotations
 from typing import List, Dict, Tuple, Optional
@@ -14,7 +14,7 @@ from optimal.optimal import optimal_algorithm
 def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60*60,
                 debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
-    Implementation of a VCG auction
+    Implementation of a VCG auctions
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time: The time to run the optimal for

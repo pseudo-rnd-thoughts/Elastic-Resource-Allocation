@@ -15,21 +15,10 @@ def time_test(model: CpoModel, time: int):
     :param model: The cplex model
     :param time: The time to limit for
     """
-    print("Solving for model with {} minutes".format(time//60))
     model_solution = model.solve(TimeLimit=time)
-    print(u"Solve status: " + str(model_solution.get_solve_status()) + ", Fail status: " + str(model_solution.get_fail_status()))
-    s = model_solution.get_search_status()
-    if s:
-        print(u"Search status: " + str(s), end="")
-        s = model_solution.get_stop_cause()
-        if s:
-            print(u", stop cause: " + str(s), end="")
-        print(u"\n")
-
-    # Print solve time
-    print(u"Solve time: " + str(round(model_solution.get_solve_time(), 2)) + " sec\n")
-    print("Objective values: {}".format(model_solution.get_objective_values()))
-    print("\n")
+    print("Objective values: {}, Solve status: {}, Solve Time: {} secs"
+          .format(model_solution.get_solve_status(), round(model_solution.get_solve_time(), 2),
+                  model_solution.get_objective_values()))
 
 
 if __name__ == "__main__":

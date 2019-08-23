@@ -150,7 +150,7 @@ def plot_auction_result(servers: List[Server], name: str):
     """
     Plots the server jobs allocations
     :param servers: A list of servers to plot
-    :param name: For the auction name
+    :param name: For the auctions name
     """
     server_names = [server.name for server in servers]
     allocated_jobs = [job for server in servers for job in server.allocated_jobs]
@@ -225,9 +225,9 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
 def plot_auction_convergence(auctions_utilities: Dict[str, List[float]], auctions_prices: Dict[str, List[float]],
                              vcg_utility: float, vcg_price: float):
     """
-    Plots the auction utility and revenue as it convergence
-    :param auctions_utilities: A dictionary of auction utility with auction name
-    :param auctions_prices: A dictionary of auction prices with auction name
+    Plots the auctions utility and revenue as it convergence
+    :param auctions_utilities: A dictionary of auctions utility with auctions name
+    :param auctions_prices: A dictionary of auctions prices with auctions name
     :param vcg_utility: The vcg utility
     :param vcg_price:  The vcg price
     """
@@ -241,9 +241,9 @@ def plot_auction_convergence(auctions_utilities: Dict[str, List[float]], auction
     for pos in range(max_iterations):
         data.append(['price', 'vcg', pos, vcg_price])
         data.append(['utility', 'vcg', pos, vcg_utility])
-    df = pd.DataFrame(data, columns=['measure', 'auction name', 'time', 'utility'])
+    df = pd.DataFrame(data, columns=['measure', 'auctions name', 'time', 'utility'])
 
-    sns.lineplot('time', 'utility', hue='auction name', data=df, row='measure')
+    sns.lineplot('time', 'utility', hue='auctions name', data=df, row='measure')
     plt.title("Auction Utility Convergence")
     plt.show()
 

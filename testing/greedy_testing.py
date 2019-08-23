@@ -10,7 +10,7 @@ from core.server import Server
 from core.result import Result, AlgorithmResults, print_repeat_results
 from core.model import ModelDist, reset_model
 
-import core.graphing as graphing
+import graphing.graphing as graphing
 
 from optimal.optimal import optimal_algorithm
 

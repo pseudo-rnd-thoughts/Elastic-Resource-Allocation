@@ -37,17 +37,6 @@ class SumServerPercentage(MatrixPolicy):
                               (server.available_bandwidth - (s + r)) / server.available_bandwidth)
 
 
-class ProductServerPercentage(MatrixPolicy):
-    def __init__(self):
-        super().__init__("Product Percentage")
-    
-    def evaluate(self, job: Job, server: Server, s: int, w: int, r: int):
-        return job.utility * \
-               ((server.available_storage - job.required_storage) / server.available_storage) * \
-               ((server.available_computation - w) / server.available_computation) * \
-               ((server.available_bandwidth - (s + r)) / server.available_bandwidth)
-
-
 class SumExpServerPercentage(MatrixPolicy):
     def __init__(self):
         super().__init__("Sum Exp Percentage")

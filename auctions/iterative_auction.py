@@ -1,4 +1,4 @@
-"""Custom auction by Mark and Seb"""
+"""Custom auctions by Mark and Seb"""
 
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     model_solution = model.solve(TimeLimit=15)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN or model_solution.get_objective_values() is None:
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
@@ -105,7 +105,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
                       debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
-    A iterative auction created by Seb Stein and Mark Towers
+    A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param epsilon: For the evaluate job price increase

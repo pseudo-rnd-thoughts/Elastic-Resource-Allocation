@@ -1,7 +1,7 @@
 """Model Distribution Testing"""
 
 from core.model import load_dist, ModelDist
-import core.graphing as graphing
+import graphing.graphing as graphing
 
 
 def plot_distributions():
