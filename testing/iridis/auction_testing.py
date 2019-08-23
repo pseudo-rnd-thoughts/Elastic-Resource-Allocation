@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from tqdm import tqdm
+import sys
 
 from core.model import reset_model, ModelDist, load_dist
 
@@ -21,7 +22,7 @@ def auction_price(model_dist, name, repeats=50):
         jobs, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers, 15)
+        vcg_result = vcg_auction(jobs, servers, 60)
         if vcg_result is None:
             print("VCG result fail")
             continue
@@ -29,6 +30,7 @@ def auction_price(model_dist, name, repeats=50):
         reset_model(jobs, servers)
 
         for epsilon in epsilons:
+            iterative_prices, iterative_utilities = iterative_auction(jobs, servers, 20)
             iterative_result = iterative_auction(jobs, servers)
             if iterative_result is None:
                 print("Iterative result fail")
@@ -48,8 +50,9 @@ def auction_price(model_dist, name, repeats=50):
 
 
 if __name__ == "__main__":
-    print("Auction Test")
+    num_jobs = sys.argv[1]
+    num_servers = sys.argv[2]
+    print("Auction Test for Jobs {} Servers {} ".format(num_jobs, num_servers))
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (100, 20), (150, 25)):
-        model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
-        auction_price(model_dist, 'Job {} server {}'.format(num_jobs, num_servers))
+    model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+    auction_price(model_dist, 'j{}_s{}'.format(num_jobs, num_servers))

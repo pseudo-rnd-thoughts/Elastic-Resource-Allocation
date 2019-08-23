@@ -1,17 +1,17 @@
 """Optimal solution through mixed integer programming"""
 
 from __future__ import annotations
+
 from typing import List, Dict, Tuple, Optional
-from time import time
+
+from docplex.cp.config import context
+from docplex.cp.model import CpoModel, CpoVariable
+from docplex.cp.solution import CpoSolveResult
+from docplex.cp.solution import SOLVE_STATUS_OPTIMAL, SOLVE_STATUS_UNKNOWN
 
 from core.job import Job
 from core.result import Result
 from core.server import Server
-
-from docplex.cp.model import CpoModel, CpoVariable
-from docplex.cp.solution import CpoSolveResult
-from docplex.cp.config import context
-from docplex.cp.solution import SOLVE_STATUS_OPTIMAL, SOLVE_STATUS_UNKNOWN
 
 context.log_output = None
 
@@ -87,20 +87,9 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
         model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.025, TimeLimit=time_limit)
 
     if debug_time:
-        print(u"Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
-                                                          model_solution.get_fail_status()))
-        s = model_solution.get_search_status()
-        if s:
-            print(u"Search status: " + str(s), end="")
-            s = model_solution.get_stop_cause()
-            if s:
-                print(u", stop cause: " + str(s), end="")
-            print(u"\n")
-
-        # Print solve time
-        print(u"Solve time: " + str(round(model_solution.get_solve_time(), 2)) + " sec\n")
-        print("Objective values: {}".format(model_solution.get_objective_values()))
-        print("\n")
+        print("Solve time: {} secs, Objective value: {}, bounds: {}, gaps: {}"
+              .format(round(model_solution.get_solve_time(), 2), model_solution.get_objective_values(),
+                      model_solution.get_objective_bounds(), model_solution.get_objective_gaps()))
     
     if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
         return None

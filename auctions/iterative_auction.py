@@ -13,7 +13,7 @@ from core.job import Job
 from core.server import Server
 
 
-def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 5, debug_results: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
@@ -45,8 +45,8 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
 
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
-    model_solution = model.solve(TimeLimit=15)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN or model_solution.get_objective_values() is None:
+    model_solution = model.solve(TimeLimit=time_limit)
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
@@ -102,7 +102,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
 
-def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
+def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60, epsilon: int = 5,
                       debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
     A iterative auctions created by Seb Stein and Mark Towers
@@ -121,7 +121,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
         job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
-            jobs = min((evaluate_job_price(job, server, epsilon=epsilon) for server in servers), key=lambda bid: bid[0])
+            jobs = min((evaluate_job_price(job, server, time_limit, epsilon=epsilon) for server in servers), key=lambda bid: bid[0])
 
         if job_price <= job.utility:
             if debug_allocation:

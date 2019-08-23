@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import json
-from tqdm import tqdm
 import sys
+from tqdm import tqdm
 
 from core.model import reset_model, ModelDist, load_dist
 
@@ -58,8 +58,9 @@ def greedy_test(model_dist, name, repeats=200):
 
 
 if __name__ == "__main__":
-    num_jobs, num_servers = sys.argv
-    print("Greedy Testing for Jobs {} and Servers {}".format(num_jobs, num_servers))
+    num_jobs = sys.argv[1]
+    num_servers = sys.argv[2]
+    print("Greedy Test for Jobs {} Servers {} ".format(num_jobs, num_servers))
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
     greedy_test(model_dist, 'j{}_s{}'.format(num_jobs, num_servers))
