@@ -1,0 +1,45 @@
+ Running PBS prologue script on yellow07
+
+ ===============================================================================
+ Job started on Fri Aug 23 23:56:00 BST 2019
+
+ JOB ID: 7455958.blue101
+ JOB NAME: run_file.sh
+ Num Hosts: 1
+ Num Tasks: 8
+ Nodes used: 
+ yellow07
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+Auction Test for Jobs 25 Servers 5 
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+VCG result fail
+Model j25_s5 results
+[[10.0, [507]], [60.02, [507]], [300.05, [507]], [900.15, [507]], [3600.55, [507]], [10.0, [59]], [60.01, [59]], [300.05, [59]], [900.14, [59]], [3600.55, [59]], [10.01, [833]], [60.01, [981]], [300.05, [1113]], [900.14, [1113]], [3600.56, [1113]], [10.0, [553]], [60.02, [553]], [300.05, [595]], [900.14, [595]], [3600.56, [651]], [10.01, [1179]], [60.01, [1179]], [300.05, [1179]], [900.14, [1179]], [3600.56, [1179]], [10.0, [34]], [60.01, [34]], [300.05, [34]], [900.14, [34]], [3600.55, [34]], [10.01, [122]], [60.01, [122]], [300.05, [122]], [900.14, [122]], [3600.55, [122]], [10.01, [177]], [60.01, [177]], [300.05, [177]], [900.14, [177]], [3600.55, [177]], [10.0, [627]], [60.01, [627]], [300.05, [647]], [900.14, [647]], [3600.56, [647]], [10.0, [68]], [60.01, [68]], [300.04, [68]], [900.14, [68]], [3600.55, [68]]]
+[{'vcg': (140, 266), 'iterative 1': (1247, 375), 'iterative 2': (1247, 395), 'iterative 3': (1247, 510), 'iterative 5': (1247, 420), 'iterative 7': (1247, 450), 'iterative 10': (1247, 530)}, {'vcg': (586, 1902), 'iterative 1': (1088, 590), 'iterative 2': (1129, 470), 'iterative 3': (1091, 635), 'iterative 5': (1088, 635), 'iterative 7': (1114, 660), 'iterative 10': (1129, 695)}, {'vcg': (1052, -7602), 'iterative 1': (1070, 505), 'iterative 2': (1070, 625), 'iterative 3': (1070, 610), 'iterative 5': (1070, 540), 'iterative 7': (1068, 530), 'iterative 10': (1068, 585)}, {'vcg': (554, 476), 'iterative 1': (1075, 435), 'iterative 2': (1075, 520), 'iterative 3': (1075, 515), 'iterative 5': (1075, 410), 'iterative 7': (1075, 510), 'iterative 10': (1075, 465)}, {'vcg': (468, 1764), 'iterative 1': (1348, 125), 'iterative 2': (1348, 125), 'iterative 3': (1348, 125), 'iterative 5': (1348, 125), 'iterative 7': (1348, 125), 'iterative 10': (1348, 175)}, {'vcg': (748, -2430), 'iterative 1': (1193, 705), 'iterative 2': (1193, 610), 'iterative 3': (1193, 660), 'iterative 5': (1193, 655), 'iterative 7': (1193, 635), 'iterative 10': (1193, 700)}, {'vcg': (497, 19), 'iterative 1': (1143, 125), 'iterative 2': (1143, 145), 'iterative 3': (1143, 120), 'iterative 5': (1143, 135), 'iterative 7': (1136, 135), 'iterative 10': (1136, 180)}, {'vcg': (521, 934), 'iterative 1': (1053, 425), 'iterative 2': (1063, 380), 'iterative 3': (1063, 335), 'iterative 5': (1052, 440), 'iterative 7': (1063, 400), 'iterative 10': (1063, 395)}, {'vcg': (1034, -10337), 'iterative 1': (1100, 445), 'iterative 2': (1100, 390), 'iterative 3': (1100, 395), 'iterative 5': (1100, 425), 'iterative 7': (1099, 440), 'iterative 10': (1100, 375)}, {'vcg': (661, 119), 'iterative 1': (1177, 240), 'iterative 2': (1177, 205), 'iterative 3': (1178, 255), 'iterative 5': (1166, 285), 'iterative 7': (1177, 285), 'iterative 10': (1176, 265)}, {'vcg': (614, 553), 'iterative 1': (1286, 255), 'iterative 2': (1285, 250), 'iterative 3': (1285, 240), 'iterative 5': (1285, 275), 'iterative 7': (1286, 220), 'iterative 10': (1285, 255)}, {'vcg': (625, 210), 'iterative 1': (1274, 635), 'iterative 2': (1274, 490), 'iterative 3': (1274, 485), 'iterative 5': (1274, 525), 'iterative 7': (1274, 615), 'iterative 10': (1274, 690)}, {'vcg': (632, -208), 'iterative 1': (1158, 520), 'iterative 2': (1158, 460), 'iterative 3': (1158, 475), 'iterative 5': (1160, 450), 'iterative 7': (1160, 470), 'iterative 10': (1160, 475)}, {'vcg': (535, 1010), 'iterative 1': (1118, 440), 'iterative 2': (1136, 465), 'iterative 3': (1136, 435), 'iterative 5': (1118, 440), 'iterative 7': (1118, 455), 'iterative 10': (1136, 525)}, {'vcg': (617, -563), 'iterative 1': (1220, 515), 'iterative 2': (1244, 410), 'iterative 3': (1242, 475), 'iterative 5': (1242, 500), 'iterative 7': (1242, 460), 'iterative 10': (1244, 460)}, {'vcg': (594, 83), 'iterative 1': (1179, 830), 'iterative 2': (1222, 680), 'iterative 3': (1222, 685), 'iterative 5': (1222, 590), 'iterative 7': (1222, 800), 'iterative 10': (1222, 730)}, {'vcg': (570, 2640), 'iterative 1': (1134, 510), 'iterative 2': (1134, 560), 'iterative 3': (1134, 505), 'iterative 5': (1134, 500), 'iterative 7': (1134, 515), 'iterative 10': (1134, 530)}, {'vcg': (636, 280), 'iterative 1': (1210, 365), 'iterative 2': (1210, 165), 'iterative 3': (1210, 175), 'iterative 5': (1193, 350), 'iterative 7': (1210, 240), 'iterative 10': (1210, 120)}, {'vcg': (562, 878), 'iterative 1': (1167, 400), 'iterative 2': (1167, 420), 'iterative 3': (1167, 420), 'iterative 5': (1151, 495), 'iterative 7': (1167, 415), 'iterative 10': (1167, 495)}, {'vcg': (122, 669), 'iterative 1': (1332, 125), 'iterative 2': (1323, 135), 'iterative 3': (1332, 150), 'iterative 5': (1332, 125), 'iterative 7': (1332, 140), 'iterative 10': (1323, 160)}, {'vcg': (616, 2246), 'iterative 1': (1146, 585), 'iterative 2': (1146, 580), 'iterative 3': (1146, 560), 'iterative 5': (1146, 615), 'iterative 7': (1146, 585), 'iterative 10': (1146, 530)}, {'vcg': (517, 2452), 'iterative 1': (1183, 470), 'iterative 2': (1166, 510), 'iterative 3': (1158, 515), 'iterative 5': (1185, 510), 'iterative 7': (1166, 570), 'iterative 10': (1166, 500)}, {'vcg': (56, 165), 'iterative 1': (1097, 120), 'iterative 2': (1097, 120), 'iterative 3': (1097, 120), 'iterative 5': (1097, 120), 'iterative 7': (1097, 120), 'iterative 10': (1097, 120)}, {'vcg': (528, 2285), 'iterative 1': (1253, 315), 'iterative 2': (1253, 270), 'iterative 3': (1270, 125), 'iterative 5': (1270, 315), 'iterative 7': (1270, 350), 'iterative 10': (1253, 400)}, {'vcg': (45, 1170), 'iterative 1': (1199, 285), 'iterative 2': (1199, 295), 'iterative 3': (1199, 295), 'iterative 5': (1199, 320), 'iterative 7': (1199, 295), 'iterative 10': (1199, 295)}, {'vcg': (562, -276), 'iterative 1': (1118, 125), 'iterative 2': (1118, 125), 'iterative 3': (1118, 125), 'iterative 5': (1118, 125), 'iterative 7': (1118, 125), 'iterative 10': (1118, 125)}, {'vcg': (517, 1270), 'iterative 1': (1212, 665), 'iterative 2': (1212, 655), 'iterative 3': (1212, 750), 'iterative 5': (1212, 725), 'iterative 7': (1212, 585), 'iterative 10': (1212, 610)}, {'vcg': (46, 195), 'iterative 1': (1216, 800), 'iterative 2': (1216, 700), 'iterative 3': (1216, 800), 'iterative 5': (1216, 675), 'iterative 7': (1216, 830), 'iterative 10': (1216, 760)}, {'vcg': (719, -97), 'iterative 1': (1173, 630), 'iterative 2': (1170, 705), 'iterative 3': (1187, 565), 'iterative 5': (1173, 595), 'iterative 7': (1173, 650), 'iterative 10': (1170, 630)}, {'vcg': (62, 35), 'iterative 1': (1186, 280), 'iterative 2': (1186, 230), 'iterative 3': (1182, 245), 'iterative 5': (1186, 265), 'iterative 7': (1186, 230), 'iterative 10': (1182, 250)}, {'vcg': (982, -4615), 'iterative 1': (989, 675), 'iterative 2': (1025, 545), 'iterative 3': (989, 680), 'iterative 5': (989, 615), 'iterative 7': (991, 685), 'iterative 10': (990, 660)}]
+
+ ===============================================================================
+ Job finished at Sat Aug 24 10:03:26 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=8,nodes=1:ppn=8,pmem=4000mb,walltime=24:00:00
+Used resource limits are cput=29:05:18,mem=156488kb,vmem=2199340kb,walltime=10:07:26

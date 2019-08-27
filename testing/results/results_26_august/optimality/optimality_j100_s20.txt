@@ -1,0 +1,82 @@
+ Running PBS prologue script on green0508
+
+ ===============================================================================
+ Job started on Fri Aug 23 23:55:14 BST 2019
+
+ JOB ID: 7455954.blue101
+ JOB NAME: run_file.sh
+ Num Hosts: 1
+ Num Tasks: 8
+ Nodes used: 
+ green0508
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+Optimality Time for Jobs 100 Servers 20 
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.06 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.16 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.56 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.06 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.57 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.01 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.06 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.56 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.07 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.56 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.07 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.16 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.57 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.07 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.16 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.57 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.07 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.56 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.06 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.56 secs, Objective value: None, bounds: None, gaps: None
+
+	Solve time: 10.04 secs, Objective value: (214,), bounds: None, gaps: None
+	Solve time: 60.04 secs, Objective value: (214,), bounds: None, gaps: None
+	Solve time: 300.09 secs, Objective value: (214,), bounds: None, gaps: None
+	Solve time: 900.17 secs, Objective value: (214,), bounds: None, gaps: None
+	Solve time: 3600.59 secs, Objective value: (214,), bounds: None, gaps: None
+
+	Solve time: 10.02 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 60.03 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 300.06 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 900.15 secs, Objective value: None, bounds: None, gaps: None
+	Solve time: 3600.57 secs, Objective value: None, bounds: None, gaps: None
+
+ ===============================================================================
+ Job finished at Sat Aug 24 13:27:35 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=8,nodes=1:ppn=8,pmem=4000mb,walltime=24:00:00
+Used resource limits are cput=91:28:06,mem=315464kb,vmem=2168180kb,walltime=13:32:21
