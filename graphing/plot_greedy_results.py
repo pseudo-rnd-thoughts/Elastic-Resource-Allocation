@@ -1,12 +1,12 @@
 
 from __future__ import annotations
-from typing import List
-
-from core.result import Result, AlgorithmResults
+from typing import List, Dict
 
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+
+from core.result import Result, AlgorithmResults
 
 
 def plot_algorithms_results(results: List[Result]):

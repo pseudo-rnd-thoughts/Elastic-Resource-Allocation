@@ -1,0 +1,1 @@
+"""Greedy Matrix module"""

@@ -82,7 +82,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
 
     model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
                                                  TimeLimit=time_limit)
-
+    model_solution.print_solution()
     if debug_time:
         print("Solve time: {} secs, Objective value: {}, bounds: {}, gaps: {}"
               .format(round(model_solution.get_solve_time(), 2), model_solution.get_objective_values(),
@@ -102,8 +102,8 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     return Result("Optimal", jobs, servers)
 
 
-def optimal_algorithm(jobs: List[Job], servers: List[Server],
-                      force_stop: bool = False, time_limit: int = 500, debug_time: bool = False) -> Result:
+def relaxed_optimal_algorithm(jobs: List[Job], servers: List[Server],
+                              force_stop: bool = False, time_limit: int = 500, debug_time: bool = False) -> Result:
     """
     Runs the optimal algorithm solution
     :param jobs: A list of jobs

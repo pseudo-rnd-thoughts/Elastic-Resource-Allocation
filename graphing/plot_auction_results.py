@@ -6,10 +6,19 @@ import json
 from typing import List, Dict, Tuple
 
 import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from core.server import Server
+from graphing.plot_model import plot_allocation_results
 
 
 def mean_std_results(files):
-
+    """
+    Prints the mean and stardard deviation of the file results
+    :param files: A list of files
+    """
     for file in files:
         print("File")
         with open(file) as json_file:
@@ -88,51 +97,6 @@ def plot_auction_result(servers: List[Server], name: str):
     title = '{} Auction Allocation'.format(name)
 
     plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
-
-
-def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str], x_label: str, y_label: str):
-    """
-    PLots the server results
-    :param df_all: A list of Dataframes to plot
-    :param title: The titel
-    :param labels: The labels
-    :param x_label: The x label
-    :param y_label: The y label
-    """
-    hatching = '/'
-
-    n_df = len(df_all)
-    n_col = len(df_all[0].columns)
-    n_ind = len(df_all[0].index)
-    axe = plt.subplot(111)
-
-    for df in df_all:  # for each data frame
-        axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
-
-    h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
-    for i in range(0, n_df * n_col, n_col):  # len(h) = n_col * n_df
-        for j, pa in enumerate(h[i:i + n_col]):
-            for rect in pa.patches:  # for each index
-                rect.set_x(rect.get_x() + 1 / float(n_df + 1) * i / float(n_col))
-                rect.set_hatch(hatching * int(i / n_col))  # edited part
-                rect.set_width(1 / float(n_df + 1))
-
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
-    axe.set_xticklabels(df_all[0].index, rotation=0)
-    axe.set_title(title)
-    axe.set_xlabel(x_label)
-    axe.set_ylabel(y_label)
-
-    # Add invisible data to add another legend
-    n = []
-    for i in range(n_df):
-        n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
-
-    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.5])
-    if labels is not None:
-        plt.legend(n, labels, loc=[1.01, 0.1])
-    axe.add_artist(l1)
-    plt.show()
 
 
 def plot_auction_convergence(auctions_utilities: Dict[str, List[float]], auctions_prices: Dict[str, List[float]],
