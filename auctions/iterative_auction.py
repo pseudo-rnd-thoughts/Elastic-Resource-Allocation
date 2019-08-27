@@ -18,6 +18,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
     :param server: A server
+    :param time_limit: The solve time limit
     :param epsilon: The price increase
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
@@ -46,7 +47,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     model_solution = model.solve(TimeLimit=time_limit)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN or model_solution.get_objective_values() is None:
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
@@ -108,6 +109,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
+    :param time_limit: The solve time limit
     :param epsilon: For the evaluate job price increase
     :param debug_allocation: Debug the allocation process
     :param debug_results: Debugs the results

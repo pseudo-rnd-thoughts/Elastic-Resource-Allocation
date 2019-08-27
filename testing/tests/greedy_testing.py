@@ -19,7 +19,13 @@ from greedy_matrix.matrix_policy import policies as matrix_policies
 
 
 def greedy_test(model_dist, name, repeats=200):
-    """Greedy tests"""
+    """
+    Greedy Test
+    :param model_dist: The model distribution
+    :param name: The test name
+    :param repeats: The number of repeats
+    """
+
     data = []
 
     for _ in tqdm(range(repeats)):
@@ -40,7 +46,7 @@ def greedy_test(model_dist, name, repeats=200):
                     greedy_result = greedy_algorithm(jobs, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
                     results['Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
-                                                     resource_allocation_policy.name)] = greedy_result.total_utility
+                                                       resource_allocation_policy.name)] = greedy_result.total_utility
                     reset_model(jobs, servers)
 
         for policy in matrix_policies:

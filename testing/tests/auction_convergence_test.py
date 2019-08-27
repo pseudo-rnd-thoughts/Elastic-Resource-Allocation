@@ -10,7 +10,7 @@ from core.model import reset_model
 from auctions.iterative_auction import iterative_auction
 from auctions.vcg import vcg_auction
 
-import graphing.graphing as graphing
+import graphing.plot_model as graphing
 
 
 def auction_convergence(jobs: List[Job], servers: List[Server], epsilons: List[int], debug_prices: bool = True):
