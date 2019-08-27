@@ -3,6 +3,10 @@ import json
 
 
 def auction_results(file):
+    """
+    Prints the Auction results from a file
+    :param file: A file
+    """
     with open(file) as json_file:
         data = json.load(json_file)
 

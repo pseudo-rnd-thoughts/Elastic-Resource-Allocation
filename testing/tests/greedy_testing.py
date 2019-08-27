@@ -15,7 +15,7 @@ from greedy.resource_allocation_policy import policies as resource_allocation_po
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
 from greedy_matrix.matrix_greedy import matrix_greedy
-from greedy_matrix.matrix_policy import policies as matrix_policies
+from greedy_matrix.allocation_value_policy import policies as matrix_policies
 
 
 def optimal_greedy_test(model_dist, name, repeats=200):
@@ -63,7 +63,7 @@ def optimal_greedy_test(model_dist, name, repeats=200):
     print(data)
 
 
-def greedy_test(model_dists, repeats=1000):
+def greedy_test(model_dists, name, repeats=200):
     data = {}
     for model_dist in model_dists:
         jobs, servers = model_dist.create()
@@ -78,7 +78,8 @@ def greedy_test(model_dists, repeats=1000):
                         greedy_result = greedy_algorithm(jobs, servers, value_density, server_selection_policy,
                                                          resource_allocation_policy)
                         result['Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
-                                                          resource_allocation_policy.name)] = greedy_result.total_utility
+                                                          resource_allocation_policy.name)] = \
+                            greedy_result.total_utility
                         reset_model(jobs, servers)
     
             for policy in matrix_policies:
@@ -90,7 +91,7 @@ def greedy_test(model_dists, repeats=1000):
             results.append(result)
         data[model_dist.name] = results
         
-    with open('no_optimal_greedy_test.txt', 'w') as json_file:
+    with open('{}_no_optimal_greedy_test.txt'.format(name), 'w') as json_file:
         json.dump(data, json_file)
         
     
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     """
     
     print("Greedy test with no optimal calculated")
-    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     _model_dists = (ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
                     for num_jobs, num_servers in ((12, 2), (15, 3), (25, 5), (50, 8), (100, 10), (150, 20)))
-    greedy_test(_model_dists)
+    greedy_test(_model_dists, model_name)
