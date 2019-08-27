@@ -4,6 +4,8 @@ args=$@
 script=${args[0]}
 
 if [ ${#args[@]} == 1 ]; then
+  args=("" 12 2 15 3 25 5)
+elif [ "$2" == "big" ]; then
   args=("" 12 2 15 3 25 5 100 20 150 25)
 fi
 

@@ -7,7 +7,6 @@ from docplex.cp.model import CpoModel
 
 from core.job import Job
 from core.server import Server
-
 from core.model import load_dist, ModelDist
 
 
@@ -103,10 +102,10 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
 
 def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
     """
-
-    :param jobs:
-    :param servers:
-    :return:
+    Modified CP optimal algorithm
+    :param jobs: A list of jobs
+    :param servers: A list of servers
+    :return: The model solution
     """
     model = CpoModel("Modified CP Optimal")
 

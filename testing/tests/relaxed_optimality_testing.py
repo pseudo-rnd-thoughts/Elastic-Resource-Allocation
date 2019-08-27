@@ -36,7 +36,7 @@ if __name__ == "__main__":
     model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
     data = []
-    for _ in range(10):
+    for _ in range(20):
         jobs, servers = model_dist.create()
         relaxed_model, _, _, _, _ = relaxed_generate_model(jobs, servers)
         optimal_model, _, _, _, _ = optimal_generate_model(jobs, servers)
