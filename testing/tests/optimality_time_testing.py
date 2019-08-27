@@ -11,13 +11,13 @@ from core.model import load_dist, ModelDist
 from optimal.optimal import generate_model
 
 
-def time_test(model: CpoModel, time: int):
+def time_test(model: CpoModel, time_limit: int):
     """
     Time Test
     :param model: The cplex model
-    :param time: The time to limit for
+    :param time_limit: The time to limit for
     """
-    model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.025, TimeLimit=time)
+    model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.025, TimeLimit=time_limit)
     print("\tSolve time: {} secs, Solve status: {}, Objective value: {}"
           .format(round(model_solution.get_solve_time(), 2), model_solution.get_solve_status(),
                   model_solution.get_objective_values()))
@@ -39,11 +39,11 @@ if __name__ == "__main__":
     data = []
     for _ in range(10):
         jobs, servers = model_dist.create()
-        model, _, _, _, _ = generate_model(jobs, servers)
+        new_model, _, _, _, _ = generate_model(jobs, servers)
 
         results = []
         for time in (10, 60, 5 * 60, 10 * 60, 30 * 60, 60 * 60):
-            value = time_test(model, time)
+            value = time_test(new_model, time)
             results.append(value)
 
         data.append(results)

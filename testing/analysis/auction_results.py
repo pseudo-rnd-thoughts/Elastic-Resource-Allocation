@@ -18,11 +18,10 @@ def auction_results(file):
                     iterative_results[results[name][0]] = [str(x)]
 
             print("VCG: {:4d}, {}".format(vcg, ', '.join('e{}: {}'.format(' '.join(names), value)
-                                                      for value, names in iterative_results.items())))
+                                                         for value, names in iterative_results.items())))
         print()
 
 
 if __name__ == "__main__":
     auction_results("../results/results_26_august/auctions/auction_results_j12_s2.txt")
     auction_results("../results/results_26_august/auctions/auction_results_j25_s5.txt")
-

@@ -7,7 +7,7 @@ from typing import List, Dict, Tuple, Optional
 from docplex.cp.config import context
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
-from docplex.cp.solution import SOLVE_STATUS_OPTIMAL, SOLVE_STATUS_UNKNOWN
+from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
 
 from core.job import Job
 from core.result import Result
@@ -64,7 +64,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
 def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loading_speeds: Dict[Job, CpoVariable],
                     compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
                     job_allocation: Dict[Job, CpoVariable],
-                    force_stop: bool = False, time_limit: int = 500, debug_time: bool = True) -> Optional[Result]:
+                    time_limit: int = 500, debug_time: bool = True) -> Optional[Result]:
     """
     Runs the cplex model
     :param model: The model to run
@@ -74,7 +74,6 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     :param compute_speeds: A dictionary of the compute speeds
     :param sending_speeds: A dictionary of the sending speeds
     :param job_allocation: A dictionary of the servers and jobs to binary variable
-    :param force_stop: What to do if the cplex ends at time limit
     :param time_limit: The time limit
     :param debug_time: Print the time taken
     :return: A results
@@ -116,4 +115,4 @@ def relaxed_optimal_algorithm(jobs: List[Job], servers: List[Server],
     model, loading_speeds, compute_speeds, sending_speed, job_allocation = generate_model(jobs, servers)
 
     return run_cplex_model(model, jobs, servers, loading_speeds, compute_speeds, sending_speed, job_allocation,
-                           force_stop, time_limit, debug_time)
+                           time_limit, debug_time)

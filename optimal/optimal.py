@@ -80,11 +80,13 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     """
     
     if force_stop:
-        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
+        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
+                                                     TimeLimit=time_limit)
         if model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
             return None
     else:
-        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.025, TimeLimit=time_limit)
+        model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.025,
+                                                     TimeLimit=time_limit, Workers=8)
 
     if debug_time:
         print("Solve time: {} secs, Objective value: {}, bounds: {}, gaps: {}"

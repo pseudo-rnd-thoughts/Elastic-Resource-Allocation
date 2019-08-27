@@ -60,7 +60,8 @@ def optimal_results(files):
                             difference_data[algorithm].append(optimal_value - value)
                             percent[algorithm].append(value / optimal_value)
 
-            data = [(np.mean(x), np.std(x), np.mean(percent[algorithm]), algorithm) for algorithm, x in difference_data.items()]
+            data = [(np.mean(x), np.std(x), np.mean(percent[algorithm]), algorithm)
+                    for algorithm, x in difference_data.items()]
             for mean, std, p, algorithm in sorted(data, key=lambda x: x[0]):
                 print("Mean {:.3f}, Std: {:.3f}, Percent: {:.3}, Algorithm: {}".format(mean, std, p, algorithm))
 

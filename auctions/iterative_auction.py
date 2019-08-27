@@ -123,7 +123,8 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
         job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
-            jobs = min((evaluate_job_price(job, server, time_limit, epsilon=epsilon) for server in servers), key=lambda bid: bid[0])
+            jobs = min((evaluate_job_price(job, server, time_limit, epsilon=epsilon) for server in servers),
+                       key=lambda bid: bid[0])
 
         if job_price <= job.utility:
             if debug_allocation:

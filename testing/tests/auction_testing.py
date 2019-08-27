@@ -53,5 +53,5 @@ if __name__ == "__main__":
     num_servers = int(sys.argv[2])
     print("Auction Test for Jobs {} Servers {} ".format(num_jobs, num_servers))
     model_name, job_dist, server_dist = load_dist('models/basic.model')
-    model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
-    auction_price(model_dist, 'j{}_s{}'.format(num_jobs, num_servers))
+    basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+    auction_price(basic_model_dist, 'j{}_s{}'.format(num_jobs, num_servers))
