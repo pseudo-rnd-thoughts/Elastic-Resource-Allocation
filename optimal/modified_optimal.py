@@ -49,7 +49,7 @@ def optimal_mp_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum((loading_speeds[job] + sending_speeds[job]) * server_job_allocation[(server, job)]
                       for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
 
     model.print_information()
     model.solve()
@@ -93,7 +93,7 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum(compute_speeds[job] for job in jobs) <= server.max_computation)
         model.add(sum(communication_speeds[job] for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
     
     model.print_information()
     model_solution = model.solve()
@@ -136,7 +136,7 @@ def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum(communication_speeds[job] * server_job_allocation[(server, job)]
                       for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
 
     model.print_information()
     model_solution = model.solve()

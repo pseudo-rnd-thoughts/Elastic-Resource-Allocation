@@ -37,9 +37,10 @@ class SumServerUsage(AllocationValuePolicy):
         super().__init__("Sum Usage")
     
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
-        return job.utility * ((server.available_storage - job.required_storage) +
-                              (server.available_computation - compute_speed) +
-                              (server.available_bandwidth - (loading_speed + sending_speed)))
+        return job.value * \
+               ((server.available_storage - job.required_storage) +
+                (server.available_computation - compute_speed) +
+                (server.available_bandwidth - (loading_speed + sending_speed)))
 
 
 class SumServerPercentage(AllocationValuePolicy):
@@ -50,7 +51,7 @@ class SumServerPercentage(AllocationValuePolicy):
         super().__init__("Sum Percentage")
     
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
-        return job.utility * \
+        return job.value * \
                ((server.available_storage - job.required_storage) / server.available_storage +
                 (server.available_computation - compute_speed) / server.available_computation +
                 (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
@@ -64,9 +65,10 @@ class SumServerMaxPercentage(AllocationValuePolicy):
         super().__init__("Sum Percentage")
     
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
-        return job.utility * ((server.available_storage - job.required_storage) / server.max_storage +
-                              (server.available_computation - compute_speed) / server.max_computation +
-                              (server.available_bandwidth - (loading_speed + sending_speed)) / server.max_bandwidth)
+        return job.value * \
+               ((server.available_storage - job.required_storage) / server.max_storage +
+                (server.available_computation - compute_speed) / server.max_computation +
+                (server.available_bandwidth - (loading_speed + sending_speed)) / server.max_bandwidth)
     
 
 class SumExpServerPercentage(AllocationValuePolicy):
@@ -77,7 +79,7 @@ class SumExpServerPercentage(AllocationValuePolicy):
         super().__init__("Sum Exp Percentage")
     
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
-        return job.utility * \
+        return job.value * \
                (exp((server.available_storage - job.required_storage) / server.available_storage) +
                 exp((server.available_computation - compute_speed) / server.available_computation) +
                 exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
@@ -91,7 +93,7 @@ class SumExp3ServerPercentage(AllocationValuePolicy):
         super().__init__("Sum Exp^3 Percentage")
     
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
-        return job.utility * \
+        return job.value * \
                (exp(((server.available_storage - job.required_storage) / server.available_storage) ** 3) +
                 exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
                 exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))

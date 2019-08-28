@@ -55,7 +55,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
         model.add(sum((loading_speeds[job] + sending_speeds[job]) * server_job_allocation[(job, server)]
                       for job in jobs) <= server.max_bandwidth)
     
-    model.maximize(sum(job.utility * server_job_allocation[(job, server)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(job, server)] for job in jobs for server in servers))
     
     return model, loading_speeds, compute_speeds, sending_speeds, server_job_allocation
 

@@ -23,7 +23,8 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
     """
-    # print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
+    if debug_results:
+        print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
     model = CpoModel("Job Price")
 
     jobs = server.allocated_jobs + [new_job]
@@ -141,7 +142,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
 
         iteration_price.append(sum(server.revenue for server in servers))
-        iteration_utility.append(sum(server.utility for server in servers))
+        iteration_utility.append(sum(server.value for server in servers))
 
     if debug_results:
         print("It is finished, number of iterations: {} with social welfare: {}"

@@ -14,8 +14,7 @@ def plot_algorithms_results(results: List[Result]):
     Plots the algorithm results with a plot for the total utility, percentage utility and percentage jobs
     :param results: A list of results
     """
-    data = [[result.algorithm_name, result.total_utility,
-             result.percentage_total_utility, result.percentage_jobs_allocated]
+    data = [[result.algorithm_name, result.sum_value, result.percentage_value, result.percentage_jobs]
             for result in results]
 
     df = pd.DataFrame(data, columns=['Algorithm Name', 'Total utility', 'Percentage utility', 'Percentage jobs'])

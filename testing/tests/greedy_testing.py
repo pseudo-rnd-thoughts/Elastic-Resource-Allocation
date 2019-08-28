@@ -37,7 +37,7 @@ def optimal_greedy_test(model_dist, name, repeats=200):
             print("No feasible solution found")
             continue
         
-        results['Optimal'] = optimal_result.total_utility
+        results['Optimal'] = optimal_result.sum_value
         reset_model(jobs, servers)
         
         for value_density in value_densities:
@@ -46,7 +46,7 @@ def optimal_greedy_test(model_dist, name, repeats=200):
                     greedy_result = greedy_algorithm(jobs, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
                     results['Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
-                                                       resource_allocation_policy.name)] = greedy_result.total_utility
+                                                       resource_allocation_policy.name)] = greedy_result.sum_value
                     reset_model(jobs, servers)
 
         for policy in matrix_policies:
@@ -79,7 +79,7 @@ def greedy_test(model_dists, name, repeats=200):
                                                          resource_allocation_policy)
                         result['Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
                                                           resource_allocation_policy.name)] = \
-                            greedy_result.total_utility
+                            greedy_result.sum_value
                         reset_model(jobs, servers)
     
             for policy in matrix_policies:

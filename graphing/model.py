@@ -71,7 +71,7 @@ def plot_jobs(jobs: List[Job], plot_utility_deadline: bool = True):
     """
     if plot_utility_deadline:
         data = [[job.name, job.required_storage, job.required_computation, job.required_results_data,
-                 job.utility, job.deadline] for job in jobs]
+                 job.value, job.deadline] for job in jobs]
         df = pd.DataFrame(data, columns=['Name', 'Storage', 'Computation', 'Results Data', 'Utility', 'Deadline'])
     else:
         data = [[job.name, job.required_storage, job.required_computation, job.required_results_data] for job in jobs]
@@ -136,7 +136,7 @@ def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10):
     :param repeats: The number of repeats
     """
     data = [[model_dist.name.split(",")[0], job.required_storage, job.required_computation, job.required_results_data,
-             job.utility, job.deadline]
+             job.value, job.deadline]
             for model_dist in model_dists for _ in range(repeats) for job in model_dist.create()[0]]
     df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data', 'Utility', 'Deadline'])
     wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])

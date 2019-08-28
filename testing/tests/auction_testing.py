@@ -26,7 +26,7 @@ def auction_price(model_dist, name, repeats=50):
         if vcg_result is None:
             print("VCG result fail")
             continue
-        results['vcg'] = (vcg_result.total_utility, vcg_result.total_price)
+        results['vcg'] = (vcg_result.sum_value, vcg_result.total_price)
         reset_model(jobs, servers)
 
         for epsilon in epsilons:

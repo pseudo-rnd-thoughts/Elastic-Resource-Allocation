@@ -24,12 +24,12 @@ class Job(object):
     price: float = 0  # This is for auctions only
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 utility: float, deadline: int):
+                 value: float, deadline: int):
         self.name: str = name
         self.required_storage: int = required_storage
         self.required_computation: int = required_computation
         self.required_results_data: int = required_results_data
-        self.utility: float = utility
+        self.value: float = value
         self.deadline: int = deadline
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
@@ -66,3 +66,10 @@ class Job(object):
         self.compute_speed = 0
         self.sending_speed = 0
         self.running_server = None
+        
+    def utility(self):
+        """
+        The social welfare of the job
+        :return: The job value minus job price
+        """
+        return self.value - self.price

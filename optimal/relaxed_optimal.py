@@ -56,7 +56,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
     model.add(sum((loading_speeds[job] + sending_speeds[job]) * job_allocation[job]
                   for job in jobs) <= super_server.max_bandwidth)
 
-    model.maximize(sum(job.utility * job_allocation[job] for job in jobs))
+    model.maximize(sum(job.value * job_allocation[job] for job in jobs))
 
     return model, loading_speeds, compute_speeds, sending_speeds, job_allocation
 
@@ -102,12 +102,11 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
 
 
 def relaxed_optimal_algorithm(jobs: List[Job], servers: List[Server],
-                              force_stop: bool = False, time_limit: int = 500, debug_time: bool = False) -> Result:
+                              time_limit: int = 500, debug_time: bool = False) -> Result:
     """
     Runs the optimal algorithm solution
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param force_stop:
     :param time_limit: The time limit to solve
     :param debug_time: If to print the time taken
     :return: The result from optimal solution

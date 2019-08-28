@@ -8,14 +8,14 @@ from core.job import Job
 from core.server import Server
 
 
-def gaussian_dist(mean, sd) -> int:
+def gaussian_dist(mean, std) -> int:
     """
     Uses gaussian distribution to generate a random number greater than 0 for a resource
     :param mean: Gaussian mean
-    :param sd: Gaussian standard deviation
+    :param std: Gaussian standard deviation
     :return: A float of random gaussian distribution
     """
-    return max(1, int(gauss(mean, sd)))
+    return max(1, int(gauss(mean, std)))
 
 
 class JobDist(object):
@@ -24,23 +24,23 @@ class JobDist(object):
     """
 
     def __init__(self, dist_name, probability,
-                 storage_mean, storage_sd,
-                 computation_mean, computation_sd,
-                 results_data_mean, results_data_sd,
-                 utility_mean, utility_sd,
-                 deadline_mean, deadline_sd):
+                 storage_mean, storage_std,
+                 computation_mean, computation_std,
+                 results_data_mean, results_data_std,
+                 value_mean, value_std,
+                 deadline_mean, deadline_std):
         self.dist_name = dist_name
         self.probability = probability
         self.storage_mean = storage_mean
-        self.storage_sd = storage_sd
+        self.storage_std = storage_std
         self.computation_mean = computation_mean
-        self.computation_sd = computation_sd
+        self.computation_std = computation_std
         self.results_data_mean = results_data_mean
-        self.results_data_sd = results_data_sd
-        self.utility_mean = utility_mean
-        self.utility_sd = utility_sd
+        self.results_data_std = results_data_std
+        self.value_mean = value_mean
+        self.value_std = value_std
         self.deadline_mean = deadline_mean
-        self.deadline_sd = deadline_sd
+        self.deadline_std = deadline_std
 
     def create_job(self, name) -> Job:
         """
@@ -50,11 +50,11 @@ class JobDist(object):
         """
         job_name = "{} {}".format(self.dist_name, name)
         return Job(name=job_name,
-                   required_storage=gaussian_dist(self.storage_mean, self.storage_sd),
-                   required_computation=gaussian_dist(self.computation_mean, self.computation_sd),
-                   required_results_data=gaussian_dist(self.results_data_mean, self.results_data_sd),
-                   utility=gaussian_dist(self.utility_mean, self.utility_sd),
-                   deadline=int(gaussian_dist(self.deadline_mean, self.deadline_sd)))
+                   required_storage=gaussian_dist(self.storage_mean, self.storage_std),
+                   required_computation=gaussian_dist(self.computation_mean, self.computation_std),
+                   required_results_data=gaussian_dist(self.results_data_mean, self.results_data_std),
+                   value=gaussian_dist(self.value_mean, self.value_std),
+                   deadline=int(gaussian_dist(self.deadline_mean, self.deadline_std)))
 
 
 class ServerDist(object):
@@ -63,17 +63,17 @@ class ServerDist(object):
     """
 
     def __init__(self, dist_name, probability,
-                 storage_mean, storage_sd,
-                 computation_mean, computation_sd,
-                 results_data_mean, results_data_sd):
+                 storage_mean, storage_std,
+                 computation_mean, computation_std,
+                 results_data_mean, results_data_std):
         self.dist_name = dist_name
         self.probability = probability
         self.storage_mean = storage_mean
-        self.storage_sd = storage_sd
+        self.storage_std = storage_std
         self.computation_mean = computation_mean
-        self.computation_sd = computation_sd
+        self.computation_std = computation_std
         self.results_data_mean = results_data_mean
-        self.results_data_sd = results_data_sd
+        self.results_data_std = results_data_std
 
     def create_server(self, name) -> Server:
         """
@@ -83,9 +83,9 @@ class ServerDist(object):
         """
         server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
-                      max_storage=gaussian_dist(self.storage_mean, self.storage_sd),
-                      max_computation=gaussian_dist(self.computation_mean, self.computation_sd),
-                      max_bandwidth=gaussian_dist(self.results_data_mean, self.results_data_sd))
+                      max_storage=gaussian_dist(self.storage_mean, self.storage_std),
+                      max_computation=gaussian_dist(self.computation_mean, self.computation_std),
+                      max_bandwidth=gaussian_dist(self.results_data_mean, self.results_data_std))
 
 
 class ModelDist(object):
@@ -145,27 +145,27 @@ def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
 
         for pos, line in enumerate(lines[1:int(num_job_dists) + 1]):
             job_name, probability, \
-                storage_mean, storage_sd,\
-                computation_mean, computation_sd,\
-                results_data_mean, results_data_sd, \
-                utility_mean, utility_sd,\
-                deadline_mean, deadline_sd = line.split(" ")
+                storage_mean, storage_std,\
+                computation_mean, computation_std,\
+                results_data_mean, results_data_std, \
+                utility_mean, utility_std,\
+                deadline_mean, deadline_std = line.split(" ")
             job_dists.append(JobDist(job_name, float(probability),
-                                     float(storage_mean), float(storage_sd),
-                                     float(computation_mean), float(computation_sd),
-                                     float(results_data_mean), float(results_data_sd),
-                                     float(utility_mean), float(utility_sd),
-                                     float(deadline_mean), float(deadline_sd)))
+                                     float(storage_mean), float(storage_std),
+                                     float(computation_mean), float(computation_std),
+                                     float(results_data_mean), float(results_data_std),
+                                     float(utility_mean), float(utility_std),
+                                     float(deadline_mean), float(deadline_std)))
 
         for pos, line in enumerate(lines[int(num_job_dists) + 1:]):
             server_name, probability, \
-                storage_mean, storage_sd, \
-                computation_mean, computation_sd, \
-                results_data_mean, results_data_sd = line.split(" ")
+                storage_mean, storage_std, \
+                computation_mean, computation_std, \
+                results_data_mean, results_data_std = line.split(" ")
             server_dists.append(ServerDist(server_name, float(probability),
-                                           float(storage_mean), float(storage_sd),
-                                           float(computation_mean), float(computation_sd),
-                                           float(results_data_mean), float(results_data_sd)))
+                                           float(storage_mean), float(storage_std),
+                                           float(computation_mean), float(computation_std),
+                                           float(results_data_mean), float(results_data_std)))
 
         return name, job_dists, server_dists
 
