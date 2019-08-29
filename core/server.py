@@ -3,6 +3,8 @@
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
+from random import gauss
+
 if TYPE_CHECKING:
     from core.job import Job
 
@@ -13,7 +15,9 @@ class Server(object):
     """
 
     revenue: float = 0  # This is the total price of the job's allocated
-    utility: float = 0  # This is the total utility of the job's allocated
+    value: float = 0  # This is the total value of the job's allocated
+
+    price_change: int = 0  # Iterative auction information
 
     def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int):
         self.name: str = name
@@ -57,7 +61,7 @@ class Server(object):
         self.available_bandwidth -= (job.loading_speed + job.sending_speed)
 
         self.revenue += job.price
-        self.utility += job.utility
+        self.value += job.value
 
     def reset_allocations(self):
         """
@@ -70,4 +74,14 @@ class Server(object):
         self.available_bandwidth = self.max_bandwidth
 
         self.revenue = 0
-        self.utility = 0
+        self.value = 0
+
+    def mutate(self, percent) -> Server:
+        """
+        Mutate the server by a percentage
+        :param percent: The percentage to increase the max resources by
+        """
+        return Server('mutated_{}'.format(self.name),
+                      self.max_storage - abs(gauss(0, self.max_storage/percent)),
+                      self.max_computation - abs(gauss(0, self.max_computation/percent)),
+                      self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)))

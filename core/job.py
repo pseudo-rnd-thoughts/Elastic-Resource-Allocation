@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
+from random import gauss
 
 if TYPE_CHECKING:
     from core.server import Server
@@ -24,12 +25,12 @@ class Job(object):
     price: float = 0  # This is for auctions only
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 utility: float, deadline: int):
+                 value: float, deadline: int):
         self.name: str = name
         self.required_storage: int = required_storage
         self.required_computation: int = required_computation
         self.required_results_data: int = required_results_data
-        self.utility: float = utility
+        self.value: float = value
         self.deadline: int = deadline
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
@@ -42,14 +43,14 @@ class Job(object):
         :param running_server: The server the job is running on
         :param price: The price of the job
         """
-        assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0,\
-            "Job {} with loading {} compute {} sending {}"\
-            .format(self.name, loading_speed, compute_speed, sending_speed)
+        assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
+            "Job {} with loading {} compute {} sending {}" \
+                .format(self.name, loading_speed, compute_speed, sending_speed)
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1 in python but is with cplex
         assert self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed
+               loading_speed * self.required_computation * sending_speed + \
+               loading_speed * compute_speed * self.required_results_data <= \
+               self.deadline * loading_speed * compute_speed * sending_speed
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed
@@ -66,3 +67,22 @@ class Job(object):
         self.compute_speed = 0
         self.sending_speed = 0
         self.running_server = None
+
+    def utility(self):
+        """
+        The social welfare of the job
+        :return: The job value minus job price
+        """
+        return self.value - self.price
+
+    def mutate(self, percent) -> Job:
+        """
+        Mutate the server by a percentage
+        :param percent: The percentage to increase the max resources by
+        """
+        return Job('mutated_{}'.format(self.name),
+                   self.required_storage + abs(gauss(0, self.required_storage / percent)),
+                   self.required_computation + abs(gauss(0, self.required_computation / percent)),
+                   self.required_results_data + abs(gauss(0, self.required_results_data / percent)),
+                   self.deadline + abs(gauss(0, self.required_results_data / percent)),
+                   self.value + abs(gauss(0, self.required_results_data / percent)))

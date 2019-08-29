@@ -1,4 +1,4 @@
-"""Custom auction by Mark and Seb"""
+"""Custom auctions by Mark and Seb"""
 
 from __future__ import annotations
 
@@ -13,16 +13,19 @@ from core.job import Job
 from core.server import Server
 
 
-def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
     :param server: A server
-    :param epsilon: The price increase
+    :param time_limit: The solve time limit
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
     """
-    # print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
+    assert server.price_change > 0
+    
+    if debug_results:
+        print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
     model = CpoModel("Job Price")
 
     jobs = server.allocated_jobs + [new_job]
@@ -45,12 +48,12 @@ def evaluate_job_price(new_job: Job, server: Server, epsilon: int = 5, debug_res
 
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
-    model_solution = model.solve(TimeLimit=15)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+    model_solution = model.solve(TimeLimit=time_limit)
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN or model_solution.get_objective_values() is None:
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
-    job_price = server.revenue - max_server_profit + epsilon
+    job_price = server.revenue - max_server_profit + server.epsilon
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
@@ -102,13 +105,13 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
 
-def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
+def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60,
                       debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
-    A iterative auction created by Seb Stein and Mark Towers
+    A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param epsilon: For the evaluate job price increase
+    :param time_limit: The solve time limit
     :param debug_allocation: Debug the allocation process
     :param debug_results: Debugs the results
     :return: A list of prices at each iteration
@@ -121,7 +124,8 @@ def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
         job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
-            jobs = min((evaluate_job_price(job, server, epsilon=epsilon) for server in servers), key=lambda bid: bid[0])
+            jobs = min((evaluate_job_price(job, server, time_limit) for server in servers),
+                       key=lambda bid: bid[0])
 
         if job_price <= job.utility:
             if debug_allocation:
@@ -138,7 +142,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], epsilon: int = 5,
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
 
         iteration_price.append(sum(server.revenue for server in servers))
-        iteration_utility.append(sum(server.utility for server in servers))
+        iteration_utility.append(sum(server.value for server in servers))
 
     if debug_results:
         print("It is finished, number of iterations: {} with social welfare: {}"
