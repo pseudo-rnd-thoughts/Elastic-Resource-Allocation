@@ -98,7 +98,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
                 r = model_solution.get_value(sending_speeds[job])
                 job.allocate(s, w, r, server)
                 server.allocate_job(job)
-    return Result("Optimal", jobs, servers)
+    return Result("Relaxed", jobs, servers)
 
 
 def relaxed_optimal_algorithm(jobs: List[Job], servers: List[Server],
