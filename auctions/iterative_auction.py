@@ -13,16 +13,17 @@ from core.job import Job
 from core.server import Server
 
 
-def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 5, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
     :param server: A server
     :param time_limit: The solve time limit
-    :param epsilon: The price increase
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
     """
+    assert server.price_change > 0
+    
     if debug_results:
         print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
     model = CpoModel("Job Price")
@@ -52,7 +53,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, epsilon: int = 
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
-    job_price = server.revenue - max_server_profit + epsilon
+    job_price = server.revenue - max_server_profit + server.epsilon
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
@@ -104,14 +105,13 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
 
-def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60, epsilon: int = 5,
+def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60,
                       debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The solve time limit
-    :param epsilon: For the evaluate job price increase
     :param debug_allocation: Debug the allocation process
     :param debug_results: Debugs the results
     :return: A list of prices at each iteration
@@ -124,7 +124,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
         job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
-            jobs = min((evaluate_job_price(job, server, time_limit, epsilon=epsilon) for server in servers),
+            jobs = min((evaluate_job_price(job, server, time_limit) for server in servers),
                        key=lambda bid: bid[0])
 
         if job_price <= job.utility:

@@ -10,15 +10,15 @@ from optimal.optimal import generate_model as optimal_generate_model
 from docplex.cp.model import CpoModel
 
 
-def time_test(model: CpoModel, time_limit: int):
+def time_test(model: CpoModel, time_limit: int, name: str):
     """
     Time Test
     :param model: The cplex model
     :param time_limit: The time to limit for
     """
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.025, TimeLimit=time_limit)
-    print("\tSolve time: {} secs, Solve status: {}, Objective value: {}"
-          .format(round(model_solution.get_solve_time(), 2), model_solution.get_solve_status(),
+    print("\t{} - Solve time: {} secs, Solve status: {}, Objective value: {}"
+          .format(name, round(model_solution.get_solve_time(), 2), model_solution.get_solve_status(),
                   model_solution.get_objective_values()))
 
     if model_solution.get_objective_values() is None:
@@ -44,8 +44,8 @@ if __name__ == "__main__":
         optimal_results = []
         relaxed_results = []
         for time in (10, 60, 5 * 60, 10 * 60):
-            relaxed_value = time_test(relaxed_model, time)
-            optimal_value = time_test(optimal_model, time)
+            relaxed_value = time_test(relaxed_model, time, 'Relax')
+            optimal_value = time_test(optimal_model, time, 'Optimal')
 
             relaxed_results.append(relaxed_value)
             optimal_results.append(optimal_value)

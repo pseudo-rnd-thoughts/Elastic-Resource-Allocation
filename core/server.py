@@ -17,6 +17,8 @@ class Server(object):
     revenue: float = 0  # This is the total price of the job's allocated
     value: float = 0  # This is the total value of the job's allocated
 
+    price_change: int = 0  # Iterative auction information
+
     def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int):
         self.name: str = name
         self.max_storage: int = max_storage
@@ -73,13 +75,13 @@ class Server(object):
 
         self.revenue = 0
         self.value = 0
-        
+
     def mutate(self, percent) -> Server:
         """
         Mutate the server by a percentage
         :param percent: The percentage to increase the max resources by
         """
         return Server('mutated_{}'.format(self.name),
-                      self.max_storage + abs(gauss(0, self.max_storage/percent)),
-                      self.max_computation + abs(gauss(0, self.max_computation/percent)),
-                      self.max_bandwidth + abs(gauss(0, self.max_bandwidth/percent)))
+                      self.max_storage - abs(gauss(0, self.max_storage/percent)),
+                      self.max_computation - abs(gauss(0, self.max_computation/percent)),
+                      self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)))
