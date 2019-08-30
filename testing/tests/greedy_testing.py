@@ -7,6 +7,7 @@ import sys
 from tqdm import tqdm
 
 from core.model import reset_model, ModelDist, load_dist
+from core.result import Result
 
 from optimal.optimal import optimal_algorithm
 
@@ -18,12 +19,11 @@ from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 
 
-def optimal_greedy_test(model_dist, repeats=200):
+def optimal_greedy_test(model_dist, repeats: int = 200):
     """
-    Greedy Test
+    Greedy test with optimal found
     :param model_dist: The model distribution
-    :param name: The test name
-    :param repeats: The number of repeats
+    :param repeats: Number of model runs
     """
     print("Greedy test with optimal calculated for {} jobs and {} servers".format(model_dist.num_jobs,
                                                                                   model_dist.num_servers))
@@ -51,8 +51,8 @@ def optimal_greedy_test(model_dist, repeats=200):
                     reset_model(jobs, servers)
 
         for policy in matrix_policies:
-            greedy_matrix_result = matrix_greedy(jobs, servers, policy)
-            results['Matrix ' + policy.name] = greedy_matrix_result.total_utility
+            greedy_matrix_result: Result = matrix_greedy(jobs, servers, policy)
+            results['Matrix ' + policy.name] = greedy_matrix_result.sum_value
             reset_model(jobs, servers)
 
         # print(results)
@@ -85,8 +85,8 @@ def no_optimal_greedy_test(model_dist, repeats=200):
                     reset_model(jobs, servers)
 
         for policy in matrix_policies:
-            greedy_matrix_result = matrix_greedy(jobs, servers, policy)
-            result['Matrix ' + policy.name] = greedy_matrix_result.total_utility
+            greedy_matrix_result: Result = matrix_greedy(jobs, servers, policy)
+            result['Matrix ' + policy.name] = greedy_matrix_result.sum_value
             reset_model(jobs, servers)
 
         data.append(result)

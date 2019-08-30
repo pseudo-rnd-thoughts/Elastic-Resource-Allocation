@@ -60,7 +60,7 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
     print("Multiple price change with iterative auctions for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
 
-    prices_changes = [[abs(int(gauss(0, 5))) for _ in range(model_dist.num_servers)] for _ in range(changes)]
+    prices_changes = [[abs(max(1, int(gauss(0, 5)))) for _ in range(model_dist.num_servers)] for _ in range(changes)]
     data = []
 
     for _ in tqdm(range(repeats)):
@@ -138,7 +138,8 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50,
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results['mutate job ' + job_diff(mutated_job, mutant_job)] = (iterative_utilities[-1], iterative_prices[-1], mutant_job.utility(), job_utilities[mutated_job])
+                results['mutate job ' + job_diff(mutated_job, mutant_job)] = \
+                    (iterative_utilities[-1], iterative_prices[-1], mutant_job.utility(), job_utilities[mutated_job])
 
                 jobs.remove(mutant_job)
                 jobs.append(mutated_job)
@@ -157,7 +158,9 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50,
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results['mutate server ' + server_diff(mutated_server, mutant_server)] = (iterative_utilities[-1], iterative_prices[-1], mutant_server.revenue, server_revenue[mutated_server])
+                results['mutate server ' + server_diff(mutated_server, mutant_server)] = \
+                    (iterative_utilities[-1], iterative_prices[-1],
+                     mutant_server.revenue, server_revenue[mutated_server])
 
                 servers.remove(mutant_server)
                 servers.append(mutated_server)

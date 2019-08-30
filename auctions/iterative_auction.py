@@ -53,7 +53,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
-    job_price = server.revenue - max_server_profit + server.epsilon
+    job_price = server.revenue - max_server_profit + server.price_change
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}

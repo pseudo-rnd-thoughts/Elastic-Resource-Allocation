@@ -13,6 +13,7 @@ from docplex.cp.model import CpoModel
 def time_test(model: CpoModel, time_limit: int, name: str):
     """
     Time Test
+    :param name:
     :param model: The cplex model
     :param time_limit: The time to limit for
     """
