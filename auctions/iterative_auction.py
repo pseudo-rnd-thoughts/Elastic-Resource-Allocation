@@ -121,7 +121,7 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
     iterative_value: List[float] = []
 
     while len(unallocated_jobs):
-        job = choice(unallocated_jobs)
+        job: Job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
             jobs = min((evaluate_job_price(job, server, time_limit) for server in servers),

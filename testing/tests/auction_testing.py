@@ -88,11 +88,12 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
     print(data)
 
 
-def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50,
+def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_change: int = 2,
                               mutate_percent: float = 0.1, mutate_repeats: int = 10, job_mutate_percent: float = 0.65):
     """Servers are mutated by a percent and the iterative auction run again checking the utility difference"""
 
     def job_diff(normal_job: Job, mutate_job: Job) -> str:
+        """The difference between two jobs"""
         return "{}, {}, {}, {}, {}".format(mutate_job.required_storage - normal_job.required_storage,
                                            mutate_job.required_computation - normal_job.required_computation,
                                            mutate_job.required_results_data - normal_job.required_results_data,
@@ -100,6 +101,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50,
                                            normal_job.value - mutate_job.value)
 
     def server_diff(normal_server: Server, mutate_server: Server) -> str:
+        """The difference between two severs"""
         return "{}, {}, {}".format(normal_server.max_storage - mutate_server.max_storage,
                                    normal_server.max_computation - mutate_server.max_computation,
                                    normal_server.max_bandwidth - mutate_server.max_bandwidth)
@@ -111,6 +113,9 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50,
 
     for _ in tqdm(range(repeats)):
         jobs, servers = model_dist.create()
+        for server in servers:
+            server.price_change = price_change
+
         results = {}
 
         iterative_results = iterative_auction(jobs, servers, 30)
