@@ -17,13 +17,12 @@ class Server(object):
     revenue: float = 0  # This is the total price of the job's allocated
     value: float = 0  # This is the total value of the job's allocated
 
-    price_change: int = 0  # Iterative auction information
-
-    def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int):
+    def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int, price_change: int = 1):
         self.name: str = name
         self.max_storage: int = max_storage
         self.max_computation: int = max_computation
         self.max_bandwidth: int = max_bandwidth
+        self.price_change: int = price_change
 
         # Allocation information
         self.allocated_jobs: List[Job] = []
@@ -36,14 +35,14 @@ class Server(object):
         Checks if a job can be run on a server if it dedicates all of resources to the job
         :param job: The job to test
         """
-        return self.available_storage >= job.required_storage and self.available_computation >= 1 \
-            and self.available_bandwidth >= 2 and any(job.required_storage * w * r +
-                                                      s * job.required_computation * r +
-                                                      s * w * job.required_results_data <=
-                                                      job.deadline * s * w * r
-                                                      for s in range(1, self.available_bandwidth + 1)
-                                                      for w in range(1, self.available_computation + 1)
-                                                      for r in range(1, self.available_bandwidth - s + 1))
+        return self.available_storage >= job.required_storage \
+            and self.available_computation >= 1 \
+            and self.available_bandwidth >= 2 and \
+            any(job.required_storage * w * r + s * job.required_computation * r +
+                s * w * job.required_results_data <= job.deadline * s * w * r
+                for s in range(1, self.available_bandwidth + 1)
+                for w in range(1, self.available_computation + 1)
+                for r in range(1, self.available_bandwidth - s + 1))
 
     def allocate_job(self, job: Job):
         """
@@ -84,4 +83,5 @@ class Server(object):
         return Server('mutated_{}'.format(self.name),
                       self.max_storage - abs(gauss(0, self.max_storage/percent)),
                       self.max_computation - abs(gauss(0, self.max_computation/percent)),
-                      self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)))
+                      self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)),
+                      self.price_change)
