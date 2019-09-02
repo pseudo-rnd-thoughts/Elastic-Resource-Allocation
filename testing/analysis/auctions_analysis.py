@@ -26,6 +26,14 @@ def auction_results(file):
         print()
 
 
+def plot_auction_results(file):
+    with open(file) as json_file:
+        json_data = json.load(json_file)
+
+
 if __name__ == "__main__":
-    auction_results("../results/results_26_august/auctions/auction_results_j12_s2.txt")
-    auction_results("../results/results_26_august/auctions/auction_results_j25_s5.txt")
+    _files = [
+        "../results/23_august/auctions/auction_results_j12_s2.txt",
+        "../results/23_august/auctions/auction_results_j15_s3.txt",
+        "../results/23_august/auctions/auction_results_j25_s5.txt"
+    ]

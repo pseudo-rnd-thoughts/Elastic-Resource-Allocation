@@ -11,5 +11,6 @@ fi
 
 for (( pos = 1; pos < ${#args[@]}; pos+=2 )); do
     cmd="qsub -v file='$script',num_jobs='${args[pos]}',num_servers='${args[pos+1]}' run_file.sh"
+    echo "File: $script for ${args[pos]} jobs and ${args[pos+1]} servers"
     eval "$cmd"
 done

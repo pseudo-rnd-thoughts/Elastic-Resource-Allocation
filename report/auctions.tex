@@ -21,11 +21,15 @@ Incentive Compatibility and Budget Balance. We believe that our iterative auctio
 and possibly economic efficient however not incentive compatible. \\
 
 \subsubsection{Proving budget balance for auction}
-%% TODO
+Budget balance is that the sum of revenue and the sum of prices is zero, as our algorithm doesnt require an auctioneer
+then budget balance is true. The algorithm can be run with a centralised auctioneer or in a decentralised manner such that
+jobs don't need to be aware of each others existence with a job only directly communicating with the server.
 \subsubsection{Proving individual rational}
 %% TODO
 \subsubsection{Economic efficient and Incentive compatible}
-%% TODO
+Our algorithm is not economically efficient or incentive compatible due a server only considering itself in choosing its
+price and is unaware of the price being charged by other servers. Because of this then the allocation of jobs to server
+may not be optimal resulting in a suboptimal economic efficient however in over 50%
 
 \subsection{Iterative Auction algorithm}\label{subsec:iterative-auction-algorithm}
 \begin{lstlisting}[language=Python]
@@ -49,8 +53,8 @@ while len(unallocated_jobs):
 \section{Iterative Auction Results}\label{sec:auctions-results}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{../results/auction_utility_convergence.png}
+    %% TODO iterative auctions price difference to vcg
+    \includegraphics[width=1\linewidth]{/images/auction_utility_convergence.png}
     \caption{Auction Utility Convergence}
 \end{figure}
 
-%% TODO iterative auctions price difference to vcg
