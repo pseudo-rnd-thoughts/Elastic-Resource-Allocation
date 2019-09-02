@@ -22,8 +22,6 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
     """
-    assert server.price_change > 0
-    
     if debug_results:
         print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
     model = CpoModel("Job Price")
@@ -116,6 +114,9 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
     :param debug_results: Debugs the results
     :return: A list of prices at each iteration
     """
+    assert all(server.price_change > 0 for server in servers), \
+        "Price change - " + ', '.join(["{}: {}".format(server.name, server.price_change) for server in servers])
+
     unallocated_jobs = jobs.copy()
     iteration_price: List[float] = []
     iterative_value: List[float] = []
