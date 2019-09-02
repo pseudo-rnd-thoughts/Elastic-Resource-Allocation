@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-args=$@
+args=($@)
 script=${args[0]}
 
 if [ ${#args[@]} == 1 ]; then

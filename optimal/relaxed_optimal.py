@@ -32,22 +32,21 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
     sending_speeds: Dict[Job, CpoVariable] = {}
     job_allocation: Dict[Job, CpoVariable] = {}
 
-    super_server = Server('Super Server',
-                          sum(server.max_storage for server in servers),
-                          sum(server.max_computation for server in servers),
-                          sum(server.max_bandwidth for server in servers))
-
     for job in jobs:
         loading_speeds[job] = model.integer_var(min=1, name="{} loading speed".format(job.name))
         compute_speeds[job] = model.integer_var(min=1, name="{} compute speed".format(job.name))
         sending_speeds[job] = model.integer_var(min=1, name="{} sending speed".format(job.name))
+        job_allocation[job] = model.binary_var(name="{} allocation".format(job.name))
 
         model.add(job.required_storage * compute_speeds[job] * sending_speeds[job] +
                   loading_speeds[job] * job.required_computation * sending_speeds[job] +
                   loading_speeds[job] * compute_speeds[job] * job.required_results_data <=
                   job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
 
-        job_allocation[job] = model.binary_var(name="{} allocation".format(job.name))
+    super_server = Server('Super Server',
+                          sum(server.max_storage for server in servers),
+                          sum(server.max_computation for server in servers),
+                          sum(server.max_bandwidth for server in servers))
 
     model.add(sum(job.required_storage * job_allocation[job]
                   for job in jobs) <= super_server.max_storage)
