@@ -80,8 +80,8 @@ class Server(object):
         Mutate the server by a percentage
         :param percent: The percentage to increase the max resources by
         """
-        return Server('mutated_{}'.format(self.name),
-                      self.max_storage - abs(gauss(0, self.max_storage/percent)),
-                      self.max_computation - abs(gauss(0, self.max_computation/percent)),
-                      self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)),
+        return Server('mutated {}'.format(self.name),
+                      int(max(1, self.max_storage - abs(gauss(0, self.max_storage/percent)))),
+                      int(max(1, self.max_computation - abs(gauss(0, self.max_computation/percent)))),
+                      int(max(1, self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)))),
                       self.price_change)

@@ -34,6 +34,7 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], matrix_policy: Allocat
             job.allocate(s, w, r, server)
             server.allocate_job(job)
             unallocated_jobs.remove(job)
+            print(len(unallocated_jobs))
         else:
             break
 

@@ -50,7 +50,7 @@ def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
         # print(results)
         data.append(results)
 
-    with open('single_price_iterative_auction_results_{}.txt'.format(model_dist.name), 'w') as outfile:
+    with open('single_price_iterative_auction_results_{}.txt'.format(model_dist.file_name), 'w') as outfile:
         json.dump(data, outfile)
     print(data)
 
@@ -83,13 +83,13 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
 
         data.append(results)
 
-    with open('multi_price_iterative_auction_results_{}.txt'.format(model_dist.name), 'w') as outfile:
+    with open('multi_price_iterative_auction_results_{}.txt'.format(model_dist.file_name), 'w') as outfile:
         json.dump(data, outfile)
     print(data)
 
 
 def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_change: int = 2,
-                              mutate_percent: float = 0.1, mutate_repeats: int = 10, job_mutate_percent: float = 0.65):
+                              mutate_percent: float = 0.05, mutate_repeats: int = 10, job_mutate_percent: float = 0.75):
     """Servers are mutated by a percent and the iterative auction run again checking the utility difference"""
 
     def job_diff(normal_job: Job, mutate_job: Job) -> str:
@@ -124,7 +124,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
             continue
 
         iterative_prices, iterative_utilities = iterative_results
-        results['no mutation'] = (iterative_utilities[-1], iterative_prices[-1])
+        results['no mutation'] = (iterative_utilities[-1], iterative_prices[-1], 0, 0)
         job_utilities = {job: job.utility() for job in jobs}
         server_revenue = {server: server.revenue for server in servers}
         reset_model(jobs, servers)
@@ -143,7 +143,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results['mutate job ' + job_diff(mutated_job, mutant_job)] = \
+                results[mutant_job.name + job_diff(mutated_job, mutant_job)] = \
                     (iterative_utilities[-1], iterative_prices[-1], mutant_job.utility(), job_utilities[mutated_job])
 
                 jobs.remove(mutant_job)
@@ -163,7 +163,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results['mutate server ' + server_diff(mutated_server, mutant_server)] = \
+                results[mutant_server.name + server_diff(mutated_server, mutant_server)] = \
                     (iterative_utilities[-1], iterative_prices[-1],
                      mutant_server.revenue, server_revenue[mutated_server])
 
@@ -174,7 +174,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
 
         data.append(results)
 
-    with open('mutate_iterative_auction_{}.txt'.format(model_dist.name), 'w') as json_file:
+    with open('mutate_iterative_auction_{}.txt'.format(model_dist.file_name), 'w') as json_file:
         json.dump(data, json_file)
     print(data)
 

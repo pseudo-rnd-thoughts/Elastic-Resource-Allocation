@@ -62,7 +62,6 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
     plt.show()
 
 
-# noinspection DuplicatedCode
 def plot_jobs(jobs: List[Job], plot_utility_deadline: bool = True):
     """
     Plots the jobs on a graph
@@ -85,7 +84,6 @@ def plot_jobs(jobs: List[Job], plot_utility_deadline: bool = True):
     plt.show()
 
 
-# noinspection DuplicatedCode
 def plot_servers(servers: List[Server]):
     """
     Plots the severs on a graph
@@ -101,7 +99,6 @@ def plot_servers(servers: List[Server]):
     plt.show()
 
 
-# noinspection DuplicatedCode
 def plot_server_jobs_allocations(servers: List[Server]):
     """
     Plots the server jobs allocations
@@ -128,37 +125,59 @@ def plot_server_jobs_allocations(servers: List[Server]):
     plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
 
 
-# noinspection DuplicatedCode
-def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10):
+def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 1000):
     """
     Plots the job distribution of a list of models
     :param model_dists: A list of model distributions
     :param repeats: The number of repeats
     """
+
+    """
     data = [[model_dist.name.split(",")[0], job.required_storage, job.required_computation, job.required_results_data,
              job.value, job.deadline]
             for model_dist in model_dists for _ in range(repeats) for job in model_dist.create()[0]]
+
     df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data', 'Utility', 'Deadline'])
     wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
-    sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+
+    sns.catplot('Resource', 'Value', hue='Model', data=wide_df, kind='violin')
     plt.title("Job Distribution")
+    plt.show()
+    """
+
+    data = []
+    for model_dist in model_dists:
+        for _ in range(repeats):
+            job = model_dist.create()[0][0]
+            data.append((model_dist.dist_name, "Storage", job.required_storage))
+            data.append((model_dist.dist_name, "Computation", job.required_computation))
+            data.append((model_dist.dist_name, "Bandwidth", job.required_results_data))
+            data.append((model_dist.dist_name, "Value", job.value))
+            data.append((model_dist.dist_name, "Deadline", job.deadline))
+
+    df = pd.DataFrame(data, columns=['Model', 'Resource', 'Value'])
+
+    g = sns.FacetGrid(data=df, col='Resource')
+    g.map(sns.catplot, 'Model', 'Value', kind='violin')
+
     plt.show()
 
 
-# noinspection DuplicatedCode
 def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     """
     Plots the server distribution of a list of models
     :param model_dists: A list of model distributions
     :param repeats: The number of repeats
     """
-    data = [[model_dist.name.split(",")[0], server.max_storage, server.max_computation, server.max_bandwidth]
+
+    data = [[model_dist.dist_name, server.max_storage, server.max_computation, server.max_bandwidth]
             for model_dist in model_dists for _ in range(repeats) for server in model_dist.create()[1]]
+
     df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data'])
-    wide_df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
-    wide_df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
-    sns.catplot('Model', 'Value', hue='Resource', data=wide_df, kind='violin')
+    df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
+    df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
+
+    sns.catplot('Resource', 'Value', hue='Model', data=df, kind='violin')
     plt.title("Server Distribution")
     plt.show()
-

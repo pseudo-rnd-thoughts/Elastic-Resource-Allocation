@@ -11,7 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from core.server import Server
-from graphing.model import plot_allocation_results
+from graphing.graph_model import plot_allocation_results
 
 
 def mean_std_results(files):

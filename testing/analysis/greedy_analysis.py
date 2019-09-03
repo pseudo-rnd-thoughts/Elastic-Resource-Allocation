@@ -9,7 +9,6 @@ import pandas as pd
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-
 def algo_optimal_percent_difference(files):
     algo_difference = {}
     sub_optimals = {}
@@ -86,30 +85,56 @@ def plot_results(files, title):
     """
     # g.fig.suptitle(title)
     plt.show()
-    
+
+
+def plot_relaxed(files):
+    data = []
+
+    for file, model in files:
+        with open(file) as json_file:
+            json_data = json.load(json_file)
+
+            for results in json_data:
+                if results['relaxed'][-1] is not None and results['optimal'][-1] is not None:
+                    relaxed = results['relaxed'][-1]
+                    optimal = results['optimal'][-1]
+
+                    data.append((model, relaxed - optimal))
+
+    df = pd.DataFrame(data, columns=['model', 'relaxed - optimal'])
+    sns.scatterplot('model', 'relaxed - optimal', data=df)
+    plt.show()
+
 
 if __name__ == "__main__":
     optimal_files = [
-        ("../results/23_august/greedy_results_j12_s2.txt", "12 Jobs 2 Servers"),
-        ("../results/23_august/greedy_results_j15_s3.txt", "15 Jobs 3 Servers"),
-        ("../results/23_august/greedy_results_j25_s5.txt", "25 Jobs 5 Servers")
+        ("../results/august_23/greedy_results_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/august_23/greedy_results_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/august_23/greedy_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
     no_optimal_files = [
-        ("../results/30_august/basic_j12_s2_no_optimal_greedy.txt", "12 Jobs 2 Servers"),
-        ("../results/30_august/basic_j15_s3_no_optimal_greedy.txt", "15 Jobs 3 Servers"),
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_1.txt", "25 Jobs 5 Servers")
+        ("../results/august_30/basic_j12_s2_no_optimal_greedy.txt", "12 Jobs 2 Servers"),
+        ("../results/august_30/basic_j15_s3_no_optimal_greedy.txt", "15 Jobs 3 Servers"),
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_1.txt", "25 Jobs 5 Servers")
     ]
 
     j25_s2_files = [
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_1.txt", "1"),
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_2.txt", "2"),
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_3.txt", "3"),
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_4.txt", "4"),
-        ("../results/30_august/basic_j25_s5_no_optimal_greedy_5.txt", "5")
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_1.txt", "1"),
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_2.txt", "2"),
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_3.txt", "3"),
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_4.txt", "4"),
+        ("../results/august_30/basic_j25_s5_no_optimal_greedy_5.txt", "5")
+    ]
+
+    relaxed_files = [
+        ("../results/august_29/relaxed_results_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/august_29/relaxed_results_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/august_29/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
     # algo_optimal_percent_difference(_files)
     # plot_results(optimal_files, "Greedy results with Optimal")
     # plot_results(no_optimal_files, "Greedy results without Optimal")
-    plot_results(j25_s2_files, "Greedy results without Optimal")
+    # plot_results(j25_s2_files, "Greedy results without Optimal")
+    plot_relaxed(relaxed_files)

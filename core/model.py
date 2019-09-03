@@ -90,14 +90,14 @@ class ServerDist(object):
 
 class ModelDist(object):
     """Model distributions"""
-    name = ""
     num_jobs = 0
     num_servers = 0
 
     def __init__(self, dist_name: str, job_dists: List[JobDist], num_jobs: int,
                  server_dists: List[ServerDist], num_servers: int):
-        self.name = "{}_j{}_s{}".format(dist_name, num_jobs, num_servers)
+        self.file_name = "{}_j{}_s{}".format(dist_name, num_jobs, num_servers)
         self.dist_name = dist_name
+
         self.job_dists = job_dists
         self.num_jobs = num_jobs
         self.server_dists = server_dists

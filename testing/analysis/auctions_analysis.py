@@ -1,8 +1,12 @@
 
 import json
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
-def auction_results(file):
+
+def print_auction_results(file):
     """
     Prints the Auction results from a file
     :param file: A file
@@ -26,14 +30,65 @@ def auction_results(file):
         print()
 
 
-def plot_auction_results(file):
+def print_mutated_auction_results(file):
     with open(file) as json_file:
-        json_data = json.load(json_file)
+        data = json.load(json_file)
+
+        for result in data:
+            no_mutate = result['no mutation'][0]
+            for name, values in result.items():
+                if name != "no mutation":
+                    if no_mutate < values[0]:
+                        print("{} total utility increase from {} to {}".format(name, no_mutate, values[0]))
+                    if values[2] > values[3]:
+                        print("{:.10} utility increase from {:.3f} to {}".format(name, values[2], values[3]))
+
+
+
+def plot_auction_results(files, title):
+    data = []
+    for file, model in files:
+        with open(file) as json_file:
+            json_data = json.load(json_file)
+
+            for pos, results in enumerate(json_data):
+                for name, result in results.items():
+                    data.append((model, pos, name, result[0], result[1]))
+
+    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
+    g = sns.FacetGrid(df, col='model')
+    g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df, legend='full')
+    g.fig.subplots_adjust(top=0.9)
+    plt.title(title)
+    plt.show()
 
 
 if __name__ == "__main__":
-    _files = [
-        "../results/23_august/auctions/auction_results_j12_s2.txt",
-        "../results/23_august/auctions/auction_results_j15_s3.txt",
-        "../results/23_august/auctions/auction_results_j25_s5.txt"
+    normal_files = [
+        ("../results/august_23/auction_results_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/august_23/auction_results_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/august_23/auction_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
+
+    single_price_auctions = [
+        ("../results/august_26/single_price_auction_results_basic_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/august_26/single_price_auction_results_basic_j25_s5.txt", "25 Jobs 5 Servers")
+    ]
+
+    multi_price_auction = [
+        ("../results/august_30/multi_price_iterative_auction_results_basic_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/august_30/multi_price_iterative_auction_results_basic_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/august_30/multi_price_iterative_auction_results_basic_j25_s5.txt", "25 Jobs 5 Servers")
+    ]
+
+    mutated_price_auction = [
+        ("../results/september_2/mutate_iterative_auction_basic_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/september_2/mutate_iterative_auction_basic_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/september_2/mutate_iterative_auction_basic_j25_s5.txt", "25 Jobs 5 Servers")
+    ]
+
+    # plot_auction_results(normal_files, "Normal")
+    # plot_auction_results(single_price_auctions, "Single Price")
+    # plot_auction_results(multi_price_auction, "Multiple Price")
+
+    print_mutated_auction_results(mutated_price_auction[0][0])

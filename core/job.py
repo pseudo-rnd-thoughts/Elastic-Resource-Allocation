@@ -80,9 +80,9 @@ class Job(object):
         Mutate the server by a percentage
         :param percent: The percentage to increase the max resources by
         """
-        return Job('mutated_{}'.format(self.name),
-                   self.required_storage + abs(gauss(0, self.required_storage / percent)),
-                   self.required_computation + abs(gauss(0, self.required_computation / percent)),
-                   self.required_results_data + abs(gauss(0, self.required_results_data / percent)),
-                   self.deadline + abs(gauss(0, self.required_results_data / percent)),
-                   self.value + abs(gauss(0, self.required_results_data / percent)))
+        return Job('mutated {}'.format(self.name),
+                   int(self.required_storage + abs(gauss(0, self.required_storage / percent))),
+                   int(self.required_computation + abs(gauss(0, self.required_computation / percent))),
+                   int(self.required_results_data + abs(gauss(0, self.required_results_data / percent))),
+                   int(self.deadline - abs(gauss(0, self.required_results_data / percent))),
+                   int(self.value - abs(gauss(0, self.required_results_data / percent))))
