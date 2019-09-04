@@ -100,8 +100,8 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
     return Result("Relaxed", jobs, servers)
 
 
-def relaxed_optimal_algorithm(jobs: List[Job], servers: List[Server],
-                              time_limit: int = 500, debug_time: bool = False) -> Result:
+def relaxed_algorithm(jobs: List[Job], servers: List[Server],
+                      time_limit: int = 500, debug_time: bool = False) -> Result:
     """
     Runs the optimal algorithm solution
     :param jobs: A list of jobs

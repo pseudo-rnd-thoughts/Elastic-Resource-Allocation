@@ -10,7 +10,7 @@ from core.model import reset_model, ModelDist, load_dist
 from core.result import Result
 
 from optimal.optimal import optimal_algorithm
-
+from optimal.relaxed import relaxed_algorithm
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import policies as server_selection_policies
@@ -37,10 +37,15 @@ def optimal_greedy_test(model_dist: ModelDist, repeats: int = 200):
         if optimal_result is None:
             print("No feasible solution found")
             continue
-        
+
         results['Optimal'] = optimal_result.sum_value
         reset_model(jobs, servers)
-        
+
+        relaxed_result = relaxed_algorithm(jobs, servers, time_limit=60)
+        if relaxed_result is not None:
+            results['Relaxed'] = relaxed_result.sum_value
+        reset_model(jobs, servers)
+
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
@@ -69,7 +74,6 @@ def no_optimal_greedy_test(model_dist: ModelDist, repeats=200):
                                                                                      model_dist.num_servers))
 
     data = []
-
     for _ in tqdm(range(repeats)):
         result = {}
         jobs, servers = model_dist.create()
@@ -90,9 +94,8 @@ def no_optimal_greedy_test(model_dist: ModelDist, repeats=200):
             result['Matrix ' + policy.name] = greedy_matrix_result.sum_value
             print("Result")
             reset_model(jobs, servers)
-
-        data.append(result)
         """
+        data.append(result)
 
     with open('{}_no_optimal_greedy_test.txt'.format(model_dist.file_name), 'w') as json_file:
         json.dump(data, json_file)

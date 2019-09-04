@@ -1,3 +1,7 @@
+"""Analysis of the greedy results"""
+
+from __future__ import annotations
+from typing import List
 
 import json
 import numpy as np
@@ -9,7 +13,11 @@ import pandas as pd
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def algo_optimal_percent_difference(files):
+def print_optimal_percent_difference(files):
+    """
+    Prints the percentage difference of algorithm compared to the optimal
+    :param files: The files
+    """
     algo_difference = {}
     sub_optimals = {}
     total = {}
@@ -77,6 +85,7 @@ def plot_results(files, title):
     df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
 
     g = sns.FacetGrid(df, col='model', height=6, aspect=0.75, sharex=False)
+    # noinspection PyUnresolvedReferences
     g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
     """
     titles = g.axes.flatten()
@@ -87,7 +96,11 @@ def plot_results(files, title):
     plt.show()
 
 
-def plot_relaxed(files):
+def plot_relaxed(files: List[str]):
+    """
+    Plots the relaxed results
+    :param files: A list of files
+    """
     data = []
 
     for file, model in files:

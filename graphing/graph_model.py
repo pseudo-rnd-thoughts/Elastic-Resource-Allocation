@@ -160,7 +160,8 @@ def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10000):
     df = pd.DataFrame(data, columns=['Model', 'Resource', 'Value'])
 
     g = sns.FacetGrid(df, col='Resource', sharey=False, col_wrap=3)
-    g = (g.map(sns.violinplot, 'Model', 'Value').set_titles('{col_name}'))
+    # noinspection PyUnresolvedReferences
+    (g.map(sns.violinplot, 'Model', 'Value').set_titles('{col_name}'))
     plt.show()
 
 

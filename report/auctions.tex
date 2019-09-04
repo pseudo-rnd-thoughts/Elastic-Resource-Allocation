@@ -25,7 +25,8 @@ Budget balance is that the sum of revenue and the sum of prices is zero, as our 
 then budget balance is true. The algorithm can be run with a centralised auctioneer or in a decentralised manner such that
 jobs don't need to be aware of each others existence with a job only directly communicating with the server.
 \subsubsection{Proving individual rational}
-%% TODO
+The utility of all partitions are non-negative therefore the sum of all server revenue $\geq$ the sum of revenue without
+jobs. So the revenue of a job must be non-negative. %% TODO
 \subsubsection{Economic efficient and Incentive compatible}
 Our algorithm is not economically efficient or incentive compatible due a server only considering itself in choosing its
 price and is unaware of the price being charged by other servers. Because of this then the allocation of jobs to server
@@ -53,8 +54,11 @@ while len(unallocated_jobs):
 \section{Iterative Auction Results}\label{sec:auctions-results}
 \begin{figure}[H]
     \centering
-    %% TODO iterative auctions price difference to vcg
-    \includegraphics[width=1\linewidth]{/images/auction_utility_convergence.png}
-    \caption{Auction Utility Convergence}
+    \includegraphics[width=1\linewidth]{./images/single_price_auction_results.png}
+    \caption{Multiple Price auction results}
 \end{figure}
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{./images/multiple_price_auction_results.png}
+    \caption{Multiple Price auction results}
+\end{figure}

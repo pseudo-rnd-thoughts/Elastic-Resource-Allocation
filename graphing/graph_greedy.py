@@ -1,3 +1,4 @@
+"""Graphs the greedy algorithms"""
 
 from __future__ import annotations
 from typing import List, Dict

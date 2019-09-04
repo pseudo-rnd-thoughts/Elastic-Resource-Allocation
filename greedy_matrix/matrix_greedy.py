@@ -11,6 +11,13 @@ from greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
 def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy):
+    """
+    Calculates the value of a server job allocation with the resources allocated
+    :param job: A job
+    :param server: A server
+    :param value: The value policy
+    :return: The tuple of values and resource allocations
+    """
     return max(((value.evaluate(job, server, s, w, r), s, w, r)
                 for s in range(1, server.available_bandwidth + 1)
                 for w in range(1, server.available_computation + 1)
@@ -19,7 +26,14 @@ def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy):
                 s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
 
 
-def matrix_greedy(jobs: List[Job], servers: List[Server], matrix_policy: AllocationValuePolicy):
+def matrix_greedy(jobs: List[Job], servers: List[Server], matrix_policy: AllocationValuePolicy) -> Result:
+    """
+    A greedy algorithm that uses the idea of a matrix
+    :param jobs: A list of jobs
+    :param servers: A list of servers
+    :param matrix_policy: The value matrix policy
+    :return: The results
+    """
     unallocated_jobs = jobs.copy()
     while unallocated_jobs:
         value_matrix = []

@@ -42,6 +42,10 @@ def mean_std_results(files):
 
 
 def optimal_results(files):
+    """
+
+    :param files:
+    """
     for file in files:
         with open(file) as json_file:
             results = json.load(json_file)
