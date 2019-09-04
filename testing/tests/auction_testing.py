@@ -60,7 +60,7 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
     print("Multiple price change with iterative auctions for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
 
-    prices_changes = [[abs(max(1, int(gauss(0, 5)))) for _ in range(model_dist.num_servers)] for _ in range(changes)]
+    prices_changes = [[max(1, int(abs(gauss(0, 5)))) for _ in range(model_dist.num_servers)] for _ in range(changes)]
     data = []
 
     for _ in tqdm(range(repeats)):
@@ -77,8 +77,8 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
                 continue
 
             iterative_prices, iterative_utilities = iterative_results
-            results['price change ' + ' '.join([str(x) for x in price_changes])] = (iterative_utilities[-1],
-                                                                                    iterative_prices[-1])
+            results['Prices: ' + ','.join([str(x) for x in price_changes])] = (iterative_utilities[-1],
+                                                                               iterative_prices[-1])
             reset_model(jobs, servers)
 
         data.append(results)

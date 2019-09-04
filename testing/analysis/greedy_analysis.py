@@ -77,13 +77,13 @@ def plot_results(files, title):
     df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
 
     g = sns.FacetGrid(df, col='model', height=6, aspect=0.75, sharex=False)
-    g.map(sns.barplot, 'value', 'algorithm')
+    g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
     """
     titles = g.axes.flatten()
     for pos, (_, model) in enumerate(files):
         titles[pos].set_title(model)
     """
-    # g.fig.suptitle(title)
+    g.fig.suptitle(title)
     plt.show()
 
 
@@ -133,8 +133,7 @@ if __name__ == "__main__":
         ("../results/august_29/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
-    # algo_optimal_percent_difference(_files)
     # plot_results(optimal_files, "Greedy results with Optimal")
-    # plot_results(no_optimal_files, "Greedy results without Optimal")
+    plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
-    plot_relaxed(relaxed_files)
+    # plot_relaxed(relaxed_files)

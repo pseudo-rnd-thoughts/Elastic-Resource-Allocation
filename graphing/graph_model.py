@@ -125,7 +125,7 @@ def plot_server_jobs_allocations(servers: List[Server]):
     plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
 
 
-def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 1000):
+def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10000):
     """
     Plots the job distribution of a list of models
     :param model_dists: A list of model distributions
@@ -149,18 +149,18 @@ def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 1000):
     data = []
     for model_dist in model_dists:
         for _ in range(repeats):
-            job = model_dist.create()[0][0]
-            data.append((model_dist.dist_name, "Storage", job.required_storage))
-            data.append((model_dist.dist_name, "Computation", job.required_computation))
-            data.append((model_dist.dist_name, "Bandwidth", job.required_results_data))
-            data.append((model_dist.dist_name, "Value", job.value))
-            data.append((model_dist.dist_name, "Deadline", job.deadline))
+            jobs = model_dist.create()[0]
+            for job in jobs:
+                data.append((model_dist.dist_name, "Storage", job.required_storage))
+                data.append((model_dist.dist_name, "Computation", job.required_computation))
+                data.append((model_dist.dist_name, "Bandwidth", job.required_results_data))
+                data.append((model_dist.dist_name, "Value", job.value))
+                data.append((model_dist.dist_name, "Deadline", job.deadline))
 
     df = pd.DataFrame(data, columns=['Model', 'Resource', 'Value'])
 
-    g = sns.FacetGrid(data=df, col='Resource')
-    g.map(sns.catplot, 'Model', 'Value', kind='violin')
-
+    g = sns.FacetGrid(df, col='Resource', sharey=False, col_wrap=3)
+    g = (g.map(sns.violinplot, 'Model', 'Value').set_titles('{col_name}'))
     plt.show()
 
 
@@ -178,6 +178,6 @@ def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     df = pd.melt(df, id_vars=['Model']).sort_values(['variable', 'value'])
     df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
 
-    sns.catplot('Resource', 'Value', hue='Model', data=df, kind='violin')
+    sns.violinplot('Resource', 'Value', hue='Model', data=df)
     plt.title("Server Distribution")
     plt.show()

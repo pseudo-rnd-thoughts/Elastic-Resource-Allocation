@@ -103,7 +103,7 @@ if __name__ == "__main__":
     num_jobs = int(sys.argv[1])
     num_servers = int(sys.argv[2])
 
-    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
     # optimal_greedy_test(basic_model_dist)

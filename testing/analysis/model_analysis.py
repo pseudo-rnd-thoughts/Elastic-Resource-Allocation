@@ -16,5 +16,5 @@ if __name__ == "__main__":
         model_dist = ModelDist(model_name, job_dist, 1, server_dist, 1)
         models.append(model_dist)
 
-    graph_model.plot_job_distribution(models)
-    # graph_model.plot_server_distribution(models)
+    # graph_model.plot_job_distribution(models)
+    graph_model.plot_server_distribution(models)

@@ -46,7 +46,7 @@ while len(unallocated_jobs):
             # Uses the allocation info to create the new allocation on the selected server
             allocate_job(job_price, job, allocation_info, unallocated_jobs)
         else:
-            # Remove job as the job can be run ever at a price lower than the job's true utility
+            # Remove job as the job can be run ever at a price lower than the job's value utility
             unallocated_jobs.remove(job)
 \end{lstlisting}
 

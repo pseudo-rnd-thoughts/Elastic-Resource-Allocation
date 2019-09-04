@@ -44,6 +44,21 @@ def print_mutated_auction_results(file):
                         print("{:.10} utility increase from {:.3f} to {}".format(name, values[2], values[3]))
 
 
+def print_multiple_auction_results(files):
+    for file, model in files:
+        print(model)
+        with open(file) as json_file:
+            data = json.load(json_file)
+
+            for results in data:
+                result = {}
+                for price_change, (value, _) in results.items():
+                    if value in result:
+                        result[value].append(price_change)
+                    else:
+                        result[value] = [price_change]
+                print("; ".join(["{}: {}".format(value, ', '.join(names)) for value, names in result.items()]))
+        print()
 
 def plot_auction_results(files, title):
     data = []
@@ -56,10 +71,10 @@ def plot_auction_results(files, title):
                     data.append((model, pos, name, result[0], result[1]))
 
     df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
-    g = sns.FacetGrid(df, col='model')
-    g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df, legend='full')
+    g = sns.FacetGrid(df, col='model', col_wrap=2)
+    g: sns.FacetGrid = (g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df).set_titles("{col_name}").add_legend())
     g.fig.subplots_adjust(top=0.9)
-    plt.title(title)
+    g.fig.suptitle(title)
     plt.show()
 
 
@@ -87,8 +102,9 @@ if __name__ == "__main__":
         ("../results/september_2/mutate_iterative_auction_basic_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
-    # plot_auction_results(normal_files, "Normal")
-    # plot_auction_results(single_price_auctions, "Single Price")
-    # plot_auction_results(multi_price_auction, "Multiple Price")
+    plot_auction_results(normal_files, "Normal")
+    plot_auction_results(single_price_auctions, "Single Price")
+    plot_auction_results(multi_price_auction, "Multiple Price")
 
-    print_mutated_auction_results(mutated_price_auction[0][0])
+    # print_multiple_auction_results(multi_price_auction)
+    # print_mutated_auction_results(mutated_price_auction[0][0])
