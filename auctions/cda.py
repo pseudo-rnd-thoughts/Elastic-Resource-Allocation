@@ -19,7 +19,7 @@ class FixedJob(Job):
         super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
-        self.loading_speed, self.compute_speed, self.sending_speed = max(
+        self.loading_speed, self.compute_speed, self.sending_speed = min(
             ((s, w, r)
              for s in range(1, job.required_storage + 1)
              for w in range(1, job.required_computation + 1)
@@ -27,9 +27,23 @@ class FixedJob(Job):
              if job.required_storage / s + job.required_computation / w +
              job.required_results_data / r <= job.deadline),
             key=lambda x: sum(x))
+        # print("{} - s: {}, w: {}, r: {}".format(self.name, self.loading_speed, self.compute_speed, self.sending_speed))
+
+    def reset_allocation(self):
+        """
+        Overrides the reset_allocation function from job to just change the server not resource speeds
+        """
+        self.running_server = None
 
 
 def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -> Optional[Result]:
+    """
+    Finds the optimal solution
+    :param jobs: A list of jobs
+    :param servers: A list of servers
+    :param time_limit:
+    :return:
+    """
     model = CpoModel("CDA")
 
     allocations = {(job, server): model.binary_var(name='{} job {} server'.format(job.name, server.name))
@@ -41,14 +55,13 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
         model.add(sum((job.loading_speed + job.sending_speed) * allocations[(job, server)]
                       for job in jobs) <= server.max_storage)
 
+    model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))
     model_solution = model.solve(TimeLimit=time_limit)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
-        return None
 
     for job in jobs:
         for server in servers:
             if model_solution.get_value(allocations[(job, server)]):
-                job.server = server
+                job.running_server = server
                 server.allocate_job(job)
 
     return Result("CDA", jobs, servers)
@@ -78,6 +91,7 @@ def combinatorial_double_auction(jobs: List[Job], servers: List[Server], time: i
     job_prices: Dict[Job, float] = {}
     server_prices: Dict[Server, float] = {}
     allocated_jobs = [job for job in fixed_jobs if job.running_server]
+    print(allocated_jobs)
     job_info: Dict[Job, Server] = {job: job.running_server for job in fixed_jobs}
 
     if debug_running:

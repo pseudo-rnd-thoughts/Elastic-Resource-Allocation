@@ -49,7 +49,8 @@ class Server(object):
         Updates the server attributes for when it is allocated within jobs
         :param job: The job being allocated
         """
-        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0
+        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0,\
+            "{} - s: {}, w: {}, r: {}".format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
         assert self.available_storage >= job.required_storage
         assert self.available_computation >= job.compute_speed
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed
