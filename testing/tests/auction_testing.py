@@ -13,6 +13,7 @@ from core.model import reset_model, ModelDist, load_dist
 
 from auctions.vcg import vcg_auction
 from auctions.iterative_auction import iterative_auction
+from auctions.cda import combinatorial_double_auction
 
 
 def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
@@ -27,11 +28,18 @@ def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
         jobs, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers, 60)
+        vcg_result = vcg_auction(jobs, servers)
         if vcg_result is None:
             print("VCG result fail")
             continue
-        results['vcg'] = (vcg_result.sum_value, vcg_result.total_price)
+        results['vcg'] = vcg_result.sum_value
+        reset_model(jobs, servers)
+
+        cda_result = combinatorial_double_auction(jobs, servers)
+        if cda_result is None:
+            print("CDA result fail")
+            continue
+        results['cda'] = cda_result.sum_value
         reset_model(jobs, servers)
 
         for price_change in price_changes:
@@ -44,7 +52,7 @@ def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
                 continue
 
             iterative_prices, iterative_utilities = iterative_result
-            results['price change {}'.format(price_change)] = (iterative_utilities[-1], iterative_prices[-1])
+            results['price change {}'.format(price_change)] = iterative_utilities[-1]
             reset_model(jobs, servers)
 
         # print(results)

@@ -147,6 +147,6 @@ if __name__ == "__main__":
     ]
 
     # plot_results(optimal_files, "Greedy results with Optimal")
-    plot_results(no_optimal_files, "Greedy results without Optimal")
+    # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
-    # plot_relaxed(relaxed_files)
+    plot_relaxed(relaxed_files)

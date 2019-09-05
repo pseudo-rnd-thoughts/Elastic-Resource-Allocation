@@ -18,29 +18,20 @@ class ResourceAllocationPolicy(ABC):
     def __init__(self, name):
         self.name = name
 
-    def possible_bids(self, job: Job, server: Server) -> Generator[Tuple[float, Tuple[Speed, Speed, Speed]]]:
-        """
-        Calculates all of the possible bids that could be made
-        TODO optimise searching through kkt maths
-        :param job: The job
-        :param server: The allocated server
-        :return: A list of tuples of possible resource speeds
-        """
-        return ((self.resource_evaluator(job, server, s, w, r), (s, w, r))
-                for s in range(1, server.available_bandwidth + 1)
-                for w in range(1, server.available_computation + 1)
-                for r in range(1, server.available_bandwidth - s + 1)
-                if job.required_storage * w * r + s * job.required_computation * r +
-                s * w * job.required_results_data <= job.deadline * s * w * r)
-
-    def allocate(self, job: Job, server: Server) -> Tuple[float, Tuple[Speed, Speed, Speed]]:
+    def allocate(self, job: Job, server: Server) -> Tuple[Speed, Speed, Speed]:
         """
         Determines the resource speed for the job on the server but finding the smallest
         :param job: The job
         :param server: The server
         :return: A tuple of resource speeds
         """
-        return min(self.possible_bids(job, server), key=lambda bid: bid[0])
+        return min(((s, w, r)
+                    for s in range(1, server.available_bandwidth + 1)
+                    for w in range(1, server.available_computation + 1)
+                    for r in range(1, server.available_bandwidth - s + 1)
+                    if job.required_storage * w * r + s * job.required_computation * r +
+                    s * w * job.required_results_data <= job.deadline * s * w * r),
+                   key=lambda bid: self.resource_evaluator(job, server, bid[0], bid[1], bid[2]))
 
     @abstractmethod
     def resource_evaluator(self, job: Job, server: Server,
@@ -91,8 +82,8 @@ class SumSpeeds(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Sum of speeds")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
-                           sending_speed: Speed) -> float:
+    def resource_evaluator(self, job: Job, server: Server,
+                           loading_speed: Speed, compute_speed: Speed, sending_speed: Speed) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
 

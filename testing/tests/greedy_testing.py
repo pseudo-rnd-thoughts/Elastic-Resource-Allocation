@@ -60,7 +60,6 @@ def optimal_greedy_test(model_dist: ModelDist, repeats: int = 200):
             results['Matrix ' + policy.name] = greedy_matrix_result.sum_value
             reset_model(jobs, servers)
 
-        # print(results)
         data.append(results)
 
     with open('greedy_results_{}.txt'.format(model_dist.file_name), 'w') as outfile:
@@ -88,13 +87,6 @@ def no_optimal_greedy_test(model_dist: ModelDist, repeats=200):
                         greedy_result.sum_value
                     reset_model(jobs, servers)
 
-        """
-        for policy in matrix_policies:
-            greedy_matrix_result: Result = matrix_greedy(jobs, servers, policy)
-            result['Matrix ' + policy.name] = greedy_matrix_result.sum_value
-            print("Result")
-            reset_model(jobs, servers)
-        """
         data.append(result)
 
     with open('{}_no_optimal_greedy_test.txt'.format(model_dist.file_name), 'w') as json_file:
@@ -109,5 +101,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist('models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
-    # optimal_greedy_test(basic_model_dist)
-    no_optimal_greedy_test(basic_model_dist)
+    optimal_greedy_test(basic_model_dist)
+    # no_optimal_greedy_test(basic_model_dist)
