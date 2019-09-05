@@ -151,7 +151,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results[mutant_job.name + job_diff(mutated_job, mutant_job)] = \
+                results['{} job: {}'.format(mutant_job.name, job_diff(mutated_job, mutant_job))] = \
                     (iterative_utilities[-1], iterative_prices[-1], mutant_job.utility(), job_utilities[mutated_job])
 
                 jobs.remove(mutant_job)
@@ -171,7 +171,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                     continue
 
                 iterative_prices, iterative_utilities = iterative_results
-                results[mutant_server.name + server_diff(mutated_server, mutant_server)] = \
+                results['{} server: {}'.format(mutant_server.name, server_diff(mutated_server, mutant_server))] = \
                     (iterative_utilities[-1], iterative_prices[-1],
                      mutant_server.revenue, server_revenue[mutated_server])
 

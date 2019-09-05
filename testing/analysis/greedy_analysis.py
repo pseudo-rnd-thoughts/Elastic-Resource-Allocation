@@ -1,7 +1,7 @@
 """Analysis of the greedy results"""
 
 from __future__ import annotations
-from typing import List
+from typing import List, Tuple
 
 import json
 import numpy as np
@@ -96,7 +96,7 @@ def plot_results(files, title):
     plt.show()
 
 
-def plot_relaxed(files: List[str]):
+def plot_relaxed(files: List[Tuple[str, str]]):
     """
     Plots the relaxed results
     :param files: A list of files
@@ -146,7 +146,16 @@ if __name__ == "__main__":
         ("../results/august_29/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
+    no_optimal_2_files = [
+        ("../results/september_5/basic_j12_s2_no_optimal_greedy_test.txt", "12 Jobs 2 Servers"),
+        ("../results/september_5/basic_j15_s3_no_optimal_greedy_test.txt", "15 Jobs 3 Servers"),
+        ("../results/september_5/basic_j25_s5_no_optimal_greedy_test.txt", "25 Jobs 5 Servers"),
+        ("../results/september_5/basic_j100_s20_no_optimal_greedy_test.txt", "100 Jobs 20 Servers"),
+        ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
+    ]
+
     # plot_results(optimal_files, "Greedy results with Optimal")
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
-    plot_relaxed(relaxed_files)
+    # plot_relaxed(relaxed_files)
+    plot_results(no_optimal_2_files, "Greedy results without Optimal")

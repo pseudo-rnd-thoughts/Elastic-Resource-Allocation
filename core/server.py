@@ -82,7 +82,7 @@ class Server(object):
         :param percent: The percentage to increase the max resources by
         """
         return Server('mutated {}'.format(self.name),
-                      int(max(1, self.max_storage - abs(gauss(0, self.max_storage/percent)))),
-                      int(max(1, self.max_computation - abs(gauss(0, self.max_computation/percent)))),
-                      int(max(1, self.max_bandwidth - abs(gauss(0, self.max_bandwidth/percent)))),
+                      int(max(1, self.max_storage - abs(gauss(0, self.max_storage * percent)))),
+                      int(max(1, self.max_computation - abs(gauss(0, self.max_computation * percent)))),
+                      int(max(1, self.max_bandwidth - abs(gauss(0, self.max_bandwidth * percent)))),
                       self.price_change)
