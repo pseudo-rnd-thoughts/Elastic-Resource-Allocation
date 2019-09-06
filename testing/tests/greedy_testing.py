@@ -62,8 +62,8 @@ def optimal_greedy_test(model_dist: ModelDist, repeats: int = 200):
 
         data.append(results)
 
-    with open('greedy_results_{}.txt'.format(model_dist.file_name), 'w') as outfile:
-        json.dump(data, outfile)
+    with open('{}_greedy_test.txt'.format(model_dist.file_name), 'w') as json_file:
+        json.dump(data, json_file)
     print(data)
 
 

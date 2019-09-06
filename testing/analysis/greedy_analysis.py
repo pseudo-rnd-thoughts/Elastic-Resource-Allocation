@@ -84,15 +84,11 @@ def plot_results(files, title):
 
     df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
 
-    g = sns.FacetGrid(df, col='model', height=6, aspect=0.75, sharex=False)
+    g = sns.FacetGrid(df, col='model', height=6, aspect=0.6, sharex=False)
     # noinspection PyUnresolvedReferences
     g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
-    """
-    titles = g.axes.flatten()
-    for pos, (_, model) in enumerate(files):
-        titles[pos].set_title(model)
-    """
-    g.fig.suptitle(title)
+    g.fig.subplots_adjust(top=.9)
+    g.fig.suptitle(title, size=16)
     plt.show()
 
 
@@ -154,7 +150,7 @@ if __name__ == "__main__":
         ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
     ]
 
-    # plot_results(optimal_files, "Greedy results with Optimal")
+    plot_results(optimal_files, "Greedy results with Optimal")
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
     # plot_relaxed(relaxed_files)
