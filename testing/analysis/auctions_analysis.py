@@ -36,7 +36,7 @@ def print_auction_results(files: List[str]):
             print()
 
 
-def print_mutated_auction_results(files: List[str]):
+def print_mutated_auction_results(files: List[Tuple[str, str]]):
     """
     Prints the mutated auction results
     :param files: The files to print
@@ -49,11 +49,9 @@ def print_mutated_auction_results(files: List[str]):
             for result in data:
                 no_mutate = result['no mutation'][0]
                 for name, values in result.items():
-                    if name != "no mutation":
-                        if no_mutate < values[0]:
-                            print("{} total utility increase from {} to {}".format(name, no_mutate, values[0]))
-                        if values[2] > values[3]:
-                            print("{:.10} utility increase from {:.3f} to {}".format(name, values[2], values[3]))
+                    if no_mutate < values[0]:
+                        print("{} total utility increase from {} to {}".format(name, no_mutate, values[0]))
+
 
 
 def print_multiple_auction_results(files: List[str]):
@@ -91,6 +89,34 @@ def plot_auction_results(files, title):
             for pos, results in enumerate(json_data):
                 for name, result in results.items():
                     data.append((model, pos, name, result[0], result[1]))
+
+    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
+    g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
+    # noinspection PyUnresolvedReferences
+    g = (g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df)
+         .set_titles("{col_name}").add_legend())
+    g.fig.subplots_adjust(top=0.9)
+    g.fig.suptitle(title)
+    plt.show()
+
+
+def plot_mutate_auction_results(files, title):
+    """
+    Plots the auction results
+    :param files: The files
+    :param title: The title
+    """
+    data = []
+    for file, model in files:
+        with open(file) as json_file:
+            json_data = json.load(json_file)
+
+            for pos, results in enumerate(json_data):
+                for name_pos, (name, result) in enumerate(results.items()):
+                    if name_pos == 0:
+                        data.append((model, pos, name, result[0], result[1]))
+                    else:
+                        data.append((model, pos, 'mutate ' + str(name_pos), result[0], result[1]))
 
     df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
     g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
@@ -142,9 +168,10 @@ if __name__ == "__main__":
     # plot_auction_results(single_price_auctions, "Single Price")
     # plot_auction_results(multi_price_auction, "Multiple Price")
 
-    plot_auction_results(mutated_price_auction, "Mutate")
-    plot_auction_results(mutated_price_2_auction, "Mutate 2")
-    plot_auction_results(mutated_price_3_auction, "Mutate 3")
+    # plot_mutate_auction_results(mutated_price_auction, "Mutate")
+    # plot_mutate_auction_results(mutated_price_2_auction, "Mutate 2")
+    # plot_mutate_auction_results(mutated_price_3_auction, "Mutate 3")
 
     # print_multiple_auction_results(multi_price_auction)
     # print_mutated_auction_results(mutated_price_auction[0][0])
+    print_mutated_auction_results(mutated_price_3_auction)

@@ -7,8 +7,8 @@ from tqdm import tqdm
 import sys
 from random import gauss, choice, random
 
-from core.job import Job
-from core.server import Server
+from core.job import Job, job_diff
+from core.server import Server, server_diff
 from core.model import reset_model, ModelDist, load_dist
 
 from auctions.vcg import vcg_auction
@@ -100,20 +100,6 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                               mutate_percent: float = 0.05, mutate_repeats: int = 10, job_mutate_percent: float = 0.75):
     """Servers are mutated by a percent and the iterative auction run again checking the utility difference"""
 
-    def job_diff(normal_job: Job, mutate_job: Job) -> str:
-        """The difference between two jobs"""
-        return "{}, {}, {}, {}, {}".format(mutate_job.required_storage - normal_job.required_storage,
-                                           mutate_job.required_computation - normal_job.required_computation,
-                                           mutate_job.required_results_data - normal_job.required_results_data,
-                                           normal_job.deadline - mutate_job.deadline,
-                                           normal_job.value - mutate_job.value)
-
-    def server_diff(normal_server: Server, mutate_server: Server) -> str:
-        """The difference between two severs"""
-        return "{}, {}, {}".format(normal_server.max_storage - mutate_server.max_storage,
-                                   normal_server.max_computation - mutate_server.max_computation,
-                                   normal_server.max_bandwidth - mutate_server.max_bandwidth)
-
     print("Mutate jobs and servers with iterative auctions for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
 
@@ -187,13 +173,28 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
     print(data)
 
 
+def test_mutate(model_dist):
+    jobs, servers = model_dist.create()
+
+    for job in jobs:
+        mutated_job = job.mutate(0.05)
+        print(job_diff(job, mutated_job))
+    print()
+
+    for server in servers:
+        mutated_server = server.mutate(0.05)
+        print(server_diff(server, mutated_server))
+
+
 if __name__ == "__main__":
     num_jobs = int(sys.argv[1])
     num_servers = int(sys.argv[2])
 
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
+    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
-    single_price_iterative_auction(basic_model_dist)
+    # single_price_iterative_auction(basic_model_dist)
     # multi_price_change_iterative_auction(basic_model_dist)
     # mutated_iterative_auction(basic_model_dist)
+
+    test_mutate(basic_model_dist)

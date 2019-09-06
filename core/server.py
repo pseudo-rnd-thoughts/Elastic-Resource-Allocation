@@ -86,3 +86,10 @@ class Server(object):
                       int(max(1, self.max_computation - abs(gauss(0, self.max_computation * percent)))),
                       int(max(1, self.max_bandwidth - abs(gauss(0, self.max_bandwidth * percent)))),
                       self.price_change)
+
+
+def server_diff(normal_server: Server, mutate_server: Server) -> str:
+    """The difference between two severs"""
+    return "{}, {}, {}".format(normal_server.max_storage - mutate_server.max_storage,
+                               normal_server.max_computation - mutate_server.max_computation,
+                               normal_server.max_bandwidth - mutate_server.max_bandwidth)

@@ -46,8 +46,12 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     """
     model = CpoModel("CDA")
 
-    allocations = {(job, server): model.binary_var(name='{} job {} server'.format(job.name, server.name))
-                   for job in jobs for server in servers}
+    allocations = {}
+    for job in jobs:
+        for server in servers:
+            allocations[(job, server)] = model.binary_var(name='{} job {} server'.format(job.name, server.name))
+
+        model.add(sum(allocations[(job, server)] for server in servers) <= 1)
 
     for server in servers:
         model.add(sum(job.required_storage * allocations[(job, server)] for job in jobs) <= server.max_storage)

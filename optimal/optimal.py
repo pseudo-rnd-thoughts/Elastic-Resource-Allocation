@@ -37,10 +37,9 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
         compute_speeds[job] = model.integer_var(min=1, name="{} compute speed".format(job.name))
         sending_speeds[job] = model.integer_var(min=1, name="{} sending speed".format(job.name))
         
-        model.add(job.required_storage * compute_speeds[job] * sending_speeds[job] +
-                  loading_speeds[job] * job.required_computation * sending_speeds[job] +
-                  loading_speeds[job] * compute_speeds[job] * job.required_results_data <=
-                  job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
+        model.add(job.required_storage / loading_speeds[job] +
+                  job.required_computation / compute_speeds[job] +
+                  job.required_results_data / sending_speeds[job] <= job.deadline)
         
         for server in servers:
             server_job_allocation[(job, server)] = model.binary_var(name="{} {}".format(job.name, server.name))
