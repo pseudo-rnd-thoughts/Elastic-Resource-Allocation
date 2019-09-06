@@ -11,6 +11,7 @@ from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
 
 from core.job import Job
 from core.server import Server
+from core.result import IterativeResult
 
 
 def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: bool = False):
@@ -104,7 +105,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 
 def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60,
-                      debug_allocation: bool = False, debug_results: bool = False) -> Tuple[List[float], List[float]]:
+                      debug_allocation: bool = False, debug_results: bool = False) -> IterativeResult:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
@@ -153,4 +154,4 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return iteration_price, iterative_value
+    return IterativeResult("Iterative", jobs, servers, iteration_price, iterative_value)

@@ -116,7 +116,6 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
         if iterative_results is None:
             print("Iterative result fail")
             continue
-
         iterative_prices, iterative_utilities = iterative_results
         results['no mutation'] = (iterative_utilities[-1], iterative_prices[-1], 0, 0)
         job_utilities = {job: job.utility() for job in jobs}
@@ -173,14 +172,63 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
     print(data)
 
 
+def all_mutated_iterative_auction(model_dist, percent=0.15):
+    """
+    Tests all of the mutations for an iterative auction
+    :param model_dist: A model distribution
+    :param percent: The percent change
+    """
+    data = {}
+    positive_percent, negative_percent = 1 + percent, 1 - percent
+
+    jobs, servers = model_dist.create()
+    for job in jobs:
+        for required_storage in range(job.required_storage, int(job.required_storage*positive_percent)):
+            for required_computation in range(job.required_computation, int(job.required_computation*positive_percent)):
+                for required_results_data in range(job.required_results_data, int(job.required_results_data*positive_percent)):
+                    for value in range(int(job.value*negative_percent), job.value+1):
+                        for deadline in range(int(job.deadline*negative_percent), job.deadline+1):
+                            mutated_job = Job('mutated ' + job.name, required_storage, required_computation,
+                                              required_results_data, value, deadline)
+
+                            jobs_prime = jobs.copy()
+                            jobs_prime.remove(job)
+                            jobs_prime.append(mutated_job)
+
+                            result = iterative_auction(jobs_prime, servers)
+                            data[job_diff(job, mutated_job)] = (result.sum_value, mutated_job.price)
+                            reset_model(jobs, servers)
+
+    for server in servers:
+        for max_storage in range(int(server.max_storage*negative_percent), server.max_storage+1):
+            for max_computation in range(int(server.max_computation*negative_percent), server.max_computation+1):
+                for max_bandwidth in range(int(server.max_bandwidth*negative_percent), server.max_bandwidth+1):
+                    for price_change in (1, 2, 5, 10):
+                        mutated_server = Server('mutated ' + server.name, max_storage, max_computation, max_bandwidth,
+                                                price_change)
+
+                        servers_prime = servers.copy()
+                        servers_prime.remove(server)
+                        servers_prime.append(mutated_server)
+
+                        result = iterative_auction(jobs, servers_prime)
+                        data[server_diff(server, mutated_server)] = (result.sum_value, mutated_server.revenue)
+                        reset_model(jobs, servers)
+
+    with open('mutate_iterative_auction_{}.txt'.format(model_dist.file_name), 'w') as json_file:
+        json.dump(data, json_file)
+    print(data)
+
+
 if __name__ == "__main__":
     num_jobs = int(sys.argv[1])
     num_servers = int(sys.argv[2])
+    pos = int(sys.argv[3])
 
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
+    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
-    single_price_iterative_auction(basic_model_dist)
+    # single_price_iterative_auction(basic_model_dist)
     # multi_price_change_iterative_auction(basic_model_dist)
     # mutated_iterative_auction(basic_model_dist)
-
+    all_mutated_iterative_auction(basic_model_dist)

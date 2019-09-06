@@ -56,6 +56,17 @@ class Result(object):
             print()
 
 
+class IterativeResult(Result):
+    """An iterative results"""
+
+    def __init__(self, algorithm_name: str, jobs: List[Job], servers: List[Server],
+                 iteration_price: List[float], iterative_value: List[float]):
+        super().__init__(algorithm_name, jobs, servers)
+
+        self.iterative_price = iteration_price
+        self.iterative_value = iterative_value
+
+
 class AlgorithmResults(object):
     """
     A class on the algorithm results
