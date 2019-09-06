@@ -3,6 +3,7 @@
 import sys
 import json
 
+from core.server import Server
 from core.model import load_dist, ModelDist
 from optimal.relaxed import generate_model as relaxed_generate_model
 from optimal.optimal import generate_model as optimal_generate_model
@@ -39,7 +40,11 @@ if __name__ == "__main__":
     data = []
     for _ in range(20):
         jobs, servers = model_dist.create()
-        relaxed_model, _, _, _, _ = relaxed_generate_model(jobs, servers)
+        super_server = Server('Super Server',
+                              sum(server.max_storage for server in servers),
+                              sum(server.max_computation for server in servers),
+                              sum(server.max_bandwidth for server in servers))
+        relaxed_model, _, _, _, _ = relaxed_generate_model(jobs, super_server)
         optimal_model, _, _, _, _ = optimal_generate_model(jobs, servers)
 
         optimal_results = []
