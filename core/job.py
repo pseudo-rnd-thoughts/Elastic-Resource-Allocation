@@ -50,7 +50,9 @@ class Job(object):
         assert self.required_storage * compute_speed * sending_speed + \
             loading_speed * self.required_computation * sending_speed + \
             loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed
+            self.deadline * loading_speed * compute_speed * sending_speed, \
+            "Job {} with loading {} compute {} sending {}" \
+                .format(self.name, loading_speed, compute_speed, sending_speed)
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed

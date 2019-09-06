@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 from typing import List, Dict, Optional
+from math import exp
 
 from core.job import Job
 from core.server import Server
@@ -15,19 +16,18 @@ from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
 class FixedJob(Job):
     """Job with a fixing resource usage speed"""
 
-    def __init__(self, job):
+    def __init__(self, job, servers):
         super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
         self.loading_speed, self.compute_speed, self.sending_speed = min(
             ((s, w, r)
-             for s in range(1, job.required_storage + 1)
-             for w in range(1, job.required_computation + 1)
-             for r in range(1, job.required_results_data + 1)
-             if job.required_storage / s + job.required_computation / w +
-             job.required_results_data / r <= job.deadline),
-            key=lambda x: sum(x))
-        # print("{} - s: {}, w: {}, r: {}".format(self.name, self.loading_speed, self.compute_speed, self.sending_speed))
+             for s in range(1, max(server.max_bandwidth for server in servers))
+             for w in range(1, max(server.max_computation for server in servers))
+             for r in range(1, max(server.max_bandwidth for server in servers))
+             if job.required_storage * w * r + s * job.required_computation * r +
+             s * w * job.required_results_data <= job.deadline * s * w * r),
+            key=lambda x: exp(x[0]) ** 3 + exp(x[1]) ** 3 + exp(x[2]) ** 3)
 
     def reset_allocation(self):
         """
@@ -56,7 +56,10 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
                       for job in jobs) <= server.max_storage)
 
     model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))
+
     model_solution = model.solve(TimeLimit=time_limit)
+    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+        return None
 
     for job in jobs:
         for server in servers:
@@ -78,7 +81,7 @@ def combinatorial_double_auction(jobs: List[Job], servers: List[Server], time: i
     :param debug_results: debug the results
     :return: the results
     """
-    fixed_jobs = [FixedJob(job) for job in jobs]
+    fixed_jobs = [FixedJob(job, servers) for job in jobs]
 
     if debug_running:
         print("Finding optimal")
@@ -91,7 +94,6 @@ def combinatorial_double_auction(jobs: List[Job], servers: List[Server], time: i
     job_prices: Dict[Job, float] = {}
     server_prices: Dict[Server, float] = {}
     allocated_jobs = [job for job in fixed_jobs if job.running_server]
-    print(allocated_jobs)
     job_info: Dict[Job, Server] = {job: job.running_server for job in fixed_jobs}
 
     if debug_running:
