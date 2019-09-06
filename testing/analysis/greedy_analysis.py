@@ -52,7 +52,7 @@ def print_optimal_percent_difference(files):
         print("Mean: {:6.3f}, Std: {:6.3f} - {}".format(np.mean(percent_difference), np.std(percent_difference), algo))
 
 
-def plot_results(files, title):
+def plot_results(files, title, aspect):
     """
     Plots the results from a file
     :param files: A file of results
@@ -84,11 +84,11 @@ def plot_results(files, title):
 
     df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
 
-    g = sns.FacetGrid(df, col='model', height=6, aspect=0.6, sharex=False)
+    g = sns.FacetGrid(df, col='model', height=6, aspect=aspect, sharex=False)
     # noinspection PyUnresolvedReferences
     g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
-    g.fig.subplots_adjust(top=.9)
     g.fig.suptitle(title, size=16)
+    g.fig.subplots_adjust(top=1)
     plt.show()
 
 
@@ -150,8 +150,9 @@ if __name__ == "__main__":
         ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
     ]
 
-    plot_results(optimal_files, "Greedy results with Optimal")
+    # plot_results(optimal_files, "Greedy results with Optimal", 1)
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
-    # plot_relaxed(relaxed_files)
-    plot_results(no_optimal_2_files, "Greedy results without Optimal")
+    plot_relaxed(relaxed_files)
+    # plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
+    # plot_results(optimal_2_files, "Greedy results with Optimal", 1)

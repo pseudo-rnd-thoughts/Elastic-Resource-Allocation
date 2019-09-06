@@ -1,7 +1,7 @@
 """Auction Analysis"""
 
 from __future__ import annotations
-from typing import List
+from typing import List, Tuple
 
 import json
 
@@ -112,17 +112,17 @@ def plot_mutate_auction_results(files, title):
             json_data = json.load(json_file)
 
             for pos, results in enumerate(json_data):
-                for name_pos, (name, result) in enumerate(results.items()):
-                    if name_pos == 0:
-                        data.append((model, pos, name, result[0], result[1]))
-                    else:
-                        data.append((model, pos, 'mutate ' + str(name_pos), result[0], result[1]))
+                for name, result in results.items():
+                    if name != 'no mutate':
+                        data.append((model, pos, 'mutate', result[0], result[2] - result[3]))
 
-    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
+                data.append((model, pos, 'no mutation', results['no mutation'][0], results['no mutation'][2] - results['no mutation'][3]))
+
+    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'utility diff'])
     g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
     # noinspection PyUnresolvedReferences
-    g = (g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df)
-         .set_titles("{col_name}").add_legend())
+    g = (g.map(sns.scatterplot, 'pos', 'utility diff', hue='name', data=df)
+         .set_titles("{col_name}").set_xlabels("").add_legend())
     g.fig.subplots_adjust(top=0.9)
     g.fig.suptitle(title)
     plt.show()
@@ -170,8 +170,8 @@ if __name__ == "__main__":
 
     # plot_mutate_auction_results(mutated_price_auction, "Mutate")
     # plot_mutate_auction_results(mutated_price_2_auction, "Mutate 2")
-    # plot_mutate_auction_results(mutated_price_3_auction, "Mutate 3")
+    plot_mutate_auction_results(mutated_price_3_auction, "Mutate")
 
     # print_multiple_auction_results(multi_price_auction)
     # print_mutated_auction_results(mutated_price_auction[0][0])
-    print_mutated_auction_results(mutated_price_3_auction)
+    # print_mutated_auction_results(mutated_price_3_auction)

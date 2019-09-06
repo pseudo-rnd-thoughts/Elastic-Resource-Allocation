@@ -173,19 +173,6 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
     print(data)
 
 
-def test_mutate(model_dist):
-    jobs, servers = model_dist.create()
-
-    for job in jobs:
-        mutated_job = job.mutate(0.05)
-        print(job_diff(job, mutated_job))
-    print()
-
-    for server in servers:
-        mutated_server = server.mutate(0.05)
-        print(server_diff(server, mutated_server))
-
-
 if __name__ == "__main__":
     num_jobs = int(sys.argv[1])
     num_servers = int(sys.argv[2])
@@ -193,8 +180,7 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist('../../models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
-    # single_price_iterative_auction(basic_model_dist)
+    single_price_iterative_auction(basic_model_dist)
     # multi_price_change_iterative_auction(basic_model_dist)
     # mutated_iterative_auction(basic_model_dist)
 
-    test_mutate(basic_model_dist)
