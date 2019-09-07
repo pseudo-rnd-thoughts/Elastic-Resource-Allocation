@@ -74,7 +74,7 @@ class UtilityPerResources(ValueDensity):
 
     def evaluate(self, job: Job) -> float:
         """Value density function"""
-        return job.utility / self.resource_func.evaluate(job)
+        return job.value / self.resource_func.evaluate(job)
 
 
 class DeadlinePerResources(ValueDensity):
@@ -98,7 +98,7 @@ class UtilityDeadlinePerResource(ValueDensity):
 
     def evaluate(self, job: Job) -> float:
         """Value density function"""
-        return job.utility * job.deadline / self.resource_func.evaluate(job)
+        return job.value * job.deadline / self.resource_func.evaluate(job)
 
 
 class Random(ValueDensity):

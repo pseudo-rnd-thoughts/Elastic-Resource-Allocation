@@ -7,10 +7,10 @@ from core.job import Job
 from core.server import Server
 from core.result import Result
 
-from greedy_matrix.matrix_policy import MatrixPolicy
+from greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
-def allocate_resources(job: Job, server: Server, value: MatrixPolicy):
+def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy):
     return max(((value.evaluate(job, server, s, w, r), s, w, r)
                 for s in range(1, server.available_bandwidth + 1)
                 for w in range(1, server.available_computation + 1)
@@ -19,7 +19,7 @@ def allocate_resources(job: Job, server: Server, value: MatrixPolicy):
                 s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
 
 
-def matrix_greedy(jobs: List[Job], servers: List[Server], matrix_policy: MatrixPolicy):
+def matrix_greedy(jobs: List[Job], servers: List[Server], matrix_policy: AllocationValuePolicy):
     unallocated_jobs = jobs.copy()
     while unallocated_jobs:
         value_matrix = []

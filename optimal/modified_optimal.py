@@ -7,7 +7,6 @@ from docplex.cp.model import CpoModel
 
 from core.job import Job
 from core.server import Server
-
 from core.model import load_dist, ModelDist
 
 
@@ -50,10 +49,10 @@ def optimal_mp_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum((loading_speeds[job] + sending_speeds[job]) * server_job_allocation[(server, job)]
                       for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
 
     model.print_information()
-    model_solution = model.solve()
+    model.solve()
 
 
 def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
@@ -89,11 +88,12 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum(server_job_allocation[(server, job)] for server in servers) <= 1)
         
     for server in servers:
-        model.add(sum(job.required_storage * server_job_allocation[(server, job)] for job in jobs) <= server.max_storage)
+        model.add(sum(job.required_storage * server_job_allocation[(server, job)]
+                      for job in jobs) <= server.max_storage)
         model.add(sum(compute_speeds[job] for job in jobs) <= server.max_computation)
         model.add(sum(communication_speeds[job] for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
     
     model.print_information()
     model_solution = model.solve()
@@ -102,10 +102,10 @@ def modified_mp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
 
 def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
     """
-
-    :param jobs:
-    :param servers:
-    :return:
+    Modified CP optimal algorithm
+    :param jobs: A list of jobs
+    :param servers: A list of servers
+    :return: The model solution
     """
     model = CpoModel("Modified CP Optimal")
 
@@ -136,7 +136,7 @@ def modified_cp_optimal_algorithm(jobs: List[Job], servers: List[Server]):
         model.add(sum(communication_speeds[job] * server_job_allocation[(server, job)]
                       for job in jobs) <= server.max_bandwidth)
 
-    model.maximize(sum(job.utility * server_job_allocation[(server, job)] for job in jobs for server in servers))
+    model.maximize(sum(job.value * server_job_allocation[(server, job)] for job in jobs for server in servers))
 
     model.print_information()
     model_solution = model.solve()
@@ -148,5 +148,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist('../models/basic.model')
     model_dist = ModelDist(model_name, job_dist, 15, server_dist, 3)
 
-    jobs, servers = model_dist.create()
-    modified_mp_optimal_algorithm(jobs, servers)
+    _jobs, _servers = model_dist.create()
+    modified_mp_optimal_algorithm(_jobs, _servers)

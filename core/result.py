@@ -18,10 +18,9 @@ class Result(object):
 
         self.show_money = show_money
 
-        self.total_utility = sum(sum(job.utility for job in server.allocated_jobs) for server in servers)
-        self.percentage_total_utility = sum(job.utility for job in jobs if job.running_server) / \
-            sum(job.utility for job in jobs)
-        self.percentage_jobs_allocated = sum(1 for job in jobs if job.running_server) / len(jobs)
+        self.sum_value = sum(sum(job.value for job in server.allocated_jobs) for server in servers)
+        self.percentage_value = sum(job.value for job in jobs if job.running_server) / sum(job.value for job in jobs)
+        self.percentage_jobs = sum(1 for job in jobs if job.running_server) / len(jobs)
 
         self.total_price = sum(job.price for job in jobs)
 
@@ -32,17 +31,16 @@ class Result(object):
         """
         print("Algorithm {}".format(self.algorithm_name))
         if self.show_money:
-            print("Total money: {}, percentage jobs: {.3f}\n".format(self.total_price, self.percentage_jobs_allocated))
+            print("Total money: {}, percentage jobs: {.3f}\n".format(self.total_price, self.percentage_jobs))
         else:
             print("Total utility: {}, Percentage utility: {:.3f}, percentage jobs: {:.3f}\n"
-                  .format(self.total_utility, self.percentage_total_utility, self.percentage_jobs_allocated))
+                  .format(self.sum_value, self.percentage_value, self.percentage_jobs))
 
         for server in servers:
             if self.show_money:
-                print("Server - {}:  Money - {}".format(server.name, sum(job.price for job in server.allocated_jobs)))
+                print("Server - {}:  Revenue - {}".format(server.name, sum(job.price for job in server.allocated_jobs)))
             else:
-                print("Server - {}:  Utility - {}".format(server.name,
-                                                          sum(job.utility for job in server.allocated_jobs)))
+                print("Server - {}:  Value - {}".format(server.name, sum(job.value for job in server.allocated_jobs)))
             print("\tStorage used: {:.3f}"
                   .format(sum(job.loading_speed for job in server.allocated_jobs) / server.max_storage))
             print("\tComputation used: {:.3f}"
@@ -67,18 +65,18 @@ class AlgorithmResults(object):
     def __init__(self, results: List[Result], optimal_results: List[Result]):
         self.algorithm_name = results[0].algorithm_name
 
-        self.utility = (float(result.total_utility) for result in results)
-        self.percentage_utility = (float(result.percentage_total_utility) for result in results)
-        self.percentage_jobs = (float(result.percentage_jobs_allocated) for result in results)
+        self.utility = (float(result.sum_value) for result in results)
+        self.percentage_utility = (float(result.percentage_value) for result in results)
+        self.percentage_jobs = (float(result.percentage_jobs) for result in results)
 
-        self.mean_utility = np.mean([result.total_utility for result in results])
-        self.std_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+        self.mean_utility = np.mean([result.sum_value for result in results])
+        self.std_utility = np.std([result.percentage_value - optimal.percentage_value
                                    for result, optimal in zip(results, optimal_results)])
-        self.mean_percentage_utility = np.mean([result.percentage_total_utility for result in results])
-        self.std_percentage_utility = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+        self.mean_percentage_utility = np.mean([result.percentage_value for result in results])
+        self.std_percentage_utility = np.std([result.percentage_value - optimal.percentage_value
                                               for result, optimal in zip(results, optimal_results)])
-        self.mean_percentage_jobs = np.mean([result.percentage_jobs_allocated for result in results])
-        self.std_percentage_jobs = np.std([result.percentage_total_utility - optimal.percentage_total_utility
+        self.mean_percentage_jobs = np.mean([result.percentage_jobs for result in results])
+        self.std_percentage_jobs = np.std([result.percentage_value - optimal.percentage_value
                                            for result, optimal in zip(results, optimal_results)])
 
 
@@ -89,12 +87,12 @@ def print_job_values(job_values: List[Tuple[Job, float]]):
     """
     print("\t\tJobs")
     max_job_id_len = max(len(job.name) for job, value in job_values)+1
-    print("{:<{id_len}}| Value | Storage | Compute | models | Utility | Deadline ".format("Id", id_len=max_job_id_len))
+    print("{:<{id_len}}| Value | Storage | Compute | models | Value | Deadline ".format("Id", id_len=max_job_id_len))
     for job, value in job_values:
         # noinspection PyStringFormat
         print("{:<{id_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^9.3f}|{:^10}"
               .format(job.name, value, job.required_storage, job.required_computation,
-                      job.required_results_data, job.utility, job.deadline, id_len=max_job_id_len))
+                      job.required_results_data, job.value, job.deadline, id_len=max_job_id_len))
     print()
 
 

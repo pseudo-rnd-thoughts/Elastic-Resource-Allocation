@@ -53,7 +53,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
-    job_price = server.revenue - max_server_profit + server.epsilon
+    job_price = server.revenue - max_server_profit + server.price_change
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
@@ -118,31 +118,31 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
     """
     unallocated_jobs = jobs.copy()
     iteration_price: List[float] = []
-    iteration_utility: List[float] = []
+    iterative_value: List[float] = []
 
     while len(unallocated_jobs):
-        job = choice(unallocated_jobs)
+        job: Job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
             jobs = min((evaluate_job_price(job, server, time_limit) for server in servers),
                        key=lambda bid: bid[0])
 
-        if job_price <= job.utility:
+        if job_price <= job.value:
             if debug_allocation:
                 print("Adding job {} to server {} with price {}".format(job.name, server.name, job_price))
             allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs)
             unallocated_jobs.remove(job)
         else:
             if debug_allocation:
-                print("Removing Job {} from the unallocated job as the min price is {} and job utility is {}"
-                      .format(job.name, job_price, job.utility))
+                print("Removing Job {} from the unallocated job as the min price is {} and job value is {}"
+                      .format(job.name, job_price, job.value))
             unallocated_jobs.remove(job)
 
         if debug_allocation:
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
 
         iteration_price.append(sum(server.revenue for server in servers))
-        iteration_utility.append(sum(server.value for server in servers))
+        iterative_value.append(sum(server.value for server in servers))
 
     if debug_results:
         print("It is finished, number of iterations: {} with social welfare: {}"
@@ -152,4 +152,4 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return iteration_price, iteration_utility
+    return iteration_price, iterative_value
