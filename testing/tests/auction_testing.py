@@ -237,7 +237,7 @@ if __name__ == "__main__":
     num_servers = int(sys.argv[2])
     pos = int(sys.argv[3])
 
-    model_name, job_dist, server_dist = load_dist('../../models/basic.model')
+    model_name, job_dist, server_dist = load_dist('models/basic.model')
     basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
 
     # single_price_iterative_auction(basic_model_dist)
