@@ -16,13 +16,13 @@ from core.server import Server
 context.log_output = None
 
 
-def generate_model(jobs: List[Job], super_server: Server) -> Tuple[CpoModel, Dict[Job, CpoVariable],
+def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Dict[Job, CpoVariable],
                                                                    Dict[Job, CpoVariable], Dict[Job, CpoVariable],
-                                                                   Dict[Job, CpoVariable]]:
+                                                                   Dict[Job, CpoVariable], Server]:
     """
     Generates a model for the algorithm
     :param jobs: The list of jobs
-    :param super_server: The super server
+    :param servers: The list of servers
     :return: The generated model and the variables
     """
     model = CpoModel("Server Job Allocation")
@@ -31,6 +31,11 @@ def generate_model(jobs: List[Job], super_server: Server) -> Tuple[CpoModel, Dic
     compute_speeds: Dict[Job, CpoVariable] = {}
     sending_speeds: Dict[Job, CpoVariable] = {}
     job_allocation: Dict[Job, CpoVariable] = {}
+
+    super_server = Server('Super Server',
+                          sum(server.max_storage for server in servers),
+                          sum(server.max_computation for server in servers),
+                          sum(server.max_bandwidth for server in servers))
 
     for job in jobs:
         loading_speeds[job] = model.integer_var(min=1, max=super_server.max_bandwidth,
@@ -54,7 +59,7 @@ def generate_model(jobs: List[Job], super_server: Server) -> Tuple[CpoModel, Dic
 
     model.maximize(sum(job.value * job_allocation[job] for job in jobs))
 
-    return model, loading_speeds, compute_speeds, sending_speeds, job_allocation
+    return model, loading_speeds, compute_speeds, sending_speeds, job_allocation, super_server
 
 
 def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, loading_speeds: Dict[Job, CpoVariable],
@@ -106,12 +111,8 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server],
     :param debug_time: If to print the time taken
     :return: The result from optimal solution
     """
-    super_server = Server('Super Server',
-                          sum(server.max_storage for server in servers),
-                          sum(server.max_computation for server in servers),
-                          sum(server.max_bandwidth for server in servers))
 
-    model, loading_speeds, compute_speeds, sending_speed, job_allocation = generate_model(jobs, super_server)
+    model, loading_speeds, compute_speeds, sending_speed, job_allocation, super_server = generate_model(jobs, servers)
 
     return run_cplex_model(model, jobs, super_server, loading_speeds, compute_speeds, sending_speed, job_allocation,
                            time_limit, debug_time)

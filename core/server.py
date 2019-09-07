@@ -90,6 +90,7 @@ class Server(object):
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:
     """The difference between two severs"""
-    return "{}, {}, {}".format(normal_server.max_storage - mutate_server.max_storage,
-                               normal_server.max_computation - mutate_server.max_computation,
-                               normal_server.max_bandwidth - mutate_server.max_bandwidth)
+    return "{}: {}, {}, {}".format(normal_server.name,
+                                   normal_server.max_storage - mutate_server.max_storage,
+                                   normal_server.max_computation - mutate_server.max_computation,
+                                   normal_server.max_bandwidth - mutate_server.max_bandwidth)

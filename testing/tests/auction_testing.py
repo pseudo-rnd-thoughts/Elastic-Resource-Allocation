@@ -183,9 +183,9 @@ def all_mutated_iterative_auction(model_dist, percent=0.15):
 
     jobs, servers = model_dist.create()
     for job in jobs:
-        for required_storage in range(job.required_storage, int(job.required_storage*positive_percent)):
-            for required_computation in range(job.required_computation, int(job.required_computation*positive_percent)):
-                for required_results_data in range(job.required_results_data, int(job.required_results_data*positive_percent)):
+        for required_storage in range(job.required_storage, int(job.required_storage*positive_percent)+1):
+            for required_computation in range(job.required_computation, int(job.required_computation*positive_percent)+1):
+                for required_results_data in range(job.required_results_data, int(job.required_results_data*positive_percent)+1):
                     for value in range(int(job.value*negative_percent), job.value+1):
                         for deadline in range(int(job.deadline*negative_percent), job.deadline+1):
                             mutated_job = Job('mutated ' + job.name, required_storage, required_computation,
@@ -196,7 +196,13 @@ def all_mutated_iterative_auction(model_dist, percent=0.15):
                             jobs_prime.append(mutated_job)
 
                             result = iterative_auction(jobs_prime, servers)
-                            data[job_diff(job, mutated_job)] = (result.sum_value, mutated_job.price)
+                            if result is not None:
+                                result_data = result.store()
+                                result_data['job price'] = mutated_job.price
+                                data[job_diff(job, mutated_job)] = result_data
+                            else:
+                                data[job_diff(job, mutated_job)] = None
+
                             reset_model(jobs, servers)
 
     for server in servers:
@@ -212,10 +218,16 @@ def all_mutated_iterative_auction(model_dist, percent=0.15):
                         servers_prime.append(mutated_server)
 
                         result = iterative_auction(jobs, servers_prime)
-                        data[server_diff(server, mutated_server)] = (result.sum_value, mutated_server.revenue)
+                        if result is not None:
+                            result_data = result.store()
+                            result_data['server revenue'] = mutated_server.revenue
+                            data[server_diff(server, mutated_server)] = result_data
+                        else:
+                            data[server_diff(server, mutated_server)] = None
+
                         reset_model(jobs, servers)
 
-    with open('mutate_iterative_auction_{}.txt'.format(model_dist.file_name), 'w') as json_file:
+    with open('all_mutations_iterative_auction_{}.txt'.format(model_dist.file_name), 'w') as json_file:
         json.dump(data, json_file)
     print(data)
 

@@ -24,9 +24,9 @@ def time_test(model: CpoModel, time_limit: int, name: str):
                   model_solution.get_objective_values()))
 
     if model_solution.get_objective_values() is None:
-        return None
+        return None, "{} secs".format(round(model_solution.get_solve_time(), 2))
     else:
-        return model_solution.get_objective_values()[0]
+        return model_solution.get_objective_values()[0], "{} secs".format(round(model_solution.get_solve_time(), 2))
 
 
 if __name__ == "__main__":
@@ -40,23 +40,18 @@ if __name__ == "__main__":
     data = []
     for _ in range(20):
         jobs, servers = model_dist.create()
-        super_server = Server('Super Server',
-                              sum(server.max_storage for server in servers),
-                              sum(server.max_computation for server in servers),
-                              sum(server.max_bandwidth for server in servers))
-        relaxed_model, _, _, _, _ = relaxed_generate_model(jobs, super_server)
+
+        relaxed_model, _, _, _, _, _ = relaxed_generate_model(jobs, servers)
         optimal_model, _, _, _, _ = optimal_generate_model(jobs, servers)
 
-        optimal_results = []
-        relaxed_results = []
+        time_data = {}
         for time in (10, 60, 5 * 60, 10 * 60):
             relaxed_value = time_test(relaxed_model, time, 'Relax')
             optimal_value = time_test(optimal_model, time, 'Optimal')
 
-            relaxed_results.append(relaxed_value)
-            optimal_results.append(optimal_value)
+            time_data["{} sec".format(time)] = {'relaxed': relaxed_value, 'optimal': optimal_value}
 
-        data.append({'relaxed': relaxed_results, 'optimal': optimal_results})
+        data.append(time_data)
 
     with open('relaxed_results_j{}_s{}.txt'.format(num_jobs, num_servers), 'w') as outfile:
         json.dump(data, outfile)

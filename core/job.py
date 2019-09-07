@@ -92,8 +92,9 @@ class Job(object):
 
 def job_diff(normal_job: Job, mutate_job: Job) -> str:
     """The difference between two jobs"""
-    return "{}, {}, {}, {}, {}".format(mutate_job.required_storage - normal_job.required_storage,
-                                       mutate_job.required_computation - normal_job.required_computation,
-                                       mutate_job.required_results_data - normal_job.required_results_data,
-                                       normal_job.deadline - mutate_job.deadline,
-                                       normal_job.value - mutate_job.value)
+    return "{}: {}, {}, {}, {}, {}".format(normal_job.name,
+                                           mutate_job.required_storage - normal_job.required_storage,
+                                           mutate_job.required_computation - normal_job.required_computation,
+                                           mutate_job.required_results_data - normal_job.required_results_data,
+                                           normal_job.deadline - mutate_job.deadline,
+                                           normal_job.value - mutate_job.value)
