@@ -21,11 +21,16 @@ Incentive Compatibility and Budget Balance. We believe that our iterative auctio
 and possibly economic efficient however not incentive compatible. \\
 
 \subsubsection{Proving budget balance for auction}
-%% TODO
+Budget balance is that the sum of revenue and the sum of prices is zero, as our algorithm doesnt require an auctioneer
+then budget balance is true. The algorithm can be run with a centralised auctioneer or in a decentralised manner such that
+jobs don't need to be aware of each others existence with a job only directly communicating with the server.
 \subsubsection{Proving individual rational}
-%% TODO
+The utility of all partitions are non-negative therefore the sum of all server revenue $\geq$ the sum of revenue without
+jobs. So the revenue of a job must be non-negative. %% TODO
 \subsubsection{Economic efficient and Incentive compatible}
-%% TODO
+Our algorithm is not economically efficient or incentive compatible due a server only considering itself in choosing its
+price and is unaware of the price being charged by other servers. Because of this then the allocation of jobs to server
+may not be optimal resulting in a suboptimal economic efficient however in over 50%
 
 \subsection{Iterative Auction algorithm}\label{subsec:iterative-auction-algorithm}
 \begin{lstlisting}[language=Python]
@@ -42,15 +47,18 @@ while len(unallocated_jobs):
             # Uses the allocation info to create the new allocation on the selected server
             allocate_job(job_price, job, allocation_info, unallocated_jobs)
         else:
-            # Remove job as the job can be run ever at a price lower than the job's true utility
+            # Remove job as the job can be run ever at a price lower than the job's value utility
             unallocated_jobs.remove(job)
 \end{lstlisting}
 
 \section{Iterative Auction Results}\label{sec:auctions-results}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{../results/auction_utility_convergence.png}
-    \caption{Auction Utility Convergence}
+    \includegraphics[width=1\linewidth]{./images/single_price_auction_results.png}
+    \caption{Multiple Price auction results}
 \end{figure}
-
-%% TODO iterative auctions price difference to vcg
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{./images/multiple_price_auction_results.png}
+    \caption{Multiple Price auction results}
+\end{figure}

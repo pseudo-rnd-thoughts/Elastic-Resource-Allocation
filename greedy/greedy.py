@@ -38,7 +38,7 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
 
         # If an optimal server is found then calculate the bid allocation function
         if allocated_server:
-            value, (s, w, r) = resource_allocation_policy.allocate(job, allocated_server)
+            s, w, r = resource_allocation_policy.allocate(job, allocated_server)
             job.allocate(s, w, r, allocated_server)
             allocated_server.allocate_job(job)
 

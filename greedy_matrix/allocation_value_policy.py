@@ -12,9 +12,10 @@ class AllocationValuePolicy(object):
     """
     Allocation Value Policy
     """
+
     def __init__(self, name: str):
         self.name: str = name
-    
+
     @abstractmethod
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
         """
@@ -33,71 +34,81 @@ class SumServerUsage(AllocationValuePolicy):
     """
     Sum of servers usage after allocation
     """
+
     def __init__(self):
         super().__init__("Sum Usage")
-    
+
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
+        """Evaluates"""
         return job.value * \
-               ((server.available_storage - job.required_storage) +
-                (server.available_computation - compute_speed) +
-                (server.available_bandwidth - (loading_speed + sending_speed)))
+            ((server.available_storage - job.required_storage) +
+             (server.available_computation - compute_speed) +
+             (server.available_bandwidth - (loading_speed + sending_speed)))
 
 
 class SumServerPercentage(AllocationValuePolicy):
     """
     Sum of server usage percentage of available resources
     """
+
     def __init__(self):
         super().__init__("Sum Percentage")
-    
+
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
+        """Evaluates"""
         return job.value * \
-               ((server.available_storage - job.required_storage) / server.available_storage +
-                (server.available_computation - compute_speed) / server.available_computation +
-                (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
+            ((server.available_storage - job.required_storage) / server.available_storage +
+             (server.available_computation - compute_speed) / server.available_computation +
+             (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
 
 
 class SumServerMaxPercentage(AllocationValuePolicy):
     """
     Sum of server usage percentage of max resources
     """
+
     def __init__(self):
         super().__init__("Sum Percentage")
-    
+
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
+        """Evaluates"""
         return job.value * \
-               ((server.available_storage - job.required_storage) / server.max_storage +
-                (server.available_computation - compute_speed) / server.max_computation +
-                (server.available_bandwidth - (loading_speed + sending_speed)) / server.max_bandwidth)
-    
+            ((server.available_storage - job.required_storage) / server.max_storage +
+             (server.available_computation - compute_speed) / server.max_computation +
+             (server.available_bandwidth - (loading_speed + sending_speed)) / server.max_bandwidth)
+
 
 class SumExpServerPercentage(AllocationValuePolicy):
     """
     Sum of exponential usage percentage of available resources
     """
+
     def __init__(self):
         super().__init__("Sum Exp Percentage")
-    
+
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
+        """Evaluates"""
         return job.value * \
-               (exp((server.available_storage - job.required_storage) / server.available_storage) +
-                exp((server.available_computation - compute_speed) / server.available_computation) +
-                exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
+            (exp((server.available_storage - job.required_storage) / server.available_storage) +
+             exp((server.available_computation - compute_speed) / server.available_computation) +
+             exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
 
 
 class SumExp3ServerPercentage(AllocationValuePolicy):
     """
     Sum of the cube of the exponential usage percentage of available resources
     """
+
     def __init__(self):
         super().__init__("Sum Exp^3 Percentage")
-    
+
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int):
+        """Evaluate"""
         return job.value * \
-               (exp(((server.available_storage - job.required_storage) / server.available_storage) ** 3) +
-                exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
-                exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
-    
+            (exp(((server.available_storage - job.required_storage) / server.available_storage) ** 3) +
+             exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
+             exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
+
 
 policies = (
     SumServerUsage(),

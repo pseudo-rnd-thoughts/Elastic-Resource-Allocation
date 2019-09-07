@@ -50,7 +50,9 @@ class Job(object):
         assert self.required_storage * compute_speed * sending_speed + \
             loading_speed * self.required_computation * sending_speed + \
             loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed
+            self.deadline * loading_speed * compute_speed * sending_speed, \
+            "Job {} with loading {} compute {} sending {}" \
+                .format(self.name, loading_speed, compute_speed, sending_speed)
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed
@@ -80,9 +82,19 @@ class Job(object):
         Mutate the server by a percentage
         :param percent: The percentage to increase the max resources by
         """
-        return Job('mutated_{}'.format(self.name),
-                   self.required_storage + abs(gauss(0, self.required_storage / percent)),
-                   self.required_computation + abs(gauss(0, self.required_computation / percent)),
-                   self.required_results_data + abs(gauss(0, self.required_results_data / percent)),
-                   self.deadline + abs(gauss(0, self.required_results_data / percent)),
-                   self.value + abs(gauss(0, self.required_results_data / percent)))
+        return Job('mutated {}'.format(self.name),
+                   int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
+                   int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
+                   int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
+                   max(1, int(self.deadline - abs(gauss(0, self.required_results_data * percent)))),
+                   max(1, int(self.value - abs(gauss(0, self.required_results_data * percent)))))
+
+
+def job_diff(normal_job: Job, mutate_job: Job) -> str:
+    """The difference between two jobs"""
+    return "{}: {}, {}, {}, {}, {}".format(normal_job.name,
+                                           mutate_job.required_storage - normal_job.required_storage,
+                                           mutate_job.required_computation - normal_job.required_computation,
+                                           mutate_job.required_results_data - normal_job.required_results_data,
+                                           normal_job.deadline - mutate_job.deadline,
+                                           normal_job.value - mutate_job.value)

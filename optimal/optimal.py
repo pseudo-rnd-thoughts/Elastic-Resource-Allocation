@@ -31,19 +31,22 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
     compute_speeds: Dict[Job, CpoVariable] = {}
     sending_speeds: Dict[Job, CpoVariable] = {}
     server_job_allocation: Dict[Tuple[Job, Server], CpoVariable] = {}
+
+    max_bandwidth, max_computation = max(server.max_bandwidth for server in servers), \
+                                     max(server.max_computation for server in servers)
     
     for job in jobs:
-        loading_speeds[job] = model.integer_var(min=1, name="{} loading speed".format(job.name))
-        compute_speeds[job] = model.integer_var(min=1, name="{} compute speed".format(job.name))
-        sending_speeds[job] = model.integer_var(min=1, name="{} sending speed".format(job.name))
+        loading_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(job.name))
+        compute_speeds[job] = model.integer_var(min=1, max=max_computation, name="{} compute speed".format(job.name))
+        sending_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(job.name))
         
-        model.add(job.required_storage * compute_speeds[job] * sending_speeds[job] +
-                  loading_speeds[job] * job.required_computation * sending_speeds[job] +
-                  loading_speeds[job] * compute_speeds[job] * job.required_results_data <=
-                  job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
+        model.add(job.required_storage / loading_speeds[job] +
+                  job.required_computation / compute_speeds[job] +
+                  job.required_results_data / sending_speeds[job] <= job.deadline)
         
         for server in servers:
-            server_job_allocation[(job, server)] = model.binary_var(name="{} {}".format(job.name, server.name))
+            server_job_allocation[(job, server)] = model.binary_var(name="Job {} Server {}".format(job.name,
+                                                                                                   server.name))
         
         model.add(sum(server_job_allocation[(job, server)] for server in servers) <= 1)
     
@@ -104,6 +107,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
                 r = model_solution.get_value(sending_speeds[job])
                 job.allocate(s, w, r, server)
                 server.allocate_job(job)
+
     return Result("Optimal", jobs, servers)
 
 
