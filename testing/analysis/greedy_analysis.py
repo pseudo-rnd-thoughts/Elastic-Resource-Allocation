@@ -57,6 +57,7 @@ def plot_results(files, title, aspect):
     Plots the results from a file
     :param files: A file of results
     :param title: The graph title
+    :param aspect: The aspect of the graph
     """
     data = []
     for file, model in files:

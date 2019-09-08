@@ -172,17 +172,25 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
     print(data)
 
 
-def all_mutated_iterative_auction(model_dist, percent=0.15):
+def all_mutated_iterative_auction(model_dist, percent=0.15, num_mutated_jobs=5):
     """
     Tests all of the mutations for an iterative auction
     :param model_dist: A model distribution
     :param percent: The percent change
+    :param num_mutated_jobs: The number of jobs to mutate
     """
     data = {}
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     jobs, servers = model_dist.create()
-    for job in jobs:
+
+    result = iterative_auction(jobs, servers)
+    data['no mutate'] = result.store()
+
+    unmutated_jobs = jobs.copy()
+    for _ in range(num_mutated_jobs):
+        job = choice(unmutated_jobs)
+        unmutated_jobs.remove(job)
         for required_storage in range(job.required_storage, int(job.required_storage*positive_percent)+1):
             for required_computation in range(job.required_computation, int(job.required_computation*positive_percent)+1):
                 for required_results_data in range(job.required_results_data, int(job.required_results_data*positive_percent)+1):
@@ -196,12 +204,9 @@ def all_mutated_iterative_auction(model_dist, percent=0.15):
                             jobs_prime.append(mutated_job)
 
                             result = iterative_auction(jobs_prime, servers)
-                            if result is not None:
-                                result_data = result.store()
-                                result_data['job price'] = mutated_job.price
-                                data[job_diff(job, mutated_job)] = result_data
-                            else:
-                                data[job_diff(job, mutated_job)] = None
+                            result_data = result.store()
+                            result_data['job price'] = mutated_job.price
+                            data[job_diff(job, mutated_job)] = result_data
 
                             reset_model(jobs, servers)
 
