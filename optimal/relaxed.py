@@ -17,8 +17,8 @@ context.log_output = None
 
 
 def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Dict[Job, CpoVariable],
-                                                                   Dict[Job, CpoVariable], Dict[Job, CpoVariable],
-                                                                   Dict[Job, CpoVariable], Server]:
+                                                                    Dict[Job, CpoVariable], Dict[Job, CpoVariable],
+                                                                    Dict[Job, CpoVariable], Server]:
     """
     Generates a model for the algorithm
     :param jobs: The list of jobs

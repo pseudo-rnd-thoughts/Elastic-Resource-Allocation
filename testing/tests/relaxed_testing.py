@@ -3,7 +3,6 @@
 import sys
 import json
 
-from core.server import Server
 from core.model import load_dist, ModelDist
 from optimal.relaxed import generate_model as relaxed_generate_model
 from optimal.optimal import generate_model as optimal_generate_model

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from random import choice
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from math import inf
 
 from docplex.cp.model import CpoModel

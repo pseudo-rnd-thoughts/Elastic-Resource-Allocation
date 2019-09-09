@@ -7,19 +7,20 @@ import sys
 from tqdm import tqdm
 
 from core.model import reset_model, ModelDist, load_dist
-from core.result import Result
 
 from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
+
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
+
 from greedy_matrix.matrix_greedy import matrix_greedy
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 
 
-def optimal_greedy_test(model_dist: ModelDist, repeats: int = 200):
+def optimal_greedy_test(model_dist: ModelDist, repeats: int = 1):
     """
     Greedy test with optimal found
     :param model_dist: The model distribution

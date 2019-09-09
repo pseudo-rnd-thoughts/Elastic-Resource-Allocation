@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import exp
-from typing import Tuple, Generator
+from typing import Tuple
 
 from core.job import Job
 from core.server import Server
