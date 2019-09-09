@@ -137,7 +137,7 @@ if __name__ == "__main__":
         ("../results/august_30/basic_j25_s5_no_optimal_greedy_5.txt", "5")
     ]
 
-    relaxed_files = [
+    relaxed_1_files = [
         ("../results/august_29/relaxed_results_j12_s2.txt", "12 Jobs 2 Servers"),
         ("../results/august_29/relaxed_results_j15_s3.txt", "15 Jobs 3 Servers"),
         ("../results/august_29/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
@@ -151,9 +151,16 @@ if __name__ == "__main__":
         ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
     ]
 
+    relaxed_2_files = [
+        ("../results/september_6/relaxed_results_j12_s2.txt", "12 Jobs 2 Servers"),
+        ("../results/september_6/relaxed_results_j15_s3.txt", "15 Jobs 3 Servers"),
+        ("../results/september_6/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
+    ]
+
     # plot_results(optimal_files, "Greedy results with Optimal", 1)
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
-    plot_relaxed(relaxed_files)
+    # plot_relaxed(relaxed_1_files)
     # plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
     # plot_results(optimal_2_files, "Greedy results with Optimal", 1)
+    plot_relaxed(relaxed_2_files)

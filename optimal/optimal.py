@@ -33,7 +33,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
     server_job_allocation: Dict[Tuple[Job, Server], CpoVariable] = {}
 
     max_bandwidth, max_computation = max(server.max_bandwidth for server in servers), \
-                                     max(server.max_computation for server in servers)
+        max(server.max_computation for server in servers)
 
     for job in jobs:
         loading_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(job.name))

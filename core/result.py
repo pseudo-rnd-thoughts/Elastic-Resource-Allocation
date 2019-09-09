@@ -21,8 +21,8 @@ class Result(object):
         self.solve_time = solve_time
 
         self.sum_value = sum(sum(job.value for job in server.allocated_jobs) for server in servers)
-        self.percentage_value = sum(job.value for job in jobs if job.running_server) / sum(job.value for job in jobs)
-        self.percentage_jobs = sum(1 for job in jobs if job.running_server) / len(jobs)
+        self.percentage_value = round(sum(job.value for job in jobs if job.running_server) / sum(job.value for job in jobs), 3)
+        self.percentage_jobs = round(sum(1 for job in jobs if job.running_server) / len(jobs), 3)
 
         self.total_price = sum(job.price for job in jobs)
 
