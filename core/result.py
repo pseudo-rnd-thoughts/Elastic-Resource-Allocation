@@ -1,7 +1,7 @@
 """Result from the greedy algorithm"""
 
 from __future__ import annotations
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from operator import attrgetter
 
 import numpy as np
@@ -30,7 +30,7 @@ class Result(object):
         self.server_computation_usage = [1 - server.available_computation / server.max_storage for server in servers]
         self.server_bandwidth_usage = [1 - server.available_bandwidth / server.max_bandwidth for server in servers]
 
-    def store(self):
+    def store(self) -> Dict[str, float]:
         """
         Returns the results values for storage
         :return: The results values
@@ -88,6 +88,15 @@ class IterativeResult(Result):
 
         self.iterative_price = iteration_price
         self.iterative_value = iterative_value
+
+    def store(self) -> Dict[str, float]:
+        """
+        
+        :return:
+        """
+        data = super().store()
+        data['iterations'] = len(self.iterative_price)
+        return data
 
 
 class AlgorithmResults(object):

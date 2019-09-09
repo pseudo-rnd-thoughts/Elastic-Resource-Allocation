@@ -10,7 +10,6 @@ def convert(file):
     Converts a file to a tableau format
     :param file: The file to convert
     """
-    print(file)
     with open(file) as json_file:
         data = json.load(json_file)
 
@@ -19,10 +18,9 @@ def convert(file):
             for name, results in line.items():
                 converted_data.append({'pos': pos, 'name': name, 'results': results})
 
-        new_file = file.strip('.txt') + '.json'
-        with open(new_file) as new_json_file:
-            # json.dump(converted_data, new_json_file)
-            print(new_file)
+        new_file = "../" + file.strip('.txt') + '.json'
+        with open(new_file, 'w') as new_json_file:
+            json.dump(converted_data, new_json_file)
 
 
 if __name__ == '__main__':
