@@ -74,7 +74,7 @@ def plot_results(files, title, aspect):
                     best = max(value for value in results.values())
 
                 for result, value in results.items():
-                    if value is not None and value < best:
+                    if value is not None:
                         if result in algo_difference:
                             algo_difference[result].append(value / best)
                         else:
@@ -88,6 +88,9 @@ def plot_results(files, title, aspect):
     g = sns.FacetGrid(df, col='model', height=6, aspect=aspect, sharex=False)
     # noinspection PyUnresolvedReferences
     g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
+    axes = g.axes
+    for pos in range(len(files)):
+        axes[0, pos].set_xlim(0.9, 1)
     g.fig.suptitle(title, size=16)
     g.fig.subplots_adjust(top=1)
     plt.show()
@@ -151,6 +154,12 @@ if __name__ == "__main__":
         ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
     ]
 
+    optimal_2_files = [
+        ("../results/september_6/basic_j12_s2_greedy_test.txt", "12 Jobs 2 Servers"),
+        ("../results/september_6/basic_j15_s3_greedy_test.txt", "15 Jobs 3 Servers"),
+        ("../results/september_6/basic_j25_s5_greedy_test.txt", "25 Jobs 5 Servers")
+    ]
+
     relaxed_2_files = [
         ("../results/september_6/relaxed_results_j12_s2.txt", "12 Jobs 2 Servers"),
         ("../results/september_6/relaxed_results_j15_s3.txt", "15 Jobs 3 Servers"),
@@ -161,6 +170,6 @@ if __name__ == "__main__":
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
     # plot_relaxed(relaxed_1_files)
-    # plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
-    # plot_results(optimal_2_files, "Greedy results with Optimal", 1)
-    plot_relaxed(relaxed_2_files)
+    plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
+    plot_results(optimal_2_files, "Greedy results with Optimal", 0.75)
+    # plot_relaxed(relaxed_2_files)

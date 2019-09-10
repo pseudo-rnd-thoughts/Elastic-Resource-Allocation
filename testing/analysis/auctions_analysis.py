@@ -89,7 +89,37 @@ def plot_auction_results(files, title):
             for pos, results in enumerate(json_data):
                 for name, result in results.items():
                     data.append((model, pos, name, result[0], result[1]))
+    data = reversed(data)
 
+    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
+    g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
+    # noinspection PyUnresolvedReferences
+    g = (g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df)
+         .set_titles("{col_name}").add_legend())
+    g.fig.subplots_adjust(top=0.9)
+    g.fig.suptitle(title)
+    plt.show()
+
+
+def plot_multiple_price_auction_results(files, title):
+    """
+    Plots the auction results
+    :param files: The files
+    :param title: The title
+    """
+    data = []
+    for file, model in files:
+        with open(file) as json_file:
+            json_data = json.load(json_file)
+
+            for pos, results in enumerate(json_data):
+                for name, result in results.items():
+                    if name == "price change 1 1" or name == "price change 1 1 1":
+                        data.append((model, pos, "standard", result[0], result[1]))
+                    else:
+                        data.append((model, pos, "changed", result[0], result[1]))
+
+    data = reversed(data)
     df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
     g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
     # noinspection PyUnresolvedReferences
@@ -113,7 +143,7 @@ def plot_mutate_auction_results(files, title):
 
             for pos, results in enumerate(json_data):
                 for name, result in results.items():
-                    if name != 'no mutate':
+                    if name != 'no mutation':
                         data.append((model, pos, 'mutate', result[0], result[2] - result[3]))
 
                 data.append((model, pos, 'no mutation', results['no mutation'][0], results['no mutation'][2] - results['no mutation'][3]))
@@ -165,8 +195,8 @@ if __name__ == "__main__":
     ]
 
     # plot_auction_results(normal_files, "Normal")
-    # plot_auction_results(single_price_auctions, "Single Price")
-    # plot_auction_results(multi_price_auction, "Multiple Price")
+    plot_auction_results(single_price_auctions, "Single Price")
+    plot_multiple_price_auction_results(multi_price_auction, "Multiple Price")
 
     # plot_mutate_auction_results(mutated_price_auction, "Mutate")
     # plot_mutate_auction_results(mutated_price_2_auction, "Mutate 2")
