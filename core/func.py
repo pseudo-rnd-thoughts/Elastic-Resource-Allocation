@@ -30,7 +30,7 @@ def rand_list_max(args: Iterable[T], key=None) -> T:
     return choice(solution)
 
 
-def get_args() -> Dict[str, str]:
+def load_args() -> Dict[str, str]:
     """
     Gets all of the arguments and places in a dictionary
     :return: All of the arguments in a dictionary

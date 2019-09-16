@@ -13,12 +13,12 @@ while true; do
   else
     read -p 'Num of servers: ' num_servers
   fi
-  jobs+=$num_jobs
-  servers+=$num_servers
+  jobs+=("$num_jobs")
+  servers+=("$num_servers")
 done
 
 for (( pos = 0; pos < ${#jobs[@]}; pos++ )); do
-  for (( repeat = 0; repeat < $repeats; repeat++ )); do
+  for (( repeat = 0; repeat < repeats; repeat++ )); do
     cmd="qsub -v file='$script',num_jobs='${jobs[pos]}',num_servers='${servers[pos]}',mdoel='$model',repeat='$repeat' run_script.sh"
     eval "$cmd"
   done

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#PBS -l walltime=24:00:00
-#PBS -l nodes=1:ppn=1
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=16
 
 #Change to the directory that the job was submitted from
 cd ~/cloud_allocation/
