@@ -11,9 +11,9 @@ from core.job import Job, job_diff
 from core.server import Server, server_diff
 from core.model import reset_model, ModelDist, load_dist
 
-from auctions.vcg import vcg_auction
-from auctions.iterative_auction import iterative_auction
-from auctions.cda import combinatorial_double_auction
+from auctions.vcg_auction import vcg_auction
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from auctions.fixed_vcg_auction import fixed_vcg_auction
 
 
 def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
@@ -35,7 +35,7 @@ def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
         results['vcg'] = vcg_result.sum_value
         reset_model(jobs, servers)
 
-        cda_result = combinatorial_double_auction(jobs, servers)
+        cda_result = fixed_vcg_auction(jobs, servers)
         if cda_result is None:
             print("CDA result fail")
             continue
@@ -46,7 +46,7 @@ def single_price_iterative_auction(model_dist: ModelDist, repeats: int = 50):
             for server in servers:
                 server.price_change = price_change
 
-            iterative_result = iterative_auction(jobs, servers, 30)
+            iterative_result = decentralised_iterative_auction(jobs, servers)
             if iterative_result is None:
                 print("Iterative result fail")
                 continue
@@ -79,14 +79,12 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
             for server, price_change in zip(servers, price_changes):
                 server.price_change = price_change
 
-            iterative_results = iterative_auction(jobs, servers, 30)
+            iterative_results = decentralised_iterative_auction(jobs, servers)
             if iterative_results is None:
                 print("Iterative result fail")
                 continue
 
-            iterative_prices, iterative_utilities = iterative_results
-            results['Prices: ' + ','.join([str(x) for x in price_changes])] = (iterative_utilities[-1],
-                                                                               iterative_prices[-1])
+            # TODO add results
             reset_model(jobs, servers)
 
         data.append(results)
@@ -112,7 +110,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
 
         results = {}
 
-        iterative_results = iterative_auction(jobs, servers, 30)
+        iterative_results = decentralised_iterative_auction(jobs, servers)
         if iterative_results is None:
             print("Iterative result fail")
             continue
@@ -130,7 +128,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                 jobs.remove(mutated_job)
                 jobs.append(mutant_job)
 
-                iterative_results = iterative_auction(jobs, servers, 30)
+                iterative_results = decentralised_iterative_auction(jobs, servers)
                 if iterative_results is None:
                     print("Iterative result fail")
                     continue
@@ -150,7 +148,7 @@ def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_ch
                 servers.remove(mutated_server)
                 servers.append(mutant_server)
 
-                iterative_results = iterative_auction(jobs, servers, 30)
+                iterative_results = decentralised_iterative_auction(jobs, servers)
                 if iterative_results is None:
                     print("Iterative result fail")
                     continue
@@ -184,16 +182,19 @@ def all_mutated_iterative_auction(model_dist, percent=0.15, num_mutated_jobs=5):
 
     jobs, servers = model_dist.create()
 
-    result = iterative_auction(jobs, servers)
+    result = decentralised_iterative_auction(jobs, servers)
     data['no mutate'] = result.store()
 
     unmutated_jobs = jobs.copy()
     for _ in range(num_mutated_jobs):
         job = choice(unmutated_jobs)
         unmutated_jobs.remove(job)
-        for required_storage in range(job.required_storage, int(job.required_storage*positive_percent)+1):
-            for required_computation in range(job.required_computation, int(job.required_computation*positive_percent)+1):
-                for required_results_data in range(job.required_results_data, int(job.required_results_data*positive_percent)+1):
+        for required_storage in range(job.required_storage,
+                                      int(job.required_storage*positive_percent)+1):
+            for required_computation in range(job.required_computation,
+                                              int(job.required_computation*positive_percent)+1):
+                for required_results_data in range(job.required_results_data,
+                                                   int(job.required_results_data*positive_percent)+1):
                     for value in range(int(job.value*negative_percent), job.value+1):
                         for deadline in range(int(job.deadline*negative_percent), job.deadline+1):
                             mutated_job = Job('mutated ' + job.name, required_storage, required_computation,
@@ -203,7 +204,7 @@ def all_mutated_iterative_auction(model_dist, percent=0.15, num_mutated_jobs=5):
                             jobs_prime.remove(job)
                             jobs_prime.append(mutated_job)
 
-                            result = iterative_auction(jobs_prime, servers)
+                            result = decentralised_iterative_auction(jobs_prime, servers)
                             result_data = result.store()
                             result_data['job price'] = mutated_job.price
                             data[job_diff(job, mutated_job)] = result_data
@@ -222,7 +223,7 @@ def all_mutated_iterative_auction(model_dist, percent=0.15, num_mutated_jobs=5):
                         servers_prime.remove(server)
                         servers_prime.append(mutated_server)
 
-                        result = iterative_auction(jobs, servers_prime)
+                        result = decentralised_iterative_auction(jobs, servers_prime)
                         if result is not None:
                             result_data = result.store()
                             result_data['server revenue'] = mutated_server.revenue

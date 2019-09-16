@@ -53,7 +53,6 @@ def print_mutated_auction_results(files: List[Tuple[str, str]]):
                         print("{} total utility increase from {} to {}".format(name, no_mutate, values[0]))
 
 
-
 def print_multiple_auction_results(files: List[str]):
     """
     Prints the multiple auction results
@@ -146,7 +145,8 @@ def plot_mutate_auction_results(files, title):
                     if name != 'no mutation':
                         data.append((model, pos, 'mutate', result[0], result[2] - result[3]))
 
-                data.append((model, pos, 'no mutation', results['no mutation'][0], results['no mutation'][2] - results['no mutation'][3]))
+                data.append((model, pos, 'no mutation', results['no mutation'][0],
+                             results['no mutation'][2] - results['no mutation'][3]))
 
     df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'utility diff'])
     g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)

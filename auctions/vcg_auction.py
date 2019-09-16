@@ -11,7 +11,7 @@ from core.result import Result
 from optimal.optimal import optimal_algorithm
 
 
-def vcg_auction(jobs: List[Job], servers: List[Server], time: int = 60,
+def vcg_auction(jobs: List[Job], servers: List[Server], time: int,
                 debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions

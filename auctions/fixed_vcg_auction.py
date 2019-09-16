@@ -74,8 +74,8 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     return Result("CDA", jobs, servers)
 
 
-def combinatorial_double_auction(jobs: List[Job], servers: List[Server], time: int = 60, debug_running: bool = False,
-                                 debug_results: bool = False) -> Optional[Result]:
+def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time: int, debug_running: bool = False,
+                      debug_results: bool = False) -> Optional[Result]:
     """
     Combinatorial Double auction solved through VCG
     :param jobs: a list of jobs

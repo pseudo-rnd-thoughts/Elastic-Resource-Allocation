@@ -21,8 +21,8 @@ def convert(file):
 
         new_file = file.strip('.txt') + '.json'
         with open(new_file) as new_json_file:
-            # json.dump(converted_data, new_json_file)
             print(new_file)
+            json.dump(converted_data, new_json_file)
 
 
 if __name__ == '__main__':

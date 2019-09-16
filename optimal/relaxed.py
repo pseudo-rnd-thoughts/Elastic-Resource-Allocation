@@ -64,8 +64,8 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
 
 def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, loading_speeds: Dict[Job, CpoVariable],
                     compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
-                    job_allocation: Dict[Job, CpoVariable],
-                    time_limit: int = 500, debug_time: bool = True) -> Optional[Result]:
+                    job_allocation: Dict[Job, CpoVariable], time_limit: int,
+                    debug_time: bool = True) -> Optional[Result]:
     """
     Runs the cplex model
     :param model: The model to run
@@ -101,8 +101,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, load
     return Result("Relaxed", jobs, [super_server])
 
 
-def relaxed_algorithm(jobs: List[Job], servers: List[Server],
-                      time_limit: int = 500, debug_time: bool = False) -> Result:
+def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int, debug_time: bool = False) -> Result:
     """
     Runs the optimal algorithm solution
     :param jobs: A list of jobs

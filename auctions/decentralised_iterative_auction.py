@@ -3,22 +3,24 @@
 from __future__ import annotations
 
 from random import choice
-from typing import List, Dict
+from typing import List, Dict, Callable
 from math import inf
+from time import time
+
+from core.job import Job
+from core.server import Server
+from core.result import Result
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
 
-from core.job import Job
-from core.server import Server
-from core.result import IterativeResult
 
-
-def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_limit: int, debug_results: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
     :param server: A server
+    :param initial_cost: The initial cost of the job
     :param time_limit: The solve time limit
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
@@ -28,9 +30,12 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
     model = CpoModel("Job Price")
 
     jobs = server.allocated_jobs + [new_job]
-    loading_speed = {job: model.integer_var(min=1, name="Job {} loading speed".format(job.name)) for job in jobs}
-    compute_speed = {job: model.integer_var(min=1, name="Job {} compute speed".format(job.name)) for job in jobs}
-    sending_speed = {job: model.integer_var(min=1, name="Job {} sending speed".format(job.name)) for job in jobs}
+    loading_speed = {job: model.integer_var(min=1, max=server.max_bandwidth,
+                                            name="Job {} loading speed".format(job.name)) for job in jobs}
+    compute_speed = {job: model.integer_var(min=1, max=server.max_computation,
+                                            name="Job {} compute speed".format(job.name)) for job in jobs}
+    sending_speed = {job: model.integer_var(min=1, max=server.max_bandwidth,
+                                            name="Job {} sending speed".format(job.name)) for job in jobs}
     allocation = {job: model.binary_var(name="Job {} allocated".format(job.name)) for job in server.allocated_jobs}
 
     for job in jobs:
@@ -49,14 +54,20 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
 
     model_solution = model.solve(TimeLimit=time_limit)
     if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN or model_solution.get_objective_values() is None:
+        print("Decentralised model failure")
         return inf, {}, {}, {}, {}, server, jobs
 
     max_server_profit = model_solution.get_objective_values()[0]
+
     job_price = server.revenue - max_server_profit + server.price_change
+    if job_price < initial_cost:
+        job_price = initial_cost
+
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
     allocation = {job: model_solution.get_value(allocated) for job, allocated in allocation.items()}
+
     if debug_results:
         print("Sever: {} - Max server profit: {}, prior server total price: {} therefore job price: {}"
               .format(server.name, model_solution.get_objective_values()[0], server.revenue, job_price))
@@ -67,7 +78,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit, debug_results: 
 def allocate_jobs(job_price: float, new_job: Job, server: Server,
                   loading: Dict[Job, int], compute: Dict[Job, int], sending: Dict[Job, int],
                   allocation: Dict[Job, bool], unallocated_jobs: List[Job],
-                  debug_allocations: bool = False, debug_result: bool = False):
+                  debug_allocations: bool = False, debug_result: bool = False) -> int:
     """
     Allocates a job to a server based on the last allocation
     :param job_price: The new job price
@@ -80,6 +91,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
     :param unallocated_jobs: A list of all unallocated jobs
     :param debug_allocations: Debug the allocations
     :param debug_result: Debug results
+    :return: The number of messages
     """
     allocated_jobs = server.allocated_jobs
     server.reset_allocations()
@@ -88,28 +100,37 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
     new_job.allocate(loading[new_job], compute[new_job], sending[new_job], server, price=job_price)
     server.allocate_job(new_job)
 
+    messages = 0
+
     for job in allocated_jobs:
         if allocation[job]:
             job.allocate(loading[job], compute[job], sending[job], server, job.price)
             server.allocate_job(job)
+
             if debug_allocations:
                 print("Job {} is now allocated to server {}".format(job.name, allocation[job], server.name))
         else:
             job.reset_allocation()
             unallocated_jobs.append(job)
+            messages += 1
+
             if debug_allocations:
                 print("Job {} is unallocated to server {}".format(job.name, allocation[job], server.name))
 
     if debug_result:
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
+    return messages
 
-def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 60,
-                      debug_allocation: bool = False, debug_results: bool = False) -> IterativeResult:
+
+def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
+                                    initial_cost: Callable[[Job], int] = None,
+                                    debug_allocation: bool = False, debug_results: bool = False) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
+    :param initial_cost: An initial cost function
     :param time_limit: The solve time limit
     :param debug_allocation: Debug the allocation process
     :param debug_results: Debugs the results
@@ -118,21 +139,26 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
     assert all(server.price_change > 0 for server in servers), \
         "Price change - " + ', '.join(["{}: {}".format(server.name, server.price_change) for server in servers])
 
+    initial_job_cost = {job: initial_cost(job) if initial_cost is not None else -1 for job in jobs}
+
     unallocated_jobs = jobs.copy()
-    iteration_price: List[float] = []
-    iterative_value: List[float] = []
+
+    iterations: int = 0
+    messages: int = 0
+    start_time: float = time()
 
     while len(unallocated_jobs):
         job: Job = choice(unallocated_jobs)
 
         job_price, loading, compute, sending, allocation, server, \
-            jobs = min((evaluate_job_price(job, server, time_limit) for server in servers),
+            jobs = min((evaluate_job_price(job, server, time_limit, initial_job_cost[job]) for server in servers),
                        key=lambda bid: bid[0])
+        messages += 2 * len(servers)
 
         if job_price <= job.value:
             if debug_allocation:
                 print("Adding job {} to server {} with price {}".format(job.name, server.name, job_price))
-            allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs)
+            messages += allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs)
             unallocated_jobs.remove(job)
         else:
             if debug_allocation:
@@ -143,15 +169,18 @@ def iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int = 
         if debug_allocation:
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
 
-        iteration_price.append(sum(server.revenue for server in servers))
-        iterative_value.append(sum(server.value for server in servers))
+        # iteration_price.append(sum(server.revenue for server in servers))
+        # iterative_value.append(sum(server.value for server in servers))
+        iterations += 1
 
     if debug_results:
         print("It is finished, number of iterations: {} with social welfare: {}"
-              .format(len(iteration_price), sum(server.revenue for server in servers)))
+              .format(iterations, sum(server.revenue for server in servers)))
         for server in servers:
             print("Server {}: total revenue - {}".format(server.name, server.revenue))
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return IterativeResult("Iterative", jobs, servers, iteration_price, iterative_value)
+    total_time = time() - start_time
+    return Result("Iterative", jobs, servers,
+                  total_solve_time=total_time, total_iterations=iterations, total_messages=messages)

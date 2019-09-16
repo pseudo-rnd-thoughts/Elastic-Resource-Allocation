@@ -11,7 +11,5 @@ source activate env37
 
 module load cplex/12.7.1
 
-cmd="python -m testing.tests.$file $num_jobs $num_servers $repeat"
-eval $cmd
-
-# Example script: qsub -v file="optimality_test" run_file.sh
+cmd="python -m testing.tests.$file $model $num_jobs $num_servers $repeat"
+eval "Running $cmd"

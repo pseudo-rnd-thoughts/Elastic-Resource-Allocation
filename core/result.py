@@ -14,14 +14,14 @@ class Result(object):
     """Generic results class"""
 
     def __init__(self, algorithm_name: str, jobs: List[Job],  servers: List[Server],
-                 show_money: bool = False, solve_time: int = None):
+                 show_money: bool = False, **kwargs):
         self.algorithm_name = algorithm_name
 
         self.show_money = show_money
-        self.solve_time = solve_time
 
         self.sum_value = sum(sum(job.value for job in server.allocated_jobs) for server in servers)
-        self.percentage_value = round(sum(job.value for job in jobs if job.running_server) / sum(job.value for job in jobs), 3)
+        self.percentage_value = round(sum(job.value for job in jobs if job.running_server) /
+                                      sum(job.value for job in jobs), 3)
         self.percentage_jobs = round(sum(1 for job in jobs if job.running_server) / len(jobs), 3)
 
         self.total_price = sum(job.price for job in jobs)
@@ -30,22 +30,28 @@ class Result(object):
         self.server_computation_usage = [1 - server.available_computation / server.max_storage for server in servers]
         self.server_bandwidth_usage = [1 - server.available_bandwidth / server.max_bandwidth for server in servers]
 
+        # The results data
+        self.data = kwargs
+        self.data['sum value'] = self.sum_value
+        self.data['percentage value'] = self.percentage_value
+        self.data['percentage jobs'] = self.percentage_jobs
+        self.data['server storage usage'] = self.server_storage_usage
+        self.data['server computation usage'] = self.server_computation_usage
+        self.data['server bandwidth usage'] = self.server_bandwidth_usage
+
+        if self.show_money:
+            self.data['total money'] = self.total_price
+            self.data['prices'] = {'{} job price'.format(job.name): job.price
+                                   for job in jobs}
+            self.data['revenues'] = {'{} server revenue'.format(server.name): server.revenue
+                                     for server in servers}
+
     def store(self):
         """
         Returns the results values for storage
         :return: The results values
         """
-        data = {'sum value': self.sum_value,
-                'percentage value': self.percentage_value,
-                'percentage jobs': self.percentage_jobs,
-                'server storage usage': self.server_storage_usage,
-                'server computation usage': self.server_computation_usage,
-                'server bandwidth usage': self.server_bandwidth_usage}
-        if self.solve_time is not None:
-            data['solve time'] = self.solve_time
-        if self.show_money:
-            data['total price'] = self.total_price
-        return data
+        return self.data
 
     def print(self, servers: List[Server]):
         """
@@ -77,17 +83,6 @@ class Result(object):
                 print("\t\t|{:<{id_len}}|{:^9}|{:^9}|{:^8}"
                       .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed, id_len=max_job_id_len))
             print()
-
-
-class IterativeResult(Result):
-    """An iterative results"""
-
-    def __init__(self, algorithm_name: str, jobs: List[Job], servers: List[Server],
-                 iteration_price: List[float], iterative_value: List[float]):
-        super().__init__(algorithm_name, jobs, servers)
-
-        self.iterative_price = iteration_price
-        self.iterative_value = iterative_value
 
 
 class AlgorithmResults(object):
