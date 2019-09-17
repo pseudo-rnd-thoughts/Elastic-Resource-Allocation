@@ -36,9 +36,8 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
     allocate_jobs([job for job, value in job_values], servers, server_selection_policy, resource_allocation_policy,
                   job_allocation_debug=job_allocation_debug)
 
-    algorithm_name = "{:<{}}|{:^{}}|{:>{}}".format(value_density.name, value_density_name_length,
-                                                   server_selection_policy.name, server_selection_name_length,
-                                                   resource_allocation_policy.name, resource_name_length)
+    algorithm_name = 'Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
+                                                resource_allocation_policy.name)
     return Result(algorithm_name, jobs, servers)
 
 

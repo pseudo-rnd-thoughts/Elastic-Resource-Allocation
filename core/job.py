@@ -1,7 +1,7 @@
 """Job object implementation"""
 
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Final
 from random import gauss
 
 if TYPE_CHECKING:
@@ -26,15 +26,15 @@ class Job(object):
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
                  value: float, deadline: int):
-        self.name: str = name
-        self.required_storage: int = required_storage
-        self.required_computation: int = required_computation
-        self.required_results_data: int = required_results_data
-        self.value: float = value
-        self.deadline: int = deadline
+        self.name: Final[str] = name
+        self.required_storage: Final[int] = required_storage
+        self.required_computation: Final[int] = required_computation
+        self.required_results_data: Final[int] = required_results_data
+        self.value: Final[float] = value
+        self.deadline: Final[int] = deadline
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
-                 price: float = 0):
+                 price: float = None):
         """
         Sets the job attribute for when it is allocated to a server
         :param loading_speed: The loading speed of the job
@@ -43,14 +43,16 @@ class Job(object):
         :param running_server: The server the job is running on
         :param price: The price of the job
         """
+        # Check that the allocation information is correct
         assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
             "Job {} with loading {} compute {} sending {}" \
-            .format(self.name, loading_speed, compute_speed, sending_speed)
-        # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1 in python but is with cplex
+                .format(self.name, loading_speed, compute_speed, sending_speed)
+
+        # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
         assert self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed, \
+               loading_speed * self.required_computation * sending_speed + \
+               loading_speed * compute_speed * self.required_results_data <= \
+               self.deadline * loading_speed * compute_speed * sending_speed, \
             "Job {} with loading {} compute {} sending {}" \
                 .format(self.name, loading_speed, compute_speed, sending_speed)
 
@@ -59,7 +61,8 @@ class Job(object):
         self.sending_speed = sending_speed
         self.running_server = running_server
 
-        self.price = price
+        if price is not None:
+            self.price = price
 
     def reset_allocation(self):
         """
@@ -69,6 +72,7 @@ class Job(object):
         self.compute_speed = 0
         self.sending_speed = 0
         self.running_server = None
+        self.price = 0
 
     def utility(self):
         """
@@ -86,15 +90,26 @@ class Job(object):
                    int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
                    int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
                    int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
-                   max(1, int(self.deadline - abs(gauss(0, self.required_results_data * percent)))),
-                   max(1, int(self.value - abs(gauss(0, self.required_results_data * percent)))))
+                   int(max(1, self.deadline - abs(gauss(0, self.required_results_data * percent)))),
+                   int(max(1, self.value - abs(gauss(0, self.required_results_data * percent)))))
+
+    def __str__(self) -> str:
+        if self.loading_speed > 0:
+            return "Job {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}, " \
+                   "allocated loading: {}, compute: {}, sending: {} speeds" \
+                .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
+                        self.deadline, self.value, self.loading_speed, self.compute_speed, self.sending_speed)
+        else:
+            return "Job {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}" \
+                .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
+                        self.deadline, self.value)
 
 
 def job_diff(normal_job: Job, mutate_job: Job) -> str:
     """The difference between two jobs"""
-    return "{}: {}, {}, {}, {}, {}".format(normal_job.name,
-                                           mutate_job.required_storage - normal_job.required_storage,
-                                           mutate_job.required_computation - normal_job.required_computation,
-                                           mutate_job.required_results_data - normal_job.required_results_data,
-                                           normal_job.deadline - mutate_job.deadline,
-                                           normal_job.value - mutate_job.value)
+    return "{} - {}: {}, {}, {}, {}, {}".format(normal_job.name, mutate_job.name,
+                                                mutate_job.required_storage - normal_job.required_storage,
+                                                mutate_job.required_computation - normal_job.required_computation,
+                                                mutate_job.required_results_data - normal_job.required_results_data,
+                                                normal_job.deadline - mutate_job.deadline,
+                                                normal_job.value - mutate_job.value)

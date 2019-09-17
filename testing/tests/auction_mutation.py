@@ -2,7 +2,17 @@
 
 from __future__ import annotations
 
-from core.model import ModelDist
+import json
+from tqdm import tqdm
+from random import choice, random
+
+from core.core import save_filename
+from core.model import ModelDist, reset_model
+from core.job import Job, job_diff
+from core.server import Server, server_diff
+
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+
 
 def mutated_iterative_auction(model_dist: ModelDist, repeats: int = 50, price_change: int = 2,
                               mutate_percent: float = 0.05, mutate_repeats: int = 10, job_mutate_percent: float = 0.75):
@@ -143,6 +153,10 @@ def all_mutated_iterative_auction(model_dist, percent=0.15, num_mutated_jobs=5):
 
                         reset_model(jobs, servers)
 
-    with open('all_mutations_iterative_auction_{}.txt'.format(model_dist.file_name), 'w') as json_file:
+    with open(save_filename('all_mutations_iterative_auction', model_dist.file_name, repeat), 'w') as json_file:
         json.dump(data, json_file)
     print(data)
+
+
+if __name__ == "__main__":
+    pass

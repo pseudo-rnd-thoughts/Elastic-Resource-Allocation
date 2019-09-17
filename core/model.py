@@ -8,7 +8,7 @@ from core.job import Job
 from core.server import Server
 
 
-def gaussian_dist(mean, std) -> int:
+def positive_gaussian_dist(mean, std) -> int:
     """
     Uses gaussian distribution to generate a random number greater than 0 for a resource
     :param mean: Gaussian mean
@@ -50,11 +50,11 @@ class JobDist(object):
         """
         job_name = "{} {}".format(self.dist_name, name)
         return Job(name=job_name,
-                   required_storage=gaussian_dist(self.storage_mean, self.storage_std),
-                   required_computation=gaussian_dist(self.computation_mean, self.computation_std),
-                   required_results_data=gaussian_dist(self.results_data_mean, self.results_data_std),
-                   value=gaussian_dist(self.value_mean, self.value_std),
-                   deadline=int(gaussian_dist(self.deadline_mean, self.deadline_std)))
+                   required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                   required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                   required_results_data=positive_gaussian_dist(self.results_data_mean, self.results_data_std),
+                   value=positive_gaussian_dist(self.value_mean, self.value_std),
+                   deadline=int(positive_gaussian_dist(self.deadline_mean, self.deadline_std)))
 
 
 class ServerDist(object):
@@ -83,9 +83,9 @@ class ServerDist(object):
         """
         server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
-                      max_storage=gaussian_dist(self.storage_mean, self.storage_std),
-                      max_computation=gaussian_dist(self.computation_mean, self.computation_std),
-                      max_bandwidth=gaussian_dist(self.results_data_mean, self.results_data_std))
+                      max_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                      max_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                      max_bandwidth=positive_gaussian_dist(self.results_data_mean, self.results_data_std))
 
 
 class ModelDist(object):
@@ -142,7 +142,7 @@ def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     server_dists: List[ServerDist] = []
     with open(file_name) as f:
         lines = f.readlines()
-        name, num_job_dists, _ = lines[0].split(" ")
+        name, num_job_dists, num_server_dists = lines[0].split(" ")
 
         for pos, line in enumerate(lines[1:int(num_job_dists) + 1]):
             job_name, probability, \

@@ -100,8 +100,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
                     job.allocate(s, w, r, server)
                     server.allocate_job(job)
 
-        return Result("Optimal", jobs, servers)
-
+        return Result("Optimal", jobs, servers, solve_time=round(model_solution.get_solve_time(), 2))
     else:
         return None
 

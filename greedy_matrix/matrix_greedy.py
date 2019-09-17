@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import List, Tuple
+from time import time
 
 from core.job import Job
 from core.result import Result
@@ -39,6 +40,7 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
                                for job in jobs for server in servers}
     unallocated_jobs = jobs.copy()
 
+    start_time = time()
     while len(allocation_value_matrix):
         (allocated_job, allocated_server), (value, s, w, r) = max(allocation_value_matrix, key=lambda x: x[0][0])
 
@@ -52,4 +54,4 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
         for server in servers:
             allocation_value_matrix.pop((allocated_job, server))
 
-    return Result("Matrix Greedy", jobs, servers)
+    return Result("Matrix Greedy " + allocation_value_policy.name, jobs, servers, solve_time=time()-start_time)

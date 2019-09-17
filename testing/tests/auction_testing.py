@@ -10,7 +10,7 @@ from tqdm import tqdm
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.fixed_vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
-from core.func import load_args
+from core.core import load_args
 from core.model import reset_model, ModelDist, load_dist
 
 
@@ -95,8 +95,8 @@ def multi_price_change_iterative_auction(model_dist: ModelDist, changes: int = 1
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, job_dist, server_dist = load_dist('models/basic.model')
-    basic_model_dist = ModelDist(model_name, job_dist, num_jobs, server_dist, num_servers)
+    model_name, job_dist, server_dist = load_dist(args['model'])
+    basic_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['severs'])
 
     # single_price_iterative_auction(basic_model_dist)
     # multi_price_change_iterative_auction(basic_model_dist)

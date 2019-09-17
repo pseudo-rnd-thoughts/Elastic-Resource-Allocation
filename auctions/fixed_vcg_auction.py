@@ -46,6 +46,7 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     """
     model = CpoModel("CDA")
 
+    # As no resource speeds then only assign binary variables for the allocation
     allocations = {}
     for job in jobs:
         for server in servers:
@@ -53,25 +54,30 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
 
         model.add(sum(allocations[(job, server)] for server in servers) <= 1)
 
+    # Server resource speeds constraints
     for server in servers:
         model.add(sum(job.required_storage * allocations[(job, server)] for job in jobs) <= server.max_storage)
         model.add(sum(job.compute_speed * allocations[(job, server)] for job in jobs) <= server.max_storage)
         model.add(sum((job.loading_speed + job.sending_speed) * allocations[(job, server)]
                       for job in jobs) <= server.max_storage)
 
+    # Optimisation
     model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))
 
-    model_solution = model.solve(TimeLimit=time_limit)
+    # Solve the cplex model with time limit
+    model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
     if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+        print("Fixed VCG auction failure")
         return None
 
+    # Allocate all of the jobs
     for job in jobs:
         for server in servers:
             if model_solution.get_value(allocations[(job, server)]):
                 job.running_server = server
                 server.allocate_job(job)
 
-    return Result("CDA", jobs, servers)
+    return Result("CDA", jobs, servers, -1)
 
 
 def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time: int, debug_running: bool = False,
@@ -85,18 +91,23 @@ def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time: int, debug_r
     :param debug_results: debug the results
     :return: the results
     """
+    # Generate the fixed jobs
     fixed_jobs = [FixedJob(job, servers) for job in jobs]
 
+    # Price information
+    job_prices: Dict[Job, float] = {}
+    server_prices: Dict[Server, float] = {}
+
+    # Find the optimal solution
     if debug_running:
         print("Finding optimal")
     optimal_solution = optimal_algorithm(fixed_jobs, servers, time_limit=time)
     if optimal_solution is None:
         return None
-    if debug_results:
+    elif debug_results:
         print("Optimal total utility: {}".format(optimal_solution.sum_value))
 
-    job_prices: Dict[Job, float] = {}
-    server_prices: Dict[Server, float] = {}
+    # Save the job and server information from the optimal solution
     allocated_jobs = [job for job in fixed_jobs if job.running_server]
     job_info: Dict[Job, Server] = {job: job.running_server for job in fixed_jobs}
 

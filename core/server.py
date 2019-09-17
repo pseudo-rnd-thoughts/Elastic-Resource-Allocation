@@ -1,7 +1,7 @@
 """Server object implementation"""
 
 from __future__ import annotations
-from typing import List, TYPE_CHECKING
+from typing import List, Final, TYPE_CHECKING
 
 from random import gauss
 
@@ -18,11 +18,11 @@ class Server(object):
     value: float = 0  # This is the total value of the job's allocated
 
     def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int, price_change: int = 1):
-        self.name: str = name
-        self.max_storage: int = max_storage
-        self.max_computation: int = max_computation
-        self.max_bandwidth: int = max_bandwidth
-        self.price_change: int = price_change
+        self.name: Final[str] = name
+        self.max_storage: Final[int] = max_storage
+        self.max_computation: Final[int] = max_computation
+        self.max_bandwidth: Final[int] = max_bandwidth
+        self.price_change: Final[int] = price_change
 
         # Allocation information
         self.allocated_jobs: List[Job] = []
@@ -38,10 +38,11 @@ class Server(object):
         return self.available_storage >= job.required_storage \
             and self.available_computation >= 1 \
             and self.available_bandwidth >= 2 and \
-            any(job.required_storage * w * r + s * job.required_computation * r +
-                s * w * job.required_results_data <= job.deadline * s * w * r
+            any(job.required_storage * self.available_computation * r +
+                s * job.required_computation * r +
+                s * self.available_computation * job.required_results_data
+                <= job.deadline * s * self.available_computation * r
                 for s in range(1, self.available_bandwidth + 1)
-                for w in range(1, self.available_computation + 1)
                 for r in range(1, self.available_bandwidth - s + 1))
 
     def allocate_job(self, job: Job):
