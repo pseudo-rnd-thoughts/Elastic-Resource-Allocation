@@ -103,3 +103,14 @@ def allocate(job: Job, loading: int, compute: int, sending: int, server: Server,
     """
     job.allocate(loading, compute, sending, server, price)
     server.allocate_job(job)
+
+
+def list_item_replacement(lists: List[T], old_item: T, new_item: T):
+    lists.remove(old_item)
+    lists.append(new_item)
+
+
+def list_copy_remove(lists: List[T], item: T) -> List[T]:
+    list_copy = lists.copy()
+    list_copy.remove(item)
+    return list_copy

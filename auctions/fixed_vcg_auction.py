@@ -3,11 +3,13 @@
 from __future__ import annotations
 from typing import List, Dict, Optional
 from math import exp
+from time import time
 
 from core.job import Job
 from core.server import Server
 from core.result import Result
 from core.model import reset_model
+from core.core import allocate, list_copy_remove
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
@@ -29,6 +31,19 @@ class FixedJob(Job):
              s * w * job.required_results_data <= job.deadline * s * w * r),
             key=lambda x: exp(x[0]) ** 3 + exp(x[1]) ** 3 + exp(x[2]) ** 3)
 
+    def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
+                 price: float = None):
+        """
+        OVerrides the allocate function from job to just allocate the running server and the price
+        :param loading_speed: Ignored
+        :param compute_speed: Ignored
+        :param sending_speed: Ignored
+        :param running_server: The server the job is running on
+        :param price: The price of the job
+        """
+        self.running_server = running_server
+        self.price = price
+
     def reset_allocation(self):
         """
         Overrides the reset_allocation function from job to just change the server not resource speeds
@@ -36,13 +51,13 @@ class FixedJob(Job):
         self.running_server = None
 
 
-def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -> Optional[Result]:
+def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -> Optional[int]:
     """
     Finds the optimal solution
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param time_limit:
-    :return:
+    :param time_limit: The time limit to solve with
+    :return: The results
     """
     model = CpoModel("CDA")
 
@@ -77,79 +92,89 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
                 job.running_server = server
                 server.allocate_job(job)
 
-    return Result("CDA", jobs, servers, -1)
+    return sum(job.value for job in jobs if job.running_server)
 
 
-def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time: int, debug_running: bool = False,
+def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int, debug_running: bool = False,
                       debug_results: bool = False) -> Optional[Result]:
     """
-    Combinatorial Double auction solved through VCG
+    Combinatorial Double auction solved through VCG auction algorithm
     :param jobs: a list of jobs
     :param servers: a list of servers
-    :param time:The time limit
+    :param time_limit:The time limit
     :param debug_running: debug the running
     :param debug_results: debug the results
     :return: the results
     """
+    start_time = time()
+
     # Generate the fixed jobs
     fixed_jobs = [FixedJob(job, servers) for job in jobs]
 
     # Price information
     job_prices: Dict[Job, float] = {}
-    server_prices: Dict[Server, float] = {}
+    server_revenues: Dict[Server, float] = {}
 
     # Find the optimal solution
     if debug_running:
         print("Finding optimal")
-    optimal_solution = optimal_algorithm(fixed_jobs, servers, time_limit=time)
+    optimal_solution = optimal_algorithm(fixed_jobs, servers, time_limit=time_limit)
     if optimal_solution is None:
         return None
     elif debug_results:
-        print("Optimal total utility: {}".format(optimal_solution.sum_value))
+        print("Optimal total utility: {}".format(optimal_solution))
 
     # Save the job and server information from the optimal solution
     allocated_jobs = [job for job in fixed_jobs if job.running_server]
-    job_info: Dict[Job, Server] = {job: job.running_server for job in fixed_jobs}
+    job_allocation: Dict[Job, Server] = {job: job.running_server for job in fixed_jobs}
 
     if debug_running:
         print("Allocated jobs: {}".format(", ".join([job.name for job in allocated_jobs])))
 
+    # For each allocated job, find the sum of values if the job doesnt exist
     for job in allocated_jobs:
+        # Reset the model and remove the job from the job list
         reset_model(fixed_jobs, servers)
+        jobs_prime = list_copy_remove(fixed_jobs, job)
 
-        jobs_prime = fixed_jobs.copy()
-        jobs_prime.remove(job)
-
+        # Find the optimal solution where the job doesnt exist
         if debug_running:
-            print("Solving for without job {}".format(job.name))
-        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time)
+            print("Solving for without {} job".format(job.name))
+        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time_limit)
         if optimal_prime is None:
             return None
-        job_cost = (optimal_solution.sum_value - job.value) - optimal_prime.sum_value
-        if debug_results:
-            print("Job {}: £{:.1f}, Utility: {} ".format(job.name, job_cost, job.value))
-        job_prices[job] = -job_cost
+        else:
+            job_prices[job] = optimal_solution - optimal_prime
+            if debug_results:
+                print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 
+    # For each server, find the sum of values if the server doesnt exist
     for server in servers:
+        # Resets the model and removes the server from the server list
         reset_model(fixed_jobs, servers)
+        servers_prime = list_copy_remove(servers, server)
 
-        servers_prime = servers.copy()
-        servers_prime.remove(server)
-
+        # Find the optimal solution where the server doesnt exist
         if debug_running:
-            print("Solving for without server {}".format(server.name))
+            print("Solving for without {} server".format(server.name))
         optimal_prime = optimal_algorithm(fixed_jobs, servers_prime, time_limit=time)
         if optimal_prime is None:
             return None
-        server_transfer = optimal_solution.sum_value - optimal_prime.sum_value
-        if debug_results:
-            print("Server {}: £{:.1f}".format(server.name, server_transfer))
-        server_prices[server] = server_transfer
+        else:
+            server_revenues[server] = optimal_solution - optimal_prime
+            if debug_results:
+                print("Server {}: £{:.1f}".format(server.name, server_revenues[server]))
 
+    # Resets all of the jobs and servers and allocates all of their info from the original optimal solution
     reset_model(fixed_jobs, servers)
     for job in allocated_jobs:
-        job.running_server = job_info[job]
-        job.price = job_prices[job]
-        job_info[job].allocate_job(job)
+        allocate(job, -1, -1, -1, job_allocation[job], job_prices[job])
 
-    return Result('vcg', fixed_jobs, servers)
+    # Check that the job prices sum to the same value as the server revenues,
+    # else the optimal solution hasn't been found at some point
+    if sum(job_prices.values()) != sum(server_revenues.values()):
+        print("Fixed  VCG fail as sum of job prices {} != sum of server prices {}"
+              .format(sum(job_prices.values()), sum(server_revenues.values())))
+
+    return Result('vcg', fixed_jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
+                  failure=sum(job_prices.values()) != sum(server_revenues.values()))

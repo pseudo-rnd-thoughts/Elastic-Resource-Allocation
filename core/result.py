@@ -12,8 +12,9 @@ class Result(object):
 
     def __init__(self, algorithm_name: str, jobs: List[Job], servers: List[Server], solve_time: float,
                  show_money: bool = False, **kwargs):
+        self.algorithm_name = algorithm_name
+
         self.data = dict()
-        self.data['name'] = algorithm_name
         self.data['solve_time'] = round(solve_time, 3)
 
         # General total information
@@ -46,10 +47,13 @@ class Result(object):
             self.data['total money'] = sum(job.price for job in jobs)
             self.data['prices'] = {job.name: job.price for job in jobs}
             self.data['revenues'] = {server.name: server.revenue for server in servers}
+            self.data['price change'] = {server.name: server.price_change for server in servers}
 
-    def store(self):
+    def store(self, **kwargs):
         """
         Returns the results values for storage
         :return: The results values
         """
+        for key, value in kwargs.items():
+            self.data[key] = value
         return self.data

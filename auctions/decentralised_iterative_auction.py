@@ -191,5 +191,5 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return Result("Iterative", jobs, servers, time() - start_time,
+    return Result("Iterative", jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
                   total_iterations=iterations, total_messages=messages)

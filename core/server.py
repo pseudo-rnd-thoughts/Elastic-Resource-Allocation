@@ -22,7 +22,7 @@ class Server(object):
         self.max_storage: Final[int] = max_storage
         self.max_computation: Final[int] = max_computation
         self.max_bandwidth: Final[int] = max_bandwidth
-        self.price_change: Final[int] = price_change
+        self.price_change: int = price_change
 
         # Allocation information
         self.allocated_jobs: List[Job] = []
