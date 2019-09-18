@@ -106,11 +106,23 @@ def allocate(job: Job, loading: int, compute: int, sending: int, server: Server,
 
 
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
+    """
+    Replace the item in the list
+    :param lists: The list
+    :param old_item: The item to remove
+    :param new_item: The item to append
+    """
     lists.remove(old_item)
     lists.append(new_item)
 
 
 def list_copy_remove(lists: List[T], item: T) -> List[T]:
+    """
+    Copy the list and remove an item
+    :param lists: The list
+    :param item: The item to remove
+    :return: The copied list without the item
+    """
     list_copy = lists.copy()
     list_copy.remove(item)
     return list_copy

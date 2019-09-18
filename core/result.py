@@ -1,7 +1,8 @@
 """Result from the greedy algorithm"""
 
 from __future__ import annotations
-from typing import List, Tuple
+
+from typing import List
 
 from core.job import Job
 from core.server import Server

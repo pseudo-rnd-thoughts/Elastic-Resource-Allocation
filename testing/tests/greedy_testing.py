@@ -26,7 +26,7 @@ def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
     :param repeat: The repeat
     :param repeats: Number of model runs
     :param optimal_time_limit: The compute time for the optimal algorithm
-    :poram relaxed_time_limit: The compute time for the relaxed algorithm
+    :param relaxed_time_limit: The compute time for the relaxed algorithm
     """
     print("Greedy test with optimal calculated for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))

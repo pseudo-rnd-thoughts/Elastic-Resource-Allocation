@@ -1,17 +1,17 @@
 """Auction Mutation"""
 
 from __future__ import annotations
-from typing import Callable
-import json
-from tqdm import tqdm
-from random import choice, random
 
-from core.core import save_filename, list_item_replacement, load_args
-from core.model import ModelDist, reset_model, load_dist
-from core.job import Job, job_diff
-from core.server import Server, server_diff
+import json
+from random import choice
+from typing import Callable
+
+from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from core.core import save_filename, list_item_replacement, load_args
+from core.job import Job, job_diff
+from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
@@ -45,7 +45,6 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
         # Save the job prices and server revenues
         job_prices = {job: job.price for job in jobs}
-        server_revenue = {server: server.revenue for server in servers}
         allocated_jobs = {job: job.running_server is not None for job in jobs}
 
         # Loop each time mutating a job or server and find the auction results and compare to the unmutated result

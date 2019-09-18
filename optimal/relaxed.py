@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import List, Dict, Tuple, Optional
+from time import time
 
 from docplex.cp.config import context
 from docplex.cp.model import CpoModel, CpoVariable
@@ -79,7 +80,9 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, load
     :param debug_time: Print the time taken
     :return: A results
     """
+    start_time = time()
 
+    # Run the model
     model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
                                                  TimeLimit=time_limit)
     if debug_time:
@@ -90,15 +93,14 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, load
     if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
         return None
 
+    # For each of the jobs allocate if allocated to the server
     for job in jobs:
         if model_solution.get_value(job_allocation[job]):
-            s = model_solution.get_value(loading_speeds[job])
-            w = model_solution.get_value(compute_speeds[job])
-            r = model_solution.get_value(sending_speeds[job])
-            job.allocate(s, w, r, super_server)
+            job.allocate(model_solution.get_value(loading_speeds[job]), model_solution.get_value(compute_speeds[job]),
+                         model_solution.get_value(sending_speeds[job]), super_server)
             super_server.allocate_job(job)
 
-    return Result("Relaxed", jobs, [super_server])
+    return Result("Relaxed", jobs, [super_server], time() - start_time)
 
 
 def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int, debug_time: bool = False) -> Result:

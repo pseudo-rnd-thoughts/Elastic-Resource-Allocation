@@ -145,6 +145,10 @@ class Random(ValueDensity):
         """Value density function"""
         return random()
 
+    def inverse(self, job: Job, density: float) -> float:
+        """Inverse evaluation function"""
+        raise Exception("Not supported function of inverse")
+
 
 # Functions you actually want to use
 policies = (

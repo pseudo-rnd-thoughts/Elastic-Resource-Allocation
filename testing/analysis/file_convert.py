@@ -6,7 +6,11 @@ import json
 import csv
 
 
-def csv_convert(file):
+def csv_convert(file: str):
+    """
+    Convert the file to a CSV file
+    :param file: The file location
+    """
     with open(file) as original_file:
         data = json.load(original_file)
 
@@ -49,4 +53,4 @@ if __name__ == '__main__':
     ]
 
     for test_file, model in optimal_greedy_test_basic:
-        convert(test_file)
+        json_convert(test_file)
