@@ -35,7 +35,7 @@ class FixedJob(Job):
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
         """
-        OVerrides the allocate function from job to just allocate the running server and the price
+        Overrides the allocate function from job to just allocate the running server and the price
         :param loading_speed: Ignored
         :param compute_speed: Ignored
         :param sending_speed: Ignored
@@ -63,11 +63,11 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     model = CpoModel("CDA")
 
     # As no resource speeds then only assign binary variables for the allocation
-    allocations = {}
-    for job in jobs:
-        for server in servers:
-            allocations[(job, server)] = model.binary_var(name='{} job {} server'.format(job.name, server.name))
+    allocations = {(job, server): model.binary_var(name='{} job {} server'.format(job.name, server.name))
+                   for job in jobs for server in servers}
 
+    # Allocation constraint
+    for job in jobs:
         model.add(sum(allocations[(job, server)] for server in servers) <= 1)
 
     # Server resource speeds constraints

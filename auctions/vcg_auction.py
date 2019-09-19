@@ -33,7 +33,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
     # Find the optimal solution
     if debug_running:
         print("Finding optimal")
-    optimal_solution = optimal_algorithm(jobs, servers, time_limit=time_limit, debug_time=debug_time)
+    optimal_solution = optimal_algorithm(jobs, servers, time_limit=time_limit)
     if optimal_solution is None:
         return None
     elif debug_results:
@@ -57,7 +57,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         # Find the optimal solution where the job doesnt exist
         if debug_running:
             print("Solving for without job {}".format(job.name))
-        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time_limit, debug_time=debug_time)
+        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time_limit)
         if optimal_prime is None:
             return None
         else:
@@ -74,7 +74,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         # Find the optimal solution where the server doesnt exist
         if debug_running:
             print("Solving for without server {}".format(server.name))
-        optimal_prime = optimal_algorithm(jobs, servers_prime, time_limit=time_limit, debug_time=debug_time)
+        optimal_prime = optimal_algorithm(jobs, servers_prime, time_limit=time_limit)
         if optimal_prime is None:
             return None
         else:
