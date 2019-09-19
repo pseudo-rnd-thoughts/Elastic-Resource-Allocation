@@ -95,8 +95,8 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     return sum(job.value for job in jobs if job.running_server)
 
 
-def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int, debug_running: bool = False,
-                      debug_results: bool = False) -> Optional[Result]:
+def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
+                      debug_running: bool = False,  debug_results: bool = False) -> Optional[Result]:
     """
     Combinatorial Double auction solved through VCG auction algorithm
     :param jobs: a list of jobs

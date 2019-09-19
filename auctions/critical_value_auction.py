@@ -62,7 +62,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     """
     Critical value auction
     :param jobs: A list of jobs
-    :param servers: A list of serveres
+    :param servers: A list of servers
     :param value_density: The value density function
     :param server_selection_policy: The server selection policy
     :param resource_allocation_policy: The resource allocation policy

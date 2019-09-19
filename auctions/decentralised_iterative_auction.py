@@ -132,7 +132,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
                                     initial_cost: Callable[[Job], int] = None,
-                                    debug_allocation: bool = True, debug_results: bool = True) -> Result:
+                                    debug_allocation: bool = False, debug_results: bool = False) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
