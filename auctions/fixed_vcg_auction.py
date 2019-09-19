@@ -158,7 +158,7 @@ def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         # Find the optimal solution where the server doesnt exist
         if debug_running:
             print("Solving for without {} server".format(server.name))
-        optimal_prime = optimal_algorithm(fixed_jobs, servers_prime, time_limit=time)
+        optimal_prime = optimal_algorithm(fixed_jobs, servers_prime, time_limit=time_limit)
         if optimal_prime is None:
             return None
         else:
