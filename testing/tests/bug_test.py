@@ -18,3 +18,6 @@ if __name__ == "__main__":
     args = load_args()
 
     model_name, job_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+
+    run_fixed_auction(loaded_model_dist)
