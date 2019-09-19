@@ -132,7 +132,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
                                     initial_cost: Callable[[Job], int] = None,
-                                    debug_allocation: bool = False, debug_results: bool = False) -> Result:
+                                    debug_allocation: bool = True, debug_results: bool = True) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
@@ -172,12 +172,10 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
             if debug_allocation:
                 print("Adding job {} to server {} with price {}".format(job.name, server.name, job_price))
             messages += allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs)
-            unallocated_jobs.remove(job)
-        else:
-            if debug_allocation:
-                print("Removing Job {} from the unallocated job as the min price is {} and job value is {}"
-                      .format(job.name, job_price, job.value))
-            unallocated_jobs.remove(job)
+        elif debug_allocation:
+            print("Removing Job {} from the unallocated job as the min price is {} and job value is {}"
+                  .format(job.name, job_price, job.value))
+        unallocated_jobs.remove(job)
 
         if debug_allocation:
             print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))

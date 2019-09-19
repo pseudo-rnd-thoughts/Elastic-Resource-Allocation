@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import List, Tuple
 from time import time
 
+from core.core import allocate
 from core.job import Job
 from core.result import Result
 from core.server import Server
@@ -28,30 +29,46 @@ def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -
                 s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
 
 
-def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_policy: AllocationValuePolicy) -> Result:
+def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
+                  debug_allocation: bool = False, debug_pop: bool = False) -> Result:
     """
     A greedy algorithm that uses the idea of a matrix
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param allocation_value_policy: The value matrix policy
+    :param debug_allocation: Debugs the allocation
+    :param debug_pop: Debugs the values that are popped
     :return: The results
     """
+    start_time = time()
+
+    # Generate the full allocation value matrix
     allocation_value_matrix = {(job, server): allocate_resources(job, server, allocation_value_policy)
-                               for job in jobs for server in servers}
+                               for job in jobs for server in servers if server.can_run(job)}
     unallocated_jobs = jobs.copy()
 
-    start_time = time()
+    # Loop over the allocation matrix till there are no values left
     while len(allocation_value_matrix):
-        (allocated_job, allocated_server), (value, s, w, r) = max(allocation_value_matrix, key=lambda x: x[0][0])
+        (allocated_job, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
+        allocate(allocated_job, s, w, r, allocated_server)
 
-        allocated_job.allocate(s, w, r, allocated_server)
-        allocated_server.allocated_job(allocated_job)
+        if debug_allocation:
+            print("Job {} on Server {} with value {:.3f}, loading {} compute {} sending {}"
+                  .format(allocated_job.name, allocated_server.name, v, s, w, r))
 
-        for job in unallocated_jobs:
-            allocation_value_matrix.pop((job, allocated_server))
-            if allocated_server.can_run(job) is False:
-                allocation_value_matrix.pop((job, allocated_server))
+        # Remove the job from the allocation matrix
         for server in servers:
-            allocation_value_matrix.pop((allocated_job, server))
+            if (allocated_job, server) in allocation_value_matrix:
+                if debug_pop:
+                    print("Pop job {} and server {}".format(allocated_job.name, server.name))
+                allocation_value_matrix.pop((allocated_job, server))
+
+        # Remove the job from the unallocated jobs and check if the allocated server can now not run any of the jobs
+        unallocated_jobs.remove(allocated_job)
+        for job in unallocated_jobs:
+            if allocated_server.can_run(job) is False and (job, allocated_server) in allocation_value_matrix:
+                if debug_pop:
+                    print("Pop job {} and server {}".format(job.name, allocated_server.name))
+                allocation_value_matrix.pop((job, allocated_server))
 
     return Result("Matrix Greedy " + allocation_value_policy.name, jobs, servers, solve_time=time()-start_time)

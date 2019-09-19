@@ -1,7 +1,7 @@
 """Server object implementation"""
 
 from __future__ import annotations
-from typing import List, Final, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 from random import gauss
 
@@ -18,10 +18,10 @@ class Server(object):
     value: float = 0  # This is the total value of the job's allocated
 
     def __init__(self, name: str, max_storage: int, max_computation: int, max_bandwidth: int, price_change: int = 1):
-        self.name: Final[str] = name
-        self.max_storage: Final[int] = max_storage
-        self.max_computation: Final[int] = max_computation
-        self.max_bandwidth: Final[int] = max_bandwidth
+        self.name: str = name
+        self.max_storage: int = max_storage
+        self.max_computation: int = max_computation
+        self.max_bandwidth: int = max_bandwidth
         self.price_change: int = price_change
 
         # Allocation information

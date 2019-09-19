@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 from random import choice
+import random
 import sys
+import pickle
 
 from core.model import ModelDist
 from core.job import Job
@@ -40,11 +42,16 @@ def load_args() -> Dict[str, Union[str, int]]:
     Gets all of the arguments and places in a dictionary
     :return: All of the arguments in a dictionary
     """
+    assert len(sys.argv) == 5, "Args: {}".format(sys.argv)
+    assert sys.argv[2].isdigit(), "Jobs: {}".format(sys.argv[2])
+    assert sys.argv[3].isdigit(), "Servers: {}".format(sys.argv[3])
+    assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
+
     return {
-        'model': 'models/'+sys.argv[1],
-        'jobs': sys.argv[2],
-        'servers': sys.argv[3],
-        'repeat': sys.argv[4]
+        'model': 'models/'+sys.argv[1]+'.model',
+        'jobs': int(sys.argv[2]),
+        'servers': int(sys.argv[3]),
+        'repeat': int(sys.argv[4])
     }
 
 
@@ -126,3 +133,12 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     list_copy = lists.copy()
     list_copy.remove(item)
     return list_copy
+
+
+def save_random_state(filename):
+    """
+    Save the random state to the filename
+    :param filename: The filename to save the state to
+    """
+    with open(filename, 'w') as file:
+        pickle.dumps(file, random.getstate())
