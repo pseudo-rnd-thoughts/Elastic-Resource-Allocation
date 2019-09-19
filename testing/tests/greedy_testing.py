@@ -78,8 +78,6 @@ def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
         
     
 if __name__ == "__main__":
-    print(random.getstate())
-
     args = load_args()
 
     model_name, job_dist, server_dist = load_dist(args['model'])
