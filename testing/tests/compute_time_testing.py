@@ -1,14 +1,13 @@
 """Relaxed optimality testing"""
 
-import sys
 import json
+import sys
 
 from docplex.cp.model import CpoModel
 
 from core.model import load_dist, ModelDist
-
-from optimal.relaxed import generate_model as relaxed_generate_model
 from optimal.optimal import generate_model as optimal_generate_model
+from optimal.relaxed import generate_model as relaxed_generate_model
 
 
 def time_test(model: CpoModel, time_limit: int, name: str):

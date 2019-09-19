@@ -6,9 +6,9 @@ from typing import List
 
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import numpy as np
 
 from core.job import Job
 from core.model import ModelDist

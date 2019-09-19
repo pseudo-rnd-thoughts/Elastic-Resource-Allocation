@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Optional
 from time import time
+from typing import List, Dict, Tuple, Optional
 
 from docplex.cp.config import context
 from docplex.cp.model import CpoModel, CpoVariable
@@ -100,7 +100,7 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, load
                          model_solution.get_value(sending_speeds[job]), super_server)
             super_server.allocate_job(job)
 
-    return Result("Relaxed", jobs, [super_server], time() - start_time)
+    return Result("Relaxed", jobs, [super_server], time() - start_time, solve_status=model_solution.get_solve_status())
 
 
 def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int, debug_time: bool = False) -> Result:

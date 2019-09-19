@@ -5,10 +5,10 @@ from __future__ import annotations
 import json
 from typing import List, Dict, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 
 from core.server import Server
 from graphing.graph_model import plot_allocation_results

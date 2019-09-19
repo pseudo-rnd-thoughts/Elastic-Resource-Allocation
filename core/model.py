@@ -1,6 +1,7 @@
 """This creates the models for the jobs and servers"""
 
 from __future__ import annotations
+
 from random import gauss, random
 from typing import List, Tuple
 

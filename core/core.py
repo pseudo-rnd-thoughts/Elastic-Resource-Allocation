@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Iterable, Dict, Union, List, Tuple, TypeVar
-from random import choice
+import pickle
 import random
 import sys
-import pickle
+from random import choice
+from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
-from core.model import ModelDist
 from core.job import Job
+from core.model import ModelDist
 from core.server import Server
 
 T = TypeVar('T')

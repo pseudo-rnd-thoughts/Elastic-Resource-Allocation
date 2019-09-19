@@ -45,8 +45,8 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
                   job.required_results_data / sending_speeds[job] <= job.deadline)
 
         for server in servers:
-            server_job_allocation[(job, server)] = model.binary_var(name="Job {} Server {}".format(job.name,
-                                                                                                   server.name))
+            server_job_allocation[(job, server)] = model.binary_var(name="Job {} Server {}"
+                                                                    .format(job.name, server.name))
 
         model.add(sum(server_job_allocation[(job, server)] for server in servers) <= 1)
 
@@ -63,10 +63,10 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
     return model, loading_speeds, compute_speeds, sending_speeds, server_job_allocation
 
 
-def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loading_speeds: Dict[Job, CpoVariable],
-                    compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
-                    server_job_allocation: Dict[Tuple[Job, Server], CpoVariable], time_limit: int,
-                    debug_time: bool = True) -> Optional[Result]:
+def solve_model(model: CpoModel, jobs: List[Job], servers: List[Server], loading_speeds: Dict[Job, CpoVariable],
+                compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
+                server_job_allocation: Dict[Tuple[Job, Server], CpoVariable], time_limit: int,
+                debug_time: bool = True) -> Optional[Result]:
     """
     Runs the cplex model
     :param model: The model to run
@@ -100,7 +100,8 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], servers: List[Server], loa
                     job.allocate(s, w, r, server)
                     server.allocate_job(job)
 
-        return Result("Optimal", jobs, servers, solve_time=round(model_solution.get_solve_time(), 2))
+        return Result("Optimal", jobs, servers, round(model_solution.get_solve_time(), 2),
+                      solve_status=model_solution.get_solve_status())
     else:
         return None
 
@@ -116,5 +117,5 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int, d
     """
     model, loading_speeds, compute_speeds, sending_speed, server_job_allocation = generate_model(jobs, servers)
 
-    return run_cplex_model(model, jobs, servers, loading_speeds, compute_speeds, sending_speed, server_job_allocation,
-                           time_limit, debug_time)
+    return solve_model(model, jobs, servers, loading_speeds, compute_speeds, sending_speed, server_job_allocation,
+                       time_limit, debug_time)

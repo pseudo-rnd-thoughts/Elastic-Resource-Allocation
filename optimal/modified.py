@@ -2,12 +2,12 @@
 
 from typing import List
 
-from docplex.mp.model import Model
 from docplex.cp.model import CpoModel
+from docplex.mp.model import Model
 
 from core.job import Job
-from core.server import Server
 from core.model import load_dist, ModelDist
+from core.server import Server
 
 
 def optimal_mp_algorithm(jobs: List[Job], servers: List[Server]):

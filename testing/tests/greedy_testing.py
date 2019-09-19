@@ -3,21 +3,17 @@
 from __future__ import annotations
 
 import json
-import random
 
 from tqdm import tqdm
 
 from core.core import load_args, save_filename
 from core.model import reset_model, ModelDist, load_dist
-
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
-
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
-
 from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
 

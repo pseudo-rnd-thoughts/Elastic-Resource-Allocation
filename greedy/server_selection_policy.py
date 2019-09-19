@@ -1,6 +1,7 @@
 """Allocation policy functions"""
 
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from math import exp
 from random import choice

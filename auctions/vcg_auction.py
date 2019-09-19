@@ -1,15 +1,15 @@
 """Implementation of an VCG auctions"""
 
 from __future__ import annotations
-from typing import List, Dict, Tuple, Optional
+
 from time import time
+from typing import List, Dict, Tuple, Optional
 
 from core.core import list_copy_remove
 from core.job import Job
-from core.server import Server
 from core.model import reset_model
 from core.result import Result
-
+from core.server import Server
 from optimal.optimal import optimal_algorithm
 
 

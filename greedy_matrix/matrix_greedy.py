@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple
 from time import time
+from typing import List, Tuple
 
 from core.core import allocate
 from core.job import Job
@@ -51,7 +51,6 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
     while len(allocation_value_matrix):
         (allocated_job, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
         allocate(allocated_job, s, w, r, allocated_server)
-
         if debug_allocation:
             print("Job {} on Server {} with value {:.3f}, loading {} compute {} sending {}"
                   .format(allocated_job.name, allocated_server.name, v, s, w, r))
@@ -66,7 +65,12 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
         # Remove the job from the unallocated jobs and check if the allocated server can now not run any of the jobs
         unallocated_jobs.remove(allocated_job)
         for job in unallocated_jobs:
-            if allocated_server.can_run(job) is False and (job, allocated_server) in allocation_value_matrix:
+            # Update the allocation when the server is updated
+            if allocated_server.can_run(job):
+                allocation_value_matrix[(job, allocated_server)] = allocate_resources(job, allocated_server,
+                                                                                      allocation_value_policy)
+            # If job cant be run then remove the job
+            elif (job, allocated_server) in allocation_value_matrix:
                 if debug_pop:
                     print("Pop job {} and server {}".format(job.name, allocated_server.name))
                 allocation_value_matrix.pop((job, allocated_server))

@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from typing import List
 from math import floor
 from time import time
+from typing import List
 
 from core.job import Job
 from core.result import Result
 from core.server import Server
-
 from greedy.greedy import allocate_jobs
 from greedy.resource_allocation_policy import ResourceAllocationPolicy
 from greedy.server_selection_policy import ServerSelectionPolicy

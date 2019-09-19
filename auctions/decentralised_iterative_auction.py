@@ -2,18 +2,34 @@
 
 from __future__ import annotations
 
-from random import choice
-from typing import List, Dict, Callable
 from math import inf
+from random import choice
 from time import time
-
-from core.core import allocate
-from core.job import Job
-from core.server import Server
-from core.result import Result
+from typing import List, Dict, Callable
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+
+from core.core import allocate
+from core.job import Job
+from core.result import Result
+from core.server import Server
+
+
+def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, int], sending_speeds: Dict[Job, int],
+                    allocations: Dict[Job, bool]):
+    """
+    Assert that the solution is valid
+    :param loading_speeds: The loading speeds
+    :param compute_speeds: The compute speeds
+    :param sending_speeds: The sending speeds
+    :param allocations: The allocation of jobs
+    """
+    for job, allocation in allocations.items():
+        if allocation:
+            assert job.required_storage / loading_speeds[job] + \
+                   job.required_computation / compute_speeds[job] + \
+                   job.required_results_data / sending_speeds[job] <= job.deadline
 
 
 def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_limit: int, debug_results: bool = False):
@@ -80,6 +96,9 @@ def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_lim
     compute = {job: model_solution.get_value(compute_speed[job]) for job in jobs}
     sending = {job: model_solution.get_value(sending_speed[job]) for job in jobs}
     allocation = {job: model_solution.get_value(allocated) for job, allocated in allocation.items()}
+
+    # Check that the solution is valid
+    assert_solution(loading, compute, sending, allocation)
 
     if debug_results:
         print("Sever: {} - Max server profit: {}, prior server total price: {} therefore job price: {}"

@@ -1,18 +1,19 @@
 """Combinatorial Double Auction"""
 
 from __future__ import annotations
-from typing import List, Dict, Optional
+
 from math import exp
 from time import time
-
-from core.job import Job
-from core.server import Server
-from core.result import Result
-from core.model import reset_model
-from core.core import allocate, list_copy_remove
+from typing import List, Dict, Optional
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+
+from core.core import allocate, list_copy_remove
+from core.job import Job
+from core.model import reset_model
+from core.result import Result
+from core.server import Server
 
 
 class FixedJob(Job):
