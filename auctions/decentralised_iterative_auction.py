@@ -32,16 +32,18 @@ def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, in
                    job.required_results_data / sending_speeds[job] <= job.deadline
 
 
-def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_limit: int, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int, debug_results: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
     :param server: A server
-    :param initial_cost: The initial cost of the job
     :param time_limit: The solve time limit
+    :param initial_cost: The initial cost of the job
     :param debug_results: Prints the result from the model solution
     :return: The results from the job prices
     """
+    assert time_limit > 0, "Time limit: {}".format(time_limit)
+
     if debug_results:
         print("Evaluating job {}'s price on server {}".format(new_job.name, server.name))
     model = CpoModel("Job {} Price".format(new_job.name))
@@ -76,7 +78,6 @@ def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_lim
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     # Solve the model with a time limit
-    print(time_limit)
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
 
     # If the model solution failed then return an infinite price

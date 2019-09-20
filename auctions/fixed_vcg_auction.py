@@ -62,6 +62,8 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     :param time_limit: The time limit to solve with
     :return: The results
     """
+    assert time_limit > 0, "Time limit: {}".format(time_limit)
+
     model = CpoModel("CDA")
 
     # As no resource speeds then only assign binary variables for the allocation

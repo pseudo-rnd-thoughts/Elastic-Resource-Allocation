@@ -20,6 +20,8 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     :param time_limit: The time limit to solve
     :return: The result from optimal solution
     """
+    assert time_limit > 0, "Time limit: {}".format(time_limit)
+
     model = CpoModel("Server Job Allocation")
 
     # The resource speed variables and the allocation variables
