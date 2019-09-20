@@ -42,6 +42,8 @@ class FixedJob(Job):
         :param running_server: The server the job is running on
         :param price: The price of the job
         """
+        assert self.running_server is None
+
         self.running_server = running_server
         self.price = price
 
@@ -72,12 +74,14 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
 
     # Server resource speeds constraints
     for server in servers:
-        model.add(sum(job.required_storage * allocations[(job, server)] for job in jobs) <= server.max_storage)
-        model.add(sum(job.compute_speed * allocations[(job, server)] for job in jobs) <= server.max_storage)
+        model.add(sum(job.required_storage * allocations[(job, server)]
+                      for job in jobs) <= server.max_storage)
+        model.add(sum(job.compute_speed * allocations[(job, server)]
+                      for job in jobs) <= server.max_storage)
         model.add(sum((job.loading_speed + job.sending_speed) * allocations[(job, server)]
                       for job in jobs) <= server.max_storage)
 
-    # Optimisation
+    # Optimisation problem
     model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))
 
     # Solve the cplex model with time limit
@@ -86,11 +90,11 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
         print("Fixed VCG auction failure")
         return None
 
-    # Allocate all of the jobs
+    # Allocate all of the jobs to the servers
     for job in jobs:
         for server in servers:
             if model_solution.get_value(allocations[(job, server)]):
-                job.running_server = server
+                job.allocate(0, 0, 0, server)
                 server.allocate_job(job)
 
     return sum(job.value for job in jobs if job.running_server)

@@ -50,11 +50,18 @@ class Server(object):
         Updates the server attributes for when it is allocated within jobs
         :param job: The job being allocated
         """
-        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0,\
-            "{} - s: {}, w: {}, r: {}".format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
-        assert self.available_storage >= job.required_storage
-        assert self.available_computation >= job.compute_speed
-        assert self.available_bandwidth >= job.loading_speed + job.sending_speed
+        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
+            "Job {} - loading: {}, compute: {}, sending: {}"\
+            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
+        assert self.available_storage >= job.required_storage, \
+            "Server {} available storage {}, job required storage {}"\
+            .format(self.name, self.available_storage, job.required_storage)
+        assert self.available_computation >= job.compute_speed, \
+            "Server {} available computation {}, job compute speed {}"\
+            .format(self.name, self.available_computation, job.compute_speed)
+        assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
+            "Server {} available bandwidth {}, job loading speed {} and sending speed {}"\
+            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
 
         self.allocated_jobs.append(job)
         self.available_storage -= job.required_storage
