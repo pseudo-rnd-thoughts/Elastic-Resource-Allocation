@@ -67,17 +67,16 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
 
     # Check that it is solved
     if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
-        print("Optimal algorithm failued")
+        print("Optimal algorithm failed")
         return None
 
     # Generate the allocation of the jobs and servers
     for job in jobs:
         for server in servers:
             if model_solution.get_value(server_job_allocation[(job, server)]):
-                s = model_solution.get_value(loading_speeds[job])
-                w = model_solution.get_value(compute_speeds[job])
-                r = model_solution.get_value(sending_speeds[job])
-                job.allocate(s, w, r, server)
+                job.allocate(model_solution.get_value(loading_speeds[job]),
+                             model_solution.get_value(compute_speeds[job]),
+                             model_solution.get_value(sending_speeds[job]), server)
                 server.allocate_job(job)
 
     return Result("Optimal", jobs, servers, round(model_solution.get_solve_time(), 2),

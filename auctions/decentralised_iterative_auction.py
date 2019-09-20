@@ -52,13 +52,14 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     # Add the new job to the list of server allocated jobs
     jobs = server.allocated_jobs + [new_job]
 
-    # Create all of the resource speeds variables and the binary allocation variables
-    loading_speed = {job: model.integer_var(min=1, max=server.max_bandwidth,
+    # Create all of the resource speeds variables
+    loading_speed = {job: model.integer_var(min=1, max=server.max_bandwidth-1,
                                             name="Job {} loading speed".format(job.name)) for job in jobs}
     compute_speed = {job: model.integer_var(min=1, max=server.max_computation,
                                             name="Job {} compute speed".format(job.name)) for job in jobs}
-    sending_speed = {job: model.integer_var(min=1, max=server.max_bandwidth,
+    sending_speed = {job: model.integer_var(min=1, max=server.max_bandwidth-1,
                                             name="Job {} sending speed".format(job.name)) for job in jobs}
+    # Create all of the allocation variables however only on the currently allocated jobs
     allocation = {job: model.binary_var(name="Job {} allocated".format(job.name)) for job in server.allocated_jobs}
 
     # Add the deadline constraint
