@@ -17,7 +17,7 @@ def run_fixed_auction(model_dist: ModelDist):
 
 def run_decentralised_iterative_auction(model_dist: ModelDist):
     jobs, servers = model_dist.create()
-    result = decentralised_iterative_auction(jobs, servers, 15, None, True, True)
+    result = decentralised_iterative_auction(jobs, servers, 15, lambda x: 20, True, True)
     print(result.store())
 
 

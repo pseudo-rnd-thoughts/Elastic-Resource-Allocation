@@ -8,12 +8,15 @@ from tqdm import tqdm
 
 from core.core import load_args, save_filename
 from core.model import reset_model, ModelDist, load_dist
+
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
+
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
+
 from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
 
@@ -68,9 +71,9 @@ def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
         data.append(algorithm_results)
 
     # Save the results to the file
-    with open(save_filename('optimal_greedy_test', model_dist.file_name, repeat), 'w') as json_file:
-        json.dump(data, json_file)
-    print(data)
+    with open(save_filename('optimal_greedy_test', model_dist.file_name, repeat), 'w') as file:
+        json.dump(data, file)
+    print("Successful")
         
     
 if __name__ == "__main__":

@@ -108,7 +108,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
         print("Sever: {} - Max server profit: {}, prior server total price: {} therefore job price: {}"
               .format(server.name, model_solution.get_objective_values()[0], server.revenue, job_price))
 
-    return job_price, loading, compute, sending, allocation, server, jobs
+    return job_price, loading, compute, sending, allocation, server
 
 
 def allocate_jobs(job_price: float, new_job: Job, server: Server,
@@ -138,15 +138,16 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
     # For each of the job, if the job is allocated then allocate the job or reset the job
     for job, allocated in allocation.items():
         if allocated:
-            allocate(new_job, loading[job], compute[job], sending[job], server, job.price)
+            allocate(job, loading[job], compute[job], sending[job], server, job.price)
         else:
             job.reset_allocation()
             unallocated_jobs.append(job)
             messages += 1
 
         if debug_allocations:
-            print("Job {} is {} to server {}".format(job.name, "allocated" if allocation[job] else "unallocated",
-                                                     server.name))
+            print("Job {} is {} to server {} with loading {}, compute {} and sending {}"
+                  .format(job.name, "allocated" if allocation[job] else "unallocated", server.name,
+                          loading[job], compute[job], sending[job]))
     if debug_result:
         print("Server {}'s total price: {}".format(server.name, server.revenue))
 
@@ -185,10 +186,12 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
         job: Job = choice(unallocated_jobs)
 
         # Calculate the min job price from all of the servers
-        job_price, loading, compute, sending, allocation, server, jobs = \
+        job_price, loading, compute, sending, allocation, server = \
             min((evaluate_job_price(job, server, time_limit, initial_job_cost[job]) for server in servers),
                 key=lambda bid: bid[0])
         messages += 2 * len(servers)
+
+        assert_solution(loading, compute, sending, allocation)
 
         # If the job price is less than the job value then allocate the job else remove the
         if job_price <= job.value:
@@ -201,7 +204,7 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
         unallocated_jobs.remove(job)
 
         if debug_allocation:
-            print("Number of unallocated jobs: {}, {}\n".format(len(unallocated_jobs), job in unallocated_jobs))
+            print("Number of unallocated jobs: {}".format(len(unallocated_jobs)))
         iterations += 1
 
     if debug_results:

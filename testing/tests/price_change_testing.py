@@ -10,6 +10,7 @@ from tqdm import tqdm
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.fixed_vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
+
 from core.core import load_args, save_filename
 from core.model import reset_model, ModelDist, load_dist
 
@@ -66,14 +67,15 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         data.append(auction_results)
 
     # Save all of the results to a file
-    with open(save_filename('uniform_price_change_auction_results', model_dist.file_name, repeat), 'w') as outfile:
-        json.dump(data, outfile)
-    print(data)
+    with open(save_filename('uniform_price_change_auction_results', model_dist.file_name, repeat), 'w') as file:
+        json.dump(data, file)
+    print("Successful")
 
 
 def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_changes: int = 10, repeats: int = 20,
                                   vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
-                                  decentralised_iterative_time_limit: int = 15):
+                                  decentralised_iterative_time_limit: int = 15,
+                                  price_change_mean: int = 2, price_change_std: int = 4):
     """
     Test non uniform price change servers on the decentralised iterative auction
     :param model_dist: The model distribution
@@ -83,15 +85,16 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
     :param vcg_time_limit: The vcg compute time limit
     :param fixed_vcg_time_limit: The fixed vcg compute time limit
     :param decentralised_iterative_time_limit: The decentralised iterative compute time limit
-    :return:
+    :param price_change_mean: The price change mean value
+    :param price_change_std: The price change standard deviation
     """
     print("Multiple price change with iterative auctions for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
 
     # Generate all of the price changes
-    prices_changes = [[max(1, int(abs(gauss(2, 4)))) for _ in range(model_dist.num_servers)]
-                      for _ in range(price_changes)]
+    prices_changes = [[max(1, int(abs(gauss(price_change_mean, price_change_std))))
+                       for _ in range(model_dist.num_servers)] for _ in range(price_changes)]
 
     # Loop, for each calculate the result for the results
     for _ in tqdm(range(repeats)):
@@ -126,9 +129,9 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
         data.append(auction_results)
 
     # Save the results to a file
-    with open(save_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat), 'w') as outfile:
-        json.dump(data, outfile)
-    print(data)
+    with open(save_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat), 'w') as file:
+        json.dump(data, file)
+    print("Successful")
 
 
 if __name__ == "__main__":

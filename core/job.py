@@ -58,8 +58,9 @@ class Job(object):
             "with loading {} compute {} sending {} speed and deadline {} time taken {}" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
                         loading_speed, compute_speed, sending_speed, self.deadline,
-                        self.required_storage / loading_speed + self.required_computation / compute_speed +
-                        self.required_results_data / sending_speed)
+                        self.required_storage * compute_speed * sending_speed +
+                        loading_speed * self.required_computation * sending_speed +
+                        loading_speed * compute_speed * self.required_results_data)
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed
