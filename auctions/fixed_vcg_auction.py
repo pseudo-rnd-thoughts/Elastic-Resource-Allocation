@@ -33,7 +33,7 @@ class FixedJob(Job):
             key=lambda x: exp(x[0]) ** 3 + exp(x[1]) ** 3 + exp(x[2]) ** 3)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
-                 price: float = None):
+                 price: float = 0):
         """
         Overrides the allocate function from job to just allocate the running server and the price
         :param loading_speed: Ignored

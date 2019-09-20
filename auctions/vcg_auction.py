@@ -60,7 +60,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         if optimal_prime is None:
             return None
         else:
-            job_prices[job] = optimal_solution.sum_value - optimal_prime.sum_value
+            job_prices[job] = (optimal_solution.sum_value - job.value) - optimal_prime.sum_value
             if debug_results:
                 print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 

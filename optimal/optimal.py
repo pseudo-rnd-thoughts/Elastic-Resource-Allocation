@@ -40,9 +40,9 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
         compute_speeds[job] = model.integer_var(min=1, max=max_computation, name="{} compute speed".format(job.name))
         sending_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(job.name))
 
-        model.add(job.required_storage / loading_speeds[job] +
-                  job.required_computation / compute_speeds[job] +
-                  job.required_results_data / sending_speeds[job] <= job.deadline)
+        model.add((job.required_storage / loading_speeds[job]) +
+                  (job.required_computation / compute_speeds[job]) +
+                  (job.required_results_data / sending_speeds[job]) <= job.deadline)
 
         # The job allocation variables and add the allocation constraint
         for server in servers:

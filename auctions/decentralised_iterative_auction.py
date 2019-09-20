@@ -27,9 +27,10 @@ def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, in
     """
     for job, allocation in allocations.items():
         if allocation:
-            assert job.required_storage / loading_speeds[job] + \
-                   job.required_computation / compute_speeds[job] + \
-                   job.required_results_data / sending_speeds[job] <= job.deadline
+            assert (job.required_storage * compute_speeds[job] * sending_speeds[job]) + \
+                   (loading_speeds[job] * job.required_computation * sending_speeds[job]) + \
+                   (loading_speeds[job] * compute_speeds[job] * job.required_results_data) <= \
+                   (job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
 
 
 def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int, debug_results: bool = False):
@@ -62,9 +63,9 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
 
     # Add the deadline constraint
     for job in jobs:
-        model.add(job.required_storage / loading_speed[job] +
-                  job.required_computation / compute_speed[job] +
-                  job.required_results_data / sending_speed[job] <= job.deadline)
+        model.add((job.required_storage / loading_speed[job]) +
+                  (job.required_computation / compute_speed[job]) +
+                  (job.required_results_data / sending_speed[job]) <= job.deadline)
 
     # Add the server resource constraints
     model.add(sum(job.required_storage * allocated for job, allocated in allocation.items()) +
