@@ -14,14 +14,13 @@ from optimal.optimal import optimal_algorithm
 
 
 def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
-                debug_running: bool = False, debug_time: bool = False, debug_results: bool = False) -> Optional[Result]:
+                debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The time to run the optimal for
     :param debug_running: Debug what is being calculated
-    :param debug_time: Debug how long the allocation took to calculate
     :param debug_results: Debug the results for each job and server
     """
     start_time = time()
@@ -92,7 +91,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
     # Check that the job prices sum to the same value as the server revenues,
     # else the optimal solution hasn't been found at some point
     if sum(job_prices.values()) != sum(server_revenues.values()):
-        print("Fixed  VCG fail as sum of job prices {} != sum of server prices {}"
+        print("VCG fail as sum of job prices {} != sum of server prices {}"
               .format(sum(job_prices.values()), sum(server_revenues.values())))
 
     return Result('vcg', jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,

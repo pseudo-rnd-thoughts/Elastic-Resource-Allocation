@@ -76,6 +76,7 @@ def evaluate_job_price(new_job: Job, server: Server, initial_cost: int, time_lim
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     # Solve the model with a time limit
+    print(time_limit)
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
 
     # If the model solution failed then return an infinite price
