@@ -95,4 +95,6 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
         job.allocate(s, w, r, server, price=price)
         server.allocate_job(job)
 
-    return Result('Critical Value', jobs, servers, time() - start_time, show_money=True)
+    return Result('Critical Value', jobs, servers, time() - start_time, show_money=True,
+                  value_density=value_density.name, server_selection_policy=server_selection_policy.name,
+                  resource_allocation_policy=resource_allocation_policy.name)

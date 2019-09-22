@@ -8,7 +8,7 @@ from time import time
 from typing import List, Dict, Callable
 
 from docplex.cp.model import CpoModel
-from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import allocate
 from core.job import Job
@@ -83,8 +83,9 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
 
     # If the model solution failed then return an infinite price
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
-        print("Decentralised model failure")
+    if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
+            model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+        print("Decentralised model failure, solve status: {}".format(model_solution.get_solve_status()))
         return inf, {}, {}, {}, {}, server, jobs
 
     # Get the max server profit that the model finds

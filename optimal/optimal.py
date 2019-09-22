@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import List, Dict, Tuple, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable
-from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.job import Job
 from core.result import Result
@@ -66,18 +66,24 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
 
     # Check that it is solved
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+    if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
+            model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
         print("Optimal algorithm failed")
         return None
 
     # Generate the allocation of the jobs and servers
-    for job in jobs:
-        for server in servers:
-            if model_solution.get_value(server_job_allocation[(job, server)]):
-                job.allocate(model_solution.get_value(loading_speeds[job]),
-                             model_solution.get_value(compute_speeds[job]),
-                             model_solution.get_value(sending_speeds[job]), server)
-                server.allocate_job(job)
+    try:
+        for job in jobs:
+            for server in servers:
+                if model_solution.get_value(server_job_allocation[(job, server)]):
+                    job.allocate(model_solution.get_value(loading_speeds[job]),
+                                 model_solution.get_value(compute_speeds[job]),
+                                 model_solution.get_value(sending_speeds[job]), server)
+                    server.allocate_job(job)
+    except (AssertionError, KeyError) as e:
+        print(e)
+        model_solution.print_solution()
+        return None
 
     return Result("Optimal", jobs, servers, round(model_solution.get_solve_time(), 2),
                   solve_status=model_solution.get_solve_status())

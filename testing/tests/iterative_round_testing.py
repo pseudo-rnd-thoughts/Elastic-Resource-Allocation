@@ -46,7 +46,7 @@ if __name__ == "__main__":
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
     job_initial_cost = [
-        lambda x: cost for cost in range(0, job_dist[0].value_mean, 10)
+        lambda x: cost for cost in range(0, int(sum(dist.value_mean for dist in job_dist) / len(job_dist)), 10)
     ]
     server_price_changes = [1, 2, 5, 10, 15]
 

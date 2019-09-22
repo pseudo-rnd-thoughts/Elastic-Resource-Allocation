@@ -93,11 +93,16 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
         return None
 
     # Allocate all of the jobs to the servers
-    for job in jobs:
-        for server in servers:
-            if model_solution.get_value(allocations[(job, server)]):
-                job.allocate(0, 0, 0, server)
-                server.allocate_job(job)
+    try:
+        for job in jobs:
+            for server in servers:
+                if model_solution.get_value(allocations[(job, server)]):
+                    job.allocate(0, 0, 0, server)
+                    server.allocate_job(job)
+    except (KeyError, AssertionError) as e:
+        print(e)
+        model_solution.print_solution()
+        return None
 
     return sum(job.value for job in jobs if job.running_server)
 
@@ -179,7 +184,7 @@ def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
 
     # Check that the job prices sum to the same value as the server revenues,
     # else the optimal solution hasn't been found at some point
-    if sum(job_prices.values()) != sum(server_revenues.values()):
+    if debug_results and sum(job_prices.values()) != sum(server_revenues.values()):
         print("Fixed VCG fail as sum of job prices {} != sum of server prices {}"
               .format(sum(job_prices.values()), sum(server_revenues.values())))
 
