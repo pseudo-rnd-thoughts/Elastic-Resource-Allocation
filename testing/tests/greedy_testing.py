@@ -44,12 +44,12 @@ def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
 
         # Find the optimal solution
         optimal_result = optimal_algorithm(jobs, servers, optimal_time_limit)
-        algorithm_results['optimal'] = optimal_result.store() if optimal_result is None else "failure"
+        algorithm_results['optimal'] = optimal_result.store() if optimal_result is not None else "failure"
         reset_model(jobs, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(jobs, servers, relaxed_time_limit)
-        algorithm_results['Relaxed'] = relaxed_result.store() if relaxed_result is None else "failure"
+        algorithm_results['Relaxed'] = relaxed_result.store() if relaxed_result is not None else "failure"
         reset_model(jobs, servers)
 
         # Loop over all of the greedy policies permutations

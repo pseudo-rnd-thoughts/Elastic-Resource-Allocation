@@ -41,18 +41,12 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
 
         # Calculate the vcg auction
         vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
-        if vcg_result is None:
-            auction_results['vcg'] = 'failure'
-        else:
-            auction_results['vcg'] = vcg_result.store()
-
+        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(jobs, servers)
+
         # Calculate the fixed vcg auction
         fixed_vcg_result = fixed_vcg_auction(jobs, servers, fixed_vcg_time_limit)
-        if fixed_vcg_result is None:
-            auction_results['fixed vcg'] = 'failure'
-        else:
-            auction_results['fixed vcg'] = fixed_vcg_result.store()
+        auction_results['fixed vcg'] = fixed_vcg_result.store() if vcg_result is not None else 'failure'
 
         # For each uniform price change, set all of the server prices to that and solve auction
         for price_change in price_changes:
@@ -101,20 +95,14 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
         jobs, servers = model_dist.create()
         auction_results = {}
 
-        # Calculate the vcg auction
+        # Calculate the fixed vcg auction
         vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
-        if vcg_result is None:
-            auction_results['vcg'] = 'failure'
-        else:
-            auction_results['vcg'] = vcg_result.store()
-
+        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(jobs, servers)
+
         # Calculate the fixed vcg auction
         fixed_vcg_result = fixed_vcg_auction(jobs, servers, fixed_vcg_time_limit)
-        if fixed_vcg_result is None:
-            auction_results['fixed vcg'] = 'failure'
-        else:
-            auction_results['fixed vcg'] = fixed_vcg_result.store()
+        auction_results['fixed vcg'] = fixed_vcg_result.store() if vcg_result is not None else 'failure'
 
         for price_changes in prices_changes:
             reset_model(jobs, servers)
