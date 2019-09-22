@@ -8,6 +8,8 @@ import sys
 from random import choice
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
+from docplex.cp.solution import CpoSolveResult
+
 from core.job import Job
 from core.model import ModelDist
 from core.server import Server
@@ -142,3 +144,15 @@ def save_random_state(filename):
     """
     with open(filename, 'w') as file:
         pickle.dumps(file, random.getstate())
+
+
+def print_model_solution(model_solution: CpoSolveResult):
+    """
+    Print the model solution information
+    :param model_solution: The model solution
+    """
+    print("Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
+                                                     model_solution.get_fail_status()))
+    print("Search status: {}, Stop Cause: {}, Solve Time: {} secs".format(model_solution.get_search_status(),
+                                                                          model_solution.get_stop_cause(),
+                                                                          round(model_solution.get_solve_time(), 2)))

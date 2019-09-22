@@ -10,6 +10,7 @@ from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 from core.job import Job
 from core.result import Result
 from core.server import Server
+from core.core import print_model_solution
 
 
 def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -> Optional[Result]:
@@ -69,6 +70,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
         print("Optimal algorithm failed")
+        print_model_solution(model_solution)
         return None
 
     # Generate the allocation of the jobs and servers
@@ -82,7 +84,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
                     server.allocate_job(job)
     except (AssertionError, KeyError) as e:
         print(e)
-        model_solution.print_solution()
+        print_model_solution(model_solution)
         return None
 
     return Result("Optimal", jobs, servers, round(model_solution.get_solve_time(), 2),

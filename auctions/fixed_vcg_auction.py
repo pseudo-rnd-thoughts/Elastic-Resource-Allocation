@@ -7,9 +7,9 @@ from time import time
 from typing import List, Dict, Optional
 
 from docplex.cp.model import CpoModel
-from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import allocate, list_copy_remove
+from core.core import allocate, list_copy_remove, print_model_solution
 from core.job import Job
 from core.model import reset_model
 from core.result import Result
@@ -88,8 +88,12 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
 
     # Solve the cplex model with time limit
     model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
-        print("Fixed VCG auction failure")
+
+    # Check that the model is solved
+    if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
+            model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+        print("Fixed VCG model failure")
+        print_model_solution(model_solution)
         return None
 
     # Allocate all of the jobs to the servers
@@ -97,13 +101,13 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
         for job in jobs:
             for server in servers:
                 if model_solution.get_value(allocations[(job, server)]):
-                    job.allocate(0, 0, 0, server)
-                    server.allocate_job(job)
+                    allocate(job, 0, 0, 0, server)
     except (KeyError, AssertionError) as e:
         print(e)
-        model_solution.print_solution()
+        print_model_solution(model_solution)
         return None
 
+    # Return the sum of the job value for all of teh running jobs
     return sum(job.value for job in jobs if job.running_server)
 
 
