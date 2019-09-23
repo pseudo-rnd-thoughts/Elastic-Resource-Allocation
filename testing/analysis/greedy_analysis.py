@@ -1,14 +1,16 @@
 """Analysis of the greedy results"""
 
 from __future__ import annotations
-from typing import List, Tuple
 
 import json
-import numpy as np
-import seaborn as sns
+from typing import List, Tuple
+
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
+from seaborn.axisgrid import FacetGrid
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -52,48 +54,49 @@ def print_optimal_percent_difference(files):
         print("Mean: {:6.3f}, Std: {:6.3f} - {}".format(np.mean(percent_difference), np.std(percent_difference), algo))
 
 
-def plot_results(files, title, aspect):
+def plot_results(files: List[Tuple[str, str]], filename: str, aspect: float, attribute: str):
     """
     Plots the results from a file
     :param files: A file of results
     :param title: The graph title
     :param aspect: The aspect of the graph
+    :param attribute:
     """
     data = []
     for file, model in files:
-        algo_difference = {}
         with open(file) as json_file:
             json_data = json.load(json_file)
 
-            for results in json_data:
-                if 'Optimal' in results:
-                    best = results['Optimal']
-                    if best < max(value for value in results.values()):
-                        continue
+            optimal_failures = 0
+            for pos, algo_results in enumerate(json_data):
+                if 'optimal' in algo_results and algo_results['optimal'] != "failure":
+                    best = algo_results['optimal'][attribute]
+                    if best < max(result[attribute] for algo, result in algo_results.items()
+                                  if type(result) is dict and algo != "Relaxed"):
+                        optimal_failures += 1
                 else:
-                    best = max(value for value in results.values())
+                    best = max(result[attribute] for result in algo_results.values() if type(result) is dict)
 
-                for result, value in results.items():
-                    if value is not None:
-                        if result in algo_difference:
-                            algo_difference[result].append(value / best)
-                        else:
-                            algo_difference[result] = [value / best]
+                for algo, results in algo_results.items():
+                    if type(results) is dict:
+                        data.append((model, algo, pos, results[attribute] / best))
 
-        for algo, percent_difference in sorted(algo_difference.items(), key=lambda x: np.mean(x[1])):
-            data.append((model, algo, np.mean(percent_difference)))
+            print("Optimal Failures: {}".format(optimal_failures))
 
-    df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
+    df = pd.DataFrame(data, columns=['model', 'algorithm', 'pos', attribute])
 
     g = sns.FacetGrid(df, col='model', height=6, aspect=aspect, sharex=False)
     # noinspection PyUnresolvedReferences
-    g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
-    axes = g.axes
-    for pos in range(len(files)):
-        axes[0, pos].set_xlim(0.9, 1)
-    g.fig.suptitle(title, size=16)
-    g.fig.subplots_adjust(top=1)
+    g: FacetGrid = (g.map(sns.barplot, attribute, 'algorithm', ci=95).set_titles("{col_name}"))
+    for pos, (_, model) in enumerate(files):
+        values = [np.mean(df[(df.model == model) & (df.algorithm == algo)][attribute]) for algo in df.algorithm.unique()]
+        g.axes[0, pos].set_xlim(min(values) - 0.02, max(values) + 0.02)
+
+    # g.fig.suptitle(title, size=16) Doesnt work
+    # g.fig.subplots_adjust(top=1)
+
     plt.show()
+    plt.savefig(filename + '.eps', format='eps')
 
 
 def plot_relaxed(files: List[Tuple[str, str]]):
@@ -166,10 +169,34 @@ if __name__ == "__main__":
         ("../results/september_6/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
+    optimal_basic = [
+        ("../results/september_20/optimal_greedy_test_basic_j12_s2_0.json", "12 Jobs 2 Servers"),
+        ("../results/september_20/optimal_greedy_test_basic_j15_s2_0.json", "15 Jobs 2 Servers"),
+        ("../results/september_20/optimal_greedy_test_basic_j15_s3_0.json", "15 Jobs 3 Servers"),
+        ("../results/september_20/optimal_greedy_test_basic_j25_s5_0.json", "25 Jobs 5 Servers"),
+        ("../results/september_20/optimal_greedy_test_basic_j50_s5_0.json", "50 Jobs 5 Servers")
+    ]
+
+    optimal_big_small = [
+        ("../results/september_20/optimal_greedy_test_big_small_j12_s2_0.json", "12 Jobs 2 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j15_s2_0.json", "15 Jobs 2 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j15_s3_0.json", "15 Jobs 3 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j25_s5_0.json", "25 Jobs 5 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j50_s7_0.json", "50 Jobs 7 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j75_s8_0.json", "75 Jobs 8 Servers"),
+        ("../results/september_20/optimal_greedy_test_big_small_j100_s10_0.json", "100 Jobs 10 Servers")
+
+    ]
+
     # plot_results(optimal_files, "Greedy results with Optimal", 1)
     # plot_results(no_optimal_files, "Greedy results without Optimal")
     # plot_results(j25_s2_files, "Greedy results without Optimal")
     # plot_relaxed(relaxed_1_files)
-    plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
-    plot_results(optimal_2_files, "Greedy results with Optimal", 0.75)
+    # plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
+    # plot_results(optimal_2_files, "Greedy results with Optimal", 0.75)
     # plot_relaxed(relaxed_2_files)
+
+    plot_results(optimal_basic, "optimal_basic_value", 0.65, "sum value")
+    plot_results(optimal_basic, "optimal_basic_percentage_jobs", 0.65, "percentage jobs")
+    plot_results(optimal_big_small, "optimal_big_small_value", 0.65, "sum value")
+    plot_results(optimal_big_small, "optimal_big_small_percentage_jobs", 0.65, "percentage jobs")

@@ -50,7 +50,7 @@ def load_args() -> Dict[str, Union[str, int]]:
     assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
 
     return {
-        'model': 'models/'+sys.argv[1]+'.model',
+        'model': 'models/' + sys.argv[1] + '.model',
         'jobs': int(sys.argv[2]),
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
@@ -156,3 +156,22 @@ def print_model_solution(model_solution: CpoSolveResult):
     print("Search status: {}, Stop Cause: {}, Solve Time: {} secs".format(model_solution.get_search_status(),
                                                                           model_solution.get_stop_cause(),
                                                                           round(model_solution.get_solve_time(), 2)))
+
+
+def print_model(jobs: List[Job], servers: List[Server]):
+    """
+    Print the model
+    :param jobs: The list of jobs
+    :param servers: The list of servers
+    """
+    print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
+    for job in jobs:
+        print("{:9s}|{:9d}|{:13d}|{:14d}|{:7f}|{:9d}|{:9d}|{:9d}|{:9d}| {:f}"
+              .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
+                      job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
+
+    print("Server Name | Storage | Computation | Bandwidth | Allocated Jobs")
+    for server in servers:
+        print("{:12s}|{:9f}|{:13f}|{:11f}| {}".format(server.name, server.max_storage, server.max_computation,
+                                                     server.max_bandwidth,
+                                                     ', '.join([job.name for job in server.allocated_jobs])))

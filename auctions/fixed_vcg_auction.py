@@ -129,7 +129,6 @@ def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
 
     # Price information
     job_prices: Dict[Job, float] = {}
-    server_revenues: Dict[Server, float] = {}
 
     # Find the optimal solution
     if debug_running:
@@ -164,33 +163,9 @@ def fixed_vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
             if debug_results:
                 print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 
-    # For each server, find the sum of values if the server doesnt exist
-    for server in servers:
-        # Resets the model and removes the server from the server list
-        reset_model(fixed_jobs, servers)
-        servers_prime = list_copy_remove(servers, server)
-
-        # Find the optimal solution where the server doesnt exist
-        if debug_running:
-            print("Solving for without {} server".format(server.name))
-        optimal_prime = optimal_algorithm(fixed_jobs, servers_prime, time_limit=time_limit)
-        if optimal_prime is None:
-            return None
-        else:
-            server_revenues[server] = optimal_solution - optimal_prime
-            if debug_results:
-                print("Server {}: £{:.1f}".format(server.name, server_revenues[server]))
-
     # Resets all of the jobs and servers and allocates all of their info from the original optimal solution
     reset_model(fixed_jobs, servers)
     for job in allocated_jobs:
         allocate(job, -1, -1, -1, job_allocation[job], job_prices[job])
 
-    # Check that the job prices sum to the same value as the server revenues,
-    # else the optimal solution hasn't been found at some point
-    if debug_results and sum(job_prices.values()) != sum(server_revenues.values()):
-        print("Fixed VCG fail as sum of job prices {} != sum of server prices {}"
-              .format(sum(job_prices.values()), sum(server_revenues.values())))
-
-    return Result('vcg', fixed_jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
-                  failure=sum(job_prices.values()) != sum(server_revenues.values()))
+    return Result('vcg', fixed_jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True)

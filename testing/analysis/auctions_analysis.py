@@ -194,14 +194,25 @@ if __name__ == "__main__":
         ("../results/september_5/mutate_iterative_auction_basic_j25_s5.txt", "25 Jobs 5 Servers")
     ]
 
+    iterative_round = [
+        ("../results/september_20/iterative_round_results_basic_j12_s2_0.json", "12 Jobs 2 Servers"),
+        ("../results/september_20/iterative_round_results_basic_j15_s2_0.json", "15 Jobs 2 Servers")
+    ]
+
+    mutated_price_4_auction = [
+        ("../results/september_20/mutate_iterative_auction_basic_j15_s2.txt", "15 Jobs 2 Servers")
+    ]
+
     # plot_auction_results(normal_files, "Normal")
-    plot_auction_results(single_price_auctions, "Single Price")
-    plot_multiple_price_auction_results(multi_price_auction, "Multiple Price")
+    # plot_auction_results(single_price_auctions, "Single Price")
+    # plot_multiple_price_auction_results(multi_price_auction, "Multiple Price")
 
     # plot_mutate_auction_results(mutated_price_auction, "Mutate")
     # plot_mutate_auction_results(mutated_price_2_auction, "Mutate 2")
-    plot_mutate_auction_results(mutated_price_3_auction, "Mutate")
+    # plot_mutate_auction_results(mutated_price_3_auction, "Mutate")
 
     # print_multiple_auction_results(multi_price_auction)
     # print_mutated_auction_results(mutated_price_auction[0][0])
     # print_mutated_auction_results(mutated_price_3_auction)
+
+
