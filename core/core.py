@@ -100,7 +100,7 @@ def print_job_allocation(job: Job, allocated_server: Server, s: int, w: int, r: 
           .format(job.name, allocated_server.name, s, w, r))
 
 
-def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = None):
+def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = 0):
     """
     Allocate a job to a server
     :param job: The job

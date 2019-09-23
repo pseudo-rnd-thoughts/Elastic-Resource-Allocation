@@ -187,10 +187,15 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
         # Choice a random job from the list
         job: Job = choice(unallocated_jobs)
 
+        # Check that at least a single job can run the job else remove the job and continue the loop
+        if any(server.can_empty_run(job) for server in servers) is False:
+            unallocated_jobs.remove(job)
+            continue
+
         # Calculate the min job price from all of the servers
         job_price, loading, compute, sending, allocation, server = \
-            min((evaluate_job_price(job, server, time_limit, initial_job_cost[job]) for server in servers),
-                key=lambda bid: bid[0])
+            min((evaluate_job_price(job, server, time_limit, initial_job_cost[job])
+                 for server in servers if server.can_empty_run(job)), key=lambda bid: bid[0])
         messages += 2 * len(servers)
 
         assert_solution(loading, compute, sending, allocation)

@@ -57,9 +57,10 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         data.append(auction_results)
 
     # Save all of the results to a file
-    with open(save_filename('uniform_price_change_auction_results', model_dist.file_name, repeat), 'w') as file:
+    filename = save_filename('critical_values_results', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful")
+    print("Successful, data saved to " + filename)
 
 
 if __name__ == "__main__":

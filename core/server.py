@@ -30,10 +30,11 @@ class Server(object):
         self.available_computation: int = max_computation
         self.available_bandwidth: int = max_bandwidth
 
-    def can_run(self, job: Job):
+    def can_run(self, job: Job) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of resources to the job
+        Checks if a job can be run on a server if it dedicates all of it's available resources to the job
         :param job: The job to test
+        :return: If it can run
         """
         return self.available_storage >= job.required_storage \
             and self.available_computation >= 1 \
@@ -44,6 +45,22 @@ class Server(object):
                 <= job.deadline * s * self.available_computation * r
                 for s in range(1, self.available_bandwidth + 1)
                 for r in range(1, self.available_bandwidth - s + 1))
+
+    def can_empty_run(self, job: Job) -> bool:
+        """
+        Check if a job can be run on a server if it dedicates all of it's resources to the job
+        :param job: The job to test
+        :return: If it can run
+        """
+        return self.max_storage >= job.required_storage \
+            and self.max_computation >= 1 \
+            and self.max_bandwidth >= 2 and \
+            any(job.required_storage * self.max_computation * r +
+                s * job.required_computation * r +
+                s * self.max_computation * job.required_results_data
+                <= job.deadline * s * self.max_computation * r
+                for s in range(1, self.max_bandwidth + 1)
+                for r in range(1, self.max_bandwidth - s + 1))
 
     def allocate_job(self, job: Job):
         """

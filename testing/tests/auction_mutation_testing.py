@@ -52,27 +52,30 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
             reset_model(jobs, servers)
 
             # Choice a random job and mutate it
-            mutated_job: Job = choice(jobs)
-            mutant_job = mutated_job.mutate(mutate_percent)
+            job: Job = choice(jobs)
+            mutant_job = job.mutate(mutate_percent)
 
-            list_item_replacement(jobs, mutated_job, mutant_job)
+            # Replace the job with the mutant job in the job list
+            list_item_replacement(jobs, job, mutant_job)
 
             # Find the result with the mutated job
             mutant_result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost)
             if mutant_result is not None:
-                auction_results[mutated_job.name + ' job'] = \
-                    mutant_result.store(difference=job_diff(mutated_job, mutant_job), mutant_value=mutant_job.price,
-                                        mutated_value=job_prices[mutated_job], allocated=allocated_jobs[mutated_job])
+                auction_results[job.name + ' job'] = \
+                    mutant_result.store(difference=job_diff(job, mutant_job), mutant_value=mutant_job.price,
+                                        mutated_value=job_prices[job], allocated=allocated_jobs[job])
 
-            list_item_replacement(jobs, mutant_job, mutated_job)
+            # Replace the mutant job with the job in the job list
+            list_item_replacement(jobs, mutant_job, job)
 
         # Append the results to the data list
         data.append(auction_results)
 
     # Save all of the results to a file
-    with open(save_filename('mutate_iterative_auction', model_dist.file_name, repeat), 'w') as file:
+    filename = save_filename('mutate_iterative_auction', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful")
+    print("Successful, data saved to " + filename)
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
@@ -111,23 +114,26 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                                                    int(job.required_results_data * positive_percent) + 1):
                     for value in range(int(job.value * negative_percent), job.value + 1):
                         for deadline in range(int(job.deadline * negative_percent), job.deadline + 1):
-                            # Create the new mutated job and create new jobs list
+                            # Create the new mutated job and create new jobs list with the mutant job replacing the job
                             mutant_job = Job('mutated ' + job.name + ' job', required_storage, required_computation,
                                              required_results_data, value, deadline)
-                            jobs_prime = list_item_replacement(jobs, job, mutant_job)
+                            list_item_replacement(jobs, job, mutant_job)
 
                             # Calculate the job price with the mutated job
-                            result = decentralised_iterative_auction(jobs_prime, servers, time_limit, initial_cost)
+                            result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost)
                             if result is not None:
                                 mutation_results.append(result.store(difference=job_diff(mutant_job, job),
                                                                      mutant_value=mutant_job))
 
+                            # Remove the mutant job and readd the job to the list of jobs and reset the model
+                            list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
 
     # Save all of the results to a file
-    with open(save_filename('all_mutations_iterative_auction', model_dist.file_name, repeat), 'w') as file:
+    filename = save_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
         json.dump(mutation_results, file)
-    print("Successful")
+    print("Successful, data saved to " + filename)
 
 
 if __name__ == "__main__":
@@ -136,5 +142,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    mutated_job_test(loaded_model_dist, args['repeat'])
-    # all_job_mutations_test(loaded_model_dist, args['repeat'])
+    # mutated_job_test(loaded_model_dist, args['repeat'])
+    all_job_mutations_test(loaded_model_dist, args['repeat'])

@@ -71,9 +71,10 @@ def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
         data.append(algorithm_results)
 
     # Save the results to the file
-    with open(save_filename('optimal_greedy_test', model_dist.file_name, repeat), 'w') as file:
+    filename = save_filename('optimal_greedy_test', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful")
+    print("Successful, data saved to " + filename)
         
     
 if __name__ == "__main__":

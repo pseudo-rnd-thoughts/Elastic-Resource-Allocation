@@ -42,9 +42,11 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
                         results.store(initial_cost=initial_cost(0), price_change=price_change)
         data.append(auction_results)
 
-    with open(save_filename('iterative_round_results', model_dist.file_name, repeat), 'w') as file:
+    # Save all of the results to a file
+    filename = save_filename('iterative_round_results', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful")
+    print("Successful, data saved to " + filename)
 
 
 if __name__ == "__main__":

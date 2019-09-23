@@ -17,7 +17,7 @@ from greedy.value_density import ValueDensity
 
 def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
                         server_selection_policy: ServerSelectionPolicy,
-                        resource_allocation_policy: ResourceAllocationPolicy) -> float:
+                        resource_allocation_policy: ResourceAllocationPolicy, debug_bound: bool = False) -> float:
     """
     Calculates the critical values of the job
     :param job: The job to find the critical value
@@ -25,14 +25,19 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
     :param servers: A list of servers
     :param server_selection_policy: The server selection policy
     :param resource_allocation_policy: The resource allocation policy
-    :return:
+    :param debug_bound: Debugs the bound that the job position is being tested at
+    :return: The results
     """
     # The upper and lower bound index in the job list that is sorted by value
     upper_bound, lower_bound = sorted_jobs.index(job), len(sorted_jobs) - 1
     jobs = sorted_jobs.copy()
 
+    if debug_bound:
+        print("Upper bound: {}, Lower bound: {}".format(upper_bound, lower_bound))
+        print("\nLength: {}".format(len(sorted_jobs)-1))
+
     # Loop till the two bounds are equal to each other (this is a speical implementation of the binary search algo)
-    while upper_bound <= lower_bound:
+    while upper_bound < lower_bound:
         # Find a test position between the two bounds and insert the job into that position in the list
         test_pos = floor((upper_bound + lower_bound) / 2)
         jobs.remove(job)
@@ -44,8 +49,12 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
         # Dependant on if the job is allocated then change the upper or lower bound
         if job.running_server:
             upper_bound = test_pos + 1
+            if debug_bound:
+                print("New Upper bound: {}, Lower bound: {}".format(upper_bound, lower_bound))
         else:
             lower_bound = test_pos - 1
+            if debug_bound:
+                print("Upper bound: {}, New Lower bound: {}".format(upper_bound, lower_bound))
 
     # Special case where the job is the last index in the list and is still allocated
     if upper_bound == len(sorted_jobs) - 1:
@@ -75,7 +84,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     # Find the allocation of jobs with the list sorted normally
     allocate_jobs(valued_jobs, servers, server_selection_policy, resource_allocation_policy)
     allocated_jobs = {job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server)
-                      for job in jobs}
+                      for job in valued_jobs if job.running_server}
 
     # Find the job's critical value of the allocated jobs
     job_critical_values = {
