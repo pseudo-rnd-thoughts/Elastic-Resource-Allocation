@@ -10,6 +10,8 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
 from docplex.cp.solution import CpoSolveResult
 
+import matplotlib.pyplot as plt
+
 from core.job import Job
 from core.model import ModelDist
 from core.server import Server
@@ -77,27 +79,31 @@ def print_job_values(job_values: List[Tuple[Job, float]]):
     :param job_values: A list of tuples with the job and its value
     """
     print("\t\tJobs")
-    max_job_id_len = max(len(job.name) for job, value in job_values) + 1
-    print("{:<{id_len}}| Value | Storage | Compute | models | Value | Deadline ".format("Id", id_len=max_job_id_len))
+    max_job_name_len = max(len(job.name) for job, value in job_values) + 1
+    print("{:<{name_len}}| Value | Storage | Compute | models | Value | Deadline "
+          .format("Id", name_len=max_job_name_len))
     for job, value in job_values:
         # noinspection PyStringFormat
-        print("{:<{id_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^9.3f}|{:^10}"
+        print("{:<{name_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^7.1f}|{:^8}"
               .format(job.name, value, job.required_storage, job.required_computation,
-                      job.required_results_data, job.value, job.deadline, id_len=max_job_id_len))
+                      job.required_results_data, job.value, job.deadline, name_len=max_job_name_len))
     print()
 
 
-def print_job_allocation(job: Job, allocated_server: Server, s: int, w: int, r: int):
+def print_job_allocation(jobs: List[Job]):
     """
     Prints the job allocation resource speeds
-    :param job: The job
-    :param allocated_server: The server
-    :param s: The loading speed
-    :param w: The compute speed
-    :param r: The sending speed
+    :param jobs: List of jobs
     """
-    print("Job {} - Server {}, loading speed: {}, compute speed: {}, sending speed: {}"
-          .format(job.name, allocated_server.name, s, w, r))
+    print("Job Allocation")
+    max_job_name_len = max(len(job.name) for job in jobs) + 1
+    for job in jobs:
+        if job.running_server:
+            print("Job {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
+                  .format(job.name, job.running_server.name, job.loading_speed, job.compute_speed, job.sending_speed,
+                          name_len=max_job_name_len))
+        else:
+            print("Job {} - None".format(job.name))
 
 
 def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = 0):
@@ -173,5 +179,22 @@ def print_model(jobs: List[Job], servers: List[Server]):
     print("Server Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
         print("{:12s}|{:9f}|{:13f}|{:11f}| {}".format(server.name, server.max_storage, server.max_computation,
-                                                     server.max_bandwidth,
-                                                     ', '.join([job.name for job in server.allocated_jobs])))
+                                                      server.max_bandwidth,
+                                                      ', '.join([job.name for job in server.allocated_jobs])))
+
+
+def decode_filename(encoded_file: str) -> Tuple[str, str]:
+    """
+    Returns the location of the file and the model type fo the file
+    :param encoded_file: The encoded filename
+    :return: Tuple of the location of the file and the model type
+    """
+    return "../results/{}.json".format(encoded_file), encoded_file.replace("_j\\d+_s\\d+_\\d+", "").replace("_", " ")
+
+
+def save_plot(name: str):
+    """
+    Saves the current plot
+    :param name: Save plot name
+    """
+    plt.savefig('../figures/' + name + '.eps', format='eps')

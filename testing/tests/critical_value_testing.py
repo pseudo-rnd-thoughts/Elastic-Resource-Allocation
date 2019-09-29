@@ -63,6 +63,33 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     print("Successful, data saved to " + filename)
 
 
+def debug(model_dist: ModelDist):
+    """
+    Debugs the critical value testing
+    :param model_dist: The model distribution
+    """
+    jobs, servers = model_dist.create()
+
+    result = critical_value_auction(jobs, servers, value_densities[0], server_selection_policies[0],
+                                    resource_allocation_policies[0],
+                                    debug_job_value=True, debug_greedy_allocation=True, debug_critical_value=True)
+    print(result.store())
+    print("\t\tJob result prices")
+    for job in jobs:
+        print("Job {}: {}".format(job.name, job.price))
+    """
+    # Tests the critical value
+    for value_density in value_densities:
+        for server_selection_policy in server_selection_policies:
+            for resource_allocation_policy in resource_allocation_policies:
+                reset_model(jobs, servers)
+                critical_value_result = critical_value_auction(jobs, servers, value_density,
+                                                               server_selection_policy, resource_allocation_policy)
+                print(critical_value_result.algorithm_name)
+                print(critical_value_result.store())
+    """
+
+
 if __name__ == "__main__":
     args = load_args()
 

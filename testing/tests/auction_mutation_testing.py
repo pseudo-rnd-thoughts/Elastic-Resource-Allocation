@@ -124,6 +124,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             if result is not None:
                                 mutation_results.append(result.store(difference=job_diff(mutant_job, job),
                                                                      mutant_value=mutant_job))
+                                print(result.store(difference=job_diff(mutant_job, job), mutant_value=mutant_job))
 
                             # Remove the mutant job and readd the job to the list of jobs and reset the model
                             list_item_replacement(jobs, mutant_job, job)

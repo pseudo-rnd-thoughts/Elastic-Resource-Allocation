@@ -163,8 +163,8 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param initial_cost: An initial cost function
     :param time_limit: The solve time limit
+    :param initial_cost: An initial cost function
     :param debug_allocation: Debug the allocation process
     :param debug_results: Debugs the results
     :return: A list of prices at each iteration

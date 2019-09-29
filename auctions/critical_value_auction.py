@@ -6,7 +6,9 @@ from math import floor
 from time import time
 from typing import List
 
+from core.core import print_job_values
 from core.job import Job
+from core.model import reset_model
 from core.result import Result
 from core.server import Server
 from greedy.greedy import allocate_jobs
@@ -33,11 +35,12 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
     jobs = sorted_jobs.copy()
 
     if debug_bound:
-        print("Upper bound: {}, Lower bound: {}".format(upper_bound, lower_bound))
-        print("\nLength: {}".format(len(sorted_jobs)-1))
+        print("\nJob: {} - Initial index: {}".format(job.name, upper_bound))
 
     # Loop till the two bounds are equal to each other (this is a speical implementation of the binary search algo)
     while upper_bound < lower_bound:
+        reset_model(jobs, servers)
+
         # Find a test position between the two bounds and insert the job into that position in the list
         test_pos = floor((upper_bound + lower_bound) / 2)
         jobs.remove(job)
@@ -50,23 +53,28 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
         if job.running_server:
             upper_bound = test_pos + 1
             if debug_bound:
-                print("New Upper bound: {}, Lower bound: {}".format(upper_bound, lower_bound))
+                print("Allocated - New Upper bound: {}, Lower bound: {}".format(upper_bound, lower_bound))
         else:
             lower_bound = test_pos - 1
             if debug_bound:
-                print("Upper bound: {}, New Lower bound: {}".format(upper_bound, lower_bound))
+                print("Not Allocated - Upper bound: {}, New Lower bound: {}".format(upper_bound, lower_bound))
 
     # Special case where the job is the last index in the list and is still allocated
+    print()
     if upper_bound == len(sorted_jobs) - 1:
+        print("Price: 0")
         return 0
     else:
         # Else find the job value of the job below on the list
+        print("Price: {}".format(sorted_jobs[upper_bound].value))
         return sorted_jobs[upper_bound].value
 
 
 def critical_value_auction(jobs: List[Job], servers: List[Server],
                            value_density: ValueDensity, server_selection_policy: ServerSelectionPolicy,
-                           resource_allocation_policy: ResourceAllocationPolicy) -> Result:
+                           resource_allocation_policy: ResourceAllocationPolicy,
+                           debug_job_value: bool = False, debug_greedy_allocation: bool = False,
+                           debug_critical_value: bool = False) -> Result:
     """
     Critical value auction
     :param jobs: A list of jobs
@@ -74,28 +82,33 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     :param value_density: The value density function
     :param server_selection_policy: The server selection policy
     :param resource_allocation_policy: The resource allocation policy
+    :param debug_job_value: Debug the job value ordering
+    :param debug_greedy_allocation: Debug the job allocation
+    :param debug_critical_value: Debug the bound for each job
     :return: The results
     """
     start_time = time()
 
     # Sort the list according to a value density function
     valued_jobs = sorted((job for job in jobs), key=lambda job: value_density.evaluate(job), reverse=True)
+    if debug_job_value:
+        print_job_values(sorted(((job, value_density.evaluate(job)) for job in jobs),
+                                key=lambda jv: jv[1], reverse=True))
 
     # Find the allocation of jobs with the list sorted normally
-    allocate_jobs(valued_jobs, servers, server_selection_policy, resource_allocation_policy)
+    allocate_jobs(valued_jobs, servers, server_selection_policy, resource_allocation_policy,
+                  debug_allocation=debug_greedy_allocation)
     allocated_jobs = {job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server)
                       for job in valued_jobs if job.running_server}
 
     # Find the job's critical value of the allocated jobs
-    job_critical_values = {
-        job: find_critical_value(job, valued_jobs, servers, server_selection_policy, resource_allocation_policy)
-        for job in allocated_jobs.keys()
-    }
 
-    for job in jobs:
-        job.reset_allocation()
-    for server in servers:
-        server.reset_allocations()
+    job_critical_values = {}
+    for job in allocated_jobs.keys():
+        job_critical_values[job] = find_critical_value(job, valued_jobs, servers, server_selection_policy,
+                                                       resource_allocation_policy, debug_bound=debug_critical_value)
+
+    reset_model(jobs, servers)
 
     # Allocate the jobs and set the price to the critical value
     for job in allocated_jobs.keys():
@@ -106,6 +119,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
 
     return Result('Critical Value {}, {}, {}'.format(value_density.name, server_selection_policy.name,
                                                      resource_allocation_policy.name),
-                  jobs, servers, time() - start_time, show_money=True, value_density=value_density.name,
+                  jobs, servers, time() - start_time, show_money=True,
+                  value_density=value_density.name,
                   server_selection_policy=server_selection_policy.name,
                   resource_allocation_policy=resource_allocation_policy.name)
