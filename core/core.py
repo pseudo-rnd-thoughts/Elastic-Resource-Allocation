@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
+import re
 import pickle
 import random
 import sys
 from random import choice
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
-from docplex.cp.solution import CpoSolveResult
-
 import matplotlib.pyplot as plt
+from docplex.cp.solution import CpoSolveResult
 
 from core.job import Job
 from core.model import ModelDist
@@ -189,7 +189,8 @@ def decode_filename(encoded_file: str) -> Tuple[str, str]:
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return "../results/{}.json".format(encoded_file), encoded_file.replace("_j\\d+_s\\d+_\\d+", "").replace("_", " ")
+    return "../results/{}.json".format(encoded_file), \
+           re.findall("_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server ")
 
 
 def save_plot(name: str):

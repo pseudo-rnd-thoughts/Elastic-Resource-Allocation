@@ -55,8 +55,15 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
+    def cost_lambda(c):
+        """
+        Create a lambda function for the cost
+        :param c: The fixed cost
+        :return: The lambda function
+        """
+        return lambda x: c
     job_initial_cost = [
-        lambda x: cost for cost in range(0, int(sum(dist.value_mean for dist in job_dist) / len(job_dist)), 10)
+        cost_lambda(cost) for cost in range(0, int(sum(dist.value_mean for dist in job_dist) / len(job_dist)), 10)
     ]
     server_price_changes = [1, 2, 5, 10, 15]
 

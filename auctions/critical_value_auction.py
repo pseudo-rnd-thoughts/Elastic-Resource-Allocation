@@ -19,7 +19,8 @@ from greedy.value_density import ValueDensity
 
 def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
                         server_selection_policy: ServerSelectionPolicy,
-                        resource_allocation_policy: ResourceAllocationPolicy, debug_bound: bool = False) -> float:
+                        resource_allocation_policy: ResourceAllocationPolicy,
+                        debug_bound: bool = False, debug_price: bool = False) -> float:
     """
     Calculates the critical values of the job
     :param job: The job to find the critical value
@@ -28,6 +29,7 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
     :param server_selection_policy: The server selection policy
     :param resource_allocation_policy: The resource allocation policy
     :param debug_bound: Debugs the bound that the job position is being tested at
+    :param debug_price: Debugs the final price
     :return: The results
     """
     # The upper and lower bound index in the job list that is sorted by value
@@ -62,11 +64,13 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
     # Special case where the job is the last index in the list and is still allocated
     print()
     if upper_bound == len(sorted_jobs) - 1:
-        print("Price: 0")
+        if debug_price:
+            print("Price: 0")
         return 0
     else:
         # Else find the job value of the job below on the list
-        print("Price: {}".format(sorted_jobs[upper_bound].value))
+        if debug_price:
+            print("Price: {}".format(sorted_jobs[upper_bound].value))
         return sorted_jobs[upper_bound].value
 
 

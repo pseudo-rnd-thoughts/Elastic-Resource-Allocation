@@ -26,10 +26,10 @@ def mutated_job_analysis(encoded_files: List[str]):
             for pos, result in enumerate(file_data):
                 for mutation_name, mutation_results in result.items():
                     if mutation_name == "no mutation":
-                        data.append((pos, model_name, mutation_name, mutation_results['revenues'], 0, 0, 0,
+                        data.append((pos, model_name, "No Mutation", mutation_results['revenues'], 0, 0, 0,
                                      mutation_results['total_iterations']))
                     else:
-                        data.append((pos, model_name, mutation_name, mutation_results['revenues'],
+                        data.append((pos, model_name, "Mutation", mutation_results['revenues'],
                                      mutation_results['mutant_value'], mutation_results['mutated_value'],
                                      mutation_results['mutant_value'] - mutation_results['mutated_value'],
                                      mutation_results['total_iterations']))
@@ -41,13 +41,6 @@ def mutated_job_analysis(encoded_files: List[str]):
     (g.map(sns.scatterplot, 'Pos', 'Mutate Difference', hue='Mutation', data=df)
      .set_titles("{col_name}").set_xlabels("").add_legend())
     plt.show()
-    """
-    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'utility diff'])
-    g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
-    # noinspection PyUnresolvedReferences
-    g = (g.map(sns.scatterplot, 'pos', 'utility diff', hue='name', data=df)
-         .set_titles("{col_name}").set_xlabels("").add_legend())
-    """
 
 
 def all_mutation_analysis(files: List[str]):
@@ -65,9 +58,13 @@ if __name__ == "__main__":
     # Old results for mutation is september 2, 4 and 5
 
     # Mutate jobs auction testing
-    september_20 = [
-        "september_20/mutate_iterative_auction_basic_j15_s_0.json"
+    mutate_september_20 = [
+        "september_20/mutate_iterative_auction_basic_j12_s2_0",
+        "september_20/mutate_iterative_auction_basic_j15_s2_0",
+        "september_20/mutate_iterative_auction_basic_j15_s3_0",
+        "september_20/mutate_iterative_auction_basic_j25_s5_0"
     ]
+    mutated_job_analysis(mutate_september_20)
 
     # All jobs mutation auction testing
 

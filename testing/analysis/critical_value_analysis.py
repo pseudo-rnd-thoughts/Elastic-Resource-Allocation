@@ -26,24 +26,37 @@ def critical_value_analysis(encoded_files: List[str]):
 
             for pos, result in enumerate(critical_value_data):
                 for algorithm_name, critical_value_result in result.items():
-                    data.append((model_name, pos, algorithm_name, critical_value_result['total money'],
-                                 critical_value_result['value_density'],
-                                 critical_value_result['server_selection_policy'],
-                                 critical_value_result['resource_allocation_policy']))
+                    if algorithm_name == "price change 3":
+                        data.append((model_name, pos, algorithm_name, critical_value_result['total money'],
+                                     "", "", ""))
+                    else:
+                        data.append((model_name, pos, algorithm_name, critical_value_result['total money'],
+                                     critical_value_result['value_density'],
+                                     critical_value_result['server_selection_policy'],
+                                     critical_value_result['resource_allocation_policy']))
 
-    df = pd.DataFrame(data, columns=['Model', 'Pos', 'Algo Name', 'Total Money', 'Value Density',
+    df = pd.DataFrame(data, columns=['Model', 'Pos', 'Algorithm Name', 'Total Money', 'Value Density',
                                      'Server Selection Policy', 'Resource Allocation Policy'])
+
+    g = sns.FacetGrid(df, col='Model', height=6, sharex=False)
+    g: sns.FacetGrid = (g.map(sns.barplot, 'Total Money', 'Algorithm Name', ci=95, data=df)
+                        .set_titles("{col_name}"))
+    """
     g = sns.FacetGrid(df, col='Model', col_wrap=2)
     # noinspection PyUnresolvedReferences
     (g.map(sns.scatterplot, 'Pos', 'Total Money', hue='Algo Name', data=df)
      .set_titles("{col_name}").set_xlabels("").add_legend())
+     """
     plt.show()
 
 
 if __name__ == "__main__":
+    # No old results
     september_20 = [
-        "september_20/critical_value_results_basic_j12_s2_0.json",
-        "september_20/critical_value_results_basic_j15_s2_0.json",
-        "september_20/critical_value_results_basic_j15_s3_0.json",
-        "september_20/critical_value_results_basic_j25_s5_0.json"
+        "september_20/critical_values_results_basic_j12_s2_0",
+        "september_20/critical_values_results_basic_j15_s2_0",
+        "september_20/critical_values_results_basic_j15_s3_0",
+        "september_20/critical_values_results_basic_j25_s5_0"
     ]
+
+    critical_value_analysis(september_20)

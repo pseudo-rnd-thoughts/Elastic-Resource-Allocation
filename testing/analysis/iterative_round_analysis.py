@@ -21,28 +21,19 @@ def plot_price_rounds(encoded_files: List[str]):
     for encoded_file in encoded_files:
         filename, model_name = decode_filename(encoded_file)
         with open(filename) as file:
-            file_data = json.dumps(file)
-
+            file_data = json.load(file)
             for pos, model_result in enumerate(file_data):
-                for result in model_result.values():
-                    initial_cost = result['initial cost']
-                    price_change = result['price change']
-                    total_iterations = result['total_iterations']
-                    total_messages = result['total_messages']
-                    total_money = result['total money']
+                for name, result in model_result.items():
+                    data.append([pos, model_name, name, result['initial_cost'], result['price change'],
+                                 result['total_iterations'], result['total_messages'], result['total money']])
 
-                    data.append([pos, model_name, initial_cost, price_change,
-                                 total_iterations, total_messages, total_money])
-
-    df = pd.DataFrame(data, columns=["Pos", "Model", "Initial cost", "Price Change", "Total Iterations",
+    df = pd.DataFrame(data, columns=["Pos", "Model", "Name", "Initial cost", "Price Change", "Total Iterations",
                                      "Total Messages", "Total Money"])
 
-    for x in ("Initial cost", "Price Change"):
-        for y in ("Total Iterations", "Total Messages", "Total Money"):
-            g = sns.scatterplot(x, y, data=df)
-            g.set_titles("{}, {}".format(x, y))
+    g = sns.FacetGrid(df, col='Model', sharex=False)
+    g: sns.FacetGrid = (g.map(sns.barplot, "Total Iterations", "Name", ci=95).set_titles("{col_name}"))
 
-            plt.show()
+    plt.show()
 
 
 if __name__ == "__main__":
