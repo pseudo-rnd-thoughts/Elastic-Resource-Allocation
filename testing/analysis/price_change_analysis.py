@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from core.core import decode_filename
-
 import json
-import seaborn as sns
+from typing import List
+
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
+
+from core.core import decode_filename, save_plot
 
 
-def plot_auction_results(encoded_files):
+def plot_auction_results(encoded_files: List[str], save_filename: str = None):
     """
     Plots the auction results
     :param encoded_files: The list of encoded files
@@ -31,6 +33,9 @@ def plot_auction_results(encoded_files):
     # noinspection PyUnresolvedReferences
     (g.map(sns.scatterplot, 'pos', 'value', hue='name', data=df)
      .set_titles("{col_name}").add_legend())
+
+    if save_filename is not None:
+        save_plot(save_filename)
     plt.show()
 
 

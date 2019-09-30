@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 from typing import List
 
-from core.core import decode_filename
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,10 +12,12 @@ import pandas as pd
 import seaborn as sns
 from seaborn.axisgrid import FacetGrid
 
+from core.core import decode_filename, save_plot
+
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def plot_results(encoded_files: List[str], aspect: float, attribute: str):
+def plot_results(encoded_files: List[str], aspect: float, attribute: str, save_filename: str = None):
     """
     Plots the results from a file
     :param encoded_files: A file of results
@@ -61,6 +61,8 @@ def plot_results(encoded_files: List[str], aspect: float, attribute: str):
                   for algo in df.algorithm.unique()]
         g.axes[0, pos].set_xlim(min(values) - 0.02, max(values) + 0.02)
 
+    if save_filename is not None:
+        save_plot(save_filename)
     plt.show()
 
 
@@ -85,7 +87,7 @@ if __name__ == "__main__":
         "september_20/optimal_greedy_test_big_small_j100_s10_0"
     ]
 
-    plot_results(september_20_basic, 0.65, "sum value")
-    plot_results(september_20_basic, 0.65, "percentage jobs")
-    plot_results(september_20_big_small, 0.65, "sum value")
-    plot_results(september_20_big_small, 0.65, "percentage jobs")
+    plot_results(september_20_basic, 0.65, "sum value", "greedy_basic_sum_value")
+    plot_results(september_20_basic, 0.65, "percentage jobs", "greedy_basic_percentage_jobs")
+    plot_results(september_20_big_small, 0.65, "sum value", "greedy_big_small_sum_value")
+    plot_results(september_20_big_small, 0.65, "percentage jobs", "greedy_big_small_percentage_jobs")

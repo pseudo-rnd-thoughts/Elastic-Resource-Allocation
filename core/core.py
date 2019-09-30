@@ -198,4 +198,6 @@ def save_plot(name: str):
     Saves the current plot
     :param name: Save plot name
     """
-    plt.savefig('../figures/' + name + '.eps', format='eps')
+    filename = '../figures/' + name + '.eps'
+    print("Save file location: " + filename)
+    plt.savefig(filename, format='eps', dpi=1000)
