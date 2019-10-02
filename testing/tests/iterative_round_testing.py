@@ -7,7 +7,7 @@ import json
 
 from tqdm import tqdm
 
-from core.core import save_filename, load_args
+from core.core import results_filename, load_args
 from core.job import Job
 from core.model import ModelDist, load_dist, reset_model
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
@@ -43,7 +43,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
         data.append(auction_results)
 
     # Save all of the results to a file
-    filename = save_filename('iterative_round_results', model_dist.file_name, repeat)
+    filename = results_filename('iterative_round_results', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)

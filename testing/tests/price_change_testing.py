@@ -11,7 +11,7 @@ from auctions.decentralised_iterative_auction import decentralised_iterative_auc
 from auctions.fixed_vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
 
-from core.core import load_args, save_filename
+from core.core import load_args, results_filename
 from core.model import reset_model, ModelDist, load_dist
 
 
@@ -61,7 +61,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         data.append(auction_results)
 
     # Save all of the results to a file
-    filename = save_filename('uniform_price_change_auction_results', model_dist.file_name, repeat)
+    filename = results_filename('uniform_price_change_auction_results', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)
@@ -118,7 +118,7 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
         data.append(auction_results)
 
     # Save the results to a file
-    filename = save_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
+    filename = results_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    uniform_price_change_test(loaded_model_dist, args['repeat'])
+    uniform_price_change_test(loaded_model_dist, args['repeat'], repeats=1)
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

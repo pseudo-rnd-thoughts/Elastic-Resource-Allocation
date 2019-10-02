@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from random import gauss, random
 from typing import List, Tuple
 
@@ -132,44 +133,35 @@ class ModelDist(object):
         return jobs, servers
 
 
-def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
+def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     """
     Loads jobs and server distributions from a file
-    :param file_name: The file to load from
+    :param filename: The filename to load from
     :return: A tuple of the list of random job distributions and random server distributions
     """
 
-    job_dists: List[JobDist] = []
-    server_dists: List[ServerDist] = []
-    with open(file_name) as f:
-        lines = f.readlines()
-        name, num_job_dists, num_server_dists = lines[0].split(" ")
+    with open(filename) as file:
+        data = json.load(file)
 
-        for pos, line in enumerate(lines[1:int(num_job_dists) + 1]):
-            job_name, probability, \
-                storage_mean, storage_std,\
-                computation_mean, computation_std,\
-                results_data_mean, results_data_std, \
-                utility_mean, utility_std,\
-                deadline_mean, deadline_std = line.split(" ")
-            job_dists.append(JobDist(job_name, float(probability),
-                                     float(storage_mean), float(storage_std),
-                                     float(computation_mean), float(computation_std),
-                                     float(results_data_mean), float(results_data_std),
-                                     float(utility_mean), float(utility_std),
-                                     float(deadline_mean), float(deadline_std)))
+        job_dists: List[JobDist] = [
+            JobDist(dist['name'], dist['probability'],
+                    dist['required_storage_mean'], dist['required_storage_std'],
+                    dist['required_computation_mean'], dist['required_computation_std'],
+                    dist['required_results_data_mean'], dist['required_results_data_std'],
+                    dist['value_mean'], dist['value_std'],
+                    dist['deadline_mean'], dist['deadline_std'])
+            for dist in data['job_dist']
+        ]
 
-        for pos, line in enumerate(lines[int(num_job_dists) + 1:]):
-            server_name, probability, \
-                storage_mean, storage_std, \
-                computation_mean, computation_std, \
-                results_data_mean, results_data_std = line.split(" ")
-            server_dists.append(ServerDist(server_name, float(probability),
-                                           float(storage_mean), float(storage_std),
-                                           float(computation_mean), float(computation_std),
-                                           float(results_data_mean), float(results_data_std)))
+        server_dists: List[ServerDist] = [
+            ServerDist(dist['name'], dist['probability'],
+                       dist['maximum_storage_mean'], dist['maximum_storage_std'],
+                       dist['maximum_computation_mean'], dist['maximum_computation_std'],
+                       dist['maximum_bandwidth_mean'], dist['maximum_bandwidth_std'])
+            for dist in data['server_dist']
+        ]
 
-        return name, job_dists, server_dists
+        return data['name'], job_dists, server_dists
 
 
 def reset_model(jobs: List[Job], servers: List[Server]):

@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 
-from core.core import save_filename, list_item_replacement, load_args
+from core.core import results_filename, list_item_replacement, load_args
 from core.job import Job, job_diff
 from core.model import ModelDist, reset_model, load_dist
 
@@ -72,7 +72,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
         data.append(auction_results)
 
     # Save all of the results to a file
-    filename = save_filename('mutate_iterative_auction', model_dist.file_name, repeat)
+    filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)
@@ -131,7 +131,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             reset_model(jobs, servers)
 
     # Save all of the results to a file
-    filename = save_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
+    filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(mutation_results, file)
     print("Successful, data saved to " + filename)

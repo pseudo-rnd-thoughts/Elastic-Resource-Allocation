@@ -9,20 +9,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot
+from core.core import decode_filename, save_plot, analysis_filename
 
 
-def critical_value_analysis(encoded_files: List[str], x_attribute: str = 'Total Money', save_filename: str = None):
+def critical_value_analysis(encoded_filenames: List[str], x_axis: str = 'Total Money', save_filename: str = None):
     """
     Analysis of the critical value analysis
-    :param encoded_files: A list of encoded files to analysis
-    :param x_attribute: The x axis value
+    :param encoded_filenames: The list of encoded filenames
+    :param x_axis: The x axis to plot
     :param save_filename: The save filename
     """
     data = []
+    test_name: str = ""
 
-    for encoded_file in encoded_files:
-        filename, model_name = decode_filename(encoded_file)
+    for encoded_filename in encoded_filenames:
+        filename, model_name, test_name = decode_filename(encoded_filename)
         with open(filename) as file:
             critical_value_data = json.load(file)
 
@@ -42,16 +43,11 @@ def critical_value_analysis(encoded_files: List[str], x_attribute: str = 'Total 
                                      'Server Selection Policy', 'Resource Allocation Policy', 'Solve Time'])
 
     g = sns.FacetGrid(df, col='Model', height=6, sharex=False)
-    g: sns.FacetGrid = (g.map(sns.barplot, x_attribute, 'Algorithm Name', ci=95, data=df)
-                        .set_titles("{col_name}"))
-    """
-    g = sns.FacetGrid(df, col='Model', col_wrap=2)
     # noinspection PyUnresolvedReferences
-    (g.map(sns.scatterplot, 'Pos', 'Total Money', hue='Algo Name', data=df)
-     .set_titles("{col_name}").set_xlabels("").add_legend())
-     """
+    sns.FacetGrid = (g.map(sns.barplot, x_axis, 'Algorithm Name', ci=95, data=df).set_titles("{col_name}"))
+
     if save_filename is not None:
-        save_plot(save_filename)
+        save_plot(analysis_filename(test_name, x_axis))
     plt.show()
 
 

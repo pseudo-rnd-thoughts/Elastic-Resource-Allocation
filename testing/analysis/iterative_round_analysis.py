@@ -5,21 +5,29 @@ from __future__ import annotations
 import json
 from typing import List
 
+import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename
+from core.core import decode_filename, save_plot, analysis_filename
 
 
-def plot_price_rounds(encoded_files: List[str]):
+matplotlib.rcParams['font.family'] = "monospace"
+
+
+def plot_price_rounds(encoded_filenames: List[str], x_axis: str, save: bool = False):
     """
     Plots the price round graphs
-    :param encoded_files: The list of the files
+    :param encoded_filenames: The list of encoded filenames
+    :param x_axis: The x axis on the plot
+    :param save: If to save the plot
     """
     data = []
-    for encoded_file in encoded_files:
-        filename, model_name = decode_filename(encoded_file)
+    test_name: str = ""
+
+    for encoded_filename in encoded_filenames:
+        filename, model_name, test_name = decode_filename(encoded_filename)
         with open(filename) as file:
             file_data = json.load(file)
             for pos, model_result in enumerate(file_data):
@@ -29,10 +37,12 @@ def plot_price_rounds(encoded_files: List[str]):
 
     df = pd.DataFrame(data, columns=["Pos", "Model", "Name", "Initial cost", "Price Change", "Total Iterations",
                                      "Total Messages", "Total Money"])
-
     g = sns.FacetGrid(df, col='Model', sharex=False)
-    g: sns.FacetGrid = (g.map(sns.barplot, "Total Iterations", "Name", ci=95).set_titles("{col_name}"))
+    # noinspection PyUnresolvedReferences
+    (g.map(sns.barplot, x=x_axis, y="Name", data=df).set_titles("{col_name}"))
 
+    if save:
+        save_plot(analysis_filename(test_name, x_axis))
     plt.show()
 
 
@@ -41,8 +51,7 @@ if __name__ == "__main__":
         "september_20/iterative_round_results_basic_j12_s2_0",
         "september_20/iterative_round_results_basic_j15_s2_0",
         "september_20/iterative_round_results_basic_j15_s3_0",
-        "september_20/iterative_round_results_basic_j25_s5_0",
-        "september_20/iterative_round_results_basic_j50_s5_0"
+        "september_20/iterative_round_results_basic_j25_s5_0"
     ]
 
-    plot_price_rounds(september_20)
+    plot_price_rounds(september_20, "Total Iterations")

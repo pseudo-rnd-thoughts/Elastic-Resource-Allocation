@@ -62,7 +62,6 @@ def find_critical_value(job: Job, sorted_jobs: List[Job], servers: List[Server],
                 print("Not Allocated - Upper bound: {}, New Lower bound: {}".format(upper_bound, lower_bound))
 
     # Special case where the job is the last index in the list and is still allocated
-    print()
     if upper_bound == len(sorted_jobs) - 1:
         if debug_price:
             print("Price: 0")
@@ -78,7 +77,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
                            value_density: ValueDensity, server_selection_policy: ServerSelectionPolicy,
                            resource_allocation_policy: ResourceAllocationPolicy,
                            debug_job_value: bool = False, debug_greedy_allocation: bool = False,
-                           debug_critical_value: bool = False) -> Result:
+                           debug_critical_bound: bool = False, debug_critical_value: bool = False) -> Result:
     """
     Critical value auction
     :param jobs: A list of jobs
@@ -88,7 +87,8 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     :param resource_allocation_policy: The resource allocation policy
     :param debug_job_value: Debug the job value ordering
     :param debug_greedy_allocation: Debug the job allocation
-    :param debug_critical_value: Debug the bound for each job
+    :param debug_critical_bound: Debug the bound for each job
+    :param debug_critical_value: Debug the price for each job
     :return: The results
     """
     start_time = time()
@@ -110,7 +110,8 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     job_critical_values = {}
     for job in allocated_jobs.keys():
         job_critical_values[job] = find_critical_value(job, valued_jobs, servers, server_selection_policy,
-                                                       resource_allocation_policy, debug_bound=debug_critical_value)
+                                                       resource_allocation_policy, debug_bound=debug_critical_bound,
+                                                       debug_price=debug_critical_value)
 
     reset_model(jobs, servers)
 

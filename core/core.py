@@ -52,25 +52,35 @@ def load_args() -> Dict[str, Union[str, int]]:
     assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
 
     return {
-        'model': 'models/' + sys.argv[1] + '.model',
+        'model': 'models/' + sys.argv[1] + '.json',
         'jobs': int(sys.argv[2]),
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
     }
 
 
-def save_filename(test_name: str, model_dist: ModelDist, repeat: int = None) -> str:
+def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) -> str:
     """
-    Generates the save filename based on the info
+    Generates the save filename for testing results
     :param test_name: The test name
     :param model_dist: The model distribution
     :param repeat: The repeat number
-    :return: The save filename
+    :return: The concatenation of the test name, model distribution name and the repeat
     """
     if repeat is None:
         return '{}_{}.json'.format(test_name, model_dist)
     else:
         return '{}_{}_{}.json'.format(test_name, model_dist, repeat)
+
+
+def analysis_filename(test_name: str, axis: str) -> str:
+    """
+    Generates the save filename for Analysis plot results
+    :param test_name: The test name
+    :param axis: The axis name
+    :return: The concatenation of the test name and the axis
+    """
+    return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
 
 
 def print_job_values(job_values: List[Tuple[Job, float]]):
@@ -172,32 +182,40 @@ def print_model(jobs: List[Job], servers: List[Server]):
     """
     print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for job in jobs:
-        print("{:9s}|{:9d}|{:13d}|{:14d}|{:7f}|{:9d}|{:9d}|{:9d}|{:9d}| {:f}"
+        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^9d}| {:.2f}"
               .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
                       job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
 
-    print("Server Name | Storage | Computation | Bandwidth | Allocated Jobs")
+    print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:12s}|{:9f}|{:13f}|{:11f}| {}".format(server.name, server.max_storage, server.max_computation,
-                                                      server.max_bandwidth,
-                                                      ', '.join([job.name for job in server.allocated_jobs])))
+        print("{:^12s}|{:9d}|{:13d}|{:11d}| {}".format(server.name, server.max_storage, server.max_computation,
+                                                       server.max_bandwidth,
+                                                       ', '.join([job.name for job in server.allocated_jobs])))
 
 
-def decode_filename(encoded_file: str) -> Tuple[str, str]:
+def decode_filename(encoded_file: str) -> Tuple[str, str, str]:
     """
+    Decodes the filename to recover the file location,
     Returns the location of the file and the model type fo the file
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
     return "../results/{}.json".format(encoded_file), \
-           re.findall("_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server ")
+           re.findall(r"_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server "), \
+           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "").split("/")[1]
 
 
-def save_plot(name: str):
+def save_plot(name: str, eps: bool = True):
     """
     Saves the current plot
     :param name: Save plot name
+    :param eps: If to save as a eps format
     """
-    filename = '../figures/' + name + '.eps'
-    print("Save file location: " + filename)
-    plt.savefig(filename, format='eps', dpi=1000)
+    if eps:
+        filename = '../figures/' + name + '.eps'
+        print("Save file location: " + filename)
+        plt.savefig(filename, format='eps', dpi=1000)
+    else:
+        filename = '../figures/' + name + '.png'
+        print("Save file location: " + filename)
+        plt.savefig(filename, format='png')
