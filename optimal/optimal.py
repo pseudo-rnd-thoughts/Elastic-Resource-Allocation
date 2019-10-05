@@ -7,10 +7,10 @@ from typing import List, Dict, Tuple, Optional
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from core.core import print_model_solution, print_model
 from core.job import Job
 from core.result import Result
 from core.server import Server
-from core.core import print_model_solution, print_model
 
 
 def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -> Optional[Result]:
@@ -23,7 +23,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     """
     assert time_limit > 0, "Time limit: {}".format(time_limit)
 
-    model = CpoModel("Server Job Allocation")
+    model = CpoModel("Optimal")
 
     # The resource speed variables and the allocation variables
     loading_speeds: Dict[Job, CpoVariable] = {}
@@ -33,7 +33,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.max_bandwidth for server in servers) - 1, \
-        max(server.max_computation for server in servers)
+                                     max(server.max_computation for server in servers)
 
     # Loop over each job to allocate the variables and add the deadline constraints
     for job in jobs:

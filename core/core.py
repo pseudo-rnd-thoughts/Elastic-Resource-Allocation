@@ -18,6 +18,8 @@ from core.server import Server
 
 T = TypeVar('T')
 
+save_eps = False
+
 
 def rand_list_max(args: Iterable[T], key=None) -> T:
     """
@@ -205,13 +207,12 @@ def decode_filename(encoded_file: str) -> Tuple[str, str, str]:
            encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "").split("/")[1]
 
 
-def save_plot(name: str, eps: bool = True):
+def save_plot(name: str):
     """
     Saves the current plot
     :param name: Save plot name
-    :param eps: If to save as a eps format
     """
-    if eps:
+    if save_eps:
         filename = '../figures/' + name + '.eps'
         print("Save file location: " + filename)
         plt.savefig(filename, format='eps', dpi=1000)

@@ -15,9 +15,12 @@ from greedy.resource_allocation_policy import policies as resource_allocation_po
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.critical_value_auction import critical_value_auction
+from auctions.vcg_auction import vcg_auction
+from auctions.fixed_vcg_auction import fixed_vcg_auction
 
 
 def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 3,
+                           vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
                            decentralised_iterative_time_limit: int = 15):
     """
     The critical value testing
@@ -25,6 +28,8 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     :param repeat: The repeat
     :param repeats: The number of repeats
     :param price_change: The price change
+    :param vcg_time_limit:
+    :param fixed_vcg_time_limit:
     :param decentralised_iterative_time_limit: The decentralised iterative time limit
     """
     print("Critical Value testing for {} jobs and {} servers"
@@ -37,6 +42,16 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         # Generate the jobs and servers
         jobs, servers = model_dist.create()
         auction_results = {}
+
+        # Calculate the vcg auction
+        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
+        reset_model(jobs, servers)
+
+        # Calculate the fixed vcg auction
+        fixed_vcg_result = fixed_vcg_auction(jobs, servers, fixed_vcg_time_limit)
+        auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
+        reset_model(jobs, servers)
 
         # The decentralised iterative auction results
         for server in servers:
