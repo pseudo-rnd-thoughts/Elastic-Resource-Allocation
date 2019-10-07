@@ -159,19 +159,11 @@ def allocation_test(model_dist: ModelDist, repeat: int = 0, repeats: int = 10,
     print("Successful, data saved to " + filename)
 
 
-def gurobi_debug(model_dist: ModelDist, repeat: int):
-    jobs, servers = model_dist.create()
-
-    gurobi_result = gurobi_optimal_algorithm(jobs, servers, 10)
-    cplex_result = optimal_algorithm(jobs, servers, 15)
-
-
 if __name__ == "__main__":
     args = load_args()
 
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    # all_algorithms_test(basic_model_dist, args['repeat'])
+    all_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
-    gurobi_debug(loaded_model_dist, args['repeat'])
