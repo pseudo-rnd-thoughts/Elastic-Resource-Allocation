@@ -15,11 +15,11 @@ from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
-from optimal.optimal import optimal_algorithm, gurobi_optimal_algorithm
+from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
 
 
-def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
+def all_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 1,
                         optimal_time_limit: int = 30, relaxed_time_limit: int = 30):
     """
     Greedy test with optimal found

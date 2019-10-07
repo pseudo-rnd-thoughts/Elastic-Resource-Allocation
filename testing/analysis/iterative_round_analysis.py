@@ -10,13 +10,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, save_eps
 
 
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def plot_price_rounds(encoded_filenames: List[str], x_axis: str, save: bool = False):
+def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str, save: bool = False):
     """
     Plots the price round graphs
     :param encoded_filenames: The list of encoded filenames
@@ -27,7 +27,7 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, save: bool = Fa
     test_name: str = ""
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename(encoded_filename)
+        filename, model_name, test_name = decode_filename('iterative_round', encoded_filename)
         with open(filename) as file:
             file_data = json.load(file)
             for pos, model_result in enumerate(file_data):
@@ -35,11 +35,13 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, save: bool = Fa
                     data.append([pos, model_name, name, result['initial_cost'], result['price change'],
                                  result['total_iterations'], result['total_messages'], result['total money']])
 
-    df = pd.DataFrame(data, columns=["Pos", "Model", "Name", "Initial cost", "Price Change", "Total Iterations",
-                                     "Total Messages", "Total Money"])
-    g = sns.FacetGrid(df, col='Model', sharex=False)
+    df = pd.DataFrame(data, columns=["Pos", "Model Name", "Algorithm Name", "Initial cost", "Price Change",
+                                     "Total Iterations", "Total Messages", "Total Money"])
+    g = sns.FacetGrid(df, col='Model Name', sharex=False, margin_titles=True, height=4)
     # noinspection PyUnresolvedReferences
-    (g.map(sns.barplot, x=x_axis, y="Name", data=df).set_titles("{col_name}"))
+    (g.map(sns.barplot, x=x_axis, y="Algorithm Name", data=df).set_titles("{col_name}"))
+
+    g.fig.suptitle(title)
 
     if save:
         save_plot(analysis_filename(test_name, x_axis))
@@ -47,11 +49,14 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, save: bool = Fa
 
 
 if __name__ == "__main__":
+    save_eps = False
+
     september_20 = [
-        "september_20/iterative_round_results_basic_j12_s2_0",
-        "september_20/iterative_round_results_basic_j15_s2_0",
-        "september_20/iterative_round_results_basic_j15_s3_0",
-        "september_20/iterative_round_results_basic_j25_s5_0"
+        "iterative_round_results_basic_j12_s2_0",
+        "iterative_round_results_basic_j15_s2_0",
+        "iterative_round_results_basic_j15_s3_0",
+        "iterative_round_results_basic_j25_s5_0"
     ]
 
-    plot_price_rounds(september_20, "Total Iterations")
+    for attribute in ["Total Iterations", "Total Messages", "Total Money"]:
+        plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute), save=True)

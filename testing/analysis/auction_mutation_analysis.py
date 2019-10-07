@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, save_eps
 
 
 def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool = False):
@@ -43,10 +43,10 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool =
 
     df = pd.DataFrame(data, columns=['Pos', 'Model', 'Mutation', 'Revenue', 'Mutant Value', 'Mutated Value',
                                      'Mutate Difference', 'Iterations'])
+
     g = sns.FacetGrid(df, col='Model', col_wrap=2)
-    # noinspection PyUnresolvedReferences
-    (g.map(sns.scatterplot, x='Pos', y=y_axis, hue='Mutation', data=df)
-     .set_titles("{col_name}").set_xlabels("").add_legend())
+    g = (g.map(sns.scatterplot, x='Pos', y=y_axis, hue='Mutation', data=df)
+         .set_titles("{col_name}").set_xlabels("").add_legend())
 
     if save:
         save_plot(analysis_filename(test_name, y_axis))
@@ -65,6 +65,8 @@ def all_mutation_analysis(encoded_filenames: List[str]):
 if __name__ == "__main__":
     # Old results for mutation is september 2, 4 and 5
 
+    save_eps = False
+
     # Mutate jobs auction testing
     mutate_september_20 = [
         "september_20/mutate_iterative_auction_basic_j12_s2_0",
@@ -72,7 +74,7 @@ if __name__ == "__main__":
         "september_20/mutate_iterative_auction_basic_j15_s3_0",
         "september_20/mutate_iterative_auction_basic_j25_s5_0"
     ]
-    mutated_job_analysis(mutate_september_20, 'Mutate Difference')
+    mutated_job_analysis(mutate_september_20, 'Mutate Difference', save=True)
 
     # All jobs mutation auction testing
 

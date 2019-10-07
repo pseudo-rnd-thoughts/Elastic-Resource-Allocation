@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from seaborn.axisgrid import FacetGrid
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, save_eps
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -20,7 +19,7 @@ matplotlib.rcParams['font.family'] = "monospace"
 def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str], x_label: str, y_label: str):
     """
     PLots the server results
-    :param df_all: A list of Dataframes to plot
+    :param df_all: A list of data frames to plot
     :param title: The title
     :param labels: The labels
     :param x_label: The x label
@@ -62,11 +61,11 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
     plt.show()
 
 
-def plot_results(encoded_filenames: List[str], x_axis: str, save: bool = False):
+def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str, title: str, save: bool = False):
     """
-    Plots the results from a file
-    :param encoded_filenames: A list of encoded filenames
-    :param x_axis: The x axis on the plot
+    All Algorithm test results analysis
+    :param encoded_filenames: List of encoded filenames
+    :param x_axis: The X axis to plot
     :param save: If to save the plot
     """
     data = []
@@ -74,38 +73,41 @@ def plot_results(encoded_filenames: List[str], x_axis: str, save: bool = False):
     test_name: str = ""
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename(encoded_filename)
+        filename, model_name, test_name = decode_filename("greedy", encoded_filename)
         model_names.append(model_name)
 
-        with open(filename) as json_file:
-            json_data = json.load(json_file)
+        with open(filename) as file:
+            json_data = json.load(file)
 
-            optimal_failures = 0
-            for pos, algo_results in enumerate(json_data):
-                if 'optimal' in algo_results and algo_results['optimal'] != "failure":
-                    best = algo_results['optimal'][x_axis]
-                    if best < max(result[x_axis] for algo, result in algo_results.items()
-                                  if type(result) is dict and algo != "Relaxed"):
-                        optimal_failures += 1
-                else:
-                    best = max(result[x_axis] for result in algo_results.values() if type(result) is dict)
+            for pos, results in enumerate(json_data):
+                # Find the best results of sum value or percentage jobs from all of the algorithms
+                best_sum_value = max(r['sum value'] for a, r in results.items()
+                                     if a != 'Relaxed' and type(r) is dict)
+                best_percentage_jobs = max(r['percentage jobs'] for a, r in results.items()
+                                           if a != 'Relaxed' and type(r) is dict)
+                for algo_name, algo_results in results.items():
+                    if type(algo_results) is dict:  # Otherwise optimal or relaxed == 'failure'
+                        data.append((pos, model_name, algo_name, algo_results['sum value'],
+                                     algo_results['percentage jobs'], algo_results['solve_time'],
+                                     algo_results['sum value'] / best_sum_value,
+                                     algo_results['percentage jobs'] / best_percentage_jobs))
 
-                for algo, results in algo_results.items():
-                    if type(results) is dict:
-                        data.append((model_name, algo, pos, results[x_axis] / best))
+    df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Sum Value', 'Percentage Jobs',
+                                     'Solve Time', 'Best Sum Value', 'Best Percentage Jobs'])
 
-            print("Optimal Failures: {}".format(optimal_failures))
+    g = sns.FacetGrid(df, col='Model Name', sharex=False, height=6, margin_titles=True)
+    g: sns.FacetGrid = (g.map(sns.barplot, x=x_axis, y='Algorithm Name', data=df).set_titles('{col_name}'))
 
-    df = pd.DataFrame(data, columns=['model', 'algorithm', 'pos', x_axis])
-
-    g = sns.FacetGrid(df, col='model', sharex=False)
-    # noinspection PyUnresolvedReferences
-    g: FacetGrid = (g.map(sns.barplot, x=x_axis, y='algorithm').set_titles("{col_name}"))
-
+    """
     for pos, model in enumerate(model_names):
-        values = [np.mean(df[(df.model == model) & (df.algorithm == algo)][x_axis])
-                  for algo in df.algorithm.unique()]
-        g.axes[0, pos].set_xlim(min(values) - 0.02, max(values) + 0.02)
+        values = [np.mean(df[(df['Model Name'] == model) & (df['Algorithm Name'] == algo)][x_axis])
+                  for algo in df['Algorithm Name'].unique()]
+        print(model, min(values), max(values))
+        g.axes[0, pos].set_xlim(min(values) * 0.98, max(values) * 1.02)
+    """
+
+    g.fig.subplots_adjust(top=0.9)
+    g.fig.suptitle(title)
 
     if save:
         save_plot(analysis_filename(test_name, x_axis))
@@ -114,26 +116,26 @@ def plot_results(encoded_filenames: List[str], x_axis: str, save: bool = False):
 
 if __name__ == "__main__":
     # Old results for greedy is august 23, 29, 30 and september 5, 6
+    save_eps = False
 
-    september_20_basic = [
-        "september_20/optimal_greedy_test_basic_j12_s2_0",
-        "september_20/optimal_greedy_test_basic_j15_s2_0",
-        "september_20/optimal_greedy_test_basic_j15_s3_0",
-        "september_20/optimal_greedy_test_basic_j25_s5_0",
-        "september_20/optimal_greedy_test_basic_j50_s5_0"
+    basic = [
+        "optimal_greedy_test_basic_j12_s2_0",
+        # "optimal_greedy_test_basic_j15_s2_0",
+        "optimal_greedy_test_basic_j15_s3_0",
+        "optimal_greedy_test_basic_j25_s5_0",
+        "optimal_greedy_test_basic_j50_s5_0"
     ]
 
-    september_20_big_small = [
-        "september_20/optimal_greedy_test_big_small_j12_s2_0",
-        "september_20/optimal_greedy_test_big_small_j15_s2_0",
-        "september_20/optimal_greedy_test_big_small_j15_s3_0",
-        "september_20/optimal_greedy_test_big_small_j25_s5_0",
-        "september_20/optimal_greedy_test_big_small_j50_s7_0",
-        "september_20/optimal_greedy_test_big_small_j75_s8_0",
-        "september_20/optimal_greedy_test_big_small_j100_s10_0"
+    big_small = [
+        "optimal_greedy_test_big_small_j12_s2_0",
+        # "optimal_greedy_test_big_small_j15_s2_0",
+        "optimal_greedy_test_big_small_j15_s3_0",
+        "optimal_greedy_test_big_small_j25_s5_0",
+        "optimal_greedy_test_big_small_j50_s7_0",
+        "optimal_greedy_test_big_small_j75_s8_0",
+        "optimal_greedy_test_big_small_j100_s10_0"
     ]
 
-    plot_results(september_20_basic, "sum value")
-    plot_results(september_20_basic, "percentage jobs")
-    plot_results(september_20_big_small, "sum value")
-    plot_results(september_20_big_small, "percentage jobs")
+    for model_files, model_name in [(basic, "basic"), (big_small, "big small")]:
+        for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+            all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name), save=True)

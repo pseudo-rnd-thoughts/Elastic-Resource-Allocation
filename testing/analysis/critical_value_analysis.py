@@ -9,21 +9,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, save_eps
 
 
-def critical_value_analysis(encoded_filenames: List[str], x_axis: str = 'Total Money', save_filename: str = None):
+def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: str, save: bool = False):
     """
     Analysis of the critical value analysis
     :param encoded_filenames: The list of encoded filenames
     :param x_axis: The x axis to plot
-    :param save_filename: The save filename
+    :param save: The save filename
     """
     data = []
     test_name: str = ""
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename(encoded_filename)
+        filename, model_name, test_name = decode_filename('critical_value', encoded_filename)
         with open(filename) as file:
             critical_value_data = json.load(file)
 
@@ -33,7 +33,8 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str = 'Total M
                         data.append((model_name, pos, "Iterative Auction", critical_value_result['total money'],
                                      "", "", "", critical_value_result['solve_time']))
                     else:
-                        data.append((model_name, pos, algorithm_name, critical_value_result['total money'],
+                        data.append((model_name, pos, algorithm_name,
+                                     critical_value_result['total money'],
                                      critical_value_result['value_density'],
                                      critical_value_result['server_selection_policy'],
                                      critical_value_result['resource_allocation_policy'],
@@ -43,21 +44,26 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str = 'Total M
                                      'Server Selection Policy', 'Resource Allocation Policy', 'Solve Time'])
 
     g = sns.FacetGrid(df, col='Model', height=6, sharex=False)
-    # noinspection PyUnresolvedReferences
-    sns.FacetGrid = (g.map(sns.barplot, x_axis, 'Algorithm Name', ci=95, data=df).set_titles("{col_name}"))
+    g: sns.FacetGrid = (g.map(sns.barplot, x=x_axis, y='Algorithm Name', data=df).set_titles("{col_name}"))
 
-    if save_filename is not None:
+    g.fig.suptitle(title)
+
+    if save:
         save_plot(analysis_filename(test_name, x_axis))
     plt.show()
 
 
 if __name__ == "__main__":
     # No old results
+
+    save_eps = False
+
     september_20 = [
-        "september_20/critical_values_results_basic_j12_s2_0",
-        "september_20/critical_values_results_basic_j15_s2_0",
-        "september_20/critical_values_results_basic_j15_s3_0",
-        "september_20/critical_values_results_basic_j25_s5_0"
+        "critical_values_results_basic_j12_s2_0",
+        "critical_values_results_basic_j15_s2_0",
+        "critical_values_results_basic_j15_s3_0",
+        "critical_values_results_basic_j25_s5_0"
     ]
 
-    critical_value_analysis(september_20, "critical_value")
+    for attribute in ['Total Money', 'Solve Time']:
+        critical_value_analysis(september_20, attribute, '{} of basic model'.format(attribute), save=True)

@@ -18,7 +18,7 @@ from core.server import Server
 
 T = TypeVar('T')
 
-save_eps = False
+save_eps = True
 
 
 def rand_list_max(args: Iterable[T], key=None) -> T:
@@ -195,24 +195,24 @@ def print_model(jobs: List[Job], servers: List[Server]):
                                                        ', '.join([job.name for job in server.allocated_jobs])))
 
 
-def decode_filename(encoded_file: str) -> Tuple[str, str, str]:
+def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     """
-    Decodes the filename to recover the file location,
-    Returns the location of the file and the model type fo the file
+    Decodes the filename to recover the file location, the model name and the greedy name
+    :param folder: The data folder
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return "../results/{}.json".format(encoded_file), \
+    return "../results/{}/{}.json".format(folder, encoded_file), \
            re.findall(r"_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server "), \
-           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "").split("/")[1]
+           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
 
 
-def save_plot(name: str):
+def save_plot(name: str, eps: bool = False):
     """
     Saves the current plot
     :param name: Save plot name
     """
-    if save_eps:
+    if eps:
         filename = '../figures/' + name + '.eps'
         print("Save file location: " + filename)
         plt.savefig(filename, format='eps', dpi=1000)
