@@ -184,15 +184,15 @@ def print_model(jobs: List[Job], servers: List[Server]):
     """
     print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for job in jobs:
-        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^9d}| {:.2f}"
+        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
               .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
                       job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:^12s}|{:9d}|{:13d}|{:11d}| {}".format(server.name, server.max_storage, server.max_computation,
-                                                       server.max_bandwidth,
-                                                       ', '.join([job.name for job in server.allocated_jobs])))
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.max_storage, server.max_computation,
+                                                          server.max_bandwidth,
+                                                          ', '.join([job.name for job in server.allocated_jobs])))
 
 
 def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:

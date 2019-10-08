@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from core.core import load_args, print_model
-from core.model import ModelDist, load_dist
+from core.model import ModelDist, load_dist, reset_model
 from optimal.optimal import optimal_algorithm
 
 
@@ -16,14 +16,14 @@ def optimality_testing(model_dist: ModelDist):
 
     print("Models")
     print_model(jobs, servers)
-
     for time_limit in [10, 30, 60, 5*60, 15*60, 60*60, 24*60*60]:
-        print("Time Limit: {}".format(time_limit))
+        print("\n\nTime Limit: {}".format(time_limit))
         result = optimal_algorithm(jobs, servers, time_limit)
         print(result.store())
         if result.data['solve_status'] == 'Optimal':
             print("Solved completely at time limit: {}".format(time_limit))
             break
+        reset_model(jobs, servers)
 
 
 if __name__ == "__main__":
