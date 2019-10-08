@@ -62,6 +62,9 @@ class Job(object):
                         loading_speed * self.required_computation * sending_speed +
                         loading_speed * compute_speed * self.required_results_data)
 
+        # Check that a server is not already allocated
+        assert self.running_server is None, "Server already allocated of {}".format(self.running_server)
+
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed
         self.sending_speed = sending_speed

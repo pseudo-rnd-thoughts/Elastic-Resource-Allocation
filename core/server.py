@@ -79,6 +79,8 @@ class Server(object):
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
             "Server {} available bandwidth {}, job loading speed {} and sending speed {}"\
             .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
+        assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}"\
+            .format(job.name, self.name)
 
         self.allocated_jobs.append(job)
         self.available_storage -= job.required_storage

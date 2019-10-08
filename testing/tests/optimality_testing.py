@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from core.core import load_args
+from core.core import load_args, print_model
 from core.model import ModelDist, load_dist
 from optimal.optimal import optimal_algorithm
 
@@ -11,9 +11,12 @@ def optimality_testing(model_dist: ModelDist):
     """
     Optimality testing
     :param model_dist: The model distribution
-    :param repeat: The repeat
     """
     jobs, servers = model_dist.create()
+
+    print("Models")
+    print_model(jobs, servers)
+
     for time_limit in [10, 30, 60, 5*60, 15*60, 60*60, 24*60*60]:
         print("Time Limit: {}".format(time_limit))
         result = optimal_algorithm(jobs, servers, time_limit)

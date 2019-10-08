@@ -33,7 +33,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.max_bandwidth for server in servers) - 1, \
-                                     max(server.max_computation for server in servers)
+        max(server.max_computation for server in servers)
 
     # Loop over each job to allocate the variables and add the deadline constraints
     for job in jobs:
@@ -84,7 +84,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
                                  model_solution.get_value(sending_speeds[job]), server)
                     server.allocate_job(job)
     except (AssertionError, KeyError) as e:
-        print(e)
+        print("Error:", e)
         print_model_solution(model_solution)
         return None
 
