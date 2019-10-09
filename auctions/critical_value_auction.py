@@ -102,13 +102,13 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     # Find the allocation of jobs with the list sorted normally
     allocate_jobs(valued_jobs, servers, server_selection_policy, resource_allocation_policy,
                   debug_allocation=debug_greedy_allocation)
-    allocated_jobs = {job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server)
-                      for job in valued_jobs if job.running_server}
+    allocation_data = {job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server)
+                       for job in valued_jobs if job.running_server}
 
     # Find the job's critical value of the allocated jobs
 
     job_critical_values = {}
-    for job in allocated_jobs.keys():
+    for job in allocation_data.keys():
         job_critical_values[job] = find_critical_value(job, valued_jobs, servers, server_selection_policy,
                                                        resource_allocation_policy, debug_bound=debug_critical_bound,
                                                        debug_price=debug_critical_value)
@@ -116,8 +116,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     reset_model(jobs, servers)
 
     # Allocate the jobs and set the price to the critical value
-    for job in allocated_jobs.keys():
-        s, w, r, server = allocated_jobs[job]
+    for job, (s, w, r, server) in allocation_data.items():
         price = job_critical_values[job]
         job.allocate(s, w, r, server, price=price)
         server.allocate_job(job)

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename, save_eps
+from core.core import decode_filename, save_plot, analysis_filename
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -46,7 +46,7 @@ def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str, 
     g.fig.suptitle(title)
 
     if save:
-        save_plot(analysis_filename(test_name, y_axis))
+        save_plot(analysis_filename(test_name, y_axis), test_name)
     plt.show()
 
 
@@ -82,14 +82,12 @@ def plot_multiple_price_auction_results(encoded_filenames: List[str], y_axis: st
     g.fig.suptitle(title)
 
     if save:
-        save_plot(analysis_filename(test_name, y_axis))
+        save_plot(analysis_filename(test_name, y_axis), "price_change")
     plt.show()
 
 
 if __name__ == "__main__":
     # Old results in august 26 and 30
-    save_eps = False
-
     uniform = [
         "uniform_price_change_auction_results_basic_j15_s2_0",
         "uniform_price_change_auction_results_basic_j15_s3_0",

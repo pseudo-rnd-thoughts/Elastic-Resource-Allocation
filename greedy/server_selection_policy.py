@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from core.job import Job
 from core.server import Server
-from greedy.resource_allocation_policy import ResourceAllocationPolicy
+from greedy.resource_allocation_policy import ResourceAllocationPolicy, policies as resource_allocation_policies
 
 
 class ServerSelectionPolicy(ABC):
@@ -112,11 +112,20 @@ class JobSumResources(ServerSelectionPolicy):
             (loading + sending) / server.available_bandwidth
 
 
-policies = (
+policies = [
     SumResources(),
     ProductResources(),
     SumExpResource(),
     Random()
-)
+]
+
+all_policies = [
+    policy(maximise)
+    for maximise in [True, False]
+    for policy in [SumResources, ProductResources, SumExpResource, Random]
+] + [
+    JobSumResources(policy)
+    for policy in resource_allocation_policies
+]
 
 max_name_length = max(len(policy.name) for policy in policies)

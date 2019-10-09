@@ -6,6 +6,7 @@ import re
 import pickle
 import random
 import sys
+from enum import Enum, auto
 from random import choice
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
@@ -17,8 +18,6 @@ from core.model import ModelDist
 from core.server import Server
 
 T = TypeVar('T')
-
-save_eps = True
 
 
 def rand_list_max(args: Iterable[T], key=None) -> T:
@@ -203,20 +202,33 @@ def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     :return: Tuple of the location of the file and the model type
     """
     return "../results/{}/{}.json".format(folder, encoded_file), \
-           re.findall(r"_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server "), \
+           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Jobs: ").replace("s", "Servers: "), \
            encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
 
 
-def save_plot(name: str, eps: bool = False):
+class ImageFormat(Enum):
+    """
+    Image format
+    """
+    EPS = auto()
+    PNG = auto()
+    BOTH = auto()
+    NONE = auto()
+
+
+def save_plot(name: str, test_name: str, format: ImageFormat = ImageFormat.NONE):
     """
     Saves the current plot
     :param name: Save plot name
     """
-    if eps:
-        filename = '../figures/' + name + '.eps'
+    if format == ImageFormat.EPS:
+        filename = '../figures/{}/{}.eps'.format(test_name, name)
         print("Save file location: " + filename)
         plt.savefig(filename, format='eps', dpi=1000)
-    else:
-        filename = '../figures/' + name + '.png'
+    elif format == ImageFormat.PNG:
+        filename = '../figures/{}/{}.png'.format(test_name, name)
         print("Save file location: " + filename)
         plt.savefig(filename, format='png')
+    elif format == ImageFormat.BOTH:
+        save_plot(name, test_name, ImageFormat.EPS)
+        save_plot(name, test_name, ImageFormat.PNG)

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename, save_eps
+from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -58,22 +58,25 @@ def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List
     if labels is not None:
         plt.legend(n, labels, loc=[1.01, 0.1])
     axe.add_artist(l1)
+
     plt.show()
 
 
-def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str, title: str, save: bool = False):
+def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
+                            title: str, save_format: ImageFormat = ImageFormat.NONE):
     """
     All Algorithm test results analysis
     :param encoded_filenames: List of encoded filenames
     :param x_axis: The X axis to plot
-    :param save: If to save the plot
+    :param title: The title at the top of the plot
+    :param save_format: If to save the plot
     """
     data = []
     model_names: List[str] = []
-    test_name: str = ""
+    test_name: str = ''
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename("greedy", encoded_filename)
+        filename, model_name, test_name = decode_filename('greedy', encoded_filename)
         model_names.append(model_name)
 
         with open(filename) as file:
@@ -94,32 +97,30 @@ def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str, title: st
 
     df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Sum Value', 'Percentage Jobs',
                                      'Solve Time', 'Best Sum Value', 'Best Percentage Jobs'])
+    df = df.loc[~((df['Algorithm Name'].str.contains('Greedy Utility * deadline / Sum', regex=False)) |
+                  (df['Algorithm Name'].str.contains('Greedy Utility / Sqrt Sum', regex=False)) |
+                  df['Algorithm Name'].str.contains('Matrix Greedy Sum Exp^3 Percentage', regex=False))]
 
-    g = sns.FacetGrid(df, col='Model Name', sharex=False, height=6, margin_titles=True)
-    g: sns.FacetGrid = (g.map(sns.barplot, x=x_axis, y='Algorithm Name', data=df).set_titles('{col_name}'))
+    g = sns.FacetGrid(df, col='Model Name', sharex=False, height=5)
+    g = g.map(sns.barplot, x_axis, 'Algorithm Name').set_titles("{col_name}")
 
-    """
     for pos, model in enumerate(model_names):
         values = [np.mean(df[(df['Model Name'] == model) & (df['Algorithm Name'] == algo)][x_axis])
                   for algo in df['Algorithm Name'].unique()]
-        print(model, min(values), max(values))
-        g.axes[0, pos].set_xlim(min(values) * 0.98, max(values) * 1.02)
-    """
+        g.axes[0, pos].set_xlim(min(values) * 0.97, max(values) * 1.02)
 
-    g.fig.subplots_adjust(top=0.9)
+    g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    if save:
-        save_plot(analysis_filename(test_name, x_axis))
+    save_plot(analysis_filename(test_name, x_axis), "greedy", save_format)
     plt.show()
 
 
 if __name__ == "__main__":
     # Old results for greedy is august 23, 29, 30 and september 5, 6
-    save_eps = False
 
     basic = [
-        "optimal_greedy_test_basic_j12_s2_0",
+        # "optimal_greedy_test_basic_j12_s2_0",
         # "optimal_greedy_test_basic_j15_s2_0",
         "optimal_greedy_test_basic_j15_s3_0",
         "optimal_greedy_test_basic_j25_s5_0",
@@ -136,6 +137,11 @@ if __name__ == "__main__":
         "optimal_greedy_test_big_small_j100_s10_0"
     ]
 
-    for model_files, model_name in [(basic, "basic"), (big_small, "big small")]:
+    # all_algorithms_analysis(basic, 'Sum Value', "{} of {} model".format('Sum Value', 'Basic'),
+    #                         save_format=ImageFormat.BOTH)
+
+    image_format = ImageFormat.BOTH
+    for model_files, model_name in [(basic, "Basic"), (big_small, "Big Small")]:
         for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
-            all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name), save=True)
+            all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
+                                    save_format=image_format)

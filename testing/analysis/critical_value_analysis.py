@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename, save_eps
+from core.core import decode_filename, save_plot, analysis_filename
 
 
 def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: str, save: bool = False):
@@ -49,14 +49,12 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
     g.fig.suptitle(title)
 
     if save:
-        save_plot(analysis_filename(test_name, x_axis))
+        save_plot(analysis_filename(test_name, x_axis), "critical_value")
     plt.show()
 
 
 if __name__ == "__main__":
     # No old results
-
-    save_eps = False
 
     september_20 = [
         "critical_values_results_basic_j12_s2_0",

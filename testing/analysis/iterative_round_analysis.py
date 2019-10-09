@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename, save_eps
+from core.core import decode_filename, save_plot, analysis_filename
 
 
 matplotlib.rcParams['font.family'] = "monospace"
@@ -21,6 +21,7 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str, sav
     Plots the price round graphs
     :param encoded_filenames: The list of encoded filenames
     :param x_axis: The x axis on the plot
+    :param title: The title of the plot
     :param save: If to save the plot
     """
     data = []
@@ -44,12 +45,11 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str, sav
     g.fig.suptitle(title)
 
     if save:
-        save_plot(analysis_filename(test_name, x_axis))
+        save_plot(analysis_filename(test_name, x_axis), "iterative_round")
     plt.show()
 
 
 if __name__ == "__main__":
-    save_eps = False
 
     september_20 = [
         "iterative_round_results_basic_j12_s2_0",

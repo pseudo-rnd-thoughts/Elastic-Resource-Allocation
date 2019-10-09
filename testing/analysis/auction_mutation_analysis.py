@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename, save_eps
+from core.core import decode_filename, save_plot, analysis_filename
 
 
 def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool = False):
@@ -49,7 +49,7 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool =
          .set_titles("{col_name}").set_xlabels("").add_legend())
 
     if save:
-        save_plot(analysis_filename(test_name, y_axis))
+        save_plot(analysis_filename(test_name, y_axis), "auction_mutation")
     plt.show()
 
 
@@ -64,8 +64,6 @@ def all_mutation_analysis(encoded_filenames: List[str]):
 
 if __name__ == "__main__":
     # Old results for mutation is september 2, 4 and 5
-
-    save_eps = False
 
     # Mutate jobs auction testing
     mutate_september_20 = [

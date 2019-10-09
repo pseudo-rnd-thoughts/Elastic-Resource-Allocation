@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from math import exp, sqrt
 from random import random
+from typing import List
 
 from core.job import Job
 
@@ -135,6 +136,22 @@ class UtilityDeadlinePerResource(ValueDensity):
         raise density * self.resource_func.evaluate(job) / job.deadline
 
 
+class UtilityResourcePerDeadline(ValueDensity):
+    """The product of utility and deadline divided by required resources"""
+
+    def __init__(self, resource_func: ValueDensity = ResourceSum()):
+        super().__init__("Utility * {} / deadline".format(resource_func.name))
+        self.resource_func = resource_func
+
+    def evaluate(self, job: Job) -> float:
+        """Value density function"""
+        return job.value * self.resource_func.evaluate(job) / job.deadline
+
+    def inverse(self, job: Job, density: float) -> float:
+        """Inverse evaluation function"""
+        raise density * job.deadline / self.resource_func.evaluate(job)
+
+
 class Random(ValueDensity):
     """Random number generator"""
 
@@ -151,10 +168,21 @@ class Random(ValueDensity):
 
 
 # Functions you actually want to use
-policies = (
+policies = [
     UtilityPerResources(),
-    UtilityDeadlinePerResource(),
-    UtilityPerResources(ResourceSqrt())
-)
+    UtilityPerResources(ResourceSqrt()),
+    UtilityResourcePerDeadline()
+]
+
+all_policies: List[ValueDensity] = [
+    value_density for value_density in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
+]
+all_policies += [
+    value_density(resource_function)
+    for value_density in [UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource]
+    for resource_function in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
+]
+
+print([f.name for f in all_policies])
 
 max_name_length = max(len(policy.name) for policy in policies)
