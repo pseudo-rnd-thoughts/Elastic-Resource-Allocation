@@ -167,6 +167,21 @@ class Random(ValueDensity):
         raise Exception("Not supported function of inverse")
 
 
+class Storage(ValueDensity):
+    """Sorted by Storage resource requirement"""
+
+    def __init__(self):
+        super().__init__("Storage Requirement")
+
+    def evaluate(self, job: Job) -> float:
+        """Value density function"""
+        return job.value / job.required_storage
+
+    def inverse(self, job: Job, density: float) -> float:
+        """Inverse evaluation function"""
+        return density * job.required_storage
+
+
 # Functions you actually want to use
 policies = [
     UtilityPerResources(),
@@ -182,7 +197,6 @@ all_policies += [
     for value_density in [UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource]
     for resource_function in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
 ]
-
-print([f.name for f in all_policies])
+all_policies += Storage()
 
 max_name_length = max(len(policy.name) for policy in policies)

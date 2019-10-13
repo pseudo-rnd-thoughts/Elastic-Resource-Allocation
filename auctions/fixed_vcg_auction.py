@@ -64,7 +64,7 @@ def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -
     """
     assert time_limit > 0, "Time limit: {}".format(time_limit)
 
-    model = CpoModel("CDA")
+    model = CpoModel("vcg")
 
     # As no resource speeds then only assign binary variables for the allocation
     allocations = {(job, server): model.binary_var(name='{} job {} server'.format(job.name, server.name))

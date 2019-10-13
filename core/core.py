@@ -218,8 +218,11 @@ class ImageFormat(Enum):
 
 def save_plot(name: str, test_name: str, format: ImageFormat = ImageFormat.NONE):
     """
-    Saves the current plot
-    :param name: Save plot name
+
+    :param name:
+    :param test_name:
+    :param format:
+    :return:
     """
     if format == ImageFormat.EPS:
         filename = '../figures/{}/{}.eps'.format(test_name, name)
