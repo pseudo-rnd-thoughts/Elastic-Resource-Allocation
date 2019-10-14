@@ -6,24 +6,28 @@ import json
 from typing import List
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 
-def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool = False):
+def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
+                         save_format: ImageFormat = ImageFormat.NONE):
     """
     Analysis of the mutate job testing
     :param encoded_filenames: A list of encoded filenames
     :param y_axis: The y axis on the plot
-    :param save: If to save the plot
+    :param title: The title of the plot
+    :param save_format: The save format
     """
     data = []
     test_name: str = ""
+    model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename(encoded_filename)
+        filename, model_name, test_name = decode_filename("auction_mutation", encoded_filename)
         with open(filename) as file:
             file_data = json.load(file)
 
@@ -45,11 +49,18 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, save: bool =
                                      'Mutate Difference', 'Iterations'])
 
     g = sns.FacetGrid(df, col='Model', col_wrap=2)
-    g = (g.map(sns.scatterplot, x='Pos', y=y_axis, hue='Mutation', data=df)
+    g = (g.map(sns.scatterplot, 'Pos', y_axis, hue='Mutation')
          .set_titles("{col_name}").set_xlabels("").add_legend())
 
-    if save:
-        save_plot(analysis_filename(test_name, y_axis), "auction_mutation")
+    for pos, model in enumerate(model_names):
+        values = [np.mean(df[(df['Model Name'] == model) & (df['Algorithm Name'] == algo)][y_axis])
+                  for algo in df['Algorithm Name'].unique()]
+        g.axes[0, pos].set_xlim(min(values) * 0.97, max(values) * 1.02)
+
+    g.fig.subplots_adjust(top=0.88)
+    g.fig.suptitle(title)
+
+    save_plot(analysis_filename(test_name, y_axis), "auction_mutation", image_format=save_format)
     plt.show()
 
 
@@ -67,12 +78,12 @@ if __name__ == "__main__":
 
     # Mutate jobs auction testing
     mutate_september_20 = [
-        "september_20/mutate_iterative_auction_basic_j12_s2_0",
-        "september_20/mutate_iterative_auction_basic_j15_s2_0",
-        "september_20/mutate_iterative_auction_basic_j15_s3_0",
-        "september_20/mutate_iterative_auction_basic_j25_s5_0"
+        "mutate_iterative_auction_basic_j12_s2_0",
+        "mutate_iterative_auction_basic_j15_s2_0",
+        "mutate_iterative_auction_basic_j15_s3_0",
+        "mutate_iterative_auction_basic_j25_s5_0"
     ]
-    mutated_job_analysis(mutate_september_20, 'Mutate Difference', save=True)
+    mutated_job_analysis(mutate_september_20, 'Mutate Difference', ImageFormat.BOTH)
 
     # All jobs mutation auction testing
 

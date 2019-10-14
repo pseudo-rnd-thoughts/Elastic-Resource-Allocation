@@ -112,7 +112,7 @@ def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, x_axis), "greedy", save_format)
+    save_plot(analysis_filename(test_name, x_axis), "greedy", image_format=save_format)
     plt.show()
 
 
@@ -140,8 +140,29 @@ if __name__ == "__main__":
     # all_algorithms_analysis(basic, 'Sum Value', "{} of {} model".format('Sum Value', 'Basic'),
     #                         save_format=ImageFormat.BOTH)
 
+    """
     image_format = ImageFormat.BOTH
     for model_files, model_name in [(basic, "Basic"), (big_small, "Big Small")]:
+        for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+            all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
+                                    save_format=image_format)
+    """
+
+    big_small_a = [
+        "optimal_greedy_test_big_small_j12_s2_0",
+        # "optimal_greedy_test_big_small_j15_s2_0",
+        "optimal_greedy_test_big_small_j15_s3_0",
+        "optimal_greedy_test_big_small_j25_s5_0"
+    ]
+
+    big_small_b = [
+        "optimal_greedy_test_big_small_j50_s7_0",
+        "optimal_greedy_test_big_small_j75_s8_0",
+        "optimal_greedy_test_big_small_j100_s10_0"
+    ]
+
+    image_format = ImageFormat.BOTH
+    for model_files, model_name in [(big_small_b, "Big Small")]:
         for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
             all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
                                     save_format=image_format)

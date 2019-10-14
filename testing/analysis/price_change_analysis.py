@@ -10,79 +10,86 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core.core import decode_filename, save_plot, analysis_filename
+from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str, save: bool = False):
+def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
+                         save_format: ImageFormat = ImageFormat.NONE):
     """
     Plots the auction results
     :param encoded_filenames: The list of encoded filenames
     :param y_axis: The y axis on the plot
-    :param save: If to save the plot
+    :param title:
+    :param save_format:
     """
     data = []
     test_name: str = ""
+    model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
         filename, model_name, test_name = decode_filename('price_change', encoded_filename)
+        model_names.append(model_name)
+
         with open(filename) as json_file:
             json_data = json.load(json_file)
 
             for pos, results in enumerate(json_data):
                 for name, result in results.items():
                     if type(result) is dict:
-                        data.append((model_name, pos, name, result['sum value'], result['total money']))
+                        data.append((model_name, pos, name, result['sum value'], result['total money'],
+                                     result['total money'] / results['price change 1']['total money'],
+                                     result['solve_time']))
     data = reversed(data)
 
-    df = pd.DataFrame(data, columns=['model', 'pos', 'name', 'value', 'price'])
-    g: sns.FacetGrid = sns.FacetGrid(df, col='model', col_wrap=2)
-    # noinspection PyUnresolvedReferences
-    g = (g.map(sns.scatterplot, x='pos', y=y_axis, hue='name', data=df).set_titles("{col_name}").add_legend())
+    df = pd.DataFrame(data, columns=['Model Name', 'Pos', 'Algorithm Name', 'Sum Value', 'Total Money',
+                                     'Best Total Money', 'Solve Time'])
+    g: sns.FacetGrid = sns.FacetGrid(df, col='Model Name', hue='Algorithm Name')
+    g = (g.map(sns.scatterplot, 'Pos', y_axis).set_titles("{col_name}").add_legend())
 
-    print(plt.gcf(), g.fig)
-
+    g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    if save:
-        save_plot(analysis_filename(test_name, y_axis), test_name)
+    save_plot(analysis_filename(test_name, y_axis), "price_change", image_format=save_format)
     plt.show()
 
 
-def plot_multiple_price_auction_results(encoded_filenames: List[str], y_axis: str, title: str, save: bool = False):
+def plot_multiple_price_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
+                                        save_format: ImageFormat = ImageFormat.NONE):
     """
     Plots the auction results
     :param encoded_filenames: A list of encoded filenames
     :param y_axis: The y axis on the plot
-    :param save: If to save the plot
+    :param title:
+    :param save_format:
     """
     data = []
     test_name: str = ""
+    model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
         filename, model_name, test_name = decode_filename('price_change', encoded_filename)
+        model_names.append(model_name)
+
         with open(filename) as file:
             json_data = json.load(file)
 
             for pos, results in enumerate(json_data):
                 for name, result in results.items():
                     if type(result) is dict:
-                        if name == "price change 1 1" or name == "price change 1 1 1":
-                            data.append((pos, model_name, "standard", result['sum value'], result['total money']))
-                        else:
-                            data.append((pos, model_name, "changed", result['sum value'], result['total money']))
+                        data.append((pos, model_name, "changed", result['sum value'], result['total money'],
+                                     result['solve_time']))
     data = reversed(data)
 
-    df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Value', 'Price'])
-    g: sns.FacetGrid = sns.FacetGrid(df, col='Model Name', col_wrap=2)
-    # noinspection PyUnresolvedReferences
-    (g.map(sns.scatterplot, x='Pos', y='Value', hue='Algorithm Name', data=df).set_titles("{col_name}").add_legend())
+    df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Sum Value', 'Total Money', 'Solve Time'])
+    g: sns.FacetGrid = sns.FacetGrid(df, col='Model Name', hue='Algorithm Name')
+    (g.map(sns.scatterplot, 'Pos', y_axis).set_titles("{col_name}"))
 
+    g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    if save:
-        save_plot(analysis_filename(test_name, y_axis), "price_change")
+    save_plot(analysis_filename(test_name, y_axis), "price_change", image_format=save_format)
     plt.show()
 
 
@@ -96,12 +103,15 @@ if __name__ == "__main__":
 
     non_uniform = [
         "non_uniform_price_change_auction_results_basic_j12_s2_0",
-        "non_uniform_price_change_auction_results_basic_j15_s2_0",
+        # "non_uniform_price_change_auction_results_basic_j15_s2_0",
         "non_uniform_price_change_auction_results_basic_j15_s3_0",
         "non_uniform_price_change_auction_results_basic_j25_s5_0"
     ]
 
-    for attribute in ['price']:
-        plot_auction_results(uniform, attribute, '{} of uniform basic model'.format(attribute))
-        plot_multiple_price_auction_results(uniform, attribute, '{} of non uniform basic model'.format(attribute),
-                                            save=True)
+    for attribute in ['Sum Value', 'Total Money', 'Solve Time']:
+        plot_auction_results(uniform, attribute, '{} of uniform basic model'.format(attribute),
+                             save_format=ImageFormat.BOTH)
+        plot_multiple_price_auction_results(non_uniform, attribute, '{} of non uniform basic model'.format(attribute),
+                                            save_format=ImageFormat.BOTH)
+    plot_auction_results(uniform, 'Best Total Money', '{} of uniform basic model'.format('Best Total Money'),
+                         save_format=ImageFormat.BOTH)
