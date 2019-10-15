@@ -39,10 +39,10 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str,
                 for name, result in model_result.items():
                     data.append([pos, model_name, name, result['initial_cost'], result['price change'],
                                  result['total_iterations'], result['total_messages'], result['total money'],
-                                 result['solve_time']])
+                                 result['solve_time'], result['Sum value']])
 
     df = pd.DataFrame(data, columns=["Pos", "Model Name", "Algorithm Name", "Initial cost", "Price Change",
-                                     "Total Iterations", "Total Messages", "Total Money", "Solve Time"])
+                                     "Total Iterations", "Total Messages", "Total Money", "Solve Time", 'Sum Value'])
     g = sns.FacetGrid(df, col='Model Name', sharex=False, margin_titles=True, height=4)
     # noinspection PyUnresolvedReferences
     (g.map(sns.barplot, x_axis, "Algorithm Name").set_titles("{col_name}"))
@@ -68,5 +68,6 @@ if __name__ == "__main__":
         "iterative_round_results_basic_j25_s5_0"
     ]
 
-    for attribute in ["Total Iterations", "Total Messages", "Total Money", "Solve Time"]:
-        plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute), save_format=ImageFormat.BOTH)
+    #for attribute in ["Total Iterations", "Total Messages", "Total Money", "Solve Time", 'Sum Value']:
+        #plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute), save_format=ImageFormat.BOTH)
+    plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'), save_format=ImageFormat.BOTH)
