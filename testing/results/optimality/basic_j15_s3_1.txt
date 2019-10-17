@@ -1,0 +1,62 @@
+ Running PBS prologue script on green0706
+
+ ===============================================================================
+ Job started on Wed Oct  9 13:47:58 BST 2019
+
+ JOB ID: 7522626.blue101
+ JOB NAME: run_script.sh
+ Num Hosts: 1
+ Num Tasks: 16
+ Nodes used: 
+ green0706
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+Running python -m testing.tests.optimality_testing big_small 15 3 1
+Models
+Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price
+  big 0  |   21    |     17      |      7       | 131.0 |    0    |    0    |    0    |    16    | 0.00
+ small 1 |   11    |     17      |      4       | 48.0  |    0    |    0    |    0    |    24    | 0.00
+ small 2 |    7    |     21      |      1       | 54.0  |    0    |    0    |    0    |    16    | 0.00
+ small 3 |    5    |     20      |      5       | 48.0  |    0    |    0    |    0    |    22    | 0.00
+ small 4 |   10    |     12      |      4       | 74.0  |    0    |    0    |    0    |    23    | 0.00
+ small 5 |   14    |      5      |      1       | 38.0  |    0    |    0    |    0    |    21    | 0.00
+ small 6 |    8    |     19      |      3       | 43.0  |    0    |    0    |    0    |    17    | 0.00
+ small 7 |   14    |     13      |      4       | 80.0  |    0    |    0    |    0    |    19    | 0.00
+  big 8  |   21    |     29      |      15      | 71.0  |    0    |    0    |    0    |    20    | 0.00
+ small 9 |    5    |      9      |      2       | 58.0  |    0    |    0    |    0    |    24    | 0.00
+small 10 |    9    |     14      |      2       | 66.0  |    0    |    0    |    0    |    19    | 0.00
+small 11 |   11    |     15      |      6       | 43.0  |    0    |    0    |    0    |    26    | 0.00
+small 12 |    6    |     13      |      4       | 79.0  |    0    |    0    |    0    |    30    | 0.00
+ big 13  |   21    |     26      |      4       | 46.0  |    0    |    0    |    0    |    18    | 0.00
+ big 14  |   31    |     18      |      14      | 119.0 |    0    |    0    |    0    |    15    | 0.00
+
+Server Name | Storage | Computation | Bandwidth | Allocated Jobs
+  small 0   |   32    |     17      |    16     | 
+   big 1    |   61    |     30      |    10     | 
+  small 2   |   32    |     18      |    23     | 
+
+
+Time Limit: 10
+{'solve_time': 10.01, 'sum value': 762, 'percentage value': 0.764, 'percentage jobs': 0.8, 'server value': {'small 0': 237, 'big 1': 252, 'small 2': 273}, 'server storage usage': {'small 0': 0.969, 'big 1': 0.951, 'small 2': 1.0}, 'server computation usage': {'small 0': 0.353, 'big 1': 0.8, 'small 2': 0.556}, 'server bandwidth usage': {'small 0': 0.75, 'big 1': 1.0, 'small 2': 0.652}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 30
+{'solve_time': 30.01, 'sum value': 762, 'percentage value': 0.764, 'percentage jobs': 0.8, 'server value': {'small 0': 237, 'big 1': 252, 'small 2': 273}, 'server storage usage': {'small 0': 0.969, 'big 1': 0.951, 'small 2': 1.0}, 'server computation usage': {'small 0': 0.353, 'big 1': 0.8, 'small 2': 0.556}, 'server bandwidth usage': {'small 0': 0.75, 'big 1': 1.0, 'small 2': 0.652}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 60
+{'solve_time': 60.03, 'sum value': 762, 'percentage value': 0.764, 'percentage jobs': 0.8, 'server value': {'small 0': 237, 'big 1': 252, 'small 2': 273}, 'server storage usage': {'small 0': 0.969, 'big 1': 0.951, 'small 2': 1.0}, 'server computation usage': {'small 0': 0.353, 'big 1': 0.8, 'small 2': 0.556}, 'server bandwidth usage': {'small 0': 0.75, 'big 1': 1.0, 'small 2': 0.652}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 300
+{'solve_time': 98.66, 'sum value': 762, 'percentage value': 0.764, 'percentage jobs': 0.8, 'server value': {'small 0': 237, 'big 1': 252, 'small 2': 273}, 'server storage usage': {'small 0': 0.969, 'big 1': 0.951, 'small 2': 1.0}, 'server computation usage': {'small 0': 0.353, 'big 1': 0.8, 'small 2': 0.556}, 'server bandwidth usage': {'small 0': 0.75, 'big 1': 1.0, 'small 2': 0.652}, 'solve_status': 'Optimal'}
+Solved completely at time limit: 300
+
+ ===============================================================================
+ Job finished at Wed Oct  9 13:51:18 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=16,nodes=1:ppn=16,pmem=4000mb,walltime=48:00:00
+Used resource limits are cput=00:36:12,mem=210668kb,vmem=2103240kb,walltime=00:03:20
