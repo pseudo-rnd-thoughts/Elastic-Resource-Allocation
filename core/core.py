@@ -4,10 +4,9 @@ from __future__ import annotations
 
 import re
 import pickle
-import random
 import sys
 from enum import Enum, auto
-from random import choice
+from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
 import matplotlib.pyplot as plt
@@ -160,7 +159,7 @@ def save_random_state(filename):
     :param filename: The filename to save the state to
     """
     with open(filename, 'w') as file:
-        pickle.dumps(file, random.getstate())
+        pickle.dumps(file, random_state())
 
 
 def print_model_solution(model_solution: CpoSolveResult):

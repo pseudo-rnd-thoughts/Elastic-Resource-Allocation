@@ -55,7 +55,7 @@ def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Opti
 
 def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: List[Server], pos: int,
                         lower_bound: float, upper_bound: float,
-                        best_lower_bound: float) -> List[Tuple[Dict[Server, List[Job]], int, float, float]]:
+                        best_lower_bound: float) -> List[Tuple[float, float, Dict[Server, List[Job]], int]]:
     """
     Generates all of the candidates from a prior allocation using the list of jobs and servers
     using the current position in the job list for which jobs to use
@@ -73,10 +73,10 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
         allocation_copy = allocation.copy()
         allocation[server].append(job)
 
-        new_candidates.append((allocation_copy, pos, lower_bound + job.value, upper_bound))
+        new_candidates.append((lower_bound + job.value, upper_bound, allocation_copy, pos))
 
     if upper_bound - job.value > best_lower_bound:
-        new_candidates.append((allocation.copy(), pos, lower_bound, upper_bound - job.value))
+        new_candidates.append((lower_bound, upper_bound - job.value, allocation.copy(), pos))
 
     return new_candidates
 
@@ -92,11 +92,11 @@ def branch_bound(jobs: List[Job], servers: List[Server]) -> Result:
     best_allocation: Optional[Dict[Server, List[Job]]] = None
     best_speeds: Optional[Dict[Job, Tuple[int, int, int]]] = None
 
-    candidates: List[Tuple[Dict[Server, List[Job]], int, float, float]] = generate_candidates(
-        {server: [] for server in servers}, jobs[0], servers, 1, 0, sum(job.value for job in jobs))
+    candidates: List[Tuple[float, float, Dict[Server, List[Job]], int]] = generate_candidates(
+        {server: [] for server in servers}, jobs[0], servers, 1, 0, sum(job.value for job in jobs), best_lower_bound)
 
     while candidates:
-        allocation, pos, lower_bound, upper_bound = candidates.pop(0)
+        lower_bound, upper_bound, allocation, pos, = candidates.pop(0)
 
         job_speeds = feasible_allocation(allocation)
         if job_speeds:

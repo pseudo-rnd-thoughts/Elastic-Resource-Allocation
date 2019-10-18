@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
-from typing import List, Generic, TypeVar
+from enum import Enum, auto
+from typing import List, Generic, TypeVar, Callable
 
 T = TypeVar('T')
+
+
+class Comparison(Enum):
+    """
+    Comparison types
+    """
+    GREATER = auto()
+    EQUAL = auto()
+    LESS = auto()
 
 
 class PriorityQueue(Generic[T]):
@@ -14,6 +24,9 @@ class PriorityQueue(Generic[T]):
 
     queue: List[T] = []
     size: int = 0
+
+    def __init__(self, comparator: Callable[[T, T], Comparison]):
+        self.comparator = comparator
 
     def pop(self) -> T:
         """
@@ -30,9 +43,9 @@ class PriorityQueue(Generic[T]):
         while True:
             left, right, largest = self.left(pos), self.right(pos), pos
 
-            if left < self.size and self.queue[left] > self.queue[pos]:
+            if left < self.size and self.comparator(self.queue[left], self.queue[pos]) == Comparison.GREATER:
                 largest = left
-            if right < self.size and self.queue[right] > self.queue[pos]:
+            if right < self.size and self.comparator(self.queue[right], self.queue[pos]) == Comparison.GREATER:
                 largest = right
 
             if largest == pos:
@@ -54,7 +67,7 @@ class PriorityQueue(Generic[T]):
 
         pos = self.size - 1
         parent = self.parent(pos)
-        while pos > 0 and self.queue[parent] > self.queue[pos]:  # Add custom comparison here
+        while pos > 0 and self.comparator(self.queue[parent], self.queue[pos]) == Comparison.GREATER:
             self.swap(pos, parent)
 
             pos = parent
@@ -69,7 +82,8 @@ class PriorityQueue(Generic[T]):
         for d in data:
             self.push(d)
 
-    def parent(self, pos: int) -> int:
+    @staticmethod
+    def parent(pos: int) -> int:
         """
 
         :param pos:
@@ -77,7 +91,8 @@ class PriorityQueue(Generic[T]):
         """
         return (pos - 1) // 2
 
-    def left(self, pos: int) -> int:
+    @staticmethod
+    def left(pos: int) -> int:
         """
 
         :param pos:
@@ -85,7 +100,8 @@ class PriorityQueue(Generic[T]):
         """
         return 2*pos + 1
 
-    def right(self, pos: int) -> int:
+    @staticmethod
+    def right(pos: int) -> int:
         """
 
         :param pos:
@@ -109,4 +125,9 @@ class PriorityQueue(Generic[T]):
 
         :return:
         """
+        if self.size == 0:
+            return "[]"
+
+        str_ = "[" + self.queue[0]
+
         return ', '.join(self.queue)
