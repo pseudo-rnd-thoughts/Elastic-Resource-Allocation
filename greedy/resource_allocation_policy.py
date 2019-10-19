@@ -84,6 +84,20 @@ class SumSpeed(ResourceAllocationPolicy):
         return loading_speed + compute_speed + sending_speed
 
 
+class DeadlinePercent(ResourceAllocationPolicy):
+    """Ratio of speeds divided by deadline"""
+
+    def __init__(self):
+        super().__init__("Deadline Percent")
+
+    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
+        """Resource evaluator"""
+        return (job.required_storage / loading_speed +
+                job.required_computation / compute_speed +
+                job.required_results_data / sending_speed) / job.deadline
+
+
 policies = (
     SumPercentage(),
     SumExpPercentage(),

@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 from tqdm import tqdm
 
 from core.core import load_args, results_filename
+from core.job import Job
 from core.model import reset_model, ModelDist, load_dist
+from core.server import Server
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import policies as server_selection_policies
@@ -112,8 +114,8 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 1000):
     print("Successful, data saved to " + filename)
 
 
-def allocation_test(model_dist: ModelDist, repeat: int = 0, repeats: int = 10,
-                    optimal_time_limit: int = 30, relaxed_time_limit: int = 30):
+def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
+                    optimal_time_limit: int = 300, relaxed_time_limit: int = 150):
     """
     Allocation test
     :param model_dist: The model distribution
@@ -122,8 +124,6 @@ def allocation_test(model_dist: ModelDist, repeat: int = 0, repeats: int = 10,
     :param optimal_time_limit: The optimal time limit
     :param relaxed_time_limit: The relaxed time limit
     """
-    print("Allocation testing using the results of the greedy, relaxed and optimal{} jobs and {} servers"
-          .format(model_dist.num_jobs, model_dist.num_servers))
 
     def job_data() -> Dict[str, Tuple[int, int, int, str]]:
         """
@@ -135,35 +135,40 @@ def allocation_test(model_dist: ModelDist, repeat: int = 0, repeats: int = 10,
             for job in jobs if job.running_server
         }
 
-    def server_data() -> Dict[str, Tuple[int, int, int]]:
+    def model_data():
         """
-        Generate the important server data
-        :return: The dictionary of server data
+        Generate the json for saving the model data usd
+        :return: The json for the
         """
-        return {
-            server.name: (server.max_storage, server.max_computation, server.max_bandwidth)
-            for server in servers
-        }
+        return (
+            {
+                job.name: (job.required_storage, job.required_computation, job.required_results_data,
+                           job.deadline, job.value) for job in jobs
+            },
+            {
+                server.name: (server.max_storage, server.max_computation, server.max_bandwidth) for server in servers
+            }
+        )
 
+    print("Allocation testing using the results of the greedy, relaxed and optimal{} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
 
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the jobs and the servers
         jobs, servers = model_dist.create()
-        algorithm_results = {}
+        algorithm_results = {'model': model_data()}
 
         # Find the optimal solution
         optimal_result = optimal_algorithm(jobs, servers, optimal_time_limit)
-        algorithm_results[optimal_result.algorithm_name] = optimal_result.store(jobs_data=job_data(),
-                                                                                servers_data=server_data()) \
+        algorithm_results[optimal_result.algorithm_name] = optimal_result.store(jobs_data=job_data()) \
             if optimal_result is not None else "failure"
         reset_model(jobs, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(jobs, servers, relaxed_time_limit)
-        algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store(jobs_data=job_data(),
-                                                                                servers_data=server_data()) \
+        algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store(jobs_data=job_data()) \
             if relaxed_result is not None else "failure"
         reset_model(jobs, servers)
 
@@ -173,15 +178,13 @@ def allocation_test(model_dist: ModelDist, repeat: int = 0, repeats: int = 10,
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(jobs, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
-                    algorithm_results[greedy_result.algorithm_name] = greedy_result.store(jobs_data=job_data(),
-                                                                                          servers_data=server_data())
+                    algorithm_results[greedy_result.algorithm_name] = greedy_result.store(jobs_data=job_data())
                     reset_model(jobs, servers)
 
         # Loop over all of the matrix policies
         for policy in matrix_policies:
             greedy_matrix_result = matrix_greedy(jobs, servers, policy)
-            algorithm_results[greedy_matrix_result.algorithm_name] = greedy_matrix_result.store(
-                jobs_data=job_data(), servers_data=server_data())
+            algorithm_results[greedy_matrix_result.algorithm_name] = greedy_matrix_result.store(jobs_data=job_data())
             reset_model(jobs, servers)
 
         # Add the results to the data
@@ -200,5 +203,6 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    best_algorithms_test(loaded_model_dist, args['repeat'])
+    # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
+    all_policies_test(loaded_model_dist, args['repeat'])

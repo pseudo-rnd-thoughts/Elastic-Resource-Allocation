@@ -123,7 +123,8 @@ all_policies = [
     policy(maximise)
     for maximise in [True, False]
     for policy in [SumResources, ProductResources, SumExpResource, Random]
-] + [
+]
+all_policies += [
     JobSumResources(policy)
     for policy in resource_allocation_policies
 ]

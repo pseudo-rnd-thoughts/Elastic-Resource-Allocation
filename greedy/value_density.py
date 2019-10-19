@@ -197,6 +197,6 @@ all_policies += [
     for value_density in [UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource]
     for resource_function in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
 ]
-all_policies += Storage()
+all_policies += [Storage(), Random()]
 
 max_name_length = max(len(policy.name) for policy in policies)
