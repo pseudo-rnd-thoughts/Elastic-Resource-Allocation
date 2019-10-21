@@ -212,6 +212,7 @@ class ImageFormat(Enum):
     """
     EPS = auto()
     PNG = auto()
+    PDF = auto()
     BOTH = auto()
     NONE = auto()
 
@@ -235,3 +236,7 @@ def save_plot(name: str, test_name: str, additional: str = "", image_format: Ima
     elif image_format == ImageFormat.BOTH:
         save_plot(name, test_name, additional, ImageFormat.EPS)
         save_plot(name, test_name, additional, ImageFormat.PNG)
+    elif image_format == ImageFormat.PDF:
+        filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
+        print("Save file location: " + filename)
+        plt.savefig(filename, format='pdf')
