@@ -15,6 +15,7 @@
 %% your usepackages here, for example:
 \usepackage{booktabs}
 \usepackage{listings}
+\usepackage{graphicx}
 
 %% do not change the following lines
 \setcopyright{ifaamas}  % do not change this line!
@@ -189,22 +190,22 @@ TODO Abstract goes here
 %% start of main body of paper
 
 \section{Introduction}\label{sec:introduction}
-In the last years, cloud computing~\cite{} has become a very popular solution to run data-intensive applications remotely.
+In the last few years, cloud computing~\cite{TODO} has become a very popular solution to run data-intensive applications remotely.
 The importance of running different highly-computational tasks from a remote entity became even more popular with the
 emerging technology of \emph{mobile edge computing}, which enables mobile users to run delay-sensitive
 computationally-intensive tasks from the edge of mobile networks at small data-centers, known as \emph{edge clouds}.
 
-These kinds of settings are very important for military tactical network where personal on the ground do not have the
-capability's to run task that a server can.
-The application of this could be analysis of video from troops on the ground, surveillance footage from UAVs or data
-analysis of captured enemy electronics.
-To do this, several types of resource of the server and the task are considered: the communication bandwidth,
+These kinds of settings are very important for military tactical network where personal on the ground often don't have the
+capability's to run time critical applications.
+This could be analysis of video by troops on the ground to identify features of it, surveillance footage from UAVs or data
+analysis of captured enemy electronics. \\
+To do this, several types of resource must be consider for run these programs: the communication bandwidth,
 computational and data storage / memory used in computing and each will have difference amounts depend on the task.
 As well the resources, each task will have a different importance depend on who is requesting it and what the task will achieve.
-For example, a general's task will be more important that a captains or analysis of a high value target's electronics
-is more important to be run than analysis of base CCTV cameras.
-In this work we demonstrate, a centralised greedy algorithm to maximise social welfare and two auction algorithms
-with one centralised and the other an decentralised iterative auction. \\
+For example, a General's task will be more important that a Captain's or analysis of a high value target's electronics
+is more important to be run than analysis of an army base CCTV cameras normally.
+In this work we have developed, a centralised greedy algorithm to maximise social welfare and two auction algorithms,
+one centralised and the other a decentralised iterative auction that doesnt require the task to reveal its importance. \\
 
 %% Fidan text
 %% These kind of settings are very important for \emph{military tactical networks}, where different entities need to run tasks
@@ -214,11 +215,17 @@ with one centralised and the other an decentralised iterative auction. \\
 %% When accomplished, different tasks carry different utility values to its entities. This will depend on the importance of
 %% the task and also who is asking for it. E.g., a general's task has a higher utility than a major's. \\
 
-In previous work, user would request a fix amount of resource that would be used for process the task however this can
-create a bottleneck with certain resources particular with small servers used in edge cloud computing.
+In previous work done in this area~\cite{KUMAR2017234}, a user would request a fix amount of resource that would be used for processing
+the task however this can create a bottleneck with certain resources, particular with small servers used in edge cloud computing.
 In this work, task will instead request the total resources required to process the task allowing the cloud provider
 to distribute it's resources more efficiently to it's task due to being aware of it's tasks requirements.\\
 
+Specifically, our contributions are:
+\begin{itemize}
+    \item We formulate an optimization problem on assigning the jobs to the servers, whose objective is to maximize the total utility of the served jobs, while taking into account the job different requirements and the limitations of the edge clouds in terms of the storage, computation and communication capacities.
+    \item We prove that the problem is NP-hard, and propose a heuristic algorithm, based on auctions, with a performance guarantee of XXX, whose computational complexity is XXX.
+    \item Using extensive realistic simulations, we compare the performance of our algorithms against other benchmark algorithms, and show that our algorithms outperforms all of them, while at the same time being very close to the optimal algorithm.
+\end{itemize}
 
 %% Fidan Text
 %% In this work, we look at a static (one-shot problem) formulation of assigning the tasks to the servers and allocating
@@ -227,44 +234,37 @@ to distribute it's resources more efficiently to it's task due to being aware of
 %% which tasks to serve, to which server they are to be assigned and what amount of the resources they need to get, in order
 %% to maximize the sum of the utilities over all the tasks in that moment. The approach we follow is based on auction-based techniques. \\
 
-
-%\begin{itemize}
-%    \item Related works
-%    \item Resource allocation in cloud computing
-%    \item Market based allocation
-%    \item New Problem case
-%\end{itemize}
-
 \section{Related work}\label{sec:related-work}
 In~\cite{vaji_infocom}, the authors consider the servers to be edge clouds responsible for both deciding where to place
 the code/data needed to run a specific task, and also for scheduling different tasks to different edge clouds.
-The goal there is to maximize the average rate of successfully accomplished tasks over time.
+The goal is to maximise the social welfare (the sum of task's values) of all tasks at arrive.
+%% The goal there is to maximize the average rate of successfully accomplished tasks over time. !!! is this true, replaced with line above
 The resources provided by different edge clouds are heterogeneous and there is a monetary constraint for every task.
 
 \section{System Model}\label{sec:system-model}
 A sketch of the system is illustrated in Fig.~\ref{system_model}.
 We assume that in the system there are $I$ servers, which could be edge clouds, and could be accessed either through
-base stations or WiFi AP .
+base stations or WiFi AP.
 Servers have different types of resources, such as: storage for the code/data needed to run a task, computation capacity
 in terms of CPU cycles needed to run a task, and communication capacity to receive the request by a task and to send
 back the results after the latter is executed.
 We assume that the servers are heterogeneous in all their characteristics.
-We denote the storage capacity of server $i$ with $S_i$, computation capacity with $W_i$, whereas the communication capacity with $R_i$.
+We denote the storage capacity of server $i$ with $S_i$, computation capacity with $W_i$, whereas the communication
+(network bandwidth) capacity with $R_i$.
 
 There are $J$ different tasks (jobs)\footnote{In this paper, we will use the notions job and task interchangeably.}
 from different entities that need to be run on those servers.
 Running any of these tasks on the server requires storing the appropriate code/data on the same server.
 These could be for example images of objects or CNN layers in identification tasks.
-The size of task $j$ is denoted as $s_j$.
-A task also requires some CPU cycles from the server.
-This is denoted as $w_j$, and is expressed in the total number of flops.
-A related parameter to this is the rate at which the number of flops are assigned from the server per unit of time.
-We denote this as $w_{i,j}$, and its unit is Mflops/s.
+The size of task $j$ is denoted as $s_j$ with the speed that the program is loaded at is $s^{'}_j$.
+A task also requires some CPU cycles from the server which is denoted as $w_j$, and is expressed in the total number of flops.
+The related parameter is the rate at which the number of cpu cycle per unit of time are completed.
+We denote this as $w^{'}_j$, and its unit is MHz.
 Finally, after the task is run and the results obtained, the latter need to be sent back to the user.
 The size of these results is denoted with $r_j$, and the rate at which they are sent from server $i$ (if the task was
-executed there) to the user is $r_{i,j}$.
-As opposed to the storage requirement of the task $s_j$ that is \emph{strict}, the computation and communication
-parameters $w_{i,j}$ and $r_{i,j}$ are \emph{elastic}, i.e., the job can be run under different values.
+executed there) to the user is $r^{'}_j$.
+To prevent all jobs just been run with extremely slow speed meaning that job take a very long time to complete, a deadline
+attribute is used such that the job must be completed with the deadline for the
 The values of these parameters would be constrained by the deadline $D_j$ that any task is assigned.
 It is the maximum time the time is allowed to ``spend'' in the system.
 If the task is executed completely within that time interval by any of the servers, then the task gets the full
@@ -276,9 +276,11 @@ assigned it cannot switch to another server.
 
 In this paper, we consider the static case scenario, where all jobs arrive at the same time at the start of the program.
 The dynamic case (where task arrive over time) is beyond the scope of this paper.
-This is no task preemption as all jobs run concurrently and so cant be stopped.
+This is no task preemption as all jobs run concurrently and jobs dont arrive over time to mean a job would be stopped
+in favour of another.
 We assume that every task will request at least as much resources as required to run as any program would fail if
-resources were under reported.
+resources were under reported however we do consider the case where tasks are misreported with worse requirements than
+in reality need.
 
 % In this paper, we are considering the static case scenario, i.e., we look at the problem as a \emph{single shot}.
 % Considering the dynamic case (as the task arrive in the system and leave after (not) being served) is beyond the scope
@@ -292,17 +294,20 @@ resources were under reported.
 %% deadline ($d_j$) and internal value ($v_j$). The server will allocation resources: loading speed ($s^{'}_j$),
 %% compute speed ($w^{'}_j$) and sending speed ($r^{'}_j$) so that the job deadline constraint holds (equation \ref{deadline_constraint}). \\
 
+\subsubsection{Problem Model}
+The problem can be described as a linear programming problem with $I$ servers and $J$ jobs, the additional variable of
+$x_{i,j}$ is a binary variable of if the job $j$ is allocated to server $i$
 \begin{align}
     \max & \sum^J_j U_j (\sum^I_i x_{i,j})\label{eq:objective}\\
     \mbox{s.t.} \\
-    & \sum_{j=1}^{J}S_j x_{i,j}\leq S_i, &~ \forall i \in I,\label{eq:server_storage_constraint}\\
-    &\sum_{j=1}^{J}w_j x_{i,j}\leq W_i, &~ \forall i \in I,\label{eq:server_computation_constraint}\\
-    &\sum^J_j (r_j + s_j) x_{i,j} \leq R_i, &~ \forall i \in I,\label{eq:server_communication_constraint}\\
-    & \frac{S_j}{s_j} + \frac{W_j}{w_j} + \frac{R_j}{r_j} \leq \frac{D_j}{x_{i,j}}, &~ \forall{i \in I, j \in J},\label{eq:job_deadline}\\
-    & s_{i,j}>0, &~ \forall{i \in I, j \in J,}\label{eq:loading_speeds}\\
-    & w_{i,j}>0, &~ \forall{i \in I, j \in J,}\label{eq:compute_speeds}\\
-    & r_{i,j}>0, &~ \forall{i \in I, j \in J,}\label{eq:sending_speeds}\\
-    & \sum_{i=1}^{I} x_{i,j}\leq 1, &~ \forall j \in J,\label{eq:server_job_allocation}\\
+    & \sum^J_j s_j x_{i,j} \leq S_i, &~ \forall i \in I,\label{eq:server_storage_constraint}\\
+    & \sum^J_j w^{'}_j x_{i,j} \leq W_i, &~ \forall i \in I,\label{eq:server_computation_constraint}\\
+    & \sum^J_j (r^{'}_j + s^{'}_j) x_{i,j} \leq R_i, &~ \forall i \in I,\label{eq:server_communication_constraint}\\
+    & \frac{s_j}{s^{'}_j} + \frac{s_j}{w^{'}_j} + \frac{r_j}{r^{'}_j} \leq D_i, &~ \forall{i \in I, j \in J},\label{eq:job_deadline}\\
+    & s^{'}_j>0, &~ \forall{j \in J,}\label{eq:loading_speeds}\\
+    & w^{'}_j>0, &~ \forall{j \in J,}\label{eq:compute_speeds}\\
+    & r^{'}_j>0, &~ \forall{j \in J,}\label{eq:sending_speeds}\\
+    & \sum^I_i x_{i,j} \leq 1, &~ \forall j \in J,\label{eq:server_job_allocation}\\
     & x_{i,j} \in \{0,1\}, &~ \forall{i \in I, j \in J}\label{eq:job_allocation}
 \end{align}
 
@@ -330,21 +335,43 @@ As a result, this is an NP-hard problem.
 In the next section, we propose a heuristic, with a performance guarantee of $\frac{1}{n}$.
 
 \section{Flexible Resource Allocation Mechanisms}\label{sec:flexible-resource-allocation-mechanisms}
-Due to the flexibility of the amount of resource allocated to each task, this has meant that Dynamic Programming~\cite{}
-and Bin Packing algorithms for Multiple Knapsack Problems~\cite{} cant to use as they require the weights to be fixed.
-Non-linear integer programming is possible to use to solve this problem however the problems hugely intractable with
-larger model sizes then 15 jobs and 3 servers. %% Probably wants to be removed
+The problem as stated is a variant of the knapsack problem due to aim of maximising the total value of items with the
+addition of multiple knapsacks and multiple resources.
+But due to the addition of weight flexibility with resource speed being constrained by server capacity and a job's
+deadline constraint.
+Means that almost all previous work to develop dynamic programming or bin packing algorithms cant be use as they require
+the weight to be known when computing.
+Previous work by~\cite{Nip2017} have considered the case of flexible weight with constraints creating an algorithm that
+solves the problem in pseudo-polynomial time complexity.
+However for the case that is paper is considering, it is not possible to use due to the solve time required to find
+the optimal solution that in resource allocation could take as long the deadline for some jobs.\\
 
+Therefore we have developed a modular greedy allocation algorithm to maximise social welfare that solves the problem
+quickly while achieve a sub-optimal solution and requiring the tasks to all reveal their valuations.
+In real life, server would wish to be payed for the work so have developed two auction mechanisms.
 Combinatorial auction are a class of auction that allow for multiple resources to be sold and brought in a single bid
 however due to flexible nature of the problem case then these algorithms are largely unable to be used. \\
 Because of this, we have implemented a critical value auction using the Greedy Mechanism that is known to be
-strategyproof that is centralised and requires all users to reveal their private values.
+strategyproof that is centralised and requires all users to reveal their private values~\cite{}.
 And a second auction, that is a decentralised iterative auction using a reverse VCG mechanism to calculate the prices.
 
+\begin{figure}
+    \includegraphics[width=\linewidth]{../testing/figures/allocation/eps/allocation_optimal_allocation.eps}
+    \caption{Example Allocation with the optimal solution}
+    \label{fig:optimal_allocation}
+\end{figure}
+
 \subsection{Greedy Mechanism}\label{subsec:greedy-mechanism}
+TODO \\
 Greedy mechanism is a three stage algorithm where the jobs are ranked used a value density function.
 Then each jobs from the sorted job ranks are assigned to a server using a server selection function and then the
-resource are allocated to the
+resource are allocated to the job.
+
+\begin{figure}
+    \includegraphics[width=\linewidth]{../testing/figures/allocation/png/allocation_greedy_allocation.png}
+    \caption{Greedy allocation (using the same model as~\ref{fig:optimal_allocation})}
+    \label{fig:greedy_allocation}
+\end{figure}
 
 \subsubsection{Greedy algorithm}
 The greedy algorithm code in python
@@ -358,8 +385,23 @@ for job in ranked_jobs:
         allocate(job, allocated_server, loading_speed, compute_speed, sending_speed)
 \end{lstlisting}
 
-\subsubsection{Lower bound of greedy mechanism}
+Example Value density function
+\begin{align}
+    s_j + w_j + r_j
+\end{align}
 
+Example Server selection function (where $S^{'}_i$ is the available storage for the server $i$ and $W'^{'}_i$ and $R^{'}_i$
+being the avaiable computation and bandwidth respectively).
+\begin{align}
+    argmax_{\forall i \in I} S^{'}_i + W^{'}_i + R^{'}_i
+\end{align}
+
+Example Resource allocation function (where speeds is the set of all possible speeds that job could run at on a server)
+\begin{align}
+    argmin_{(s, w, r) \in speeds} s + w + r
+\end{align}
+
+\subsubsection{Lower bound of greedy mechanism}
 Due to the flexible nature of jobs then when allocating jobs, to be done optimally would involved being able to know
 the future allocations and then plan this jobs based on that.
 However this is not possible to do there the algorithm can only guarantee that a single job can be allocated when the
@@ -394,10 +436,37 @@ algorithm.
     & x_{i,j} \in \{0,1\}, &~ \forall{i \in I, j \in J}\label{eq:dia_job_allocation}
 \end{align}
 
+The job price is then determined by calculating the total revenue when the job is not included and when the job is included
+\begin{align}
+    job\_price = revenue_{J, I} - revenue{J, I}^{k}
+\end{align}
+
 \subsubsection{Decentralised Iterative auction properties}
 TODO
+In auction theory then four properties are considered: Incentive Compatible, Budget balanced, truthfulness and individual
+rationality.
+Our auction has the properties of budget balanced (as it is a decentralised algorithm so there is no centralised,
+auctioneer who receives a cut).
+It also has individual rationality, TODO
+However, it doesnt have incentive compatibility or truthfulness as TODO (maybe it is strategyproof )
+
+\subsubsection{Decentralised Iterative auction code}
+This is a centralised version of the code that would be decentralised
+\begin{lstlisting}[language=Python]
+unallocated_jobs = jobs
+while len(unallocated_jobs) > 0:
+    job = random.choice(unallocated_jobs)
+
+    job_price, allocation = min(evaluate_job_price(job, server) for server in servers)
+
+    if job_price <= job.value:
+        allocate_job(job, allocation, job_price, unallocated_jobs)
+    else:
+        unallocated_jobs.remove(job)
+\end{lstlisting}
 
 \subsection{Critical Value Auction}\label{subsec:critical-value-auction}
+TODO
 Single property domain auctions~\cite{nisan2007algorithmic} allow for strategyproof (weakly-dominant incentive compatible) auction that uses
 an allocation algorithm like~\ref{subsec:greedy-mechanism} that the job value is reduced till the job wouldn't be allocated.
 
@@ -439,23 +508,58 @@ Through this we estimate the total requirement over the program length and a dea
 total execution time.
 
 \subsection{Greedy mechanism testing}\label{subsec:greedy-mechanism-testing}
-
+For the greedy algorithm, we have also implemented the optimal solution using linear integer program solver and a
+relaxed variation such that a single 'super' server is considered which has the resource size of the all other servers
+combined.
 \begin{figure*}
     \includegraphics[width=\linewidth]{../testing/figures/greedy/eps//optimal_greedy_test_big_small_a_best_sum_value.eps}
     \includegraphics[width=\linewidth]{../testing/figures/greedy/eps//optimal_greedy_test_big_small_b_best_sum_value.eps}
     \caption{Greedy algorithms with big small model measuring the sum of values}
+    \label{fig:big_small_sum_values}
 \end{figure*}
+We have found that the greedy performed within 90\% of the optimal solution for most models, it struggled the most with
+settings that had high competition and so needed to be aware of other jobs requirements.
+This make sense as our algorithm doesnt think about the other job requirements when allocated its current resources.
 
 \subsection{Auction mechanisms testing}\label{subsec:auctiom-mechanisms-testing}
+To test our two auction mechanisms, we have compared the results to VCG auction and a fixed VCG auction where the job speeds
+are fixed before allocation.
+\begin{figure}
+    \includegraphics[width=\linewidth]{../testing/figures/price_change/eps/uniform_price_change_auction_results_basic_sum_value.eps}
+    \caption{The sum value of the jobs using different algorithms}
+\end{figure}
 
-\begin{figure*}
+An important factor of the decentralised iterative auction is the number of rounds required till the algorithm converges
+to the optimal pricing.
+There are two heuristic can be used to decrease the number of round required: the price change variable and to set an
+initial price for all jobs when it is first allocated.
+The effect of these heuristic have a large impact on both the number of rounds and the social welfare of the allocation.
+\begin{figure}
+    \includegraphics[width=\linewidth]{../testing/figures/iterative_round/eps/iterative_round_results_basic_total_iterations.eps}
+    \caption{The number of iterative when using difference heuristics}
+\end{figure}
+\begin{figure}
+    \includegraphics[width=\linewidth]{../testing/figures/iterative_round/eps/iterative_round_results_basic_sum_value.eps}
+    \caption{The social welfare when using difference heuristics}
+\end{figure}
+
+To investigate if users could report worse job information and get a lower price than if they truthfully reported it.
+To do this, we run the decentralised iterative auction with truthful reporting then replaced a job with a mutated version
+of a job with a modified attribute.
+We compared the price that job paid in comparison to the price when the job is not modified.
+\begin{figure}
     \includegraphics[width=\linewidth]{../testing/figures/auction_mutation/eps/mutate_iterative_auction_basic_mutate_difference.eps}
     \caption{Measuring the difference in price when the job is incorrectly reported}
-\end{figure*}
-
+\end{figure}
+We have found that very few job would paid less when modified however we found that this can happen due to allocation
+process has an element of randomness when multiple server offer the same price.
+This can cause the allocation to fall into a local maximum which means that some job are allocated that otherwise wouldn't
+be allocated in the global maximum of job prices.
+TODO prove that this is true through running a model multiple times to see if a job is sometimes allocated and
+sometimes not.
 
 \section{Conclusions and Future Work}\label{sec:conclusions-and-future-work}
-
+TODO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% bibliography: see CFP for number of permitted pages
