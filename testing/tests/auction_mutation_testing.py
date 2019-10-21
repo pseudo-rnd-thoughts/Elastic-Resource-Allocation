@@ -98,6 +98,14 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
     # The mutation results
     mutation_results = []
 
+    job = jobs[0]
+    print("Number of permutations: {}".format(
+        ((int(job.required_storage * positive_percent) + 1) - job.required_storage) *
+        ((int(job.required_computation * positive_percent) + 1) - job.required_computation) *
+        ((int(job.required_results_data * positive_percent) + 1) - job.required_results_data) *
+        ((job.deadline + 1) - int(job.deadline * negative_percent)) *
+        ((job.value + 1) - int(job.value * negative_percent))))
+
     unmutated_jobs = jobs.copy()
     # Loop, for each job then find all of the mutation of within mutate percent of the original value
     for _ in tqdm(range(num_mutated_jobs)):
