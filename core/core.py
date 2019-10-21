@@ -193,6 +193,7 @@ def print_model(jobs: List[Job], servers: List[Server]):
                                                           ', '.join([job.name for job in server.allocated_jobs])))
 
 
+# noinspection LongLine
 def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     """
     Decodes the filename to recover the file location, the model name and the greedy name
@@ -215,22 +216,25 @@ class ImageFormat(Enum):
     NONE = auto()
 
 
-def save_plot(name: str, test_name: str, additional: str = "", image_format: ImageFormat = ImageFormat.NONE):
+def save_plot(name: str, test_name: str, additional: str = "", image_format: ImageFormat = ImageFormat.NONE, lgd=None):
     """
     Saves the plot to a file of the particular image format
     :param name: The plot name
     :param test_name: The test name
     :param additional: Additional information to add to the filename
     :param image_format: The image format
+    :param lgd: The legend to be added to the plot when saved
     """
+    if lgd:
+        lgd = (lgd, )
     if image_format == ImageFormat.EPS:
         filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
         print("Save file location: " + filename)
-        plt.savefig(filename, format='eps', dpi=1000)
+        plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.PNG:
         filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
         print("Save file location: " + filename)
-        plt.savefig(filename, format='png')
+        plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.BOTH:
-        save_plot(name, test_name, additional, ImageFormat.EPS)
-        save_plot(name, test_name, additional, ImageFormat.PNG)
+        save_plot(name, test_name, additional, ImageFormat.EPS, lgd)
+        save_plot(name, test_name, additional, ImageFormat.PNG, lgd)

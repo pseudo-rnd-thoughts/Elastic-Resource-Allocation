@@ -47,8 +47,8 @@ class ServerSelectionPolicy(ABC):
 class SumResources(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
-    def __init__(self):
-        super().__init__("Sum")
+    def __init__(self, maximise: bool = False):
+        super().__init__("Sum", maximise)
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -58,8 +58,8 @@ class SumResources(ServerSelectionPolicy):
 class ProductResources(ServerSelectionPolicy):
     """The product of a server's available resources"""
 
-    def __init__(self):
-        super().__init__("Product")
+    def __init__(self, maximise: bool = False):
+        super().__init__("Product", maximise)
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -69,8 +69,8 @@ class ProductResources(ServerSelectionPolicy):
 class SumExpResource(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
-    def __init__(self):
-        super().__init__("Exponential Sum")
+    def __init__(self, maximise: bool = False):
+        super().__init__("Exponential Sum", maximise)
 
     def value(self, job: Job, server: Server) -> float:
         """Server Selection Value"""
@@ -80,8 +80,8 @@ class SumExpResource(ServerSelectionPolicy):
 class Random(ServerSelectionPolicy):
     """A random number"""
 
-    def __init__(self):
-        super().__init__("Random")
+    def __init__(self, maximise: bool = False):
+        super().__init__("Random", maximise)
 
     def select(self, job: Job, servers: List[Server]) -> Optional[Server]:
         """Selects the server"""
@@ -99,8 +99,8 @@ class Random(ServerSelectionPolicy):
 class JobSumResources(ServerSelectionPolicy):
     """Job Sum resources usage"""
 
-    def __init__(self, resource_allocation_policy: ResourceAllocationPolicy):
-        super().__init__("Job Sum of {}".format(resource_allocation_policy.name))
+    def __init__(self, resource_allocation_policy: ResourceAllocationPolicy, maximise: bool = False):
+        super().__init__("Job Sum of {}".format(resource_allocation_policy.name), maximise)
 
         self.resource_allocation_policy = resource_allocation_policy
 
@@ -125,7 +125,8 @@ all_policies = [
     for policy in [SumResources, ProductResources, SumExpResource, Random]
 ]
 all_policies += [
-    JobSumResources(policy)
+    JobSumResources(policy, maximise)
+    for maximise in [True, False]
     for policy in resource_allocation_policies
 ]
 

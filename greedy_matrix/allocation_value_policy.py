@@ -111,6 +111,21 @@ class SumExp3ServerPercentage(AllocationValuePolicy):
              exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
 
 
+class ValueOverUsage(AllocationValuePolicy):
+    """
+    Value over the usage percentage
+    """
+
+    def __init__(self):
+        super().__init__("Value over usage")
+
+    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+        """Evaluate"""
+        return job.value / ((job.required_storage / server.available_storage) +
+                            (compute_speed / server.available_computation) +
+                            ((loading_speed + sending_speed) / server.available_bandwidth))
+
+
 policies = (
     SumServerUsage(),
     SumServerPercentage(),

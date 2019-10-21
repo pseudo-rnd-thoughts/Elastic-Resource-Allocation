@@ -16,44 +16,6 @@ from core.result import Result
 from core.server import Server
 
 
-class FixedJob(Job):
-    """Job with a fixing resource usage speed"""
-
-    def __init__(self, job, servers):
-        super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
-                         job.value, job.deadline)
-        self.original_job = job
-        self.loading_speed, self.compute_speed, self.sending_speed = min(
-            ((s, w, r)
-             for s in range(1, max(server.max_bandwidth for server in servers))
-             for w in range(1, max(server.max_computation for server in servers))
-             for r in range(1, max(server.max_bandwidth for server in servers))
-             if job.required_storage * w * r + s * job.required_computation * r +
-             s * w * job.required_results_data <= job.deadline * s * w * r),
-            key=lambda x: exp(x[0]) ** 3 + exp(x[1]) ** 3 + exp(x[2]) ** 3)
-
-    def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
-                 price: float = 0):
-        """
-        Overrides the allocate function from job to just allocate the running server and the price
-        :param loading_speed: Ignored
-        :param compute_speed: Ignored
-        :param sending_speed: Ignored
-        :param running_server: The server the job is running on
-        :param price: The price of the job
-        """
-        assert self.running_server is None
-
-        self.running_server = running_server
-        self.price = price
-
-    def reset_allocation(self):
-        """
-        Overrides the reset_allocation function from job to just change the server not resource speeds
-        """
-        self.running_server = None
-
-
 def optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit) -> Optional[int]:
     """
     Finds the optimal solution

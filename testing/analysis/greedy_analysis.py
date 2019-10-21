@@ -11,55 +11,98 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+from core.core import print_job_allocation
+from core.job import Job
+from core.server import Server
+from core.model import load_dist, ModelDist, reset_model
+from optimal.optimal import optimal_algorithm
+from greedy.greedy import greedy_algorithm
+from greedy.value_density import ResourceSum
+from greedy.server_selection_policy import SumResources
+from greedy.resource_allocation_policy import SumPercentage
+
 from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str], x_label: str, y_label: str):
+def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
+                            save_format: ImageFormat = ImageFormat.NONE):
     """
-    PLots the server results
-    :param df_all: A list of data frames to plot
-    :param title: The title
-    :param labels: The labels
-    :param x_label: The x label
-    :param y_label: The y label
+
+    :param jobs:
+    :param servers:
+    :param title:
+    :param save_format:
     """
+    allocated_jobs = [job for job in jobs if job.running_server]
+    loading_df = pd.DataFrame(
+        [[job.required_storage / server.max_storage if job.running_server == server else 0 for job in allocated_jobs]
+         for server in servers],
+        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+    compute_df = pd.DataFrame(
+        [[job.compute_speed / server.max_computation if job.running_server == server else 0 for job in allocated_jobs]
+         for server in servers],
+        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+    sending_df = pd.DataFrame([[(
+                                            job.loading_speed + job.sending_speed) / server.max_bandwidth if job.running_server == server else 0
+                                for job in allocated_jobs] for server in servers],
+                              index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+    resource_df = [loading_df, compute_df, sending_df]
+
     hatching = '/'
 
-    n_df = len(df_all)
-    n_col = len(df_all[0].columns)
-    n_ind = len(df_all[0].index)
+    n_col = len(resource_df[0].columns)
+    n_ind = len(resource_df[0].index)
     axe = plt.subplot(111)
 
-    for df in df_all:  # for each data frame
+    for df in resource_df:  # for each data frame
         axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
 
     h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
-    for i in range(0, n_df * n_col, n_col):  # len(h) = n_col * n_df
+    for i in range(0, 3 * n_col, n_col):  # len(h) = n_col * n_df
         for j, pa in enumerate(h[i:i + n_col]):
             for rect in pa.patches:  # for each index
-                rect.set_x(rect.get_x() + 1 / float(n_df + 1) * i / float(n_col))
+                rect.set_x(rect.get_x() + 1 / float(3 + 1) * i / float(n_col))
                 rect.set_hatch(hatching * int(i / n_col))  # edited part
-                rect.set_width(1 / float(n_df + 1))
+                rect.set_width(1 / float(3 + 1))
 
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
-    axe.set_xticklabels(df_all[0].index, rotation=0)
+    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2.)
+    axe.set_xticklabels(resource_df[0].index, rotation=0)
     axe.set_title(title)
-    axe.set_xlabel(x_label)
-    axe.set_ylabel(y_label)
+    axe.set_xlabel("Servers")
+    axe.set_ylabel("Resource usage (%)")
 
     # Add invisible data to add another legend
     n = []
-    for i in range(n_df):
+    for i in range(3):
         n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
 
-    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.5])
-    if labels is not None:
-        plt.legend(n, labels, loc=[1.01, 0.1])
+    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.25])
+    plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05])
     axe.add_artist(l1)
 
+    save_plot(l1, analysis_filename("allocation", title.lower().replace(" ", "_")), "allocation", image_format=save_format)
     plt.show()
+
+
+def allocation_analysis():
+    """
+    Allocation Analysis
+    """
+    dist_name, job_dist, server_dist = load_dist("../../models/basic_v2.json")
+    model_dist = ModelDist(dist_name, job_dist, 20, server_dist, 2)
+    jobs, servers = model_dist.create()
+
+    # Optimal
+    optimal_results = optimal_algorithm(jobs, servers, 15)
+    plot_allocation_results(jobs, servers, "Optimal Allocation", ImageFormat.BOTH)
+    reset_model(jobs, servers)
+
+    # Greedy
+    greedy_results = greedy_algorithm(jobs, servers, ResourceSum(), SumResources(), SumPercentage())
+
+    plot_allocation_results(jobs, servers, "Greedy Allocation", ImageFormat.BOTH)
 
 
 def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
@@ -139,7 +182,6 @@ if __name__ == "__main__":
 
     # all_algorithms_analysis(basic, 'Sum Value', "{} of {} model".format('Sum Value', 'Basic'),
     #                         save_format=ImageFormat.BOTH)
-
     """
     image_format = ImageFormat.BOTH
     for model_files, model_name in [(basic, "Basic"), (big_small, "Big Small")]:
@@ -161,8 +203,12 @@ if __name__ == "__main__":
         "optimal_greedy_test_big_small_j100_s10_0"
     ]
 
+    """
     image_format = ImageFormat.BOTH
     for model_files, model_name in [(big_small_b, "Big Small")]:
         for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
             all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
                                     save_format=image_format)
+    """
+
+    allocation_analysis()
