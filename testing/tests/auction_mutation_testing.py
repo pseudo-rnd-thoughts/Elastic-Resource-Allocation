@@ -137,6 +137,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             # Remove the mutant job and read the job to the list of jobs and reset the model
                             list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
+        print()
 
     # Save all of the results to a file
     filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
