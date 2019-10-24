@@ -46,22 +46,6 @@ class Server(object):
                 for s in range(1, self.available_bandwidth + 1)
                 for r in range(1, self.available_bandwidth - s + 1))
 
-    def can_empty_run(self, job: Job) -> bool:
-        """
-        Check if a job can be run on a server if it dedicates all of it's resources to the job
-        :param job: The job to test
-        :return: If it can run
-        """
-        return self.max_storage >= job.required_storage \
-            and self.max_computation >= 1 \
-            and self.max_bandwidth >= 2 and \
-            any(job.required_storage * self.max_computation * r +
-                s * job.required_computation * r +
-                s * self.max_computation * job.required_results_data
-                <= job.deadline * s * self.max_computation * r
-                for s in range(1, self.max_bandwidth + 1)
-                for r in range(1, self.max_bandwidth - s + 1))
-
     def allocate_job(self, job: Job):
         """
         Updates the server attributes for when it is allocated within jobs

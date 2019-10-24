@@ -52,8 +52,11 @@ class FixedValue(ABC):
     Fixed Value policy for the fixed job to select the speed
     """
 
+    def __init__(self, name):
+        self.name = name
+
     @abstractmethod
-    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int ) -> int:
+    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
         """
         Evaluate how good certain speeds
         :param loading_speed: Loading speed
@@ -62,3 +65,16 @@ class FixedValue(ABC):
         :return: How good it is
         """
         pass
+
+
+class FixedSumSpeeds(FixedValue):
+    """Fixed sum of speeds"""
+
+    def __init__(self):
+        super().__init__("Sum speeds")
+
+    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
+        """Evaluation of how good it is"""
+        return loading_speed + compute_speed + sending_speed
+
+# TODO add more fixed value classes

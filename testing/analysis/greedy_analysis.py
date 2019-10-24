@@ -95,12 +95,12 @@ def allocation_analysis():
     jobs, servers = model_dist.create()
 
     # Optimal
-    optimal_results = optimal_algorithm(jobs, servers, 15)
+    optimal_algorithm(jobs, servers, 15)
     plot_allocation_results(jobs, servers, "Optimal Allocation", ImageFormat.BOTH)
     reset_model(jobs, servers)
 
     # Greedy
-    greedy_results = greedy_algorithm(jobs, servers, ResourceSum(), SumResources(), SumPercentage())
+    greedy_algorithm(jobs, servers, ResourceSum(), SumResources(), SumPercentage())
 
     plot_allocation_results(jobs, servers, "Greedy Allocation", ImageFormat.BOTH)
 

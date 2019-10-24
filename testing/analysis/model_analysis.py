@@ -13,32 +13,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def plot_server_jobs_allocations(servers: List[Server]):
-    """
-    Plots the server jobs allocations
-    :param servers: A list of servers to plot
-    """
-    server_names = [server.name for server in servers]
-    allocated_jobs = [job for server in servers for job in server.allocated_jobs]
-    job_names = [job.name for job in allocated_jobs]
-    storage_df = pd.DataFrame([[job.required_storage/server.max_storage if job in server.allocated_jobs else 0
-                                for job in allocated_jobs] for server in servers],
-                              index=server_names, columns=job_names)
-    compute_df = pd.DataFrame([[job.compute_speed/server.max_computation if job in server.allocated_jobs else 0
-                                for job in allocated_jobs] for server in servers],
-                              index=server_names, columns=job_names)
-    bandwidth_df = pd.DataFrame([[(job.loading_speed + job.sending_speed)/server.max_bandwidth
-                                  if job in server.allocated_jobs else 0
-                                  for job in allocated_jobs] for server in servers],
-                                index=server_names, columns=job_names)
-
-    df_all = [storage_df, compute_df, bandwidth_df]
-    labels = ['storage', 'compute', 'bandwidth']
-    title = 'Server Job allocations'
-
-    plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
-
-
 def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10000):
     """
     Plots the job distribution of a list of models
@@ -144,8 +118,7 @@ if __name__ == "__main__":
 
     for file in files:
         model_name, job_dist, server_dist = load_dist(file)
-        model_dist = ModelDist(model_name, job_dist, 1, server_dist, 1)
-        models.append(model_dist)
+        models.append(ModelDist(model_name, job_dist, 1, server_dist, 1))
 
     plot_job_distribution(models)
     plot_server_distribution(models)

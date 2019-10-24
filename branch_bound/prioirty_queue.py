@@ -125,9 +125,5 @@ class PriorityQueue(Generic[T]):
 
         :return:
         """
-        if self.size == 0:
-            return "[]"
 
-        str_ = "[" + self.queue[0]
-
-        return ', '.join(self.queue)
+        return '[' + ', '.join(self.queue) + ']'

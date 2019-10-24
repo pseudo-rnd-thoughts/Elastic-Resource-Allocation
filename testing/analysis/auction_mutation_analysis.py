@@ -83,7 +83,8 @@ if __name__ == "__main__":
         "mutate_iterative_auction_basic_j15_s3_0",
         "mutate_iterative_auction_basic_j25_s5_0"
     ]
-    mutated_job_analysis(mutate_september_20, 'Mutate Difference', ImageFormat.BOTH)
+    mutated_job_analysis(mutate_september_20, 'Mutate Difference', 'Effect of job misrepresentation on prices',
+                         save_format=ImageFormat.BOTH)
 
     # All jobs mutation auction testing
 

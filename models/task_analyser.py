@@ -1,12 +1,10 @@
 """Task events analysis"""
 
-import pandas as pd
 from datetime import datetime
-from tqdm import tqdm
-from memory_profiler import profile
+
+import pandas as pd
 
 
-@profile
 def analysis():
     """
     Analysis the task events file
