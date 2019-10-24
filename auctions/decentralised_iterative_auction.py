@@ -33,7 +33,8 @@ def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, in
                    (job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
 
 
-def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int,
+                       debug_results: bool = False, debug_initial_cost: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
@@ -41,6 +42,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     :param time_limit: The solve time limit
     :param initial_cost: The initial cost of the job
     :param debug_results: Prints the result from the model solution
+    :param debug_initial_cost: Prints the initial cost from the model solution
     :return: The results from the job prices
     """
     assert time_limit > 0, "Time limit: {}".format(time_limit)
@@ -95,6 +97,8 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     # Calculate the job price through a vcg similar function
     job_price = server.revenue - max_server_profit + server.price_change
     if job_price < initial_cost:  # Add an initial cost the job if the price is less than a set price
+        if debug_initial_cost:
+            print("Price set to {} due to initial cost".format(initial_cost))
         job_price = initial_cost
 
     # Get the resource speeds and job allocations
@@ -139,10 +143,10 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
     # For each of the job, if the job is allocated then allocate the job or reset the job
     for job, allocated in allocation.items():
+        job.reset_allocation()
         if allocated:
             allocate(job, loading[job], compute[job], sending[job], server, job.price)
         else:
-            job.reset_allocation()
             unallocated_jobs.append(job)
             messages += 1
 
