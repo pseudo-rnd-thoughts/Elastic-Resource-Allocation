@@ -78,7 +78,7 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 200,
     print("Successful, data saved to " + filename)
 
 
-def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 1000):
+def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
     """
     All policies test
     :param model_dist: The model distributions
@@ -108,7 +108,7 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 1000):
         data.append(algorithm_results)
 
     # Save the results to the file
-    filename = results_filename('optimal_greedy_test', model_dist.file_name, repeat)
+    filename = results_filename('all_greedy_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)

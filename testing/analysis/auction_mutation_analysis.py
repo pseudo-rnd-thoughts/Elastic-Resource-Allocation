@@ -48,14 +48,10 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
     df = pd.DataFrame(data, columns=['Pos', 'Model', 'Mutation', 'Revenue', 'Mutant Value', 'Mutated Value',
                                      'Mutate Difference', 'Iterations'])
 
-    g = sns.FacetGrid(df, col='Model', col_wrap=2)
-    g = (g.map(sns.scatterplot, 'Pos', y_axis, hue='Mutation')
+    g = sns.FacetGrid(df, col='Model', col_wrap=2, hue='Mutation')
+    g = (g.map(sns.scatterplot, 'Pos', y_axis)
          .set_titles("{col_name}").set_xlabels("").add_legend())
-
-    for pos, model in enumerate(model_names):
-        values = [np.mean(df[(df['Model Name'] == model) & (df['Algorithm Name'] == algo)][y_axis])
-                  for algo in df['Algorithm Name'].unique()]
-        g.axes[0, pos].set_xlim(min(values) * 0.97, max(values) * 1.02)
+    plt.legend(loc='bottom', bbox_to_anchor=(1, 0.5))
 
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
