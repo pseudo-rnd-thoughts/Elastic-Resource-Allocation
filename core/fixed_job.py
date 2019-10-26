@@ -8,6 +8,8 @@ from typing import List
 from core.job import Job
 from core.server import Server
 
+from docplex.cp.model import CpoModel
+
 
 class FixedJob(Job):
     """Job with a fixing resource usage speed"""
@@ -16,14 +18,25 @@ class FixedJob(Job):
         super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
-        self.loading_speed, self.compute_speed, self.sending_speed = min(
-            ((s, w, r)
-             for s in range(1, max(server.max_bandwidth for server in servers))
-             for w in range(1, max(server.max_computation for server in servers))
-             for r in range(1, max(server.max_bandwidth for server in servers))
-             if job.required_storage * w * r + s * job.required_computation * r +
-             s * w * job.required_results_data <= job.deadline * s * w * r),
-            key=lambda speed: fixed_value.evaluate(speed[0], speed[1], speed[2]))
+        self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(servers, fixed_value)
+
+    def find_fixed_speeds(self, servers: List[Server], fixed_value: FixedValue):
+        model = CpoModel("Speeds")
+        loading_speed = model.integer_var(min=1, max=max(server.max_bandwidth for server in servers)-1)
+        compute_speed = model.integer_var(min=1, max=max(server.max_storage for server in servers))
+        sending_speed = model.integer_var(min=1, max=max(server.max_bandwidth for server in servers)-1)
+
+        model.add(self.required_storage / loading_speed +
+                  self.required_computation / compute_speed +
+                  self.required_results_data / sending_speed <= self.deadline)
+
+        model.minimize(fixed_value.evaluate(loading_speed, compute_speed, sending_speed))
+
+        model_solution = model.solve(log_output=None)
+
+        return model_solution.get_value(loading_speed), \
+            model_solution.get_value(compute_speed), \
+            model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = 0):

@@ -38,15 +38,15 @@ def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_li
         model.add(sum(job.required_storage * allocations[(job, server)]
                       for job in jobs) <= server.max_storage)
         model.add(sum(job.compute_speed * allocations[(job, server)]
-                      for job in jobs) <= server.max_storage)
+                      for job in jobs) <= server.max_computation)
         model.add(sum((job.loading_speed + job.sending_speed) * allocations[(job, server)]
-                      for job in jobs) <= server.max_storage)
+                      for job in jobs) <= server.max_bandwidth)
 
     # Optimisation problem
     model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))
 
     # Solve the cplex model with time limit
-    model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
+    model_solution = model.solve(log_output=None, TimeLimit=time_limit)
 
     # Check that the model is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
@@ -62,7 +62,7 @@ def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_li
                 if model_solution.get_value(allocations[(job, server)]):
                     allocate(job, 0, 0, 0, server)
     except (KeyError, AssertionError) as e:
-        print(e)
+        print("Assertion error in fixed optimal algo: ", e)
         print_model_solution(model_solution)
         return None
 

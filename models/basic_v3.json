@@ -1,0 +1,31 @@
+{
+  "name": "basic_v3",
+  "job_dist": [
+    {
+      "name": "normal",
+      "probability": 1,
+      "required_storage_mean": 100,
+      "required_storage_std": 20,
+      "required_computation_mean": 75,
+      "required_computation_std": 25,
+      "required_results_data_mean": 40,
+      "required_results_data_std": 10,
+      "value_mean": 500,
+      "value_std": 100,
+      "deadline_mean": 30,
+      "deadline_std": 8
+    }
+  ],
+  "server_dist": [
+    {
+      "name": "normal",
+      "probability": 1,
+      "maximum_storage_mean": 1000,
+      "maximum_storage_std": 70,
+      "maximum_computation_mean": 350,
+      "maximum_computation_std": 70,
+      "maximum_bandwidth_mean": 200,
+      "maximum_bandwidth_std": 50
+    }
+  ]
+}
