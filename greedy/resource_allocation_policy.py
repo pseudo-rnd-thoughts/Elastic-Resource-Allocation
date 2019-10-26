@@ -9,8 +9,6 @@ from typing import Tuple
 from core.job import Job
 from core.server import Server
 
-Speed = int
-
 
 class ResourceAllocationPolicy(ABC):
     """Resource Allocation Policy class that is inherited with each option"""
@@ -18,7 +16,7 @@ class ResourceAllocationPolicy(ABC):
     def __init__(self, name):
         self.name = name
 
-    def allocate(self, job: Job, server: Server) -> Tuple[Speed, Speed, Speed]:
+    def allocate(self, job: Job, server: Server) -> Tuple[int, int, int]:
         """
         Determines the resource speed for the job on the server but finding the smallest
         :param job: The job
@@ -35,7 +33,7 @@ class ResourceAllocationPolicy(ABC):
 
     @abstractmethod
     def resource_evaluator(self, job: Job, server: Server,
-                           loading_speed: Speed, compute_speed: Speed, sending_speed: Speed) -> float:
+                           loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
         :param job: A job
@@ -54,12 +52,11 @@ class SumPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Percentage Sum")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
-                           sending_speed: Speed) -> float:
+    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
         """Resource evaluator"""
-        return loading_speed / server.available_storage + \
-            compute_speed / server.available_computation + \
-            sending_speed / server.available_bandwidth
+        return compute_speed / server.available_computation + \
+            (loading_speed + sending_speed) / server.available_bandwidth
 
 
 class SumExpPercentage(ResourceAllocationPolicy):
@@ -68,22 +65,21 @@ class SumExpPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Expo percentage sum")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: Speed, compute_speed: Speed,
-                           sending_speed: Speed) -> float:
+    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
         """Resource evaluator"""
-        return exp(loading_speed / server.available_storage) + \
-            exp(compute_speed / server.available_computation) + \
-            exp(sending_speed / server.available_bandwidth)
+        return exp(compute_speed / server.available_computation) + \
+            exp((loading_speed + sending_speed) / server.available_bandwidth)
 
 
-class SumSpeeds(ResourceAllocationPolicy):
+class SumSpeed(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
     def __init__(self):
         super().__init__("Sum of speeds")
 
     def resource_evaluator(self, job: Job, server: Server,
-                           loading_speed: Speed, compute_speed: Speed, sending_speed: Speed) -> float:
+                           loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
 
@@ -91,7 +87,7 @@ class SumSpeeds(ResourceAllocationPolicy):
 policies = (
     SumPercentage(),
     SumExpPercentage(),
-    SumSpeeds()
+    SumSpeed()
 )
 
 max_name_length = max(len(policy.name) for policy in policies)

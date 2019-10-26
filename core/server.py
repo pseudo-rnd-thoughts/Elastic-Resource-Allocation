@@ -1,9 +1,9 @@
 """Server object implementation"""
 
 from __future__ import annotations
-from typing import List, TYPE_CHECKING
 
 from random import gauss
+from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.job import Job
@@ -30,30 +30,55 @@ class Server(object):
         self.available_computation: int = max_computation
         self.available_bandwidth: int = max_bandwidth
 
-    def can_run(self, job: Job):
+    def can_run(self, job: Job) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of resources to the job
+        Checks if a job can be run on a server if it dedicates all of it's available resources to the job
         :param job: The job to test
+        :return: If it can run
         """
         return self.available_storage >= job.required_storage \
             and self.available_computation >= 1 \
             and self.available_bandwidth >= 2 and \
-            any(job.required_storage * w * r + s * job.required_computation * r +
-                s * w * job.required_results_data <= job.deadline * s * w * r
+            any(job.required_storage * self.available_computation * r +
+                s * job.required_computation * r +
+                s * self.available_computation * job.required_results_data
+                <= job.deadline * s * self.available_computation * r
                 for s in range(1, self.available_bandwidth + 1)
-                for w in range(1, self.available_computation + 1)
                 for r in range(1, self.available_bandwidth - s + 1))
+
+    def can_empty_run(self, job: Job) -> bool:
+        """
+        Check if a job can be run on a server if it dedicates all of it's resources to the job
+        :param job: The job to test
+        :return: If it can run
+        """
+        return self.max_storage >= job.required_storage \
+            and self.max_computation >= 1 \
+            and self.max_bandwidth >= 2 and \
+            any(job.required_storage * self.max_computation * r +
+                s * job.required_computation * r +
+                s * self.max_computation * job.required_results_data
+                <= job.deadline * s * self.max_computation * r
+                for s in range(1, self.max_bandwidth + 1)
+                for r in range(1, self.max_bandwidth - s + 1))
 
     def allocate_job(self, job: Job):
         """
         Updates the server attributes for when it is allocated within jobs
         :param job: The job being allocated
         """
-        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0,\
-            "{} - s: {}, w: {}, r: {}".format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
-        assert self.available_storage >= job.required_storage
-        assert self.available_computation >= job.compute_speed
-        assert self.available_bandwidth >= job.loading_speed + job.sending_speed
+        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
+            "Job {} - loading: {}, compute: {}, sending: {}"\
+            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
+        assert self.available_storage >= job.required_storage, \
+            "Server {} available storage {}, job required storage {}"\
+            .format(self.name, self.available_storage, job.required_storage)
+        assert self.available_computation >= job.compute_speed, \
+            "Server {} available computation {}, job compute speed {}"\
+            .format(self.name, self.available_computation, job.compute_speed)
+        assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
+            "Server {} available bandwidth {}, job loading speed {} and sending speed {}"\
+            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
 
         self.allocated_jobs.append(job)
         self.available_storage -= job.required_storage

@@ -1,8 +1,11 @@
+\usepackage{graphicx}
+
 While the greedy algorithm allows us to find near optimals for problems where we have perfect information about the
 problem case like the job utility, this may be private information that the job owner doesnt want to reveal also
 server would want to get paid for that work that they do. \\
-We propose a iterative auctions where the job owner doesnt have to reveal it's true utility. In normal VCG auctions,
-then the auctioneer will solve the problem to maximise the social welfare (total utility of allocated jobs) and
+We propose a iterative auctions that occurs before any processing is done and allows the job owner doesnt have to reveal
+it's true utility. In normal VCG auctions, then the auctioneer will solve the problem to maximise the social welfare
+(total utility of allocated jobs) and
 must find the optimal solution. Then for each job and server, the job or server is removed from the problem case and the
 optimal is solved for that as well with the server's revenue it is paid and the job's cost being the social welfare of
 the optimal solution minus the social welfare of the optimal without the job or server. This is extremely slow and
@@ -61,4 +64,9 @@ while len(unallocated_jobs):
     \centering
     \includegraphics[width=1\linewidth]{./images/multiple_price_auction_results.png}
     \caption{Multiple Price auction results}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{./images/mutated_auction.png}
+    \caption{Mutated Jobs and servers in auctions}
 \end{figure}

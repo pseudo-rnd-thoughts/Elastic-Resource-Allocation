@@ -1,14 +1,16 @@
 """This creates the models for the jobs and servers"""
 
 from __future__ import annotations
+
+import json
 from random import gauss, random
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Union
 
 from core.job import Job
 from core.server import Server
 
 
-def gaussian_dist(mean, std) -> int:
+def positive_gaussian_dist(mean, std) -> int:
     """
     Uses gaussian distribution to generate a random number greater than 0 for a resource
     :param mean: Gaussian mean
@@ -50,11 +52,31 @@ class JobDist(object):
         """
         job_name = "{} {}".format(self.dist_name, name)
         return Job(name=job_name,
-                   required_storage=gaussian_dist(self.storage_mean, self.storage_std),
-                   required_computation=gaussian_dist(self.computation_mean, self.computation_std),
-                   required_results_data=gaussian_dist(self.results_data_mean, self.results_data_std),
-                   value=gaussian_dist(self.value_mean, self.value_std),
-                   deadline=int(gaussian_dist(self.deadline_mean, self.deadline_std)))
+                   required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                   required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                   required_results_data=positive_gaussian_dist(self.results_data_mean, self.results_data_std),
+                   value=positive_gaussian_dist(self.value_mean, self.value_std),
+                   deadline=int(positive_gaussian_dist(self.deadline_mean, self.deadline_std)))
+
+    def save(self) -> Dict[str, Union[str, int]]:
+        """
+        Save the job dist
+        :return: The Json code for the job dist
+        """
+        return {
+            "name": self.dist_name,
+            "probability": self.probability,
+            "required_storage_mean": self.storage_mean,
+            "required_storage_std": self.storage_std,
+            "required_computation_mean": self.computation_mean,
+            "required_computation_std": self.computation_std,
+            "required_results_data_mean": self.results_data_mean,
+            "required_results_data_std": self.results_data_std,
+            "value_mean": self.value_mean,
+            "value_std": self.value_std,
+            "deadline_mean": self.deadline_mean,
+            "deadline_std": self.deadline_std
+        }
 
 
 class ServerDist(object):
@@ -83,9 +105,25 @@ class ServerDist(object):
         """
         server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
-                      max_storage=gaussian_dist(self.storage_mean, self.storage_std),
-                      max_computation=gaussian_dist(self.computation_mean, self.computation_std),
-                      max_bandwidth=gaussian_dist(self.results_data_mean, self.results_data_std))
+                      max_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                      max_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                      max_bandwidth=positive_gaussian_dist(self.results_data_mean, self.results_data_std))
+
+    def save(self) -> Dict[str, Union[str, int]]:
+        """
+        Save the server dist
+        :return: The Json code for the server dist
+        """
+        return {
+            "name": self.dist_name,
+            "probability": self.probability,
+            "maximum_storage_mean": self.storage_mean,
+            "maximum_storage_std": self.storage_std,
+            "maximum_computation_mean": self.computation_mean,
+            "maximum_computation_std": self.computation_std,
+            "maximum_bandwidth_mean": self.results_data_mean,
+            "maximum_bandwidth_std": self.results_data_std
+        }
 
 
 class ModelDist(object):
@@ -131,44 +169,35 @@ class ModelDist(object):
         return jobs, servers
 
 
-def load_dist(file_name: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
+def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     """
     Loads jobs and server distributions from a file
-    :param file_name: The file to load from
+    :param filename: The filename to load from
     :return: A tuple of the list of random job distributions and random server distributions
     """
 
-    job_dists: List[JobDist] = []
-    server_dists: List[ServerDist] = []
-    with open(file_name) as f:
-        lines = f.readlines()
-        name, num_job_dists, _ = lines[0].split(" ")
+    with open(filename) as file:
+        data = json.load(file)
 
-        for pos, line in enumerate(lines[1:int(num_job_dists) + 1]):
-            job_name, probability, \
-                storage_mean, storage_std,\
-                computation_mean, computation_std,\
-                results_data_mean, results_data_std, \
-                utility_mean, utility_std,\
-                deadline_mean, deadline_std = line.split(" ")
-            job_dists.append(JobDist(job_name, float(probability),
-                                     float(storage_mean), float(storage_std),
-                                     float(computation_mean), float(computation_std),
-                                     float(results_data_mean), float(results_data_std),
-                                     float(utility_mean), float(utility_std),
-                                     float(deadline_mean), float(deadline_std)))
+        job_dists: List[JobDist] = [
+            JobDist(dist['name'], dist['probability'],
+                    dist['required_storage_mean'], dist['required_storage_std'],
+                    dist['required_computation_mean'], dist['required_computation_std'],
+                    dist['required_results_data_mean'], dist['required_results_data_std'],
+                    dist['value_mean'], dist['value_std'],
+                    dist['deadline_mean'], dist['deadline_std'])
+            for dist in data['job_dist']
+        ]
 
-        for pos, line in enumerate(lines[int(num_job_dists) + 1:]):
-            server_name, probability, \
-                storage_mean, storage_std, \
-                computation_mean, computation_std, \
-                results_data_mean, results_data_std = line.split(" ")
-            server_dists.append(ServerDist(server_name, float(probability),
-                                           float(storage_mean), float(storage_std),
-                                           float(computation_mean), float(computation_std),
-                                           float(results_data_mean), float(results_data_std)))
+        server_dists: List[ServerDist] = [
+            ServerDist(dist['name'], dist['probability'],
+                       dist['maximum_storage_mean'], dist['maximum_storage_std'],
+                       dist['maximum_computation_mean'], dist['maximum_computation_std'],
+                       dist['maximum_bandwidth_mean'], dist['maximum_bandwidth_std'])
+            for dist in data['server_dist']
+        ]
 
-        return name, job_dists, server_dists
+        return data['name'], job_dists, server_dists
 
 
 def reset_model(jobs: List[Job], servers: List[Server]):

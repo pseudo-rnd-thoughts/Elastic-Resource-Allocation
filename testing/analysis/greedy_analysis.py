@@ -1,159 +1,139 @@
 """Analysis of the greedy results"""
 
 from __future__ import annotations
-from typing import List, Tuple
 
 import json
-import numpy as np
-import seaborn as sns
+from typing import List
+
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
+from seaborn.axisgrid import FacetGrid
+
+from core.core import decode_filename, save_plot, analysis_filename
 
 matplotlib.rcParams['font.family'] = "monospace"
 
 
-def print_optimal_percent_difference(files):
+def plot_allocation_results(df_all: List[pd.DataFrame], title: str, labels: List[str], x_label: str, y_label: str):
     """
-    Prints the percentage difference of algorithm compared to the optimal
-    :param files: The files
+    PLots the server results
+    :param df_all: A list of Dataframes to plot
+    :param title: The title
+    :param labels: The labels
+    :param x_label: The x label
+    :param y_label: The y label
     """
-    algo_difference = {}
-    sub_optimals = {}
-    total = {}
-    for file in files:
-        with open(file) as json_file:
-            data = json.load(json_file)
+    hatching = '/'
 
-            total[file] = len(data)
-            for results in data:
-                optimal = results['Optimal']
-                max_algo = max(((value, algo) for algo, value in results.items()), key=lambda x: x[0])
+    n_df = len(df_all)
+    n_col = len(df_all[0].columns)
+    n_ind = len(df_all[0].index)
+    axe = plt.subplot(111)
 
-                if max_algo[0] > optimal:
-                    if file in sub_optimals:
-                        sub_optimals[file] += 1
-                    else:
-                        sub_optimals[file] = 1
-                    continue
+    for df in df_all:  # for each data frame
+        axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
 
-                for result, value in results.items():
-                    if result in algo_difference:
-                        algo_difference[result].append(value / optimal)
-                    else:
-                        algo_difference[result] = [value / optimal]
+    h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
+    for i in range(0, n_df * n_col, n_col):  # len(h) = n_col * n_df
+        for j, pa in enumerate(h[i:i + n_col]):
+            for rect in pa.patches:  # for each index
+                rect.set_x(rect.get_x() + 1 / float(n_df + 1) * i / float(n_col))
+                rect.set_hatch(hatching * int(i / n_col))  # edited part
+                rect.set_width(1 / float(n_df + 1))
 
-    for file, sub_optimal in sub_optimals.items():
-        print("{} has {} sub optimal solution of {}"
-              .format(file.split("/")[-1].split(".")[0], sub_optimal, total[file]))
-    print()
+    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.)
+    axe.set_xticklabels(df_all[0].index, rotation=0)
+    axe.set_title(title)
+    axe.set_xlabel(x_label)
+    axe.set_ylabel(y_label)
 
-    for algo, percent_difference in sorted(algo_difference.items(), key=lambda x: np.mean(x[1]), reverse=True):
-        print("Mean: {:6.3f}, Std: {:6.3f} - {}".format(np.mean(percent_difference), np.std(percent_difference), algo))
+    # Add invisible data to add another legend
+    n = []
+    for i in range(n_df):
+        n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
 
-
-def plot_results(files, title, aspect):
-    """
-    Plots the results from a file
-    :param files: A file of results
-    :param title: The graph title
-    :param aspect: The aspect of the graph
-    """
-    data = []
-    for file, model in files:
-        algo_difference = {}
-        with open(file) as json_file:
-            json_data = json.load(json_file)
-
-            for results in json_data:
-                if 'Optimal' in results:
-                    best = results['Optimal']
-                    if best < max(value for value in results.values()):
-                        continue
-                else:
-                    best = max(value for value in results.values())
-
-                for result, value in results.items():
-                    if value is not None and value < best:
-                        if result in algo_difference:
-                            algo_difference[result].append(value / best)
-                        else:
-                            algo_difference[result] = [value / best]
-
-        for algo, percent_difference in sorted(algo_difference.items(), key=lambda x: np.mean(x[1])):
-            data.append((model, algo, np.mean(percent_difference)))
-
-    df = pd.DataFrame(data, columns=['model', 'algorithm', 'value'])
-
-    g = sns.FacetGrid(df, col='model', height=6, aspect=aspect, sharex=False)
-    # noinspection PyUnresolvedReferences
-    g = (g.map(sns.barplot, 'value', 'algorithm').set_titles("{col_name}"))
-    g.fig.suptitle(title, size=16)
-    g.fig.subplots_adjust(top=1)
+    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.5])
+    if labels is not None:
+        plt.legend(n, labels, loc=[1.01, 0.1])
+    axe.add_artist(l1)
     plt.show()
 
 
-def plot_relaxed(files: List[Tuple[str, str]]):
+def plot_results(encoded_filenames: List[str], x_axis: str, save: bool = False):
     """
-    Plots the relaxed results
-    :param files: A list of files
+    Plots the results from a file
+    :param encoded_filenames: A list of encoded filenames
+    :param x_axis: The x axis on the plot
+    :param save: If to save the plot
     """
     data = []
+    model_names: List[str] = []
+    test_name: str = ""
 
-    for file, model in files:
-        with open(file) as json_file:
+    for encoded_filename in encoded_filenames:
+        filename, model_name, test_name = decode_filename(encoded_filename)
+        model_names.append(model_name)
+
+        with open(filename) as json_file:
             json_data = json.load(json_file)
 
-            for results in json_data:
-                if results['relaxed'][-1] is not None and results['optimal'][-1] is not None:
-                    relaxed = results['relaxed'][-1]
-                    optimal = results['optimal'][-1]
+            optimal_failures = 0
+            for pos, algo_results in enumerate(json_data):
+                if 'optimal' in algo_results and algo_results['optimal'] != "failure":
+                    best = algo_results['optimal'][x_axis]
+                    if best < max(result[x_axis] for algo, result in algo_results.items()
+                                  if type(result) is dict and algo != "Relaxed"):
+                        optimal_failures += 1
+                else:
+                    best = max(result[x_axis] for result in algo_results.values() if type(result) is dict)
 
-                    data.append((model, relaxed - optimal))
+                for algo, results in algo_results.items():
+                    if type(results) is dict:
+                        data.append((model_name, algo, pos, results[x_axis] / best))
 
-    df = pd.DataFrame(data, columns=['model', 'relaxed - optimal'])
-    sns.scatterplot('model', 'relaxed - optimal', data=df)
+            print("Optimal Failures: {}".format(optimal_failures))
+
+    df = pd.DataFrame(data, columns=['model', 'algorithm', 'pos', x_axis])
+
+    g = sns.FacetGrid(df, col='model', sharex=False)
+    # noinspection PyUnresolvedReferences
+    g: FacetGrid = (g.map(sns.barplot, x=x_axis, y='algorithm').set_titles("{col_name}"))
+
+    for pos, model in enumerate(model_names):
+        values = [np.mean(df[(df.model == model) & (df.algorithm == algo)][x_axis])
+                  for algo in df.algorithm.unique()]
+        g.axes[0, pos].set_xlim(min(values) - 0.02, max(values) + 0.02)
+
+    if save:
+        save_plot(analysis_filename(test_name, x_axis))
     plt.show()
 
 
 if __name__ == "__main__":
-    optimal_files = [
-        ("../results/august_23/greedy_results_j12_s2.txt", "12 Jobs 2 Servers"),
-        ("../results/august_23/greedy_results_j15_s3.txt", "15 Jobs 3 Servers"),
-        ("../results/august_23/greedy_results_j25_s5.txt", "25 Jobs 5 Servers")
+    # Old results for greedy is august 23, 29, 30 and september 5, 6
+
+    september_20_basic = [
+        "september_20/optimal_greedy_test_basic_j12_s2_0",
+        "september_20/optimal_greedy_test_basic_j15_s2_0",
+        "september_20/optimal_greedy_test_basic_j15_s3_0",
+        "september_20/optimal_greedy_test_basic_j25_s5_0",
+        "september_20/optimal_greedy_test_basic_j50_s5_0"
     ]
 
-    no_optimal_files = [
-        ("../results/august_30/basic_j12_s2_no_optimal_greedy.txt", "12 Jobs 2 Servers"),
-        ("../results/august_30/basic_j15_s3_no_optimal_greedy.txt", "15 Jobs 3 Servers"),
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_1.txt", "25 Jobs 5 Servers")
+    september_20_big_small = [
+        "september_20/optimal_greedy_test_big_small_j12_s2_0",
+        "september_20/optimal_greedy_test_big_small_j15_s2_0",
+        "september_20/optimal_greedy_test_big_small_j15_s3_0",
+        "september_20/optimal_greedy_test_big_small_j25_s5_0",
+        "september_20/optimal_greedy_test_big_small_j50_s7_0",
+        "september_20/optimal_greedy_test_big_small_j75_s8_0",
+        "september_20/optimal_greedy_test_big_small_j100_s10_0"
     ]
 
-    j25_s2_files = [
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_1.txt", "1"),
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_2.txt", "2"),
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_3.txt", "3"),
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_4.txt", "4"),
-        ("../results/august_30/basic_j25_s5_no_optimal_greedy_5.txt", "5")
-    ]
-
-    relaxed_files = [
-        ("../results/august_29/relaxed_results_j12_s2.txt", "12 Jobs 2 Servers"),
-        ("../results/august_29/relaxed_results_j15_s3.txt", "15 Jobs 3 Servers"),
-        ("../results/august_29/relaxed_results_j25_s5.txt", "25 Jobs 5 Servers")
-    ]
-
-    no_optimal_2_files = [
-        ("../results/september_5/basic_j12_s2_no_optimal_greedy_test.txt", "12 Jobs 2 Servers"),
-        ("../results/september_5/basic_j15_s3_no_optimal_greedy_test.txt", "15 Jobs 3 Servers"),
-        ("../results/september_5/basic_j25_s5_no_optimal_greedy_test.txt", "25 Jobs 5 Servers"),
-        ("../results/september_5/basic_j100_s20_no_optimal_greedy_test.txt", "100 Jobs 20 Servers"),
-        ("../results/september_5/basic_j150_s25_no_optimal_greedy_test.txt", "150 Jobs 25 Servers"),
-    ]
-
-    # plot_results(optimal_files, "Greedy results with Optimal", 1)
-    # plot_results(no_optimal_files, "Greedy results without Optimal")
-    # plot_results(j25_s2_files, "Greedy results without Optimal")
-    plot_relaxed(relaxed_files)
-    # plot_results(no_optimal_2_files, "Greedy results without Optimal", 0.55)
-    # plot_results(optimal_2_files, "Greedy results with Optimal", 1)
+    plot_results(september_20_basic, "sum value")
+    plot_results(september_20_basic, "percentage jobs")
+    plot_results(september_20_big_small, "sum value")
+    plot_results(september_20_big_small, "percentage jobs")

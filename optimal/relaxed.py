@@ -2,29 +2,31 @@
 
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Optional
+from time import time
+from typing import List, Dict, Optional
 
-from docplex.cp.config import context
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
-from docplex.cp.solution import SOLVE_STATUS_UNKNOWN
+from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from core.core import print_model, print_model_solution
 from core.job import Job
 from core.result import Result
 from core.server import Server
 
-context.log_output = None
 
+def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
+                      debug_time: bool = False) -> Optional[Result]:
+    """
+    Runs the optimal algorithm solution
+    :param jobs: A list of jobs
+    :param servers: A list of servers
+    :param time_limit: The time limit to solve
+    :param debug_time: If to print the time taken
+    :return: The result from optimal solution
+    """
+    start_time = time()
 
-def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Dict[Job, CpoVariable],
-                                                                    Dict[Job, CpoVariable], Dict[Job, CpoVariable],
-                                                                    Dict[Job, CpoVariable], Server]:
-    """
-    Generates a model for the algorithm
-    :param jobs: The list of jobs
-    :param servers: The list of servers
-    :return: The generated model and the variables
-    """
     model = CpoModel("Server Job Allocation")
 
     loading_speeds: Dict[Job, CpoVariable] = {}
@@ -59,27 +61,7 @@ def generate_model(jobs: List[Job], servers: List[Server]) -> Tuple[CpoModel, Di
 
     model.maximize(sum(job.value * job_allocation[job] for job in jobs))
 
-    return model, loading_speeds, compute_speeds, sending_speeds, job_allocation, super_server
-
-
-def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, loading_speeds: Dict[Job, CpoVariable],
-                    compute_speeds: Dict[Job, CpoVariable], sending_speeds: Dict[Job, CpoVariable],
-                    job_allocation: Dict[Job, CpoVariable],
-                    time_limit: int = 500, debug_time: bool = True) -> Optional[Result]:
-    """
-    Runs the cplex model
-    :param model: The model to run
-    :param jobs: A list of jobs
-    :param super_server: A super server
-    :param loading_speeds: A dictionary of the loading speeds
-    :param compute_speeds: A dictionary of the compute speeds
-    :param sending_speeds: A dictionary of the sending speeds
-    :param job_allocation: A dictionary of the servers and jobs to binary variable
-    :param time_limit: The time limit
-    :param debug_time: Print the time taken
-    :return: A results
-    """
-
+    # Run the model
     model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
                                                  TimeLimit=time_limit)
     if debug_time:
@@ -87,32 +69,19 @@ def run_cplex_model(model: CpoModel, jobs: List[Job], super_server: Server, load
               .format(round(model_solution.get_solve_time(), 2), model_solution.get_objective_values(),
                       model_solution.get_objective_bounds(), model_solution.get_objective_gaps()))
 
-    if model_solution.get_solve_status() == SOLVE_STATUS_UNKNOWN:
+    # Check that it is solved
+    if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
+            model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+        print("Optimal algorithm failed")
+        print_model_solution(model_solution)
+        print_model(jobs, servers)
         return None
 
+    # For each of the jobs allocate if allocated to the server
     for job in jobs:
         if model_solution.get_value(job_allocation[job]):
-            s = model_solution.get_value(loading_speeds[job])
-            w = model_solution.get_value(compute_speeds[job])
-            r = model_solution.get_value(sending_speeds[job])
-            job.allocate(s, w, r, super_server)
+            job.allocate(model_solution.get_value(loading_speeds[job]), model_solution.get_value(compute_speeds[job]),
+                         model_solution.get_value(sending_speeds[job]), super_server)
             super_server.allocate_job(job)
 
-    return Result("Relaxed", jobs, [super_server])
-
-
-def relaxed_algorithm(jobs: List[Job], servers: List[Server],
-                      time_limit: int = 500, debug_time: bool = False) -> Result:
-    """
-    Runs the optimal algorithm solution
-    :param jobs: A list of jobs
-    :param servers: A list of servers
-    :param time_limit: The time limit to solve
-    :param debug_time: If to print the time taken
-    :return: The result from optimal solution
-    """
-
-    model, loading_speeds, compute_speeds, sending_speed, job_allocation, super_server = generate_model(jobs, servers)
-
-    return run_cplex_model(model, jobs, super_server, loading_speeds, compute_speeds, sending_speed, job_allocation,
-                           time_limit, debug_time)
+    return Result("Relaxed", jobs, [super_server], time() - start_time, solve_status=model_solution.get_solve_status())
