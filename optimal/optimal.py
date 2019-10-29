@@ -32,8 +32,8 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     server_job_allocation: Dict[Tuple[Job, Server], CpoVariable] = {}
 
     # The maximum bandwidth and the computation that the speed can be
-    max_bandwidth, max_computation = max(server.max_bandwidth for server in servers) - 1, \
-                                     max(server.max_computation for server in servers)
+    max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
+                                     max(server.computation_capacity for server in servers)
 
     # Loop over each job to allocate the variables and add the deadline constraints
     for job in jobs:
@@ -54,11 +54,11 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     # For each server, add the resource constraint
     for server in servers:
         model.add(sum(job.required_storage * server_job_allocation[(job, server)]
-                      for job in jobs) <= server.max_storage)
+                      for job in jobs) <= server.storage_capacity)
         model.add(sum(compute_speeds[job] * server_job_allocation[(job, server)]
-                      for job in jobs) <= server.max_computation)
+                      for job in jobs) <= server.computation_capacity)
         model.add(sum((loading_speeds[job] + sending_speeds[job]) * server_job_allocation[(job, server)]
-                      for job in jobs) <= server.max_bandwidth)
+                      for job in jobs) <= server.bandwidth_capacity)
 
     # The optimisation statement
     model.maximize(sum(job.value * server_job_allocation[(job, server)] for job in jobs for server in servers))
@@ -84,7 +84,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
                                  model_solution.get_value(sending_speeds[job]), server)
                     server.allocate_job(job)
     except (AssertionError, KeyError) as e:
-        print(e)
+        print("Error:", e)
         print_model_solution(model_solution)
         return None
 

@@ -33,7 +33,8 @@ def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, in
                    (job.deadline * loading_speeds[job] * compute_speeds[job] * sending_speeds[job])
 
 
-def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int, debug_results: bool = False):
+def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_cost: int,
+                       debug_results: bool = False, debug_initial_cost: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
     :param new_job: A new job
@@ -41,6 +42,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     :param time_limit: The solve time limit
     :param initial_cost: The initial cost of the job
     :param debug_results: Prints the result from the model solution
+    :param debug_initial_cost: Prints the initial cost from the model solution
     :return: The results from the job prices
     """
     assert time_limit > 0, "Time limit: {}".format(time_limit)
@@ -53,11 +55,11 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     jobs = server.allocated_jobs + [new_job]
 
     # Create all of the resource speeds variables
-    loading_speed = {job: model.integer_var(min=1, max=server.max_bandwidth-1,
+    loading_speed = {job: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
                                             name="Job {} loading speed".format(job.name)) for job in jobs}
-    compute_speed = {job: model.integer_var(min=1, max=server.max_computation,
+    compute_speed = {job: model.integer_var(min=1, max=server.computation_capacity,
                                             name="Job {} compute speed".format(job.name)) for job in jobs}
-    sending_speed = {job: model.integer_var(min=1, max=server.max_bandwidth-1,
+    sending_speed = {job: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
                                             name="Job {} sending speed".format(job.name)) for job in jobs}
     # Create all of the allocation variables however only on the currently allocated jobs
     allocation = {job: model.binary_var(name="Job {} allocated".format(job.name)) for job in server.allocated_jobs}
@@ -70,11 +72,11 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
 
     # Add the server resource constraints
     model.add(sum(job.required_storage * allocated for job, allocated in allocation.items()) +
-              new_job.required_storage <= server.max_storage)
+              new_job.required_storage <= server.storage_capacity)
     model.add(sum(compute_speed[job] * allocated for job, allocated in allocation.items()) +
-              compute_speed[new_job] <= server.max_computation)
+              compute_speed[new_job] <= server.computation_capacity)
     model.add(sum((loading_speed[job] + sending_speed[job]) * allocated for job, allocated in allocation.items()) +
-              (loading_speed[new_job] + sending_speed[new_job]) <= server.max_bandwidth)
+              (loading_speed[new_job] + sending_speed[new_job]) <= server.bandwidth_capacity)
 
     # The optimisation function
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
@@ -91,11 +93,16 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
 
     # Get the max server profit that the model finds
     max_server_profit = model_solution.get_objective_values()[0]
-
+    
     # Calculate the job price through a vcg similar function
     job_price = server.revenue - max_server_profit + server.price_change
     if job_price < initial_cost:  # Add an initial cost the job if the price is less than a set price
+        if debug_initial_cost:
+            print("Price set to {} due to initial cost".format(initial_cost))
         job_price = initial_cost
+        
+    print("Server: {}, Revenue: {}, Profit: {}, Price: {}, {}".format(server.name, server.revenue, max_server_profit,
+                                                                      job_price, len(server.allocated_jobs)))
 
     # Get the resource speeds and job allocations
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
@@ -139,10 +146,10 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
     # For each of the job, if the job is allocated then allocate the job or reset the job
     for job, allocated in allocation.items():
+        job.reset_allocation()
         if allocated:
             allocate(job, loading[job], compute[job], sending[job], server, job.price)
         else:
-            job.reset_allocation()
             unallocated_jobs.append(job)
             messages += 1
 
@@ -157,7 +164,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 
 def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
-                                    initial_cost: Callable[[Job], int] = None,
+                                    initial_cost: int = 0,
                                     debug_allocation: bool = False, debug_results: bool = False) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
@@ -175,8 +182,6 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
     assert all(server.price_change > 0 for server in servers), \
         "Price change - " + ', '.join(["{}: {}".format(server.name, server.price_change) for server in servers])
 
-    # Calculate the initial job cost for each job
-    initial_job_cost = {job: initial_cost(job) if initial_cost is not None else -1 for job in jobs}
     unallocated_jobs = jobs.copy()
 
     iterations: int = 0
@@ -194,7 +199,7 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
 
         # Calculate the min job price from all of the servers
         job_price, loading, compute, sending, allocation, server = \
-            min((evaluate_job_price(job, server, time_limit, initial_job_cost[job])
+            min((evaluate_job_price(job, server, time_limit, initial_cost)
                  for server in servers if server.can_empty_run(job)), key=lambda bid: bid[0])
         messages += 2 * len(servers)
 
@@ -204,14 +209,15 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
         if job_price <= job.value:
             if debug_allocation:
                 print("Adding job {} to server {} with price {}".format(job.name, server.name, job_price))
-            messages += allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs)
+            messages += allocate_jobs(job_price, job, server, loading, compute, sending, allocation, unallocated_jobs,
+                                      debug_allocation, debug_results)
         elif debug_allocation:
             print("Removing Job {} from the unallocated job as the min price is {} and job value is {}"
                   .format(job.name, job_price, job.value))
         unallocated_jobs.remove(job)
 
         if debug_allocation:
-            print("Number of unallocated jobs: {}".format(len(unallocated_jobs)))
+            print("Number of unallocated jobs: {}\n".format(len(unallocated_jobs)))
         iterations += 1
 
     if debug_results:

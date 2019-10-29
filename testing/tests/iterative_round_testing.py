@@ -32,14 +32,15 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
 
         for initial_cost in initial_costs:
             for price_change in price_changes:
-                reset_model(jobs, servers)
                 for server in servers:
                     server.price_change = price_change
 
-                results = decentralised_iterative_auction(jobs, servers, time_limit)
+                results = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
                 if results is not None:
                     auction_results['cost {}, change {}'.format(initial_cost(0), price_change)] = \
                         results.store(initial_cost=initial_cost(0), price_change=price_change)
+                reset_model(jobs, servers)
+
         data.append(auction_results)
 
     # Save all of the results to a file
@@ -47,6 +48,18 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)
+    
+
+def basic_test(model_dist: ModelDist):
+    jobs, servers = model_dist.create()
+    
+    job_initial = 0
+    price_change = 1
+    for server in servers:
+        server.price_change = price_change
+    results = decentralised_iterative_auction(jobs, servers, 15, initial_cost=job_initial,
+                                              debug_allocation=True, debug_results=True)
+    print(results.data)
 
 
 if __name__ == "__main__":
@@ -67,4 +80,5 @@ if __name__ == "__main__":
     ]
     server_price_changes = [1, 2, 5, 10, 15]
 
-    round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
+    # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
+    basic_test(loaded_model_dist)

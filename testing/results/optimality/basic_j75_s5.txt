@@ -1,0 +1,135 @@
+ Running PBS prologue script on green0245
+
+ ===============================================================================
+ Job started on Tue Oct  8 22:47:04 BST 2019
+
+ JOB ID: 7521525.blue101
+ JOB NAME: run_script.sh
+ Num Hosts: 1
+ Num Tasks: 16
+ Nodes used: 
+ green0245
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+Running python -m testing.tests.optimality_testing basic 75 5 0
+Models
+Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price
+normal 0 |    9    |     18      |      5       | 36.0  |    0    |    0    |    0    |    17    | 0.00
+normal 1 |   16    |     23      |      3       | 74.0  |    0    |    0    |    0    |    15    | 0.00
+normal 2 |    5    |     21      |      6       | 15.0  |    0    |    0    |    0    |    13    | 0.00
+normal 3 |   10    |     10      |      6       | 44.0  |    0    |    0    |    0    |    10    | 0.00
+normal 4 |    7    |     22      |      4       | 45.0  |    0    |    0    |    0    |    15    | 0.00
+normal 5 |   14    |     12      |      3       | 25.0  |    0    |    0    |    0    |    14    | 0.00
+normal 6 |   14    |      6      |      2       | 47.0  |    0    |    0    |    0    |    6     | 0.00
+normal 7 |   13    |     18      |      1       | 54.0  |    0    |    0    |    0    |    14    | 0.00
+normal 8 |   10    |     17      |      5       | 70.0  |    0    |    0    |    0    |    19    | 0.00
+normal 9 |    7    |     11      |      1       | 48.0  |    0    |    0    |    0    |    20    | 0.00
+normal 10|    9    |      3      |      3       | 63.0  |    0    |    0    |    0    |    14    | 0.00
+normal 11|    8    |     11      |      2       | 60.0  |    0    |    0    |    0    |    20    | 0.00
+normal 12|    5    |     14      |      2       | 21.0  |    0    |    0    |    0    |    15    | 0.00
+normal 13|    6    |     13      |      7       | 17.0  |    0    |    0    |    0    |    18    | 0.00
+normal 14|    5    |     10      |      1       | 80.0  |    0    |    0    |    0    |    20    | 0.00
+normal 15|   11    |     13      |      5       | 41.0  |    0    |    0    |    0    |    12    | 0.00
+normal 16|    4    |     17      |      4       | 20.0  |    0    |    0    |    0    |    8     | 0.00
+normal 17|    5    |      4      |      4       | 56.0  |    0    |    0    |    0    |    9     | 0.00
+normal 18|   12    |     20      |      4       | 74.0  |    0    |    0    |    0    |    8     | 0.00
+normal 19|    5    |     12      |      2       | 28.0  |    0    |    0    |    0    |    7     | 0.00
+normal 20|    1    |      8      |      2       | 52.0  |    0    |    0    |    0    |    17    | 0.00
+normal 21|    7    |     15      |      7       | 29.0  |    0    |    0    |    0    |    12    | 0.00
+normal 22|    6    |     16      |      7       | 60.0  |    0    |    0    |    0    |    12    | 0.00
+normal 23|    8    |     20      |      1       | 21.0  |    0    |    0    |    0    |    14    | 0.00
+normal 24|   11    |     19      |      6       | 39.0  |    0    |    0    |    0    |    12    | 0.00
+normal 25|    3    |     14      |      2       | 35.0  |    0    |    0    |    0    |    17    | 0.00
+normal 26|   10    |     19      |      4       | 20.0  |    0    |    0    |    0    |    4     | 0.00
+normal 27|    9    |     13      |      3       |  9.0  |    0    |    0    |    0    |    15    | 0.00
+normal 28|   10    |     16      |      6       | 39.0  |    0    |    0    |    0    |    13    | 0.00
+normal 29|   10    |     16      |      6       | 55.0  |    0    |    0    |    0    |    15    | 0.00
+normal 30|   18    |     13      |      1       | 66.0  |    0    |    0    |    0    |    13    | 0.00
+normal 31|   10    |      8      |      1       | 27.0  |    0    |    0    |    0    |    19    | 0.00
+normal 32|    8    |      5      |      5       | 70.0  |    0    |    0    |    0    |    18    | 0.00
+normal 33|    9    |     21      |      1       | 30.0  |    0    |    0    |    0    |    14    | 0.00
+normal 34|    5    |     15      |      6       | 53.0  |    0    |    0    |    0    |    16    | 0.00
+normal 35|   17    |      5      |      1       | 56.0  |    0    |    0    |    0    |    12    | 0.00
+normal 36|    7    |     17      |      2       | 36.0  |    0    |    0    |    0    |    13    | 0.00
+normal 37|   15    |     16      |      2       | 51.0  |    0    |    0    |    0    |    4     | 0.00
+normal 38|   12    |     17      |      5       | 79.0  |    0    |    0    |    0    |    20    | 0.00
+normal 39|   10    |     16      |      4       | 87.0  |    0    |    0    |    0    |    5     | 0.00
+normal 40|    8    |     10      |      4       | 81.0  |    0    |    0    |    0    |    14    | 0.00
+normal 41|   14    |     15      |      4       | 50.0  |    0    |    0    |    0    |    17    | 0.00
+normal 42|   16    |     24      |      6       | 73.0  |    0    |    0    |    0    |    17    | 0.00
+normal 43|   12    |     11      |      1       | 44.0  |    0    |    0    |    0    |    16    | 0.00
+normal 44|   13    |      1      |      1       | 61.0  |    0    |    0    |    0    |    17    | 0.00
+normal 45|   10    |     10      |      3       | 36.0  |    0    |    0    |    0    |    12    | 0.00
+normal 46|    3    |     15      |      1       |  1.0  |    0    |    0    |    0    |    10    | 0.00
+normal 47|   10    |     17      |      7       | 56.0  |    0    |    0    |    0    |    6     | 0.00
+normal 48|   10    |     20      |      4       | 64.0  |    0    |    0    |    0    |    13    | 0.00
+normal 49|   15    |     16      |      3       | 47.0  |    0    |    0    |    0    |    13    | 0.00
+normal 50|   11    |     13      |      6       | 52.0  |    0    |    0    |    0    |    17    | 0.00
+normal 51|   12    |     15      |      6       | 53.0  |    0    |    0    |    0    |    9     | 0.00
+normal 52|   10    |     21      |      8       | 48.0  |    0    |    0    |    0    |    25    | 0.00
+normal 53|    5    |      9      |      2       | 72.0  |    0    |    0    |    0    |    14    | 0.00
+normal 54|   13    |      7      |      4       | 46.0  |    0    |    0    |    0    |    13    | 0.00
+normal 55|    9    |     10      |      4       | 63.0  |    0    |    0    |    0    |    19    | 0.00
+normal 56|   11    |     18      |      1       | 65.0  |    0    |    0    |    0    |    13    | 0.00
+normal 57|   10    |     17      |      1       | 31.0  |    0    |    0    |    0    |    14    | 0.00
+normal 58|    7    |     11      |      7       | 60.0  |    0    |    0    |    0    |    14    | 0.00
+normal 59|   11    |     15      |      4       | 13.0  |    0    |    0    |    0    |    17    | 0.00
+normal 60|   13    |      8      |      4       | 53.0  |    0    |    0    |    0    |    12    | 0.00
+normal 61|   12    |     28      |      3       | 57.0  |    0    |    0    |    0    |    14    | 0.00
+normal 62|    4    |     28      |      5       |  7.0  |    0    |    0    |    0    |    11    | 0.00
+normal 63|   11    |     10      |      2       | 63.0  |    0    |    0    |    0    |    16    | 0.00
+normal 64|    5    |     15      |      2       | 46.0  |    0    |    0    |    0    |    15    | 0.00
+normal 65|   14    |     21      |      1       | 38.0  |    0    |    0    |    0    |    10    | 0.00
+normal 66|   10    |      7      |      6       | 42.0  |    0    |    0    |    0    |    16    | 0.00
+normal 67|   10    |     14      |      2       | 37.0  |    0    |    0    |    0    |    13    | 0.00
+normal 68|    9    |     13      |      3       | 54.0  |    0    |    0    |    0    |    13    | 0.00
+normal 69|    6    |     29      |      6       | 86.0  |    0    |    0    |    0    |    13    | 0.00
+normal 70|    7    |     19      |      6       | 31.0  |    0    |    0    |    0    |    26    | 0.00
+normal 71|    5    |     17      |      4       | 59.0  |    0    |    0    |    0    |    20    | 0.00
+normal 72|   12    |     16      |      4       | 28.0  |    0    |    0    |    0    |    8     | 0.00
+normal 73|    9    |     21      |      6       | 75.0  |    0    |    0    |    0    |    9     | 0.00
+normal 74|    6    |     27      |      2       | 51.0  |    0    |    0    |    0    |    17    | 0.00
+
+Server Name | Storage | Computation | Bandwidth | Allocated Jobs
+  normal 0  |   35    |     42      |    43     | 
+  normal 1  |   38    |     25      |    45     | 
+  normal 2  |   64    |     40      |    28     | 
+  normal 3  |   38    |     34      |    39     | 
+  normal 4  |   38    |     21      |    45     | 
+
+
+Time Limit: 10
+{'solve_time': 10.02, 'sum value': 1774, 'percentage value': 0.496, 'percentage jobs': 0.373, 'server value': {'normal 0': 321, 'normal 1': 247, 'normal 2': 485, 'normal 3': 397, 'normal 4': 324}, 'server storage usage': {'normal 0': 0.971, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.762, 'normal 1': 0.6, 'normal 2': 0.85, 'normal 3': 1.0, 'normal 4': 0.905}, 'server bandwidth usage': {'normal 0': 0.698, 'normal 1': 0.622, 'normal 2': 1.0, 'normal 3': 0.872, 'normal 4': 0.556}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 30
+{'solve_time': 30.02, 'sum value': 1776, 'percentage value': 0.497, 'percentage jobs': 0.387, 'server value': {'normal 0': 321, 'normal 1': 249, 'normal 2': 485, 'normal 3': 397, 'normal 4': 324}, 'server storage usage': {'normal 0': 0.971, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.667, 'normal 1': 0.96, 'normal 2': 0.85, 'normal 3': 0.971, 'normal 4': 0.905}, 'server bandwidth usage': {'normal 0': 0.698, 'normal 1': 0.911, 'normal 2': 1.0, 'normal 3': 0.949, 'normal 4': 0.556}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 60
+{'solve_time': 60.03, 'sum value': 1783, 'percentage value': 0.499, 'percentage jobs': 0.387, 'server value': {'normal 0': 317, 'normal 1': 280, 'normal 2': 411, 'normal 3': 411, 'normal 4': 364}, 'server storage usage': {'normal 0': 1.0, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 0.974, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.381, 'normal 1': 0.92, 'normal 2': 0.825, 'normal 3': 0.324, 'normal 4': 0.952}, 'server bandwidth usage': {'normal 0': 0.837, 'normal 1': 0.689, 'normal 2': 1.0, 'normal 3': 0.59, 'normal 4': 0.578}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 300
+{'solve_time': 300.08, 'sum value': 1791, 'percentage value': 0.501, 'percentage jobs': 0.387, 'server value': {'normal 0': 302, 'normal 1': 358, 'normal 2': 431, 'normal 3': 316, 'normal 4': 384}, 'server storage usage': {'normal 0': 1.0, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.929, 'normal 1': 0.56, 'normal 2': 1.0, 'normal 3': 0.676, 'normal 4': 0.857}, 'server bandwidth usage': {'normal 0': 0.651, 'normal 1': 0.978, 'normal 2': 1.0, 'normal 3': 0.59, 'normal 4': 1.0}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 900
+{'solve_time': 900.21, 'sum value': 1792, 'percentage value': 0.501, 'percentage jobs': 0.387, 'server value': {'normal 0': 252, 'normal 1': 310, 'normal 2': 533, 'normal 3': 400, 'normal 4': 297}, 'server storage usage': {'normal 0': 1.0, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.571, 'normal 1': 0.96, 'normal 2': 1.0, 'normal 3': 0.647, 'normal 4': 0.714}, 'server bandwidth usage': {'normal 0': 0.488, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 0.974, 'normal 4': 0.8}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 3600
+{'solve_time': 3600.72, 'sum value': 1792, 'percentage value': 0.501, 'percentage jobs': 0.387, 'server value': {'normal 0': 252, 'normal 1': 310, 'normal 2': 533, 'normal 3': 400, 'normal 4': 297}, 'server storage usage': {'normal 0': 1.0, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.571, 'normal 1': 0.96, 'normal 2': 1.0, 'normal 3': 0.647, 'normal 4': 0.714}, 'server bandwidth usage': {'normal 0': 0.488, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 0.974, 'normal 4': 0.8}, 'solve_status': 'Feasible'}
+
+
+Time Limit: 86400
+{'solve_time': 86414.1, 'sum value': 1792, 'percentage value': 0.501, 'percentage jobs': 0.387, 'server value': {'normal 0': 252, 'normal 1': 310, 'normal 2': 533, 'normal 3': 400, 'normal 4': 297}, 'server storage usage': {'normal 0': 1.0, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 1.0, 'normal 4': 1.0}, 'server computation usage': {'normal 0': 0.571, 'normal 1': 0.96, 'normal 2': 1.0, 'normal 3': 0.647, 'normal 4': 0.714}, 'server bandwidth usage': {'normal 0': 0.488, 'normal 1': 1.0, 'normal 2': 1.0, 'normal 3': 0.974, 'normal 4': 0.8}, 'solve_status': 'Feasible'}
+
+ ===============================================================================
+ Job finished at Thu Oct 10 00:09:02 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=16,nodes=1:ppn=16,pmem=4000mb,walltime=48:00:00
+Used resource limits are cput=111:59:44,mem=4636196kb,vmem=6176828kb,walltime=25:21:58

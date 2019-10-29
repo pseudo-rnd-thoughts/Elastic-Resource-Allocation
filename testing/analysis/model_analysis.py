@@ -13,32 +13,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def plot_server_jobs_allocations(servers: List[Server]):
-    """
-    Plots the server jobs allocations
-    :param servers: A list of servers to plot
-    """
-    server_names = [server.name for server in servers]
-    allocated_jobs = [job for server in servers for job in server.allocated_jobs]
-    job_names = [job.name for job in allocated_jobs]
-    storage_df = pd.DataFrame([[job.required_storage/server.max_storage if job in server.allocated_jobs else 0
-                                for job in allocated_jobs] for server in servers],
-                              index=server_names, columns=job_names)
-    compute_df = pd.DataFrame([[job.compute_speed/server.max_computation if job in server.allocated_jobs else 0
-                                for job in allocated_jobs] for server in servers],
-                              index=server_names, columns=job_names)
-    bandwidth_df = pd.DataFrame([[(job.loading_speed + job.sending_speed)/server.max_bandwidth
-                                  if job in server.allocated_jobs else 0
-                                  for job in allocated_jobs] for server in servers],
-                                index=server_names, columns=job_names)
-
-    df_all = [storage_df, compute_df, bandwidth_df]
-    labels = ['storage', 'compute', 'bandwidth']
-    title = 'Server Job allocations'
-
-    plot_allocation_results(df_all, title, labels, "Servers", "Percentage of Server resources")
-
-
 def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10000):
     """
     Plots the job distribution of a list of models
@@ -86,7 +60,7 @@ def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     :param repeats: The number of repeats
     """
 
-    data = [[model_dist.dist_name, server.max_storage, server.max_computation, server.max_bandwidth]
+    data = [[model_dist.dist_name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity]
             for model_dist in model_dists for _ in range(repeats) for server in model_dist.create()[1]]
 
     df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data'])
@@ -125,7 +99,7 @@ def plot_servers(servers: List[Server]):
     Plots the severs on a graph
     :param servers: A list of servers to plot
     """
-    data = [[server.name, server.max_storage, server.max_computation, server.max_bandwidth] for server in servers]
+    data = [[server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity] for server in servers]
     df = pd.DataFrame(data, columns=['Name', 'Storage', 'Computation', 'Bandwidth'])
     wide_df = pd.melt(df, id_vars=['Name']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource'}, inplace=True)
@@ -144,8 +118,7 @@ if __name__ == "__main__":
 
     for file in files:
         model_name, job_dist, server_dist = load_dist(file)
-        model_dist = ModelDist(model_name, job_dist, 1, server_dist, 1)
-        models.append(model_dist)
+        models.append(ModelDist(model_name, job_dist, 1, server_dist, 1))
 
     plot_job_distribution(models)
     plot_server_distribution(models)

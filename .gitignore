@@ -125,7 +125,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Latex
+# Latex for the report
 /report/static_resource_allocation.aux
 /report/static_resource_allocation.bbl
 /report/static_resource_allocation.blg
@@ -135,4 +135,10 @@ dmypy.json
 .idea/
 out/
 
-!.idea/
+# Latex for tehe paper
+/aamas/ammas20.aux
+/aamas/ammas20.bbl
+/aamas/ammas20.blg
+/aamas/ammas20.log
+/aamas/ammas20.out
+/aamas/ammas20.synctex.gz

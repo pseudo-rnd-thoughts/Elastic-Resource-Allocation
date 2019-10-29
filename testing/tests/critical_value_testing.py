@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from core.core import results_filename, load_args
 from core.model import ModelDist, reset_model, load_dist
-
+from core.fixed_job import FixedJob, FixedSumSpeeds
 from greedy.value_density import policies as value_densities
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -49,7 +49,8 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
-        fixed_vcg_result = fixed_vcg_auction(jobs, servers, fixed_vcg_time_limit)
+        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
         reset_model(jobs, servers)
 

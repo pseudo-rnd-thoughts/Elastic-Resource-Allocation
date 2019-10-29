@@ -1,6 +1,8 @@
 """Result from the greedy algorithm"""
 
 from __future__ import annotations
+from typing import List, Tuple, Dict
+from operator import attrgetter
 
 from typing import List
 
@@ -30,13 +32,16 @@ class Result(object):
             server.name: sum(job.value for job in server.allocated_jobs) for server in servers
         }
         self.data['server storage usage'] = {
-            server.name: round(1 - server.available_storage / server.max_storage, 3) for server in servers
+            server.name: round(1 - server.available_storage / server.storage_capacity, 3) for server in servers
         }
         self.data['server computation usage'] = {
-            server.name: round(1 - server.available_computation / server.max_computation, 3) for server in servers
+            server.name: round(1 - server.available_computation / server.computation_capacity, 3) for server in servers
         }
         self.data['server bandwidth usage'] = {
-            server.name: round(1 - server.available_bandwidth / server.max_bandwidth, 3) for server in servers
+            server.name: round(1 - server.available_bandwidth / server.bandwidth_capacity, 3) for server in servers
+        }
+        self.data['num jobs'] = {
+            server.name: len(server.allocated_jobs) for server in servers
         }
 
         # Additional information

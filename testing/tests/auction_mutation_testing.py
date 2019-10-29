@@ -16,7 +16,7 @@ from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
-                     time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 20,
+                     time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0,
                      mutate_percent: float = 0.05, mutate_repeats: int = 10):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference
@@ -79,7 +79,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
-                           time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 20):
+                           time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0):
     """
     Tests all of the mutations for an iterative auction
     :param model_dist: The model distribution
@@ -97,6 +97,14 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
     jobs, servers = model_dist.create()
     # The mutation results
     mutation_results = []
+
+    job = jobs[0]
+    print("Number of permutations: {}".format(
+        ((int(job.required_storage * positive_percent) + 1) - job.required_storage) *
+        ((int(job.required_computation * positive_percent) + 1) - job.required_computation) *
+        ((int(job.required_results_data * positive_percent) + 1) - job.required_results_data) *
+        ((job.deadline + 1) - int(job.deadline * negative_percent)) *
+        ((job.value + 1) - int(job.value * negative_percent))))
 
     unmutated_jobs = jobs.copy()
     # Loop, for each job then find all of the mutation of within mutate percent of the original value
@@ -126,9 +134,10 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                                                                      mutant_value=mutant_job))
                                 print(result.store(difference=job_diff(mutant_job, job), mutant_value=mutant_job))
 
-                            # Remove the mutant job and readd the job to the list of jobs and reset the model
+                            # Remove the mutant job and read the job to the list of jobs and reset the model
                             list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
+        print()
 
     # Save all of the results to a file
     filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
@@ -143,5 +152,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    # mutated_job_test(loaded_model_dist, args['repeat'])
-    all_job_mutations_test(loaded_model_dist, args['repeat'])
+    mutated_job_test(loaded_model_dist, args['repeat'])
+    # all_job_mutations_test(loaded_model_dist, args['repeat'])

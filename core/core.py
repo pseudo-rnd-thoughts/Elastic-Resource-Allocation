@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import re
 import pickle
-import random
 import sys
-from random import choice
+from enum import Enum, auto
+from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
 import matplotlib.pyplot as plt
@@ -17,8 +17,6 @@ from core.model import ModelDist
 from core.server import Server
 
 T = TypeVar('T')
-
-save_eps = False
 
 
 def rand_list_max(args: Iterable[T], key=None) -> T:
@@ -161,7 +159,7 @@ def save_random_state(filename):
     :param filename: The filename to save the state to
     """
     with open(filename, 'w') as file:
-        pickle.dumps(file, random.getstate())
+        pickle.dumps(file, random_state())
 
 
 def print_model_solution(model_solution: CpoSolveResult):
@@ -184,39 +182,64 @@ def print_model(jobs: List[Job], servers: List[Server]):
     """
     print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for job in jobs:
-        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^9d}| {:.2f}"
+        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
               .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
                       job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:^12s}|{:9d}|{:13d}|{:11d}| {}".format(server.name, server.max_storage, server.max_computation,
-                                                       server.max_bandwidth,
-                                                       ', '.join([job.name for job in server.allocated_jobs])))
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity, server.computation_capacity,
+                                                          server.bandwidth_capacity,
+                                                          ', '.join([job.name for job in server.allocated_jobs])))
 
 
-def decode_filename(encoded_file: str) -> Tuple[str, str, str]:
+# noinspection LongLine
+def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     """
-    Decodes the filename to recover the file location,
-    Returns the location of the file and the model type fo the file
+    Decodes the filename to recover the file location, the model name and the greedy name
+    :param folder: The data folder
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return "../results/{}.json".format(encoded_file), \
-           re.findall(r"_j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("j", "Job ").replace("s", "Server "), \
-           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "").split("/")[1]
+    return "../results/{}/{}.json".format(folder, encoded_file), \
+           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
+           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
 
 
-def save_plot(name: str):
+class ImageFormat(Enum):
     """
-    Saves the current plot
-    :param name: Save plot name
+    Image format
     """
-    if save_eps:
-        filename = '../figures/' + name + '.eps'
+    EPS = auto()
+    PNG = auto()
+    PDF = auto()
+    BOTH = auto()
+    NONE = auto()
+
+
+def save_plot(name: str, test_name: str, additional: str = "", image_format: ImageFormat = ImageFormat.NONE, lgd=None):
+    """
+    Saves the plot to a file of the particular image format
+    :param name: The plot name
+    :param test_name: The test name
+    :param additional: Additional information to add to the filename
+    :param image_format: The image format
+    :param lgd: The legend to be added to the plot when saved
+    """
+    if lgd:
+        lgd = (lgd, )
+    if image_format == ImageFormat.EPS:
+        filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
         print("Save file location: " + filename)
-        plt.savefig(filename, format='eps', dpi=1000)
-    else:
-        filename = '../figures/' + name + '.png'
+        plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+    elif image_format == ImageFormat.PNG:
+        filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
         print("Save file location: " + filename)
-        plt.savefig(filename, format='png')
+        plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
+    elif image_format == ImageFormat.BOTH:
+        save_plot(name, test_name, additional, ImageFormat.EPS, lgd)
+        save_plot(name, test_name, additional, ImageFormat.PNG, lgd)
+    elif image_format == ImageFormat.PDF:
+        filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
+        print("Save file location: " + filename)
+        plt.savefig(filename, format='pdf')
