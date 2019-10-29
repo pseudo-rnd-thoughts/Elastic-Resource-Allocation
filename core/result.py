@@ -1,6 +1,8 @@
 """Result from the greedy algorithm"""
 
 from __future__ import annotations
+from typing import List, Tuple, Dict
+from operator import attrgetter
 
 from typing import List
 
