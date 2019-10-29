@@ -105,9 +105,9 @@ class ServerDist(object):
         """
         server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
-                      max_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
-                      max_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
-                      max_bandwidth=positive_gaussian_dist(self.results_data_mean, self.results_data_std))
+                      storage_capacity=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                      computation_capacity=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                      bandwidth_capacity=positive_gaussian_dist(self.results_data_mean, self.results_data_std))
 
     def save(self) -> Dict[str, Union[str, int]]:
         """

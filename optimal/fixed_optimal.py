@@ -36,11 +36,11 @@ def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_li
     # Server resource speeds constraints
     for server in servers:
         model.add(sum(job.required_storage * allocations[(job, server)]
-                      for job in jobs) <= server.max_storage)
+                      for job in jobs) <= server.storage_capacity)
         model.add(sum(job.compute_speed * allocations[(job, server)]
-                      for job in jobs) <= server.max_computation)
+                      for job in jobs) <= server.computation_capacity)
         model.add(sum((job.loading_speed + job.sending_speed) * allocations[(job, server)]
-                      for job in jobs) <= server.max_bandwidth)
+                      for job in jobs) <= server.bandwidth_capacity)
 
     # Optimisation problem
     model.maximize(sum(job.value * allocations[(job, server)] for job in jobs for server in servers))

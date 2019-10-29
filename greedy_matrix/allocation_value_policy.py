@@ -74,9 +74,9 @@ class SumServerMaxPercentage(AllocationValuePolicy):
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
         return job.value * \
-            ((server.available_storage - job.required_storage) / server.max_storage +
-             (server.available_computation - compute_speed) / server.max_computation +
-             (server.available_bandwidth - (loading_speed + sending_speed)) / server.max_bandwidth)
+            ((server.available_storage - job.required_storage) / server.storage_capacity +
+             (server.available_computation - compute_speed) / server.computation_capacity +
+             (server.available_bandwidth - (loading_speed + sending_speed)) / server.bandwidth_capacity)
 
 
 class SumExpServerPercentage(AllocationValuePolicy):

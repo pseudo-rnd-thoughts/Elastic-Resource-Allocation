@@ -35,16 +35,16 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
     job_allocation: Dict[Job, CpoVariable] = {}
 
     super_server = Server('Super Server',
-                          sum(server.max_storage for server in servers),
-                          sum(server.max_computation for server in servers),
-                          sum(server.max_bandwidth for server in servers))
+                          sum(server.storage_capacity for server in servers),
+                          sum(server.computation_capacity for server in servers),
+                          sum(server.bandwidth_capacity for server in servers))
 
     for job in jobs:
-        loading_speeds[job] = model.integer_var(min=1, max=super_server.max_bandwidth,
+        loading_speeds[job] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
                                                 name="{} loading speed".format(job.name))
-        compute_speeds[job] = model.integer_var(min=1, max=super_server.max_computation,
+        compute_speeds[job] = model.integer_var(min=1, max=super_server.computation_capacity,
                                                 name="{} compute speed".format(job.name))
-        sending_speeds[job] = model.integer_var(min=1, max=super_server.max_bandwidth,
+        sending_speeds[job] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
                                                 name="{} sending speed".format(job.name))
         job_allocation[job] = model.binary_var(name="{} allocation".format(job.name))
 
@@ -53,11 +53,11 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
                   job.required_results_data / sending_speeds[job] <= job.deadline)
 
     model.add(sum(job.required_storage * job_allocation[job]
-                  for job in jobs) <= super_server.max_storage)
+                  for job in jobs) <= super_server.storage_capacity)
     model.add(sum(compute_speeds[job] * job_allocation[job]
-                  for job in jobs) <= super_server.max_computation)
+                  for job in jobs) <= super_server.computation_capacity)
     model.add(sum((loading_speeds[job] + sending_speeds[job]) * job_allocation[job]
-                  for job in jobs) <= super_server.max_bandwidth)
+                  for job in jobs) <= super_server.bandwidth_capacity)
 
     model.maximize(sum(job.value * job_allocation[job] for job in jobs))
 

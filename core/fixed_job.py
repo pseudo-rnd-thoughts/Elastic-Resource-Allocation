@@ -22,9 +22,9 @@ class FixedJob(Job):
 
     def find_fixed_speeds(self, servers: List[Server], fixed_value: FixedValue):
         model = CpoModel("Speeds")
-        loading_speed = model.integer_var(min=1, max=max(server.max_bandwidth for server in servers)-1)
-        compute_speed = model.integer_var(min=1, max=max(server.max_storage for server in servers))
-        sending_speed = model.integer_var(min=1, max=max(server.max_bandwidth for server in servers)-1)
+        loading_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
+        compute_speed = model.integer_var(min=1, max=max(server.storage_capacity for server in servers))
+        sending_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
 
         model.add(self.required_storage / loading_speed +
                   self.required_computation / compute_speed +
