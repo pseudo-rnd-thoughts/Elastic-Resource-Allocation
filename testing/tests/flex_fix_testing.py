@@ -89,6 +89,9 @@ def flex_fix_test():
     optimal_result = optimal_algorithm(jobs, servers, 15)
     print("Flexible")
     print_job_full(jobs)
+    
+    print("\n\nLatex")
+    print_job_latex(jobs)
     plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.BOTH)
     
     fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
@@ -97,7 +100,7 @@ def flex_fix_test():
     
     print("\n\nFixed")
     print_job_full(fixed_jobs)
-    plot_allocation_results(jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.BOTH)
+    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.BOTH)
     
     print_results({'optimal': optimal_result, 'fixed': fixed_result})
 
