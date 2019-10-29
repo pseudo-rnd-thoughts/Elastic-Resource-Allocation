@@ -60,7 +60,7 @@ def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     :param repeats: The number of repeats
     """
 
-    data = [[model_dist.dist_name, server.max_storage, server.max_computation, server.max_bandwidth]
+    data = [[model_dist.dist_name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity]
             for model_dist in model_dists for _ in range(repeats) for server in model_dist.create()[1]]
 
     df = pd.DataFrame(data, columns=['Model', 'Storage', 'Computation', 'Results Data'])
@@ -99,7 +99,7 @@ def plot_servers(servers: List[Server]):
     Plots the severs on a graph
     :param servers: A list of servers to plot
     """
-    data = [[server.name, server.max_storage, server.max_computation, server.max_bandwidth] for server in servers]
+    data = [[server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity] for server in servers]
     df = pd.DataFrame(data, columns=['Name', 'Storage', 'Computation', 'Bandwidth'])
     wide_df = pd.melt(df, id_vars=['Name']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource'}, inplace=True)

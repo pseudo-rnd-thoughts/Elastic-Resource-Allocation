@@ -35,9 +35,9 @@ def print_server_full(servers: List[Server]):
           .format("Name", name_len=max_server_name_len))
     for server in servers:
         print("{:^{name_len}}|{:^14.3f}|{:^14.3f}|{:^14.3f}| {}"
-              .format(server.name, (1 - server.available_storage) / server.max_storage,
-                      (1 - server.available_computation) / server.max_computation,
-                      (1 - server.available_bandwidth) / server.max_bandwidth,
+              .format(server.name, (1 - server.available_storage) / server.storage_capacity,
+                      (1 - server.available_computation) / server.computation_capacity,
+                      (1 - server.available_bandwidth) / server.bandwidth_capacity,
                       ','.join([job.name for job in server.allocated_jobs]), name_len=max_server_name_len))
 
 
@@ -49,8 +49,8 @@ def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
         max_server_name_len = max(len(server.name) for server in servers) + 1
         print("{:^{name_len}}| Storage | Computation | Bandwidth".format("Name", name_len=max_server_name_len))
         for server in servers:
-            print("{:<{name_len}}|{:^9}|{:^13}|{:^11}".format(server.name, server.max_storage, server.max_computation,
-                                                             server.max_bandwidth, name_len=max_server_name_len))
+            print("{:<{name_len}}|{:^9}|{:^13}|{:^11}".format(server.name, server.storage_capacity, server.computation_capacity,
+                                                              server.bandwidth_capacity, name_len=max_server_name_len))
 
         optimal_results = optimal_algorithm(jobs, servers, 15)
         print("Optimal Solution")
@@ -85,9 +85,9 @@ def forced_fixed_comparison():
         Job("Liam",    required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
     ]
     servers = [
-        Server("North", max_storage=350, max_computation=1, max_bandwidth=1),
-        Server("West",  max_storage=400, max_computation=1, max_bandwidth=1),
-        Server("South", max_storage=425, max_computation=1, max_bandwidth=1)
+        Server("North", storage_capacity=350, computation_capacity=1, bandwidth_capacity=1),
+        Server("West", storage_capacity=400, computation_capacity=1, bandwidth_capacity=1),
+        Server("South", storage_capacity=425, computation_capacity=1, bandwidth_capacity=1)
     ]
 
     optimal_results = optimal_algorithm(jobs, servers, 15)

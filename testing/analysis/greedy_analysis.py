@@ -37,17 +37,17 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     """
     allocated_jobs = [job for job in jobs if job.running_server]
     loading_df = pd.DataFrame(
-        [[job.required_storage / server.max_storage if job.running_server == server else 0 for job in allocated_jobs]
-         for server in servers],
+        [[job.required_storage / server.storage_capacity if job.running_server == server else 0
+          for job in allocated_jobs] for server in servers],
         index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
     compute_df = pd.DataFrame(
-        [[job.compute_speed / server.max_computation if job.running_server == server else 0 for job in allocated_jobs]
-         for server in servers],
+        [[job.compute_speed / server.computation_capacity if job.running_server == server else 0
+          for job in allocated_jobs] for server in servers],
         index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
-    sending_df = pd.DataFrame([[(
-                                            job.loading_speed + job.sending_speed) / server.max_bandwidth if job.running_server == server else 0
-                                for job in allocated_jobs] for server in servers],
-                              index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+    sending_df = pd.DataFrame(
+        [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
+          for job in allocated_jobs] for server in servers],
+        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
     resource_df = [loading_df, compute_df, sending_df]
 
     hatching = '/'
@@ -82,7 +82,7 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05])
     axe.add_artist(l1)
 
-    save_plot(l1, analysis_filename("allocation", title.lower().replace(" ", "_")), "allocation", image_format=save_format)
+    save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "allocation", image_format=save_format)
     plt.show()
 
 

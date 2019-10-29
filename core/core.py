@@ -188,8 +188,8 @@ def print_model(jobs: List[Job], servers: List[Server]):
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.max_storage, server.max_computation,
-                                                          server.max_bandwidth,
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity, server.computation_capacity,
+                                                          server.bandwidth_capacity,
                                                           ', '.join([job.name for job in server.allocated_jobs])))
 
 

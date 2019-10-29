@@ -146,7 +146,7 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
                            job.deadline, job.value) for job in jobs
             },
             {
-                server.name: (server.max_storage, server.max_computation, server.max_bandwidth) for server in servers
+                server.name: (server.storage_capacity, server.computation_capacity, server.bandwidth_capacity) for server in servers
             }
         )
 
