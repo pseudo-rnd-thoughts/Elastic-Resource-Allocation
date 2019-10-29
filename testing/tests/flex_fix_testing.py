@@ -5,7 +5,7 @@ from typing import Dict, List
 
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job
-from core.model import reset_model
+from core.model import reset_model, load_dist, ModelDist
 from core.result import Result
 from core.server import Server
 from optimal.optimal import optimal_algorithm
@@ -102,8 +102,29 @@ def flex_fix_test():
     print_job_full(fixed_jobs)
     plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.BOTH)
     
-    print_results({'optimal': optimal_result, 'fixed': fixed_result})
+    print_results({'Optimal': optimal_result, 'Fixed': fixed_result})
+    
+    
+def fog_model_testing():
+    model_name, job_dist, server_dist = load_dist("../../models/fog.json")
+    model_dist = ModelDist(model_name, job_dist, 12, server_dist, 3)
+    
+    percent = []
+    for _ in range(30):
+        jobs, servers = model_dist.create()
+        optimal_result = optimal_algorithm(jobs, servers, 15)
+    
+        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        reset_model(jobs, servers)
+        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 15)
+        
+        percent.append(round(fixed_result.sum_value / optimal_result.sum_value, 3))
+        print_results({'Optimal': optimal_result, 'Fixed': fixed_result})
+        print()
+        
+    print(sorted(percent))
 
 
 if __name__ == "__main__":
-    flex_fix_test()
+    # flex_fix_test()
+    fog_model_testing()
