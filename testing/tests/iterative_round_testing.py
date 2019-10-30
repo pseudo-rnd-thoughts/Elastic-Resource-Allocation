@@ -13,7 +13,7 @@ from core.model import ModelDist, load_dist, reset_model
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 
 
-def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[[Job], int]], price_changes: List[int],
+def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], price_changes: List[int],
                repeats: int = 50, time_limit: int = 15):
     """
     Round test
@@ -37,8 +37,8 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
 
                 results = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
                 if results is not None:
-                    auction_results['cost {}, change {}'.format(initial_cost(0), price_change)] = \
-                        results.store(initial_cost=initial_cost(0), price_change=price_change)
+                    auction_results['cost {}, change {}'.format(initial_cost, price_change)] = \
+                        results.store(initial_cost=initial_cost, price_change=price_change)
                 reset_model(jobs, servers)
 
         data.append(auction_results)
@@ -68,16 +68,7 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    def cost_lambda(c):
-        """
-        Create a lambda function for the cost
-        :param c: The fixed cost
-        :return: The lambda function
-        """
-        return lambda x: c
-    job_initial_cost = [
-        cost_lambda(cost) for cost in range(0, int(sum(dist.value_mean for dist in job_dist) / len(job_dist)), 10)
-    ]
+    job_initial_cost = [0, 25, 40, 60, 80]
     server_price_changes = [1, 2, 5, 10, 15]
 
     # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)

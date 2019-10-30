@@ -79,31 +79,54 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     print("Successful, data saved to " + filename)
 
 
-def debug(model_dist: ModelDist):
+def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int = 50,
+                                vcg_time_limit: int = 60, fixed_vcg_time_limit: int = 60):
     """
-    Debugs the critical value testing
-    :param model_dist: The model distribution
+    All policies test for critical value
+    :param model_dist: The model dist
+    :param repeat: The repeat
+    :param repeats: The number of repeats
+    :param vcg_time_limit: The VCG time limit
+    :param fixed_vcg_time_limit: THe Fixed VCG time limit
     """
-    jobs, servers = model_dist.create()
+    print("Critical value test of all policies for {} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    
+    # Loop, for each run all of the algorithms
+    for _ in tqdm(range(repeats)):
+        # Generate the jobs and the servers
+        jobs, servers = model_dist.create()
+        auction_results = {}
 
-    result = critical_value_auction(jobs, servers, value_densities[0], server_selection_policies[0],
-                                    resource_allocation_policies[0],
-                                    debug_job_value=True, debug_greedy_allocation=True, debug_critical_value=True)
-    print(result.store())
-    print("\t\tJob result prices")
-    for job in jobs:
-        print("Job {}: {}".format(job.name, job.price))
-    """
-    # Tests the critical value
-    for value_density in value_densities:
-        for server_selection_policy in server_selection_policies:
-            for resource_allocation_policy in resource_allocation_policies:
-                reset_model(jobs, servers)
-                critical_value_result = critical_value_auction(jobs, servers, value_density,
-                                                               server_selection_policy, resource_allocation_policy)
-                print(critical_value_result.algorithm_name)
-                print(critical_value_result.store())
-    """
+        # Calculate the vcg auction
+        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
+        reset_model(jobs, servers)
+
+        # Calculate the fixed vcg auction
+        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
+        auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
+        reset_model(jobs, servers)
+        
+        # Loop over all of the greedy policies permutations
+        for value_density in value_densities:
+            for server_selection_policy in server_selection_policies:
+                for resource_allocation_policy in resource_allocation_policies:
+                    critical_value_result = critical_value_auction(jobs, servers, value_density,
+                                                                   server_selection_policy, resource_allocation_policy)
+                    auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+                    reset_model(jobs, servers)
+        
+        # Add the results to the data
+        data.append(auction_results)
+    
+    # Save the results to the file
+    filename = results_filename('all_critical_value_test', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
 
 
 if __name__ == "__main__":
@@ -112,4 +135,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    critical_value_testing(loaded_model_dist, args['repeat'])
+    # critical_value_testing(loaded_model_dist, args['repeat'])
+    all_policies_critical_value(loaded_model_dist, args['repeat'])
