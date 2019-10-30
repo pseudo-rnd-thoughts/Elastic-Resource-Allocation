@@ -188,22 +188,22 @@ def print_model(jobs: List[Job], servers: List[Server]):
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity, server.computation_capacity,
-                                                          server.bandwidth_capacity,
-                                                          ', '.join([job.name for job in server.allocated_jobs])))
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}"
+              .format(server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity,
+                      ', '.join([job.name for job in server.allocated_jobs])))
 
 
 # noinspection LongLine
-def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
+def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
     """
     Decodes the filename to recover the file location, the model name and the greedy name
     :param folder: The data folder
-    :param encoded_file: The encoded filename
+    :param filename: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return "../results/{}/{}.json".format(folder, encoded_file), \
-           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
-           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
+    return "../results/{}/{}.json".format(folder, filename), \
+           re.findall(r"j\d+_s\d+", filename)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
+           filename.replace(re.findall(r"_j\d+_s\d+_0", filename)[0], "")
 
 
 class ImageFormat(Enum):
@@ -243,3 +243,14 @@ def save_plot(name: str, test_name: str, additional: str = "", image_format: Ima
         filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
         print("Save file location: " + filename)
         plt.savefig(filename, format='pdf')
+
+
+def set_price_change(servers: List[Server], price_change: int):
+    """
+
+    :param servers:
+    :param price_change:
+    :return:
+    """
+    for server in servers:
+        server.price_change = price_change

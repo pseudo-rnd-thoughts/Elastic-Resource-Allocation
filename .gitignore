@@ -142,3 +142,7 @@ out/
 /aamas/ammas20.log
 /aamas/ammas20.out
 /aamas/ammas20.synctex.gz
+
+/testing/figures/*/*/*.pdf
+
+papers/*

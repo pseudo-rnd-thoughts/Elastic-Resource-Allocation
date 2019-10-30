@@ -2,6 +2,11 @@
 Branch and bound algorithm that uses Cplex and domain knowledge to find the optimal solution to the problem case
 Lower bound is the current social welfare
 Upper bound is the possible sum of all jobs
+
+Alternative Branch and Bound
+
+# https://pypi.org/project/pybnb/
+# https://pybnb.readthedocs.io/en/stable/getting_started/index.html#defining-a-problem
 """
 
 from __future__ import annotations

@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import json
 from typing import Dict, List
 
-from core.core import ImageFormat
+from auctions.critical_value_auction import critical_value_auction
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from auctions.fixed_vcg_auction import fixed_vcg_auction
+from auctions.vcg_auction import vcg_auction
+from core.core import ImageFormat, results_filename, set_price_change, load_args
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job
 from core.model import reset_model, load_dist, ModelDist
 from core.result import Result
 from core.server import Server
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, Random as RandomServerSelection, JobSumResources
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, Random as RandomValueDensity, \
+    UtilityDeadlinePerResource
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
+from optimal.relaxed import relaxed_algorithm
 from testing.analysis.greedy_analysis import plot_allocation_results
 
 
@@ -80,7 +91,7 @@ def example_flexible_fixed_test():
     print_job_full(jobs)
     plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.BOTH)
     
-    fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+    fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
     reset_model(jobs, servers)
     fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 15)
     
@@ -100,7 +111,7 @@ def fog_model_testing():
         jobs, servers = model_dist.create()
         optimal_result = optimal_algorithm(jobs, servers, 15)
         
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
         reset_model(jobs, servers)
         fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 15)
         
@@ -112,16 +123,131 @@ def fog_model_testing():
 
 
 def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
-    pass
+    print("Greedy testing with optimal, fixed and relaxed for {} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    for _ in range(repeats):
+        jobs, servers = model_dist.create()
+        results = {}
+
+        optimal_result = optimal_algorithm(jobs, servers, 60)
+        results['Optimal'] = optimal_result.store() if optimal_result else 'failure'
+
+        reset_model(jobs, servers)
+
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
+        results['Fixed'] = fixed_result.store() if fixed_result else 'failure'
+
+        reset_model(fixed_jobs, servers)
+
+        relaxed_result = relaxed_algorithm(jobs, servers, 60)
+        results['Relaxed'] = relaxed_result.store() if relaxed_result else 'failure'
+
+        reset_model(jobs, servers)
+
+        greedy_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
+                       RandomValueDensity()]
+            for ss in [SumResources(), SumResources(True),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True),
+                       RandomServerSelection()]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in greedy_policies:
+            greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
+            results[greedy_result.algorithm_name] = greedy_result.store()
+
+            reset_model(jobs, servers)
+
+        data.append(results)
+
+    # Save the results to the file
+    filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
-    pass
+def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50):
+    print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    initial_costs = [0, 20, 40, 60, 80]
+    price_changes = [1, 2, 3, 5, 8]
+    for _ in range(repeats):
+        jobs, servers = model_dist.create()
+
+        results = {}
+
+        for initial_cost in initial_costs:
+            for price_change in price_changes:
+                set_price_change(servers, price_change)
+
+                result = decentralised_iterative_auction(jobs, servers, 15, initial_cost=initial_cost)
+                results['Initial Cost {} Price Change {}'.format(initial_cost, price_change)] = \
+                    result.store(initial_cost=initial_cost, price_change=price_change)
+
+        data.append(results)
+
+    # Save the results to the file
+    filename = results_filename('round_num', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
+
 
 
 def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
-    pass
+    print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    for _ in range(repeats):
+        jobs, servers = model_dist.create()
+        results = {}
+
+        vcg_result = vcg_auction(jobs, servers, 60)
+        results['VCG'] = vcg_result.store() if vcg_result else 'failure'
+
+        reset_model(jobs, servers)
+
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+        fixed_result = fixed_vcg_auction(fixed_jobs, servers, 60)
+        results['Fixed VCG'] = fixed_result.store() if fixed_result else 'failure'
+
+        reset_model(fixed_jobs, servers)
+
+        critical_value_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
+                       RandomValueDensity()]
+            for ss in [SumResources(), SumResources(True), RandomServerSelection(),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in critical_value_policies:
+            critical_value_result = critical_value_auction(jobs, servers, vd, ss, ra)
+            results[critical_value_result.algorithm_name] = critical_value_result.store()
+
+            reset_model(jobs, servers)
+
+        data.append(results)
+
+    # Save the results to the file
+    filename = results_filename('flexible_auction', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
 
 
 if __name__ == "__main__":
-    fog_model_testing()
+    args = load_args()
+
+    model_name, job_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+
+    greedy_testing(loaded_model_dist, args['repeat'])
+    # round_num_testing(loaded_model_dist, args['repeat'])
+    # auction_testing(loaded_model_dist, args['repeat'])

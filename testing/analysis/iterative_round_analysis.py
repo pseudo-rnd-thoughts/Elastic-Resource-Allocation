@@ -70,4 +70,4 @@ if __name__ == "__main__":
 
     for attribute in ["Total Iterations", "Total Messages", "Total Money", "Solve Time", 'Sum Value']:
         plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute), save_format=ImageFormat.BOTH)
-    # plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'), save_format=ImageFormat.BOTH)
+    plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'), save_format=ImageFormat.BOTH)

@@ -33,7 +33,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
-                                     max(server.computation_capacity for server in servers)
+        max(server.computation_capacity for server in servers)
 
     # Loop over each job to allocate the variables and add the deadline constraints
     for job in jobs:

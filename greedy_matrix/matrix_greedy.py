@@ -5,6 +5,8 @@ from __future__ import annotations
 from time import time
 from typing import List, Tuple
 
+from docplex.cp.model import CpoModel
+
 from core.core import allocate
 from core.job import Job
 from core.result import Result
@@ -21,12 +23,33 @@ def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -
     :param value: The value policy
     :return: The tuple of values and resource allocations
     """
+
+    """
+    Old code
     return max(((value.evaluate(job, server, s, w, r), s, w, r)
                 for s in range(1, server.available_bandwidth + 1)
                 for w in range(1, server.available_computation + 1)
                 for r in range(1, server.available_bandwidth - s + 1)
                 if job.required_storage * w * r + s * job.required_computation * r +
                 s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
+    """
+    model = CpoModel("Matrix value")
+
+    loading_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="loading speed")
+    compute_speed = model.integer_var(min=1, max=server.available_computation, name="compute speed")
+    sending_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="sending speed")
+
+    model.add(job.required_storage / loading_speed + job.required_computation / compute_speed +
+              job.required_results_data / sending_speed <= job.deadline)
+    model.add(compute_speed <= server.available_computation)
+    model.add(loading_speed + sending_speed <= server.available_bandwidth)
+
+    model.maximize(value.evaluate(job, server, loading_speed, compute_speed, sending_speed))
+
+    model_solution = model.solve(log_output=None)
+
+    return model_solution.get_objective_values()[0], model_solution.get_value(loading_speed), \
+        model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
 
 
 def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_policy: AllocationValuePolicy,

@@ -74,7 +74,7 @@ class Job(object):
         if price is not None:
             self.price = price
 
-    def reset_allocation(self):
+    def reset_allocation(self, forgot_price: bool = True):
         """
         Resets the allocation data to the default
         """
@@ -82,7 +82,9 @@ class Job(object):
         self.compute_speed = 0
         self.sending_speed = 0
         self.running_server = None
-        self.price = 0
+
+        if forgot_price:
+            self.price = 0
 
     def utility(self):
         """

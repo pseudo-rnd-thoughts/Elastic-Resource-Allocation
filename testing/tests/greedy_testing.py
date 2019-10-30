@@ -3,19 +3,19 @@
 from __future__ import annotations
 
 import json
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple
 
 from tqdm import tqdm
 
-from core.core import load_args, results_filename
+from core.core import results_filename
 from core.fixed_job import FixedJob, FixedSumSpeeds
-from core.job import Job
 from core.model import reset_model, ModelDist, load_dist
-from core.server import Server
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.value_density import all_policies as value_densities
+from greedy.server_selection_policy import policies as server_selection_policies, \
+    all_policies as all_server_selection_policies
+from greedy.value_density import policies as value_densities, \
+    all_policies as all_value_densities
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
 from optimal.fixed_optimal import fixed_optimal_algorithm
@@ -51,7 +51,7 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         reset_model(jobs, servers)
         
         # Find the fixed solution
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
         fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, fixed_time_limit)
         algorithm_results[fixed_result.algorithm_name] = fixed_result.store() \
             if fixed_result is not None else "failure"
@@ -106,12 +106,13 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
         algorithm_results = {}
 
         # Loop over all of the greedy policies permutations
-        for value_density in value_densities:
-            for server_selection_policy in server_selection_policies:
+        for value_density in all_value_densities:
+            for server_selection_policy in all_server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(jobs, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
                     algorithm_results[greedy_result.algorithm_name] = greedy_result.store()
+                    print("{} -> {}".format(greedy_result.algorithm_name, greedy_result.store()))
                     reset_model(jobs, servers)
 
         # Add the results to the data
@@ -205,11 +206,17 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
 
 
 if __name__ == "__main__":
-    args = load_args()
+    # args = load_args()
+    args = {
+        'model': 'models/fog.json',
+        'jobs': 12,
+        'servers': 3,
+        'repeat': 0
+    }
 
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
-    all_policies_test(loaded_model_dist, args['repeat'])
+    all_policies_test(loaded_model_dist, args['repeat'], repeats=1)

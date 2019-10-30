@@ -6,7 +6,6 @@ import json
 from typing import List
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import seaborn as sns
 
@@ -24,7 +23,6 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
     """
     data = []
     test_name: str = ""
-    model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
         filename, model_name, test_name = decode_filename("auction_mutation", encoded_filename)
@@ -58,15 +56,6 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
 
     save_plot(analysis_filename(test_name, y_axis), "auction_mutation", image_format=save_format)
     plt.show()
-
-
-def all_mutation_analysis(encoded_filenames: List[str]):
-    """
-    Analysis of all mutations of job
-    :param encoded_filenames: A list of encoded filenames
-    """
-    # TODO get the data
-    pass
 
 
 if __name__ == "__main__":

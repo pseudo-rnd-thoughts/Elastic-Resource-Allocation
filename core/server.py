@@ -55,14 +55,14 @@ class Server(object):
         :return: If it can run
         """
         return self.storage_capacity >= job.required_storage \
-               and self.computation_capacity >= 1 \
-               and self.bandwidth_capacity >= 2 and \
-               any(job.required_storage * self.computation_capacity * r +
-                   s * job.required_computation * r +
-                   s * self.computation_capacity * job.required_results_data
-                   <= job.deadline * s * self.available_computation * r
-                   for s in range(1, self.bandwidth_capacity + 1)
-                   for r in range(1, self.bandwidth_capacity - s + 1))
+            and self.computation_capacity >= 1 \
+            and self.bandwidth_capacity >= 2 and \
+            any(job.required_storage * self.computation_capacity * r +
+                s * job.required_computation * r +
+                s * self.computation_capacity * job.required_results_data
+                <= job.deadline * s * self.available_computation * r
+                for s in range(1, self.bandwidth_capacity + 1)
+                for r in range(1, self.bandwidth_capacity - s + 1))
 
     def allocate_job(self, job: Job):
         """

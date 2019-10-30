@@ -3,28 +3,32 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
-from typing import List
+
+from docplex.cp.model import CpoModel
 
 from core.job import Job
 from core.server import Server
-
-from docplex.cp.model import CpoModel
 
 
 class FixedJob(Job):
     """Job with a fixing resource usage speed"""
 
-    def __init__(self, job: Job, servers: List[Server], fixed_value: FixedValue):
-        super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
+    def __init__(self, job: Job, fixed_value: FixedValue):
+        super().__init__("Fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
-        self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(servers, fixed_value)
+        self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(fixed_value)
 
-    def find_fixed_speeds(self, servers: List[Server], fixed_value: FixedValue):
+    def find_fixed_speeds(self, fixed_value: FixedValue):
+        """
+        Find the optimal fixed speeds of the job
+        :param fixed_value: The fixed value function to value the speeds
+        :return:
+        """
         model = CpoModel("Speeds")
-        loading_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
-        compute_speed = model.integer_var(min=1, max=max(server.storage_capacity for server in servers))
-        sending_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
+        loading_speed = model.integer_var(min=1)
+        compute_speed = model.integer_var(min=1)
+        sending_speed = model.integer_var(min=1)
 
         model.add(self.required_storage / loading_speed +
                   self.required_computation / compute_speed +
@@ -53,11 +57,14 @@ class FixedJob(Job):
         self.running_server = running_server
         self.price = price
 
-    def reset_allocation(self):
+    def reset_allocation(self, forgot_price: bool = True):
         """
         Overrides the reset_allocation function from job to just change the server not resource speeds
         """
         self.running_server = None
+
+        if forgot_price:
+            self.price = 0
 
 
 class FixedValue(ABC):

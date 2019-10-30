@@ -49,7 +49,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
         fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
         reset_model(jobs, servers)
@@ -105,7 +105,7 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
         fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
         reset_model(jobs, servers)

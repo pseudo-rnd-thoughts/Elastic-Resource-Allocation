@@ -5,7 +5,7 @@ from __future__ import annotations
 from math import inf
 from random import choice
 from time import time
-from typing import List, Dict, Callable
+from typing import List, Dict
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
@@ -82,7 +82,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     model.maximize(sum(job.price * allocated for job, allocated in allocation.items()))
 
     # Solve the model with a time limit
-    model_solution = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
+    model_solution = model.solve(log_output=None, TimeLimit=time_limit)
 
     # If the model solution failed then return an infinite price
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
@@ -92,17 +92,14 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
         return inf, {}, {}, {}, {}, server, jobs
 
     # Get the max server profit that the model finds
-    max_server_profit = model_solution.get_objective_values()[0]
+    new_server_revenue = model_solution.get_objective_values()[0]
     
     # Calculate the job price through a vcg similar function
-    job_price = server.revenue - max_server_profit + server.price_change
+    job_price = server.revenue - new_server_revenue + server.price_change
     if job_price < initial_cost:  # Add an initial cost the job if the price is less than a set price
         if debug_initial_cost:
             print("Price set to {} due to initial cost".format(initial_cost))
         job_price = initial_cost
-        
-    print("Server: {}, Revenue: {}, Profit: {}, Price: {}, {}".format(server.name, server.revenue, max_server_profit,
-                                                                      job_price, len(server.allocated_jobs)))
 
     # Get the resource speeds and job allocations
     loading = {job: model_solution.get_value(loading_speed[job]) for job in jobs}
@@ -114,8 +111,8 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
     assert_solution(loading, compute, sending, allocation)
 
     if debug_results:
-        print("Sever: {} - Max server profit: {}, prior server total price: {} therefore job price: {}"
-              .format(server.name, model_solution.get_objective_values()[0], server.revenue, job_price))
+        print("Sever: {} - Prior revenue: {}, new revenue: {}, price change: {} therefore job price: {}"
+              .format(server.name, server.revenue, new_server_revenue, server.price_change, job_price))
 
     return job_price, loading, compute, sending, allocation, server
 
@@ -146,7 +143,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
     # For each of the job, if the job is allocated then allocate the job or reset the job
     for job, allocated in allocation.items():
-        job.reset_allocation()
+        job.reset_allocation(forgot_price=False)
         if allocated:
             allocate(job, loading[job], compute[job], sending[job], server, job.price)
         else:
@@ -228,5 +225,5 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
             print("\tJobs - {}".format(', '.join(["{}: £{}".format(job.name, job.price)
                                                   for job in server.allocated_jobs])))
 
-    return Result("Iterative", jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
+    return Result("DIA", jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
                   total_iterations=iterations, total_messages=messages)

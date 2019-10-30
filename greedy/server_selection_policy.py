@@ -16,7 +16,7 @@ class ServerSelectionPolicy(ABC):
     """Server Selection Policy"""
 
     def __init__(self, name: str, maximise: bool = False):
-        self.name = name
+        self.name = "{} {}".format("maximise" if maximise else "minimise", name)
         self.maximise = maximise
 
     def select(self, job: Job, servers: List[Server]) -> Optional[Server]:

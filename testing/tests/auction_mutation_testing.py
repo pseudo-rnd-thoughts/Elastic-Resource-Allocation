@@ -4,19 +4,17 @@ from __future__ import annotations
 
 import json
 from random import choice
-from typing import Callable
 
 from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-
 from core.core import results_filename, list_item_replacement, load_args
 from core.job import Job, job_diff
 from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
-                     time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0,
+                     time_limit: int = 15, initial_cost: int = 0,
                      mutate_percent: float = 0.05, mutate_repeats: int = 10):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference
@@ -79,7 +77,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
-                           time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0):
+                           time_limit: int = 15, initial_cost: int = 0):
     """
     Tests all of the mutations for an iterative auction
     :param model_dist: The model distribution
@@ -90,7 +88,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
     :param initial_cost: The initial cost of the job
     """
     print("All mutation auction tests with {} jobs and {} servers, time limit {} sec and initial cost {} "
-          .format(model_dist.num_jobs, model_dist.num_servers, time_limit, initial_cost(Job("", 0, 0, 0, 0, 0))))
+          .format(model_dist.num_jobs, model_dist.num_servers, time_limit, initial_cost))
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the jobs and servers

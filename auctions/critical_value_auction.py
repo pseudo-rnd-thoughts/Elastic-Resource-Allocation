@@ -91,15 +91,15 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
         if debug_critical_value:
             print("Job {} critical value = {:.3f}".format(job.name, job_critical_values[job]))
 
+    reset_model(jobs, servers)
     # Allocate the jobs and set the price to the critical value
     for job, (s, w, r, server) in allocation_data.items():
         price = job_critical_values[job]
         job.allocate(s, w, r, server, price=price)
         server.allocate_job(job)
 
-    return Result('Critical Value {}, {}, {}'.format(value_density.name, server_selection_policy.name,
-                                                     resource_allocation_policy.name),
-                  jobs, servers, time() - start_time, show_money=True,
-                  value_density=value_density.name,
+    return Result('Critical Value {}, {}, {}'
+                  .format(value_density.name, server_selection_policy.name, resource_allocation_policy.name),
+                  jobs, servers, time() - start_time, show_money=True, value_density=value_density.name,
                   server_selection_policy=server_selection_policy.name,
                   resource_allocation_policy=resource_allocation_policy.name)
