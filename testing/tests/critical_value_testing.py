@@ -9,9 +9,10 @@ from tqdm import tqdm
 from core.core import results_filename, load_args
 from core.model import ModelDist, reset_model, load_dist
 from core.fixed_job import FixedJob, FixedSumSpeeds
-from greedy.value_density import policies as value_densities
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy.value_density import policies as value_densities, UtilityPerResources, UtilityResourcePerDeadline, \
+    UtilityDeadlinePerResource
+from greedy.server_selection_policy import policies as server_selection_policies, SumResources, JobSumResources
+from greedy.resource_allocation_policy import policies as resource_allocation_policies, SumPercentage, SumSpeed
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.critical_value_auction import critical_value_auction
@@ -129,6 +130,54 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
     print("Successful, data saved to " + filename)
 
 
+def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
+    print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    for _ in range(repeats):
+        jobs, servers = model_dist.create()
+        results = {}
+
+        vcg_result = vcg_auction(jobs, servers, 30)
+        results['VCG'] = vcg_result.store() if vcg_result else 'failure'
+        if debug_results:
+            print(results['VCG'])
+
+        reset_model(jobs, servers)
+
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+        fixed_result = fixed_vcg_auction(fixed_jobs, servers, 30)
+        results['Fixed VCG'] = fixed_result.store() if fixed_result else 'failure'
+        if debug_results:
+            print(results['Fixed VCG'])
+
+        reset_model(fixed_jobs, servers)
+
+        critical_value_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource()]
+            for ss in [SumResources(), SumResources(True),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in critical_value_policies:
+            critical_value_result = critical_value_auction(jobs, servers, vd, ss, ra)
+            results[critical_value_result.algorithm_name] = critical_value_result.store()
+            if debug_results:
+                print(results[critical_value_result.algorithm_name])
+
+            reset_model(jobs, servers)
+
+        data.append(results)
+
+    # Save the results to the file
+    filename = results_filename('flexible_auction', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
+    
+    
 if __name__ == "__main__":
     args = load_args()
 
@@ -136,4 +185,5 @@ if __name__ == "__main__":
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
-    all_policies_critical_value(loaded_model_dist, args['repeat'])
+    # all_policies_critical_value(loaded_model_dist, args['repeat'])
+    auction_testing(loaded_model_dist, args['repeat'])

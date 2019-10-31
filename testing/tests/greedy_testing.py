@@ -7,15 +7,15 @@ from typing import Dict, Tuple
 
 from tqdm import tqdm
 
-from core.core import results_filename
+from core.core import results_filename, load_args
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.model import reset_model, ModelDist, load_dist
 from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy.resource_allocation_policy import policies as resource_allocation_policies, SumPercentage, SumSpeed
 from greedy.server_selection_policy import policies as server_selection_policies, \
-    all_policies as all_server_selection_policies
+    all_policies as all_server_selection_policies, SumResources, JobSumResources, Random as RandomServerSelection
 from greedy.value_density import policies as value_densities, \
-    all_policies as all_value_densities
+    all_policies as all_value_densities, UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Random as RandomValueDensity
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
 from optimal.fixed_optimal import fixed_optimal_algorithm
@@ -205,18 +205,70 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     print("Successful, data saved to " + filename)
 
 
+def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
+    print("Greedy testing with optimal, fixed and relaxed for {} jobs and {} servers"
+          .format(model_dist.num_jobs, model_dist.num_servers))
+    data = []
+    for _ in range(repeats):
+        jobs, servers = model_dist.create()
+        results = {}
+
+        optimal_result = optimal_algorithm(jobs, servers, 60)
+        results['Optimal'] = optimal_result.store() if optimal_result else 'failure'
+        if debug_results:
+            print(results['Optimal'])
+
+        reset_model(jobs, servers)
+
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
+        results['Fixed'] = fixed_result.store() if fixed_result else 'failure'
+        if debug_results:
+            print(results['Fixed'])
+
+        reset_model(fixed_jobs, servers)
+
+        relaxed_result = relaxed_algorithm(jobs, servers, 60)
+        results['Relaxed'] = relaxed_result.store() if relaxed_result else 'failure'
+        if debug_results:
+            print(results['Relaxed'])
+
+        reset_model(jobs, servers)
+
+        greedy_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
+                       RandomValueDensity()]
+            for ss in [SumResources(), SumResources(True),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True),
+                       RandomServerSelection()]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in greedy_policies:
+            greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
+            results[greedy_result.algorithm_name] = greedy_result.store()
+            if debug_results:
+                print(results[greedy_result.algorithm_name])
+
+            reset_model(jobs, servers)
+
+        data.append(results)
+
+    # Save the results to the file
+    filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
+    with open(filename, 'w') as file:
+        json.dump(data, file)
+    print("Successful, data saved to " + filename)
+
+
 if __name__ == "__main__":
-    # args = load_args()
-    args = {
-        'model': 'models/fog.json',
-        'jobs': 12,
-        'servers': 3,
-        'repeat': 0
-    }
+    args = load_args()
 
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
-    all_policies_test(loaded_model_dist, args['repeat'], repeats=1)
+    # all_policies_test(loaded_model_dist, args['repeat'], repeats=1)
+    paper_testing(loaded_model_dist, args['repeat'])
