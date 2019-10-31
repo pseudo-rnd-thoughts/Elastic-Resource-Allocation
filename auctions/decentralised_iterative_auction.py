@@ -138,6 +138,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
     server.reset_allocations()
 
     # Allocate the new job to the server
+    new_job.reset_allocation()  # Possible bug where the job is not reset then allocated
     allocate(new_job, loading[new_job], compute[new_job], sending[new_job], server, job_price)
     messages = 1
 
@@ -164,7 +165,7 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
                                     initial_cost: int = 0,
                                     debug_allocation: bool = False, debug_results: bool = False) -> Result:
     """
-    A iterative auctions created by Seb Stein and Mark Towers
+    A decentralised iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The solve time limit

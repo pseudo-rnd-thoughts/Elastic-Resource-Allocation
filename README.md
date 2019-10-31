@@ -8,3 +8,9 @@ Tests to run
 * Greedy (optimal, fixed optimal, greedy, relaxed)
 * Iterative Price Change and Initial Cost
 * VCG, Fixed VCG, Iterative, Critical Auction
+
+Greedy
+* 12, 3
+
+Auction / Round Number
+* 

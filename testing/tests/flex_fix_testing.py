@@ -122,7 +122,7 @@ def fog_model_testing():
     print(sorted(percent))
 
 
-def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
+def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
     print("Greedy testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
@@ -132,17 +132,23 @@ def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
 
         optimal_result = optimal_algorithm(jobs, servers, 60)
         results['Optimal'] = optimal_result.store() if optimal_result else 'failure'
+        if debug_results:
+            print(results['Optimal'])
 
         reset_model(jobs, servers)
 
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
         fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
         results['Fixed'] = fixed_result.store() if fixed_result else 'failure'
+        if debug_results:
+            print(results['Fixed'])
 
         reset_model(fixed_jobs, servers)
 
         relaxed_result = relaxed_algorithm(jobs, servers, 60)
         results['Relaxed'] = relaxed_result.store() if relaxed_result else 'failure'
+        if debug_results:
+            print(results['Relaxed'])
 
         reset_model(jobs, servers)
 
@@ -159,6 +165,8 @@ def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
         for (vd, ss, ra) in greedy_policies:
             greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
             results[greedy_result.algorithm_name] = greedy_result.store()
+            if debug_results:
+                print(results[greedy_result.algorithm_name])
 
             reset_model(jobs, servers)
 
@@ -171,7 +179,7 @@ def greedy_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
     print("Successful, data saved to " + filename)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50):
+def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, debug_results: bool = False):
     print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
     data = []
     initial_costs = [0, 20, 40, 60, 80]
@@ -185,9 +193,14 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50):
             for price_change in price_changes:
                 set_price_change(servers, price_change)
 
+                name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
                 result = decentralised_iterative_auction(jobs, servers, 15, initial_cost=initial_cost)
-                results['Initial Cost {} Price Change {}'.format(initial_cost, price_change)] = \
-                    result.store(initial_cost=initial_cost, price_change=price_change)
+                results[name] = result.store(initial_cost=initial_cost, price_change=price_change)
+
+                if debug_results:
+                    print(results[name])
+
+                reset_model(jobs, servers)
 
         data.append(results)
 
@@ -198,8 +211,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50):
     print("Successful, data saved to " + filename)
 
 
-
-def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
+def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
     print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
@@ -207,22 +219,25 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
         jobs, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers, 60)
+        vcg_result = vcg_auction(jobs, servers, 30)
         results['VCG'] = vcg_result.store() if vcg_result else 'failure'
+        if debug_results:
+            print(results['VCG'])
 
         reset_model(jobs, servers)
 
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_result = fixed_vcg_auction(fixed_jobs, servers, 60)
+        fixed_result = fixed_vcg_auction(fixed_jobs, servers, 30)
         results['Fixed VCG'] = fixed_result.store() if fixed_result else 'failure'
+        if debug_results:
+            print(results['Fixed VCG'])
 
         reset_model(fixed_jobs, servers)
 
         critical_value_policies = [
             (vd, ss, ra)
-            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
-                       RandomValueDensity()]
-            for ss in [SumResources(), SumResources(True), RandomServerSelection(),
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource()]
+            for ss in [SumResources(), SumResources(True),
                        JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
                        JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
             for ra in [SumPercentage(), SumSpeed()]
@@ -230,6 +245,8 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100):
         for (vd, ss, ra) in critical_value_policies:
             critical_value_result = critical_value_auction(jobs, servers, vd, ss, ra)
             results[critical_value_result.algorithm_name] = critical_value_result.store()
+            if debug_results:
+                print(results[critical_value_result.algorithm_name])
 
             reset_model(jobs, servers)
 
@@ -248,6 +265,6 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    greedy_testing(loaded_model_dist, args['repeat'])
-    # round_num_testing(loaded_model_dist, args['repeat'])
-    # auction_testing(loaded_model_dist, args['repeat'])
+    # greedy_testing(loaded_model_dist, args['repeat'], debug_results=True)
+    # round_num_testing(loaded_model_dist, args['repeat'], debug_results=True)
+    # auction_testing(loaded_model_dist, args['repeat'], debug_results=True)
