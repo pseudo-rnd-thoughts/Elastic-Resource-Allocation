@@ -52,9 +52,9 @@ class ResourceAllocationPolicy(ABC):
 
         model = CpoModel("Resource Allocation")
 
-        loading_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="loading speed")
+        loading_speed = model.integer_var(min=1, max=server.available_bandwidth, name="loading speed")
         compute_speed = model.integer_var(min=1, max=server.available_computation, name="compute speed")
-        sending_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="sending speed")
+        sending_speed = model.integer_var(min=1, max=server.available_bandwidth, name="sending speed")
 
         model.add(job.required_storage / loading_speed + job.required_computation / compute_speed +
                   job.required_results_data / sending_speed <= job.deadline)

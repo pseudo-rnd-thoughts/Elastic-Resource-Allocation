@@ -70,7 +70,9 @@ class Server(object):
 
         return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
         """
-        if job.required_storage > self.available_storage:
+        if job.required_storage > self.available_storage or \
+                self.available_bandwidth < 2 or \
+                self.available_computation < 1:
             return False
 
         for s in range(1, self.available_bandwidth + 1):
@@ -120,7 +122,9 @@ class Server(object):
         return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
         """
 
-        if job.required_storage > self.storage_capacity:
+        if job.required_storage > self.storage_capacity or \
+                self.bandwidth_capacity < 2 or \
+                self.computation_capacity < 1:
             return False
 
         for s in range(1, self.bandwidth_capacity):
