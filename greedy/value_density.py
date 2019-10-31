@@ -133,7 +133,7 @@ class UtilityDeadlinePerResource(ValueDensity):
 
     def inverse(self, job: Job, density: float) -> float:
         """Inverse evaluation function"""
-        raise density * self.resource_func.evaluate(job) / job.deadline
+        return density * self.resource_func.evaluate(job) / job.deadline
 
 
 class UtilityResourcePerDeadline(ValueDensity):
@@ -149,7 +149,7 @@ class UtilityResourcePerDeadline(ValueDensity):
 
     def inverse(self, job: Job, density: float) -> float:
         """Inverse evaluation function"""
-        raise density * job.deadline / self.resource_func.evaluate(job)
+        return density * job.deadline / self.resource_func.evaluate(job)
 
 
 class Random(ValueDensity):

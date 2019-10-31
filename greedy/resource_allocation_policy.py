@@ -9,7 +9,7 @@ from docplex.cp.model import CpoModel
 
 from core.job import Job
 from core.server import Server
-
+from math import inf
 
 class ResourceAllocationPolicy(ABC):
     """Resource Allocation Policy class that is inherited with each option"""
@@ -34,6 +34,20 @@ class ResourceAllocationPolicy(ABC):
                     if job.required_storage * w * r + s * job.required_computation * r +
                     s * w * job.required_results_data <= job.deadline * s * w * r),
                     key=lambda bid: self.evaluator(job, server, bid[0], bid[1], bid[2]))
+                    
+        min_value = inf
+        min_speeds = None
+
+        for s in range(1, server.available_bandwidth + 1):
+            for w in range(1, server.available_computation + 1):
+                for r in range(1, server.available_bandwidth - s + 1):
+                    if job.required_storage * w * r + s * job.required_computation * r + s * w * job.required_results_data <= job.deadline * s * w * r:
+                        value = self.evaluate(job, server, s, w, r)
+                        if value < min_value:
+                            min_value = value
+                            min_speeds = (s, w, r)
+                        break
+        return min_speeds
         """
 
         model = CpoModel("Resource Allocation")
@@ -44,7 +58,6 @@ class ResourceAllocationPolicy(ABC):
 
         model.add(job.required_storage / loading_speed + job.required_computation / compute_speed +
                   job.required_results_data / sending_speed <= job.deadline)
-        model.add(compute_speed <= server.available_computation)
         model.add(loading_speed + sending_speed <= server.available_bandwidth)
 
         model.minimize(self.evaluate(job, server, loading_speed, compute_speed, sending_speed))

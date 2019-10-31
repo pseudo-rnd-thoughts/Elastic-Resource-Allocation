@@ -259,6 +259,12 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debu
     print("Successful, data saved to " + filename)
 
 
+def debug(model_dist: ModelDist):
+    jobs, servers = model_dist.create()
+    critical_value_result = critical_value_auction(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage(), debug_critical_value=True)
+    print(critical_value_result.store())
+
+
 if __name__ == "__main__":
     args = load_args()
 
