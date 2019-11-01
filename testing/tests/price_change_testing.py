@@ -61,6 +61,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
 
         # Append the auction results to the data
         data.append(auction_results)
+        print(auction_results)
 
     # Save all of the results to a file
     filename = results_filename('uniform_price_change_auction_results', model_dist.file_name, repeat)
@@ -119,6 +120,7 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
 
         # Append the auction results to the data
         data.append(auction_results)
+        print(auction_results)
 
     # Save the results to a file
     filename = results_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
@@ -133,5 +135,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    uniform_price_change_test(loaded_model_dist, args['repeat'], repeats=1)
+    uniform_price_change_test(loaded_model_dist, args['repeat'])
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

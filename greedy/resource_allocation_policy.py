@@ -11,6 +11,7 @@ from core.job import Job
 from core.server import Server
 from math import inf
 
+
 class ResourceAllocationPolicy(ABC):
     """Resource Allocation Policy class that is inherited with each option"""
 
@@ -49,6 +50,9 @@ class ResourceAllocationPolicy(ABC):
                         break
         return min_speeds
         """
+
+        assert server.available_computation >= 1
+        assert server.available_bandwidth >= 2
 
         model = CpoModel("Resource Allocation")
 

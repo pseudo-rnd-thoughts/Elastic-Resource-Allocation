@@ -68,6 +68,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
         # Append the results to the data list
         data.append(auction_results)
+        print(auction_results)
 
     # Save all of the results to a file
     filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)

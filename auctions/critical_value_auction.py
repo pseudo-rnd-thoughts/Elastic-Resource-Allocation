@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import operator
 from time import time
 from typing import List
 
@@ -96,6 +97,49 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
     for job, (s, w, r, server) in allocation_data.items():
         price = job_critical_values[job]
         job.allocate(s, w, r, server, price=price)
+        server.allocate_job(job)
+
+    return Result('Critical Value {}, {}, {}'
+                  .format(value_density.name, server_selection_policy.name, resource_allocation_policy.name),
+                  jobs, servers, time() - start_time, show_money=True, value_density=value_density.name,
+                  server_selection_policy=server_selection_policy.name,
+                  resource_allocation_policy=resource_allocation_policy.name)
+
+
+def cv_auction(jobs: List[Job], servers: List[Server], value_density: ValueDensity,
+               server_selection_policy: ServerSelectionPolicy, resource_allocation_policy: ResourceAllocationPolicy):
+    start_time = time()
+
+    valued_jobs = {job: value_density.evaluate(job) for job in jobs}
+    ranked_jobs = sorted(valued_jobs.items(), key=operator.itemgetter(1), reverse=True)
+
+    # Runs the greedy algorithm
+    allocate_jobs(ranked_jobs, servers, server_selection_policy, resource_allocation_policy)
+    allocation_data = {job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server)
+                       for job in ranked_jobs if job.running_server}
+    reset_model(jobs, servers)
+    
+    for critical_job in allocation_data.keys():
+        critical_pos = ranked_jobs.index(critical_job)
+        ranked_jobs.remove(critical_job)
+
+        for job_pos in range(len(ranked_jobs)):
+            if any(server.can_run(critical_job) for server in servers):
+                server = server_selection_policy.select(jobs[job_pos], servers)
+                resource_allocation_policy.allocate(jobs[job_pos], server)
+            else:
+                if job_pos == 0:
+                    critical_job.price = 0
+                elif job_pos < len(jobs) - 1:
+                    critical_job.price = value_density.inverse(critical_job, valued_jobs[ranked_jobs[job_pos - 1]])
+
+        ranked_jobs.insert(critical_pos, critical_job)
+        reset_model(jobs, servers, forgot_price=False)
+
+    reset_model(jobs, servers)
+    # Allocate the jobs and set the price to the critical value
+    for job, (s, w, r, server) in allocation_data.items():
+        job.allocate(s, w, r, server)
         server.allocate_job(job)
 
     return Result('Critical Value {}, {}, {}'
