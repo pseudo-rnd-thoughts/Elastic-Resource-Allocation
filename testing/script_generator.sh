@@ -41,8 +41,7 @@ for script in "${scripts[@]}"; do
     for (( pos = 0; pos < ${#jobs[@]}; pos++ )); do
       for (( repeat = 0; repeat < repeats; repeat++ )); do
         cmd="qsub -v file='${script}_testing',num_jobs='${jobs[pos]}',num_servers='${servers[pos]}',model='$model',repeat='$repeat' run_script.sh"
-        # eval "$cmd"
-        echo "$cmd"
+        eval "$cmd"
       done
     done
   done
