@@ -60,7 +60,8 @@ def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_li
         for job in jobs:
             for server in servers:
                 if model_solution.get_value(allocations[(job, server)]):
-                    allocate(job, 0, 0, 0, server)
+                    allocate(job, job.loading_speed, job.compute_speed, job.sending_speed, server)
+                    break
     except (KeyError, AssertionError) as e:
         print("Assertion error in fixed optimal algo: ", e)
         print_model_solution(model_solution)

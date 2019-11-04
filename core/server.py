@@ -157,9 +157,8 @@ class Server(object):
         self.available_storage -= job.required_storage
         self.available_computation -= job.compute_speed
         self.available_bandwidth -= (job.loading_speed + job.sending_speed)
-
+        
         self.revenue += job.price
-        self.value += job.value
 
     def reset_allocations(self):
         """

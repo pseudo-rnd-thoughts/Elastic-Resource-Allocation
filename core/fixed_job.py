@@ -43,7 +43,7 @@ class FixedJob(Job):
             model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
-                 price: float = 0):
+                 price: float = None):
         """
         Overrides the allocate function from job to just allocate the running server and the price
         :param loading_speed: Ignored
@@ -55,7 +55,9 @@ class FixedJob(Job):
         assert self.running_server is None
 
         self.running_server = running_server
-        self.price = price
+        
+        if price is not None:
+            self.price = price
 
     def reset_allocation(self, forgot_price: bool = True):
         """
