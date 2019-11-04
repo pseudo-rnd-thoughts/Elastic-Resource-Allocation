@@ -147,3 +147,11 @@ papers/*
 
 *.json
 *-eps-converted-to.pdf
+
+!.idea/
+/.idea/excel_internship.iml
+/.idea/jsonSchemas.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/other.xml
+/.idea/vcs.xml
