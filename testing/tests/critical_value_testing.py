@@ -60,15 +60,22 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
             server.price_change = price_change
         iterative_result = decentralised_iterative_auction(jobs, servers, decentralised_iterative_time_limit)
         auction_results['price change {}'.format(price_change)] = iterative_result.store()
-
+        reset_model(jobs, servers)
+        
         # Tests the critical value
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
+                    try:
+                        critical_value_result = critical_value_auction(jobs, servers, value_density,
+                                                                       server_selection_policy,
+                                                                       resource_allocation_policy)
+                        auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+                    except Exception as e:
+                        print("Critical Error")
+                        print(e)
+                    
                     reset_model(jobs, servers)
-                    critical_value_result = critical_value_auction(jobs, servers, value_density,
-                                                                   server_selection_policy, resource_allocation_policy)
-                    auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
 
         # Append the auction results to the data
         data.append(auction_results)

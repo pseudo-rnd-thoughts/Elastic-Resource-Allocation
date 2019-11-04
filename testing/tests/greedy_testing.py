@@ -247,10 +247,14 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
             for ra in [SumPercentage(), SumSpeed()]
         ]
         for (vd, ss, ra) in greedy_policies:
-            greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
-            results[greedy_result.algorithm_name] = greedy_result.store()
-            if debug_results:
-                print(results[greedy_result.algorithm_name])
+            try:
+                greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
+                results[greedy_result.algorithm_name] = greedy_result.store()
+                
+                if debug_results:
+                    print(results[greedy_result.algorithm_name])
+            except Exception as e:
+                print(e)
 
             reset_model(jobs, servers)
 
