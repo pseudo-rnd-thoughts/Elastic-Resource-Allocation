@@ -65,7 +65,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, deb
 
                 name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
                 result = decentralised_iterative_auction(jobs, servers, 15, initial_cost=initial_cost)
-                results[name] = result.store(initial_cost=initial_cost, price_change=price_change)
+                results[name] = result.store(price_change=price_change)
 
                 if debug_results:
                     print(results[name])
@@ -73,6 +73,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, deb
                 reset_model(jobs, servers)
 
         data.append(results)
+        print(results)
 
     # Save the results to the file
     filename = results_filename('round_num', model_dist.file_name, repeat)

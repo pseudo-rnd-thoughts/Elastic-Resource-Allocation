@@ -227,4 +227,4 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
                                                   for job in server.allocated_jobs])))
 
     return Result("DIA", jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
-                  total_iterations=iterations, total_messages=messages)
+                  total_iterations=iterations, total_messages=messages, initial_cost=initial_cost)

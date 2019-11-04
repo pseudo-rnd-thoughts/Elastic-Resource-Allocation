@@ -177,6 +177,7 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debu
             reset_model(jobs, servers)
 
         data.append(results)
+        print(results)
 
     # Save the results to the file
     filename = results_filename('flexible_auction', model_dist.file_name, repeat)

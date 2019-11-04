@@ -200,14 +200,15 @@ def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
         return data['name'], job_dists, server_dists
 
 
-def reset_model(jobs: List[Job], servers: List[Server]):
+def reset_model(jobs: List[Job], servers: List[Server], forgot_price: bool = True):
     """
     Resets all of the jobs and servers back after an allocation
     :param jobs: A list of jobs
     :param servers: A list of servers
+    :param: forgot_price: If to forgot the price of a job
     """
     for job in jobs:
-        job.reset_allocation()
+        job.reset_allocation(forgot_price=forgot_price)
 
     for server in servers:
         server.reset_allocations()

@@ -15,7 +15,8 @@ from greedy.resource_allocation_policy import policies as resource_allocation_po
 from greedy.server_selection_policy import policies as server_selection_policies, \
     all_policies as all_server_selection_policies, SumResources, JobSumResources, Random as RandomServerSelection
 from greedy.value_density import policies as value_densities, \
-    all_policies as all_value_densities, UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Random as RandomValueDensity
+    all_policies as all_value_densities, UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, \
+    Random as RandomValueDensity
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
 from optimal.fixed_optimal import fixed_optimal_algorithm
@@ -258,6 +259,7 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
             reset_model(jobs, servers)
 
         data.append(results)
+        print(results)
 
     # Save the results to the file
     filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
