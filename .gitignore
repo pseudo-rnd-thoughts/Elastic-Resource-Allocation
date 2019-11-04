@@ -143,6 +143,7 @@ out/
 /aamas/ammas20.out
 /aamas/ammas20.synctex.gz
 
-/testing/figures/*/*/*.pdf
-
 papers/*
+
+*.json
+*-eps-converted-to.pdf

@@ -242,7 +242,7 @@ def save_plot(name: str, test_name: str, additional: str = "", image_format: Ima
     elif image_format == ImageFormat.PDF:
         filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
         print("Save file location: " + filename)
-        plt.savefig(filename, format='pdf')
+        plt.savefig(filename, format='pdf', bbox_extra_artists=lgd, bbox_inches='tight')
 
 
 def set_price_change(servers: List[Server], price_change: int):

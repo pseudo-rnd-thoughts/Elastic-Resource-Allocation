@@ -13,7 +13,7 @@ from greedy.server_selection_policy import SumResources
 from greedy.value_density import ValueDensity, UtilityPerResources
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.greedy import allocate_jobs
-from auctions.critical_value_auction import calculate_critical_value
+from auctions.critical_value_auction import calculate_critical_value, critical_value_auction, cv_auction
 
 
 def print_job_density(jobs: List[Job], value_density: ValueDensity):
@@ -155,10 +155,28 @@ def debug_critical_value(model_dist):
                                                                                                optimal, critical))
 
 
+def debug_new_critical(model_dist: ModelDist):
+    jobs, servers = model_dist.create()
+
+    value_density = UtilityPerResources()
+    server_selection_policy = SumResources()
+    resource_allocation_policy = SumPercentage()
+
+    critical_result = critical_value_auction(jobs, servers, value_density, server_selection_policy, resource_allocation_policy)
+    for job in jobs:
+        print("Job {} -> {}".format(job.name, job.price))
+
+    reset_model(jobs, servers)
+    new_critical_result = cv_auction(jobs, servers, value_density, server_selection_policy, resource_allocation_policy)
+    for job in jobs:
+        print("Job {} -> {}".format(job.name, job.price))
+
+
 if __name__ == "__main__":
     args = load_args()
 
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    debug_critical_value(loaded_model_dist)
+    # debug_critical_value(loaded_model_dist)
+    debug_new_critical(loaded_model_dist)

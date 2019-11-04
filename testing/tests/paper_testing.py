@@ -87,8 +87,10 @@ def example_flexible_fixed_test():
     ]
     
     optimal_result = optimal_algorithm(jobs, servers, 15)
+
     print("Flexible")
     print_job_full(jobs)
+    plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.PDF)
     plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.BOTH)
     
     fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
@@ -97,9 +99,19 @@ def example_flexible_fixed_test():
     
     print("\n\nFixed")
     print_job_full(fixed_jobs)
+    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.PDF)
     plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.BOTH)
-    
-    print_results({'Optimal': optimal_result, 'Fixed': fixed_result})
+
+    reset_model(jobs, servers)
+
+    greedy_results = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+
+    print("\n\nGreedy")
+    print_job_full(jobs)
+    plot_allocation_results(jobs, servers, "Greedy Allocation", save_format=ImageFormat.PDF)
+    plot_allocation_results(jobs, servers, "Greedy Allocation", save_format=ImageFormat.BOTH)
+
+    print_results({'Optimal': optimal_result, 'Fixed': fixed_result, 'Greedy': greedy_results})
 
 
 def fog_model_testing():
@@ -124,16 +136,15 @@ def fog_model_testing():
 
 def debug(model_dist: ModelDist):
     jobs, servers = model_dist.create()
-    critical_value_result = critical_value_auction(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage(), debug_critical_value=True)
+    critical_value_result = critical_value_auction(jobs, servers, UtilityDeadlinePerResource(),
+                                                   SumResources(), SumPercentage(), debug_critical_value=True)
     print(critical_value_result.store())
 
 
 if __name__ == "__main__":
-    args = load_args()
+    # args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    # model_name, job_dist, server_dist = load_dist(args['model'])
+    # loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    # greedy_testing(loaded_model_dist, args['repeat'], debug_results=True)
-    # round_num_testing(loaded_model_dist, args['repeat'], debug_results=True)
-    # auction_testing(loaded_model_dist, args['repeat'], debug_results=True)
+    example_flexible_fixed_test()
