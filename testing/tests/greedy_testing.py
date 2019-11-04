@@ -256,8 +256,11 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
 
             reset_model(jobs, servers)
 
+        reset_model(jobs, servers)
         greedy_result = greedy_algorithm(jobs, servers, RandomValueDensity(), RandomServerSelection(), SumPercentage())
         results[greedy_result.algorithm_name] = greedy_result.store()
+
+        reset_model(jobs, servers)
         greedy_result = greedy_algorithm(jobs, servers, RandomValueDensity(), RandomServerSelection(), SumSpeed())
         results[greedy_result.algorithm_name] = greedy_result.store()
 
