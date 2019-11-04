@@ -75,7 +75,7 @@ class Server(object):
                 self.available_computation < 1:
             return False
 
-        for s in range(1, self.available_bandwidth + 1):
+        for s in range(1, self.available_bandwidth):
             if job.required_storage * self.available_computation * (self.available_bandwidth - s) + \
                     s * job.required_computation * (self.available_bandwidth - s) +\
                     s * self.available_computation * job.required_results_data <= \
