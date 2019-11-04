@@ -72,7 +72,7 @@ class Job(object):
         self.running_server = running_server
 
         if price is not None:
-            self.price = price
+            self.price = round(price, 3)
 
     def reset_allocation(self, forgot_price: bool = True):
         """

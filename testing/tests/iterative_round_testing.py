@@ -49,7 +49,8 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
     print("Successful, data saved to " + filename)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, debug_results: bool = False):
+def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
+                      debug_results: bool = False):
     print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
     data = []
     initial_costs = [0, 20, 40, 60, 80]
@@ -64,7 +65,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, deb
                 set_price_change(servers, price_change)
 
                 name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
-                result = decentralised_iterative_auction(jobs, servers, 15, initial_cost=initial_cost)
+                result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
                 results[name] = result.store(price_change=price_change)
 
                 if debug_results:
@@ -92,4 +93,4 @@ if __name__ == "__main__":
     server_price_changes = [1, 2, 5, 10, 15]
 
     # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
-    round_num_testing(loaded_model_dist, args['repeat'])
+    round_num_testing(loaded_model_dist, args['repeat'], debug_results=True)

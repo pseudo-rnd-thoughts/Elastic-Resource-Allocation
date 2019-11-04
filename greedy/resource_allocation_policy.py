@@ -9,7 +9,6 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
 from core.job import Job
 from core.server import Server
-from math import inf
 
 
 class ResourceAllocationPolicy(ABC):

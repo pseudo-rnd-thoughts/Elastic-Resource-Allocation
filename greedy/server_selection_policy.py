@@ -27,11 +27,11 @@ class ServerSelectionPolicy(ABC):
         :return: The selected server
         """
         if self.maximise:
-            return max(((server, self.value(job, server)) for server in servers if server.can_run(job)),
-                       key=lambda sv: sv[1], default=[None])[0]
+            return max((server for server in servers if server.can_run(job)),
+                       key=lambda server: self.value(job, server), default=None)
         else:
-            return min(((server, self.value(job, server)) for server in servers if server.can_run(job)),
-                       key=lambda sv: sv[1], default=[None])[0]
+            return min((server for server in servers if server.can_run(job)),
+                       key=lambda server: self.value(job, server), default=None)
 
     @abstractmethod
     def value(self, job: Job, server: Server) -> float:

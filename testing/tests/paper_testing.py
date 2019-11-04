@@ -2,27 +2,21 @@
 
 from __future__ import annotations
 
-import json
 from typing import Dict, List
 
 from auctions.critical_value_auction import critical_value_auction
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from auctions.fixed_vcg_auction import fixed_vcg_auction
-from auctions.vcg_auction import vcg_auction
-from core.core import ImageFormat, results_filename, set_price_change, load_args
+from core.core import ImageFormat
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job
 from core.model import reset_model, load_dist, ModelDist
 from core.result import Result
 from core.server import Server
 from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPercentage, SumSpeed
-from greedy.server_selection_policy import SumResources, Random as RandomServerSelection, JobSumResources
-from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, Random as RandomValueDensity, \
-    UtilityDeadlinePerResource
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.value_density import UtilityDeadlinePerResource
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
-from optimal.relaxed import relaxed_algorithm
 from testing.analysis.greedy_analysis import plot_allocation_results
 
 

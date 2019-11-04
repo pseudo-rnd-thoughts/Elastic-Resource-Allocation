@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple
 from math import floor
+from typing import List, Tuple
 
+from auctions.critical_value_auction import calculate_critical_value, cv_auction
 from core.core import load_args
-from core.model import reset_model, ModelDist, load_dist
 from core.job import Job
+from core.model import reset_model, ModelDist, load_dist
 from core.server import Server
+from greedy.greedy import allocate_jobs
+from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import ValueDensity, UtilityPerResources
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.greedy import allocate_jobs
-from auctions.critical_value_auction import calculate_critical_value, critical_value_auction, cv_auction
 
 
 def print_job_density(jobs: List[Job], value_density: ValueDensity):
@@ -162,15 +162,17 @@ def debug_new_critical(model_dist: ModelDist):
     server_selection_policy = SumResources()
     resource_allocation_policy = SumPercentage()
 
-    critical_result = critical_value_auction(jobs, servers, value_density, server_selection_policy, resource_allocation_policy)
-    for job in jobs:
-        print("Job {} -> {}".format(job.name, job.price))
+    # critical_result = critical_value_auction(jobs, servers, value_density,
+    # server_selection_policy, resource_allocation_policy)
+    # for job in jobs:
+    #     print("Job {} -> {}".format(job.name, job.price))
 
-    reset_model(jobs, servers)
-    new_critical_result = cv_auction(jobs, servers, value_density, server_selection_policy, resource_allocation_policy)
-    for job in jobs:
-        print("Job {} -> {}".format(job.name, job.price))
-
+    # reset_model(jobs, servers)
+    
+    new_critical_result = cv_auction(jobs, servers, value_density, server_selection_policy, resource_allocation_policy,
+                                     debug_critical_value=True)
+    print(new_critical_result.store())
+    
 
 if __name__ == "__main__":
     args = load_args()

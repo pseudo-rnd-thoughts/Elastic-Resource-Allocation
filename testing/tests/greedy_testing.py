@@ -238,12 +238,10 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
 
         greedy_policies = [
             (vd, ss, ra)
-            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
-                       RandomValueDensity(), Value()]
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
             for ss in [SumResources(), SumResources(True),
                        JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
-                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True),
-                       RandomServerSelection()]
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
             for ra in [SumPercentage(), SumSpeed()]
         ]
         for (vd, ss, ra) in greedy_policies:
@@ -257,6 +255,11 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
                 print(e)
 
             reset_model(jobs, servers)
+
+        greedy_result = greedy_algorithm(jobs, servers, RandomValueDensity(), RandomServerSelection(), SumPercentage())
+        results[greedy_result.algorithm_name] = greedy_result.store()
+        greedy_result = greedy_algorithm(jobs, servers, RandomValueDensity(), RandomServerSelection(), SumSpeed())
+        results[greedy_result.algorithm_name] = greedy_result.store()
 
         data.append(results)
         print(results)

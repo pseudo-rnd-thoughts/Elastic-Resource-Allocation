@@ -14,7 +14,7 @@ from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
-                     time_limit: int = 15, initial_cost: int = 0,
+                     time_limit: int = 15, initial_cost: int = 20,
                      mutate_percent: float = 0.05, mutate_repeats: int = 10):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference

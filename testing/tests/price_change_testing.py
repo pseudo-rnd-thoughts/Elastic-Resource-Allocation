@@ -17,8 +17,7 @@ from core.fixed_job import FixedJob, FixedSumSpeeds
 
 
 def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_changes=(1, 2, 3, 5, 7, 10),
-                              vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
-                              decentralised_iterative_time_limit: int = 15):
+                              vcg_time_limit: int = 15, time_limit: int = 15):
     """
     Test the decentralised iterative auction where a uniform price change
     :param model_dist: The model distribution
@@ -26,8 +25,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
     :param repeats: The number of repeats
     :param price_changes: The uniform price changes
     :param vcg_time_limit: The compute time limit for vcg
-    :param fixed_vcg_time_limit: The compute time limit for fixed vcg
-    :param decentralised_iterative_time_limit: The compute time limit for decentralised iterative time limit
+    :param time_limit: The compute time limit for decentralised iterative time limit
     """
     print("Single price change of {} with iterative auctions for {} jobs and {} servers"
           .format(', '.join([str(x) for x in price_changes]), model_dist.num_jobs, model_dist.num_servers))
@@ -43,20 +41,22 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         # Calculate the vcg auction
         vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
+        
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
+        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
 
         # For each uniform price change, set all of the server prices to that and solve auction
         for price_change in price_changes:
             reset_model(jobs, servers)
+            
             for server in servers:
                 server.price_change = price_change
 
-            iterative_result = decentralised_iterative_auction(jobs, servers, decentralised_iterative_time_limit)
+            iterative_result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=20)
             auction_results['price change {}'.format(price_change)] = iterative_result.store()
 
         # Append the auction results to the data

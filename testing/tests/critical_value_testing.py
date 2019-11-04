@@ -137,7 +137,8 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
     print("Successful, data saved to " + filename)
 
 
-def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
+def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_time_limit: int = 15,
+                    debug_results: bool = False):
     print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
@@ -145,7 +146,7 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debu
         jobs, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers, 30)
+        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
         results['VCG'] = vcg_result.store() if vcg_result else 'failure'
         if debug_results:
             print(results['VCG'])
@@ -153,7 +154,7 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debu
         reset_model(jobs, servers)
 
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_result = fixed_vcg_auction(fixed_jobs, servers, 30)
+        fixed_result = fixed_vcg_auction(fixed_jobs, servers, vcg_time_limit)
         results['Fixed VCG'] = fixed_result.store() if fixed_result else 'failure'
         if debug_results:
             print(results['Fixed VCG'])

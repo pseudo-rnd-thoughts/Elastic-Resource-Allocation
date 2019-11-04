@@ -205,7 +205,7 @@ def reset_model(jobs: List[Job], servers: List[Server], forgot_price: bool = Tru
     Resets all of the jobs and servers back after an allocation
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param: forgot_price: If to forgot the price of a job
+    :param forgot_price: If to forgot the job price
     """
     for job in jobs:
         job.reset_allocation(forgot_price=forgot_price)

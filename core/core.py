@@ -116,7 +116,7 @@ def print_job_allocation(jobs: List[Job]):
             print("Job {} - None".format(job.name))
 
 
-def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = 0):
+def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = None):
     """
     Allocate a job to a server
     :param job: The job
