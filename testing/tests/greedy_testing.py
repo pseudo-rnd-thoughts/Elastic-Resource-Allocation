@@ -16,7 +16,7 @@ from greedy.server_selection_policy import policies as server_selection_policies
     all_policies as all_server_selection_policies, SumResources, JobSumResources, Random as RandomServerSelection
 from greedy.value_density import policies as value_densities, \
     all_policies as all_value_densities, UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, \
-    Random as RandomValueDensity
+    Random as RandomValueDensity, Value
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import matrix_greedy
 from optimal.fixed_optimal import fixed_optimal_algorithm
@@ -239,7 +239,7 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
         greedy_policies = [
             (vd, ss, ra)
             for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(),
-                       RandomValueDensity()]
+                       RandomValueDensity(), Value()]
             for ss in [SumResources(), SumResources(True),
                        JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
                        JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True),

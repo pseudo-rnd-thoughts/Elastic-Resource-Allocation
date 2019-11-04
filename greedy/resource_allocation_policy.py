@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Tuple
 
-from docplex.cp.model import CpoModel
+from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
 from core.job import Job
 from core.server import Server
@@ -68,9 +68,16 @@ class ResourceAllocationPolicy(ABC):
 
         model_solution = model.solve(log_output=None)
 
-        return model_solution.get_value(loading_speed), \
-            model_solution.get_value(compute_speed), \
-            model_solution.get_value(sending_speed)
+        if model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+            print("Error in resource allocation as model solution is {}".format(model_solution.get_search_status()))
+            print("Available storage: {}, computation: {}, bandwidth: {}"
+                  .format(server.available_storage, server.available_computation, server.available_bandwidth))
+            print("Required storage: {}, compute: {}, results data: {}"
+                  .format(job.required_storage, job.required_computation, job.required_results_data))
+        else:
+            return model_solution.get_value(loading_speed), \
+                model_solution.get_value(compute_speed), \
+                model_solution.get_value(sending_speed)
 
     @abstractmethod
     def evaluate(self, job: Job, server: Server,

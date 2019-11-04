@@ -182,6 +182,20 @@ class Storage(ValueDensity):
         return density * job.required_storage
 
 
+class Value(ValueDensity):
+
+    def __init__(self):
+        super().__init__("Value")
+
+    def evaluate(self, job: Job) -> float:
+        """Value density function"""
+        return job.value
+
+    def inverse(self, job: Job, density: float) -> float:
+        """Inverse evaluation function"""
+        return density
+
+
 # Functions you actually want to use
 policies = [
     UtilityPerResources(),
