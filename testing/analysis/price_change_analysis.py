@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Iterable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -16,13 +16,13 @@ matplotlib.rcParams['font.family'] = "monospace"
 
 
 def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
-                         save_format: ImageFormat = ImageFormat.NONE):
+                         save_formats: Iterable[ImageFormat] = ()):
     """
     Plots the auction results
     :param encoded_filenames: The list of encoded filenames
     :param y_axis: The y axis on the plot
-    :param title:
-    :param save_format:
+    :param title: The graph titles
+    :param save_formats: List of save formats
     """
     data = []
     test_name: str = ""
@@ -51,18 +51,18 @@ def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, y_axis), "price_change", image_format=save_format)
+    save_plot(analysis_filename(test_name, y_axis), "price_change", image_formats=save_formats)
     plt.show()
 
 
 def plot_multiple_price_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
-                                        save_format: ImageFormat = ImageFormat.NONE):
+                                        save_formats: Iterable[ImageFormat] = ()):
     """
     Plots the auction results
     :param encoded_filenames: A list of encoded filenames
     :param y_axis: The y axis on the plot
-    :param title:
-    :param save_format:
+    :param title: The graph title
+    :param save_formats: List of save formats
     """
     data = []
     test_name: str = ""
@@ -89,7 +89,7 @@ def plot_multiple_price_auction_results(encoded_filenames: List[str], y_axis: st
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, y_axis), "price_change", image_format=save_format)
+    save_plot(analysis_filename(test_name, y_axis), "price_change", image_formats=save_formats)
     plt.show()
 
 
@@ -110,8 +110,8 @@ if __name__ == "__main__":
 
     for attribute in ['Sum Value', 'Total Money', 'Solve Time']:
         plot_auction_results(uniform, attribute, '{} of uniform basic model'.format(attribute),
-                             save_format=ImageFormat.BOTH)
+                             save_formats=[ImageFormat.EPS, ImageFormat.PNG])
         plot_multiple_price_auction_results(non_uniform, attribute, '{} of non uniform basic model'.format(attribute),
-                                            save_format=ImageFormat.BOTH)
+                                            save_formats=[ImageFormat.EPS, ImageFormat.PNG])
     plot_auction_results(uniform, 'Best Total Money', '{} of uniform basic model'.format('Best Total Money'),
-                         save_format=ImageFormat.BOTH)
+                         save_formats=[ImageFormat.EPS, ImageFormat.PNG])

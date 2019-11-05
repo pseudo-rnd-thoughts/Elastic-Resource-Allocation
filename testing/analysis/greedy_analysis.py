@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Iterable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -25,13 +25,13 @@ matplotlib.rcParams['font.family'] = "monospace"
 
 
 def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
-                            save_format: ImageFormat = ImageFormat.NONE):
+                            save_formats: Iterable[ImageFormat] = ()):
     """
-
-    :param jobs:
-    :param servers:
-    :param title:
-    :param save_format:
+    Plots the allocation results
+    :param jobs: List of jobs
+    :param servers: List of servers
+    :param title: The title
+    :param save_formats: The save format list
     """
     allocated_jobs = [job for job in jobs if job.running_server]
     loading_df = pd.DataFrame(
@@ -77,11 +77,11 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
         n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
 
     l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.25])
-    plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05])
+    lgd = plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05])
     axe.add_artist(l1)
 
-    save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "allocation",
-              image_format=save_format, lgd=l1)
+    save_plot(analysis_filename("", title.lower().replace(" ", "_")), "allocation",
+              image_formats=save_formats)
     plt.show()
 
 
@@ -105,13 +105,13 @@ def allocation_analysis():
 
 
 def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
-                            title: str, save_format: ImageFormat = ImageFormat.NONE):
+                            title: str, save_formats: Iterable[ImageFormat] = ()):
     """
     All Algorithm test results analysis
     :param encoded_filenames: List of encoded filenames
     :param x_axis: The X axis to plot
     :param title: The title at the top of the plot
-    :param save_format: If to save the plot
+    :param save_formats: List of save formats
     """
     data = []
     model_names: List[str] = []
@@ -154,7 +154,7 @@ def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, x_axis), "greedy", image_format=save_format)
+    save_plot(analysis_filename(test_name, x_axis), "greedy", image_formats=save_formats)
     plt.show()
 
 

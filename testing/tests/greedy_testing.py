@@ -207,6 +207,13 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
 
 
 def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
+    """
+    Testing to be used in the paper
+    :param model_dist: Model distribution
+    :param repeat: The repeat
+    :param repeats: The number of repeats
+    :param debug_results: If to debug the results
+    """
     print("Greedy testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []

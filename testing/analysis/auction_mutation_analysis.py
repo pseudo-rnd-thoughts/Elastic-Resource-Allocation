@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Iterable
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,13 +13,13 @@ from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 
 def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
-                         save_format: ImageFormat = ImageFormat.NONE):
+                         save_formats: Iterable[ImageFormat] = ()):
     """
     Analysis of the mutate job testing
     :param encoded_filenames: A list of encoded filenames
     :param y_axis: The y axis on the plot
     :param title: The title of the plot
-    :param save_format: The save format
+    :param save_formats: The save format lists
     """
     data = []
     test_name: str = ""
@@ -54,7 +54,7 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, y_axis), "auction_mutation", image_format=save_format)
+    save_plot(analysis_filename(test_name, y_axis), "auction_mutation", image_formats=save_formats)
     plt.show()
 
 
@@ -69,7 +69,7 @@ if __name__ == "__main__":
         "mutate_iterative_auction_basic_j25_s5_0"
     ]
     mutated_job_analysis(mutate_september_20, 'Mutate Difference', 'Effect of job misrepresentation on prices',
-                         save_format=ImageFormat.BOTH)
+                         save_formats=[ImageFormat.EPS, ImageFormat.PNG])
 
     # All jobs mutation auction testing
 

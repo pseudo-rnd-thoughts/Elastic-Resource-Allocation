@@ -183,6 +183,7 @@ class Storage(ValueDensity):
 
 
 class Value(ValueDensity):
+    """Ordered by the value of the jobs alone"""
 
     def __init__(self):
         super().__init__("Value")
@@ -211,6 +212,6 @@ all_policies += [
     for value_density in [UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource]
     for resource_function in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
 ]
-all_policies += [Storage(), Random()]
+all_policies += [Storage(), Random(), Value()]
 
 max_name_length = max(len(policy.name) for policy in policies)

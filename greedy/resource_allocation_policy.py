@@ -41,7 +41,8 @@ class ResourceAllocationPolicy(ABC):
         for s in range(1, server.available_bandwidth + 1):
             for w in range(1, server.available_computation + 1):
                 for r in range(1, server.available_bandwidth - s + 1):
-                    if job.required_storage * w * r + s * job.required_computation * r + s * w * job.required_results_data <= job.deadline * s * w * r:
+                    if job.required_storage * w * r + s * job.required_computation * r + 
+                    s * w * job.required_results_data <= job.deadline * s * w * r:
                         value = self.evaluate(job, server, s, w, r)
                         if value < min_value:
                             min_value = value

@@ -51,6 +51,14 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
 
 def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
                       debug_results: bool = False):
+    """
+    Testing the number of rounds required to converg on the price
+    :param model_dist: The model distribution
+    :param repeat: The repeat number
+    :param repeats: The number of repeats
+    :param time_limit: The time limit for the auctions
+    :param debug_results: If to debug the results
+    """
     print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
     data = []
     initial_costs = [0, 20, 40, 60, 80]
