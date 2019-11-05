@@ -195,4 +195,4 @@ if __name__ == "__main__":
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
     # all_policies_critical_value(loaded_model_dist, args['repeat'])
-    auction_testing(loaded_model_dist, args['repeat'])
+    auction_testing(loaded_model_dist, args['repeat'], repeats=1)

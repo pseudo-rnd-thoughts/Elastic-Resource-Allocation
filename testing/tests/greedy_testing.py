@@ -283,4 +283,4 @@ if __name__ == "__main__":
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
     # all_policies_test(loaded_model_dist, args['repeat'], repeats=1)
-    paper_testing(loaded_model_dist, args['repeat'])
+    paper_testing(loaded_model_dist, args['repeat'], repeats=1)

@@ -135,5 +135,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    uniform_price_change_test(loaded_model_dist, args['repeat'])
+    uniform_price_change_test(loaded_model_dist, args['repeat'], repeats=1)
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

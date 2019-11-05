@@ -68,9 +68,6 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
                 result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
                 results[name] = result.store(price_change=price_change)
 
-                if debug_results:
-                    print(results[name])
-
                 reset_model(jobs, servers)
 
         data.append(results)
@@ -93,4 +90,4 @@ if __name__ == "__main__":
     server_price_changes = [1, 2, 5, 10, 15]
 
     # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
-    round_num_testing(loaded_model_dist, args['repeat'], debug_results=True)
+    round_num_testing(loaded_model_dist, args['repeat'], repeats=1)
