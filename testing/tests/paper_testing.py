@@ -70,19 +70,18 @@ def example_flexible_fixed_test():
     Example flexible vs fixed test
     """
     jobs = [
-        Job("Alpha", required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
-        Job("Beta", required_storage=75, required_computation=125, required_results_data=40, deadline=10, value=90),
-        Job("Charlie", required_storage=125, required_computation=110, required_results_data=45, deadline=10,
-            value=110),
-        Job("Delta", required_storage=100, required_computation=75, required_results_data=60, deadline=10, value=75),
-        Job("Echo", required_storage=85, required_computation=90, required_results_data=55, deadline=10, value=125),
-        Job("Foxtrot", required_storage=75, required_computation=120, required_results_data=40, deadline=10, value=100),
-        Job("Golf", required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
-        Job("Hotel", required_storage=115, required_computation=75, required_results_data=55, deadline=10, value=110),
-        Job("India", required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
-        Job("Juliet", required_storage=90, required_computation=120, required_results_data=40, deadline=10, value=90),
-        Job("Kilo", required_storage=110, required_computation=90, required_results_data=45, deadline=10, value=100),
-        Job("Lima", required_storage=100, required_computation=80, required_results_data=55, deadline=10, value=100)
+        Job("Alpha",   required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
+        Job("Beta",    required_storage=75,  required_computation=125, required_results_data=40, deadline=10, value=90),
+        Job("Charlie", required_storage=125, required_computation=110, required_results_data=45, deadline=10, value=110),
+        Job("Delta",   required_storage=100, required_computation=75,  required_results_data=60, deadline=10, value=75),
+        Job("Echo",    required_storage=85,  required_computation=90,  required_results_data=55, deadline=10, value=125),
+        Job("Foxtrot", required_storage=75,  required_computation=120, required_results_data=40, deadline=10, value=100),
+        Job("Golf",    required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
+        Job("Hotel",   required_storage=115, required_computation=75,  required_results_data=55, deadline=10, value=110),
+        Job("India",   required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
+        Job("Juliet",  required_storage=90,  required_computation=120, required_results_data=40, deadline=10, value=90),
+        Job("Kilo",    required_storage=110, required_computation=90,  required_results_data=45, deadline=10, value=100),
+        Job("Lima",    required_storage=100, required_computation=80,  required_results_data=55, deadline=10, value=100)
     ]
     
     servers = [
@@ -140,6 +139,37 @@ def fog_model_testing():
         print()
     
     print(sorted(percent))
+    
+
+def debug_allocation_graph():
+    jobs = [
+        Job("Alpha", required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
+        Job("Beta", required_storage=75, required_computation=125, required_results_data=40, deadline=10, value=90),
+        Job("Charlie", required_storage=125, required_computation=110, required_results_data=45, deadline=10,
+            value=110),
+        Job("Delta", required_storage=100, required_computation=75, required_results_data=60, deadline=10, value=75),
+        Job("Echo", required_storage=85, required_computation=90, required_results_data=55, deadline=10, value=125),
+        Job("Foxtrot", required_storage=75, required_computation=120, required_results_data=40, deadline=10, value=100),
+        Job("Golf", required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
+        Job("Hotel", required_storage=115, required_computation=75, required_results_data=55, deadline=10, value=110),
+        Job("India", required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
+        Job("Juliet", required_storage=90, required_computation=120, required_results_data=40, deadline=10, value=90),
+        Job("Kilo", required_storage=110, required_computation=90, required_results_data=45, deadline=10, value=100),
+        Job("Lima", required_storage=100, required_computation=80, required_results_data=55, deadline=10, value=100)
+    ]
+    
+    servers = [
+        Server("X-Ray", storage_capacity=400, computation_capacity=100, bandwidth_capacity=220),
+        Server("Yankee", storage_capacity=450, computation_capacity=100, bandwidth_capacity=210),
+        Server("Zulu", storage_capacity=375, computation_capacity=90, bandwidth_capacity=250)
+    ]
+    
+    greedy_results = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+
+    print("\n\nGreedy")
+    print_job_full(jobs)
+    plot_allocation_results(jobs, servers, "Greedy Allocation",
+                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
 
 if __name__ == "__main__":
@@ -148,4 +178,5 @@ if __name__ == "__main__":
     # model_name, job_dist, server_dist = load_dist(args['model'])
     # loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    example_flexible_fixed_test()
+    # example_flexible_fixed_test()
+    debug_allocation_graph()

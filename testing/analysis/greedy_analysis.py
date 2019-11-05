@@ -46,10 +46,11 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
         [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
           for job in allocated_jobs] for server in servers],
         index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
-    resource_df = [loading_df, compute_df, sending_df]
+    resource_df = [loading_df]
 
     hatching = '/'
 
+    n_row = len(resource_df)
     n_col = len(resource_df[0].columns)
     n_ind = len(resource_df[0].index)
     axe = plt.subplot(111)
@@ -58,14 +59,14 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
         axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
 
     h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
-    for i in range(0, 3 * n_col, n_col):  # len(h) = n_col * n_df
+    for i in range(0, n_row * n_col, n_col):  # len(h) = n_col * n_df
         for j, pa in enumerate(h[i:i + n_col]):
             for rect in pa.patches:  # for each index
-                rect.set_x(rect.get_x() + 1 / float(3 + 1) * i / float(n_col))
+                rect.set_x(rect.get_x() + 1 / float(n_row + 1) * i / float(n_col))
                 rect.set_hatch(hatching * int(i / n_col))  # edited part
-                rect.set_width(1 / float(3 + 1))
+                rect.set_width(1 / float(n_row + 1))
 
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2.)
+    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_row + 1)) / 2.)
     axe.set_xticklabels(resource_df[0].index, rotation=0)
     axe.set_title(title)
     axe.set_xlabel("Servers")

@@ -10,8 +10,8 @@
       "required_computation_std": 15,
       "required_results_data_mean": 50,
       "required_results_data_std": 10,
-      "value_mean": 100,
-      "value_std": 30,
+      "value_mean": 50,
+      "value_std": 20,
       "deadline_mean": 10,
       "deadline_std": 2
     }

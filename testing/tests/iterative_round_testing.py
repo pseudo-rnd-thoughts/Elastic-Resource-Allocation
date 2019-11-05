@@ -49,7 +49,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
     print("Successful, data saved to " + filename)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
+def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 5,
                       debug_results: bool = False):
     """
     Testing the number of rounds required to convergence on the price
@@ -61,9 +61,10 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
     """
     print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
     data = []
-    initial_costs = [0, 20, 40, 60, 80]
-    price_changes = [1, 2, 3, 5, 8]
-    for _ in range(repeats):
+    initial_costs = [0, 5, 10, 15, 20]
+    price_changes = [1, 2,  3,  5,  8]
+    
+    for _ in tqdm(range(repeats)):
         jobs, servers = model_dist.create()
 
         results = {}

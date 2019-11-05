@@ -145,7 +145,6 @@ out/
 
 papers/*
 
-*.json
 *-eps-converted-to.pdf
 
 !.idea/

@@ -150,7 +150,7 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
     print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []
-    for _ in range(repeats):
+    for _ in tqdm(range(repeats)):
         jobs, servers = model_dist.create()
         results = {}
 

@@ -8,14 +8,15 @@ from random import choice
 from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from core.core import results_filename, list_item_replacement, load_args
+from core.core import results_filename, list_item_replacement, load_args, set_price_change
 from core.job import Job, job_diff
 from core.model import ModelDist, reset_model, load_dist
 
 
-def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
-                     time_limit: int = 15, initial_cost: int = 20,
-                     mutate_percent: float = 0.05, mutate_repeats: int = 10, debug_results: bool = False):
+def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
+                     time_limit: int = 5, price_change: int = 2, initial_cost: int = 0,
+                     mutate_percent: float = 0.05, mutate_repeats: int = 10,
+                     debug_results: bool = False):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference
     :param model_dist: The model
@@ -26,6 +27,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
     :param initial_cost: The initial cost function
     :param mutate_percent: The mutate percentage
     :param mutate_repeats: The number of mutate repeats
+    :param debug_results: If to debug the results
     """
     print("Mutate jobs and servers with iterative auctions for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
@@ -34,8 +36,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
     for _ in tqdm(range(repeats)):
         # Generate the model and set the price change to 2 as default
         jobs, servers = model_dist.create()
-        for server in servers:
-            server.price_change = price_change
+        set_price_change(servers, price_change)
 
         # Calculate the results without any mutation
         no_mutation_result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost)
@@ -57,7 +58,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
             list_item_replacement(jobs, job, mutant_job)
 
             # Find the result with the mutated job
-            mutant_result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost)
+            mutant_result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
             if mutant_result is not None:
                 auction_results[job.name + ' job'] = \
                     mutant_result.store(difference=job_diff(job, mutant_job), mutant_value=mutant_job.price,
@@ -80,7 +81,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
-                           time_limit: int = 15, initial_cost: int = 0):
+                           time_limit: int = 15, initial_cost: int = 0, debug_results: bool = False):
     """
     Tests all of the mutations for an iterative auction
     :param model_dist: The model distribution
@@ -89,6 +90,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
     :param num_mutated_jobs: The number of mutated jobs
     :param time_limit: The time limit on the decentralised iterative auction
     :param initial_cost: The initial cost of the job
+    :param debug_results: If to debug the results
     """
     print("All mutation auction tests with {} jobs and {} servers, time limit {} sec and initial cost {} "
           .format(model_dist.num_jobs, model_dist.num_servers, time_limit, initial_cost))
@@ -133,19 +135,19 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             if result is not None:
                                 mutation_results.append(result.store(difference=job_diff(mutant_job, job),
                                                                      mutant_value=mutant_job))
-                                print(result.store(difference=job_diff(mutant_job, job), mutant_value=mutant_job))
+                                if debug_results:
+                                    print(result.store(difference=job_diff(mutant_job, job), mutant_value=mutant_job))
 
                             # Remove the mutant job and read the job to the list of jobs and reset the model
                             list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
-        print()
-
+        
     # Save all of the results to a file
     filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(mutation_results, file)
     print("Successful, data saved to " + filename)
-
+    
 
 if __name__ == "__main__":
     args = load_args()

@@ -156,13 +156,12 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
                   .format(job.name, "allocated" if allocation[job] else "unallocated", server.name,
                           loading[job], compute[job], sending[job]))
     if debug_result:
-        print("Server {}'s total price: {}".format(server.name, server.revenue))
+        print("{}'s total price: {}".format(server.name, server.revenue))
 
     return messages
 
 
-def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
-                                    initial_cost: int = 0,
+def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int, initial_cost: int = 0,
                                     debug_allocation: bool = False, debug_results: bool = False) -> Result:
     """
     A decentralised iterative auctions created by Seb Stein and Mark Towers
