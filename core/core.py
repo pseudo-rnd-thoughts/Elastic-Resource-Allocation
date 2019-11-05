@@ -80,7 +80,10 @@ def analysis_filename(test_name: str, axis: str) -> str:
     :param axis: The axis name
     :return: The concatenation of the test name and the axis
     """
-    return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
+    if test_name == "":
+        return axis.lower().replace(" ", "_")
+    else:
+        return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
 
 
 def print_job_values(job_values: List[Tuple[Job, float]]):
@@ -213,36 +216,34 @@ class ImageFormat(Enum):
     EPS = auto()
     PNG = auto()
     PDF = auto()
-    BOTH = auto()
-    NONE = auto()
 
 
-def save_plot(name: str, test_name: str, additional: str = "", image_format: ImageFormat = ImageFormat.NONE, lgd=None):
+def save_plot(name: str, test_name: str, additional: str = "",
+              image_formats: Iterable[ImageFormat] = (), lgd=None):
     """
     Saves the plot to a file of the particular image format
     :param name: The plot name
     :param test_name: The test name
     :param additional: Additional information to add to the filename
-    :param image_format: The image format
+    :param image_formats: The image format list
     :param lgd: The legend to be added to the plot when saved
     """
     if lgd:
         lgd = (lgd, )
-    if image_format == ImageFormat.EPS:
-        filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.PNG:
-        filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.BOTH:
-        save_plot(name, test_name, additional, ImageFormat.EPS, lgd)
-        save_plot(name, test_name, additional, ImageFormat.PNG, lgd)
-    elif image_format == ImageFormat.PDF:
-        filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='pdf', bbox_extra_artists=lgd, bbox_inches='tight')
+
+    for image_format in image_formats:
+        if image_format == ImageFormat.EPS:
+            filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+        elif image_format == ImageFormat.PNG:
+            filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
+        elif image_format == ImageFormat.PDF:
+            filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='pdf', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
 
 
 def set_price_change(servers: List[Server], price_change: int):

@@ -139,6 +139,14 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
 
 def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_time_limit: int = 15,
                     debug_results: bool = False):
+    """
+    Critical value auction testing
+    :param model_dist: The model distribution
+    :param repeat: The repeat number
+    :param repeats: The number of repeats
+    :param vcg_time_limit: The VCG time limit
+    :param debug_results: If to debug the results
+    """
     print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
           .format(model_dist.num_jobs, model_dist.num_servers))
     data = []

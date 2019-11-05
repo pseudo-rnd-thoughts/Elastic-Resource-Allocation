@@ -21,6 +21,10 @@ from testing.analysis.greedy_analysis import plot_allocation_results
 
 
 def print_results(results: Dict[str, Result]):
+    """
+    Print a dictionary of results
+    :param results: Dictionary of results with the key as the result name
+    """
     max_name_len = max(len(name) for name in results.keys())
     max_storage_len = max(
         len('{}'.format(list(result.data['server storage usage'].values()))) for result in results.values())
@@ -42,6 +46,10 @@ def print_results(results: Dict[str, Result]):
 
 
 def print_job_full(jobs: List[Job]):
+    """
+    Prints the attributes of a list of jobs in whole
+    :param jobs: List of jobs
+    """
     print("\t\tJobs")
     max_job_name_len = max(len(job.name) for job in jobs) + 1
     print("{:<{}}| Value |{:^9}|{:^13}|{:^9}|{:^10}|{:^9}|{:^9}|{:^9}| {}"
@@ -58,6 +66,9 @@ def print_job_full(jobs: List[Job]):
 
 
 def example_flexible_fixed_test():
+    """
+    Example flexible vs fixed test
+    """
     jobs = [
         Job("Alpha", required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
         Job("Beta", required_storage=75, required_computation=125, required_results_data=40, deadline=10, value=90),
@@ -84,17 +95,17 @@ def example_flexible_fixed_test():
 
     print("Flexible")
     print_job_full(jobs)
-    plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.PDF)
-    plot_allocation_results(jobs, servers, "Flexible Optimal Allocation", save_format=ImageFormat.BOTH)
-    
-    fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+    plot_allocation_results(jobs, servers, "Flexible Optimal Allocation",
+                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
+
+    fixed_jobs = [FixedJob(job, FixedSumSpeeds(), False) for job in jobs]
     reset_model(jobs, servers)
     fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 15)
     
     print("\n\nFixed")
     print_job_full(fixed_jobs)
-    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.PDF)
-    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation", save_format=ImageFormat.BOTH)
+    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation",
+                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
     reset_model(jobs, servers)
 
@@ -102,13 +113,16 @@ def example_flexible_fixed_test():
 
     print("\n\nGreedy")
     print_job_full(jobs)
-    plot_allocation_results(jobs, servers, "Greedy Allocation", save_format=ImageFormat.PDF)
-    plot_allocation_results(jobs, servers, "Greedy Allocation", save_format=ImageFormat.BOTH)
+    plot_allocation_results(jobs, servers, "Greedy Allocation",
+                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
     print_results({'Optimal': optimal_result, 'Fixed': fixed_result, 'Greedy': greedy_results})
 
 
 def fog_model_testing():
+    """
+    FOG model testing
+    """
     model_name, job_dist, server_dist = load_dist("../../models/fog.json")
     model_dist = ModelDist(model_name, job_dist, 12, server_dist, 3)
     
@@ -126,13 +140,6 @@ def fog_model_testing():
         print()
     
     print(sorted(percent))
-
-
-def debug(model_dist: ModelDist):
-    jobs, servers = model_dist.create()
-    critical_value_result = critical_value_auction(jobs, servers, UtilityDeadlinePerResource(),
-                                                   SumResources(), SumPercentage(), debug_critical_value=True)
-    print(critical_value_result.store())
 
 
 if __name__ == "__main__":

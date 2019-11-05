@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Iterable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -17,13 +17,13 @@ matplotlib.rcParams['font.family'] = "monospace"
 
 
 def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str,
-                      save_format: ImageFormat = ImageFormat.NONE):
+                      save_formats: Iterable[ImageFormat] = ()):
     """
     Plots the price round graphs
     :param encoded_filenames: The list of encoded filenames
     :param x_axis: The x axis on the plot
     :param title: The title of the plot
-    :param save_format: The save image format
+    :param save_formats: The save image format list
     """
     data = []
     test_name: str = ""
@@ -55,7 +55,7 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str,
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, x_axis), "iterative_round", image_format=save_format)
+    save_plot(analysis_filename(test_name, x_axis), "iterative_round", image_formats=save_formats)
     plt.show()
 
 
@@ -69,5 +69,7 @@ if __name__ == "__main__":
     ]
 
     for attribute in ["Total Iterations", "Total Messages", "Total Money", "Solve Time", 'Sum Value']:
-        plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute), save_format=ImageFormat.BOTH)
-    plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'), save_format=ImageFormat.BOTH)
+        plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute),
+                          save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'),
+                      save_formats=[ImageFormat.EPS, ImageFormat.PNG])

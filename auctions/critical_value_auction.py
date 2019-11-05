@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-import operator
 from time import time
 from typing import List, Dict, Tuple
 
-from core.core import print_job_values, allocate
+from core.core import allocate
 from core.job import Job
 from core.model import reset_model
 from core.result import Result

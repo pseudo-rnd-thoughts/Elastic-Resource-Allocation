@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Iterable
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,13 +14,13 @@ from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 
 def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: str,
-                            save_format: ImageFormat = ImageFormat.NONE):
+                            save_formats: Iterable[ImageFormat] = ()):
     """
     Analysis of the critical value analysis
     :param encoded_filenames: The list of encoded filenames
     :param x_axis: The x axis to plot
-    :param title:
-    :param save_format:
+    :param title: The title of the graph
+    :param save_formats: List of save formats
     """
     data = []
     test_name: str = ""
@@ -62,7 +62,7 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
     g.fig.subplots_adjust(top=0.92)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, x_axis), "critical_value", image_format=save_format)
+    save_plot(analysis_filename(test_name, x_axis), "critical_value", image_formats=save_formats)
     plt.show()
 
 
@@ -78,4 +78,4 @@ if __name__ == "__main__":
 
     for attribute in ['Total Money', 'Best Total Money', 'Solve Time']:
         critical_value_analysis(basic, attribute, '{} of Basic model'.format(attribute),
-                                save_format=ImageFormat.BOTH)
+                                save_formats=[ImageFormat.EPS, ImageFormat.PNG])

@@ -13,8 +13,9 @@ from core.server import Server
 class FixedJob(Job):
     """Job with a fixing resource usage speed"""
 
-    def __init__(self, job: Job, fixed_value: FixedValue):
-        super().__init__("Fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
+    def __init__(self, job: Job, fixed_value: FixedValue, fixed_name: bool = True):
+        name = "Fixed " + job.name if fixed_name else job.name
+        super().__init__(name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(fixed_value)
