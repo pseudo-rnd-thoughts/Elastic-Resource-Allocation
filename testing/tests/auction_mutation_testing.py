@@ -15,7 +15,7 @@ from core.model import ModelDist, reset_model, load_dist
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
                      time_limit: int = 15, initial_cost: int = 20,
-                     mutate_percent: float = 0.05, mutate_repeats: int = 10):
+                     mutate_percent: float = 0.05, mutate_repeats: int = 10, debug_results: bool = False):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference
     :param model_dist: The model
@@ -62,6 +62,8 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
                 auction_results[job.name + ' job'] = \
                     mutant_result.store(difference=job_diff(job, mutant_job), mutant_value=mutant_job.price,
                                         mutated_value=job_prices[job], allocated=allocated_jobs[job])
+                if debug_results:
+                    print(auction_results[job.name + ' job'])
 
             # Replace the mutant job with the job in the job list
             list_item_replacement(jobs, mutant_job, job)
@@ -151,5 +153,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    mutated_job_test(loaded_model_dist, args['repeat'], repeats=1)
+    mutated_job_test(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
     # all_job_mutations_test(loaded_model_dist, args['repeat'])

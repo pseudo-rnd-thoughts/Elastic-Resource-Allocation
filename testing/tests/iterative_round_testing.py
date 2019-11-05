@@ -52,7 +52,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
 def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
                       debug_results: bool = False):
     """
-    Testing the number of rounds required to converg on the price
+    Testing the number of rounds required to convergence on the price
     :param model_dist: The model distribution
     :param repeat: The repeat number
     :param repeats: The number of repeats
@@ -75,6 +75,9 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
                 name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
                 result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
                 results[name] = result.store(price_change=price_change)
+                
+                if debug_results:
+                    print(results[name])
 
                 reset_model(jobs, servers)
 
@@ -98,4 +101,4 @@ if __name__ == "__main__":
     server_price_changes = [1, 2, 5, 10, 15]
 
     # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
-    round_num_testing(loaded_model_dist, args['repeat'], repeats=1)
+    round_num_testing(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
