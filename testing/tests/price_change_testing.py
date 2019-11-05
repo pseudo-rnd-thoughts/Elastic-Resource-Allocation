@@ -19,7 +19,7 @@ from core.fixed_job import FixedJob, FixedSumSpeeds
 
 def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
                               price_changes: Iterable[int] = (1, 2, 3, 5, 7, 10), initial_cost: int = 15,
-                              vcg_time_limit: int = 15, time_limit: int = 5, debug_results: bool = False):
+                              vcg_time_limit: int = 15, time_limit: int = 15, debug_results: bool = False):
     """
     Test the decentralised iterative auction where a uniform price change
     :param model_dist: The model distribution
@@ -143,5 +143,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    uniform_price_change_test(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    uniform_price_change_test(loaded_model_dist, args['repeat'], time_limit=5)
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

@@ -49,7 +49,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
     print("Successful, data saved to " + filename)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 5,
+def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
                       debug_results: bool = False):
     """
     Testing the number of rounds required to convergence on the price
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    round_num_testing(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    round_num_testing(loaded_model_dist, args['repeat'], time_limit=5)

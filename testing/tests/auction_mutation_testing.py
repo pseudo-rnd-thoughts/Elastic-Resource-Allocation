@@ -14,7 +14,7 @@ from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
-                     time_limit: int = 5, price_change: int = 2, initial_cost: int = 0,
+                     time_limit: int = 15, price_change: int = 2, initial_cost: int = 0,
                      mutate_percent: float = 0.1, mutate_repeats: int = 10,
                      debug_results: bool = False):
     """
@@ -155,5 +155,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    mutated_job_test(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    mutated_job_test(loaded_model_dist, args['repeat'], time_limit=5)
     # all_job_mutations_test(loaded_model_dist, args['repeat'])
