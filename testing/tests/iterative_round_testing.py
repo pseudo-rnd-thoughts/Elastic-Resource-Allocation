@@ -62,7 +62,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
     print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
     data = []
     initial_costs = [0, 5, 10, 15, 20]
-    price_changes = [1, 2,  3,  5,  8]
+    price_changes = [1, 2,  5,  8, 10]
     
     for _ in tqdm(range(repeats)):
         jobs, servers = model_dist.create()
@@ -98,8 +98,4 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    job_initial_cost = [0, 20, 40, 60, 80]
-    server_price_changes = [1, 2, 5, 10, 15]
-
-    # round_test(loaded_model_dist, args['repeat'], job_initial_cost, server_price_changes)
     round_num_testing(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
