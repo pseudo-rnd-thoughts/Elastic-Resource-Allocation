@@ -73,11 +73,10 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         data.append(auction_results)
         print(auction_results)
 
-    # Save all of the results to a file
-    filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
@@ -142,11 +141,10 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
         
-    # Save all of the results to a file
-    filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(mutation_results, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(mutation_results, file)
     
 
 if __name__ == "__main__":

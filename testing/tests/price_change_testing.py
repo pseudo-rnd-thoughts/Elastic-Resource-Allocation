@@ -71,11 +71,10 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         data.append(auction_results)
         print(auction_results)
 
-    # Save all of the results to a file
-    filename = results_filename('uniform_price_change_auction_results', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('price_change_auction', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_changes: int = 10, repeats: int = 20,
@@ -130,11 +129,10 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
         data.append(auction_results)
         print(auction_results)
 
-    # Save the results to a file
-    filename = results_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save the results to a file
+        filename = results_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 if __name__ == "__main__":

@@ -42,11 +42,10 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
 
         data.append(auction_results)
 
-    # Save all of the results to a file
-    filename = results_filename('iterative_round_results', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('iterative_round_results', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
