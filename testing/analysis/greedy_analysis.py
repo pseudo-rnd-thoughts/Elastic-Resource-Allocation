@@ -119,7 +119,7 @@ def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
     test_name: str = ''
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename('greedy', encoded_filename)
+        filename, model_name, test_name = decode_filename('paper', encoded_filename)
         model_names.append(model_name)
 
         with open(filename) as file:
@@ -211,4 +211,14 @@ if __name__ == "__main__":
                                     save_format=image_format)
     """
 
-    allocation_analysis()
+    # allocation_analysis()
+
+    paper = [
+        "flexible_greedy_fog_j15_s3_0",
+        "flexible_greedy_fog_j20_s4_0",
+        "flexible_greedy_fog_j30_s5_0"
+    ]
+
+    for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+        all_algorithms_analysis(paper, attribute, "{} of {} model".format(attribute, "fog"),
+                                save_formats=[ImageFormat.EPS, ImageFormat.PNG])

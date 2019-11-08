@@ -30,7 +30,7 @@ def plot_price_rounds(encoded_filenames: List[str], x_axis: str, title: str,
     model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename('iterative_round', encoded_filename)
+        filename, model_name, test_name = decode_filename('paper', encoded_filename)
         model_names.append(model_name)
 
         with open(filename) as file:
@@ -68,8 +68,11 @@ if __name__ == "__main__":
         "iterative_round_results_basic_j25_s5_0"
     ]
 
+    paper = [
+        "round_num_fog_j15_s3_0"
+    ]
+
     for attribute in ["Total Iterations", "Total Messages", "Total Money", "Solve Time", 'Sum Value']:
-        plot_price_rounds(september_20, attribute, '{} of basic model'.format(attribute),
+        plot_price_rounds(paper, attribute, '{} of basic model'.format(attribute),
                           save_formats=[ImageFormat.EPS, ImageFormat.PNG])
-    plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'),
-                      save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    # plot_price_rounds(september_20, 'Sum Value', '{} of basic model'.format('Sum Value'), save_formats=[ImageFormat.EPS, ImageFormat.PNG])
