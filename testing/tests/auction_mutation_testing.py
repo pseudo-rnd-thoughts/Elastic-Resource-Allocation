@@ -74,7 +74,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         print(auction_results)
 
         # Save all of the results to a file
-        filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)
+        filename = results_filename('mutate_iterative_auction', model_dist.file_name, 1)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
