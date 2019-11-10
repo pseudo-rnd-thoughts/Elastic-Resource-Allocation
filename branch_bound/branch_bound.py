@@ -19,8 +19,8 @@ from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
 def print_allocation(job_server_allocations: Dict[Server, List[Job]]):
     print(', '.join(['{} -> [{}]'.format(server.name, ', '.join([job.name for job in jobs]))
                      for server, jobs in job_server_allocations.items()]))
-    
-    
+
+
 def copy(allocation):
     return {server: [job for job in jobs] for server, jobs in allocation.items()}
 
@@ -79,7 +79,7 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
     :param debug_new_candidates:
     :return: A list of tuples of the allocation, position, lower bound, upper bound
     """
-    
+
     # All of the new candidates of the job being allocated to a server
     new_candidates = []
     for server in servers:
@@ -105,13 +105,15 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
     return new_candidates
 
 
-def branch_bound_algorithm(jobs: List[Job], servers: List[Server], debug_candidate: bool = True,
-                           debug_update_lower_bound: bool = False, debug_feasibility: bool = True) -> Result:
+def branch_bound_algorithm(jobs: List[Job], servers: List[Server], debug_new_candidate: bool = False,
+                           debug_checking_allocation: bool = False, debug_update_lower_bound: bool = False,
+                           debug_feasibility: bool = False) -> Result:
     """
     Branch and bound based algorithm
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param debug_candidate:
+    :param debug_new_candidate:
+    :param debug_checking_allocation:
     :param debug_update_lower_bound:
     :param debug_feasibility:
     :return: The results from the search
@@ -124,14 +126,15 @@ def branch_bound_algorithm(jobs: List[Job], servers: List[Server], debug_candida
     best_speeds: Optional[Dict[Job, Tuple[int, int, int]]] = None
     
     # Generates the initial candidates
-    candidates: List[Tuple[float, float, Dict[Server, List[Job]], int]] = generate_candidates(
-        {server: [] for server in servers}, jobs[0], servers, 1, 0, sum(job.value for job in jobs), best_lower_bound)
+    candidates: List[Tuple[float, float, Dict[Server, List[Job]], int]] = \
+        generate_candidates({server: [] for server in servers}, jobs[0], servers, 1, 0, sum(job.value for job in jobs),
+                            best_lower_bound, debug_new_candidates=debug_new_candidate)
     
     # While candidates exist
     while candidates:
         lower_bound, upper_bound, allocation, pos, = candidates.pop(0)
         
-        if debug_candidate:
+        if debug_checking_allocation:
             print("Checking - Lower bound: {}, Upper bound: {}, pos: {}".format(lower_bound, upper_bound, pos))
             print_allocation(allocation)
         
@@ -142,18 +145,19 @@ def branch_bound_algorithm(jobs: List[Job], servers: List[Server], debug_candida
             
         if job_speeds:
             # Update the lower bound if better
-            if lower_bound > best_lower_bound:
+            if best_lower_bound < lower_bound:
                 if debug_update_lower_bound:
                     print("Update - Lower bound: {}, Best lower bound: {}".format(lower_bound, best_lower_bound))
                 
                 best_allocation = allocation
                 best_speeds = job_speeds
+                best_lower_bound = lower_bound
             
             # Generate the new candidates as the allocation was successful
             if pos < len(jobs):
-                candidates += generate_candidates(allocation, jobs[pos], servers, pos + 1,
-                                                  lower_bound, upper_bound, best_lower_bound)
-    
+                candidates += generate_candidates(allocation, jobs[pos], servers, pos + 1, lower_bound, upper_bound,
+                                                  best_lower_bound, debug_new_candidates=debug_new_candidate)
+
     # Search is finished so allocate the jobs
     for server, allocated_jobs in best_allocation.items():
         for allocated_job in allocated_jobs:

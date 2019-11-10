@@ -1,17 +1,26 @@
 """Branch & Bound algorithm"""
+
+from __future__ import annotations
+
 from typing import List, Tuple, Dict
 
-from branch_bound.branch_bound import branch_bound_algorithm, generate_candidates, print_allocation
+from branch_bound.branch_bound import branch_bound_algorithm, generate_candidates
 from core.core import load_args
 from core.job import Job
-from core.model import ModelDist, load_dist
+from core.model import ModelDist, load_dist, reset_model
 from core.server import Server
+from optimal.optimal import optimal_algorithm
 
 
 def branch_bound_test(model_dist: ModelDist):
     jobs, servers = model_dist.create()
     
-    result = branch_bound_algorithm(jobs, servers)
+    result = branch_bound_algorithm(jobs, servers, debug_update_lower_bound=True)
+    print(result.store())
+
+    reset_model(jobs, servers)
+
+    result = optimal_algorithm(jobs, servers, 200)
     print(result.store())
     
 

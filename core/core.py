@@ -206,7 +206,7 @@ def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
     """
     return "../results/{}/{}.json".format(folder, filename), \
            re.findall(r"j\d+_s\d+", filename)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
-           filename.replace(re.findall(r"_j\d+_s\d+_0", filename)[0], "")
+           filename.replace(re.findall(r"_j\d+_s\d+_\d+", filename)[0], "")
 
 
 class ImageFormat(Enum):
