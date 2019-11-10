@@ -25,7 +25,7 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
     test_name: str = ""
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename("auction_mutation", encoded_filename)
+        filename, model_name, test_name = decode_filename("paper", encoded_filename)
         with open(filename) as file:
             file_data = json.load(file)
 
@@ -49,7 +49,6 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
     g = sns.FacetGrid(df, col='Model', col_wrap=2, hue='Mutation')
     g = (g.map(sns.scatterplot, 'Pos', y_axis)
          .set_titles("{col_name}").set_xlabels("").add_legend())
-    plt.legend(loc='bottom', bbox_to_anchor=(1, 0.5))
 
     g.fig.subplots_adjust(top=0.88)
     g.fig.suptitle(title)
@@ -68,7 +67,12 @@ if __name__ == "__main__":
         "mutate_iterative_auction_basic_j15_s3_0",
         "mutate_iterative_auction_basic_j25_s5_0"
     ]
-    mutated_job_analysis(mutate_september_20, 'Mutate Difference', 'Effect of job misrepresentation on prices',
+
+    paper = [
+        "mutate_iterative_auction_fog_j15_s3_0",
+        "mutate_iterative_auction_fog_j25_s5_0"
+    ]
+    mutated_job_analysis(paper, 'Mutate Difference', 'Effect of job misrepresentation on prices',
                          save_formats=[ImageFormat.EPS, ImageFormat.PNG])
 
     # All jobs mutation auction testing

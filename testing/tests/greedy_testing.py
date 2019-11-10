@@ -274,11 +274,10 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
         data.append(results)
         print(results)
 
-    # Save the results to the file
-    filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save the results to the file
+        filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 if __name__ == "__main__":
@@ -290,4 +289,4 @@ if __name__ == "__main__":
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])
     # all_policies_test(loaded_model_dist, args['repeat'], repeats=1)
-    paper_testing(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    paper_testing(loaded_model_dist, args['repeat'])

@@ -14,7 +14,7 @@ from core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
-                     time_limit: int = 5, price_change: int = 2, initial_cost: int = 0,
+                     time_limit: int = 15, price_change: int = 2, initial_cost: int = 0,
                      mutate_percent: float = 0.1, mutate_repeats: int = 10,
                      debug_results: bool = False):
     """
@@ -73,11 +73,10 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         data.append(auction_results)
         print(auction_results)
 
-    # Save all of the results to a file
-    filename = results_filename('mutate_iterative_auction', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('mutate_iterative_auction', model_dist.file_name, 1)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
@@ -142,11 +141,10 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                             list_item_replacement(jobs, mutant_job, job)
                             reset_model(jobs, servers)
         
-    # Save all of the results to a file
-    filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(mutation_results, file)
-    print("Successful, data saved to " + filename)
+        # Save all of the results to a file
+        filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(mutation_results, file)
     
 
 if __name__ == "__main__":
@@ -155,5 +153,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    mutated_job_test(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    mutated_job_test(loaded_model_dist, args['repeat'], time_limit=5)
     # all_job_mutations_test(loaded_model_dist, args['repeat'])

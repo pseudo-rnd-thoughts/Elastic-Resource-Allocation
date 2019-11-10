@@ -63,8 +63,8 @@ class Job(object):
                         loading_speed * compute_speed * self.required_results_data)
 
         # Check that a server is not already allocated
-        assert self.running_server is None, "Job {} is already allocated to {}"\
-            .format(self.name, self.running_server.name)
+        assert self.running_server is None, \
+            "Job {} is already allocated to {}".format(self.name, self.running_server.name)
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed

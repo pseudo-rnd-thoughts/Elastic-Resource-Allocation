@@ -188,12 +188,11 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
         data.append(results)
         print(results)
 
-    # Save the results to the file
-    filename = results_filename('flexible_auction', model_dist.file_name, repeat)
-    with open(filename, 'w') as file:
-        json.dump(data, file)
-    print("Successful, data saved to " + filename)
-    
+        # Save the results to the file
+        filename = results_filename('flexible_auction', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
+
     
 if __name__ == "__main__":
     args = load_args()
@@ -203,4 +202,4 @@ if __name__ == "__main__":
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
     # all_policies_critical_value(loaded_model_dist, args['repeat'])
-    auction_testing(loaded_model_dist, args['repeat'], repeats=1, debug_results=True)
+    auction_testing(loaded_model_dist, args['repeat'])

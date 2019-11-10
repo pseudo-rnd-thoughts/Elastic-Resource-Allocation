@@ -27,7 +27,7 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
     model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename('critical_value', encoded_filename)
+        filename, model_name, test_name = decode_filename('paper', encoded_filename)
         model_names.append(model_name)
 
         with open(filename) as file:
@@ -76,6 +76,11 @@ if __name__ == "__main__":
         "critical_values_results_basic_j25_s5_0"
     ]
 
+    paper = [
+        "flexible_auction_fog_j15_s3_0",
+        "flexible_auction_fog_j25_s5_0"
+    ]
+
     for attribute in ['Total Money', 'Best Total Money', 'Solve Time']:
-        critical_value_analysis(basic, attribute, '{} of Basic model'.format(attribute),
+        critical_value_analysis(paper, attribute, '{} of Fog model'.format(attribute),
                                 save_formats=[ImageFormat.EPS, ImageFormat.PNG])

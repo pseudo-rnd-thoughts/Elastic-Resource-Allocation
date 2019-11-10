@@ -29,7 +29,7 @@ def plot_auction_results(encoded_filenames: List[str], y_axis: str, title: str,
     model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
-        filename, model_name, test_name = decode_filename('price_change', encoded_filename)
+        filename, model_name, test_name = decode_filename('paper', encoded_filename)
         model_names.append(model_name)
 
         with open(filename) as json_file:
@@ -108,6 +108,15 @@ if __name__ == "__main__":
         "non_uniform_price_change_auction_results_basic_j25_s5_0"
     ]
 
+    paper = [
+        "uniform_price_change_auction_results_fog_j15_s3_0"
+    ]
+
+    plot_auction_results(paper, 'Sum Value', 'Sum Value', save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    plot_auction_results(paper, 'Total Money', 'Total Money', save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    plot_auction_results(paper, 'Solve Time', 'Solve Time', save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+
+    """
     for attribute in ['Sum Value', 'Total Money', 'Solve Time']:
         plot_auction_results(uniform, attribute, '{} of uniform basic model'.format(attribute),
                              save_formats=[ImageFormat.EPS, ImageFormat.PNG])
@@ -115,3 +124,4 @@ if __name__ == "__main__":
                                             save_formats=[ImageFormat.EPS, ImageFormat.PNG])
     plot_auction_results(uniform, 'Best Total Money', '{} of uniform basic model'.format('Best Total Money'),
                          save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    """
