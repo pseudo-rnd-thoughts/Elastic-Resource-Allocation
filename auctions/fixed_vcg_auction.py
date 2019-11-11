@@ -5,13 +5,14 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Optional
 
+from branch_bound.branch_bound import branch_bound_algorithm
+from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import allocate, list_copy_remove
 from core.job import Job
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
 from core.fixed_job import FixedJob
-from optimal.fixed_optimal import fixed_optimal_algorithm
 
 
 def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: int,
@@ -33,7 +34,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
     # Find the optimal solution
     if debug_running:
         print("Finding optimal")
-    optimal_solution = fixed_optimal_algorithm(jobs, servers, time_limit=time_limit)
+    optimal_solution = branch_bound_algorithm(jobs, servers, fixed_feasible_allocation)
     if optimal_solution is None:
         return None
     elif debug_results:
@@ -55,7 +56,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
         # Find the optimal solution where the job doesnt exist
         if debug_running:
             print("Solving for without {} job".format(job.name))
-        optimal_prime = fixed_optimal_algorithm(jobs_prime, servers, time_limit=time_limit)
+        optimal_prime = branch_bound_algorithm(jobs_prime, servers, fixed_feasible_allocation)
         if optimal_prime is None:
             return None
         else:

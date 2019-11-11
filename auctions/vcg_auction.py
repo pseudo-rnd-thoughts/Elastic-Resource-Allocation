@@ -5,12 +5,12 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Tuple, Optional
 
+from branch_bound.branch_bound import branch_bound_algorithm
 from core.core import list_copy_remove
 from core.job import Job
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
-from optimal.optimal import optimal_algorithm
 
 
 def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
@@ -31,7 +31,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
     # Find the optimal solution
     if debug_running:
         print("Finding optimal")
-    optimal_solution = optimal_algorithm(jobs, servers, time_limit=time_limit)
+    optimal_solution = branch_bound_algorithm(jobs, servers)
     if optimal_solution is None:
         return None
     elif debug_results:
@@ -55,7 +55,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         # Find the optimal solution where the job doesnt exist
         if debug_running:
             print("Solving for without job {}".format(job.name))
-        optimal_prime = optimal_algorithm(jobs_prime, servers, time_limit=time_limit)
+        optimal_prime = branch_bound_algorithm(jobs_prime, servers)
         if optimal_prime is None:
             return None
         else:
