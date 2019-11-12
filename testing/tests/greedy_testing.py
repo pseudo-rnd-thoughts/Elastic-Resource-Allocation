@@ -7,6 +7,9 @@ from typing import Dict, Tuple
 
 from tqdm import tqdm
 
+from branch_bound.branch_bound import branch_bound_algorithm
+from branch_bound.feasibility_allocations import fixed_feasible_allocation
+from core.SuperServer import SuperServer
 from core.core import results_filename, load_args
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.model import reset_model, ModelDist, load_dist
@@ -221,22 +224,25 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
         jobs, servers = model_dist.create()
         results = {}
 
-        optimal_result = optimal_algorithm(jobs, servers, 60)
+        # Optimal
+        optimal_result = branch_bound_algorithm(jobs, servers)
         results['Optimal'] = optimal_result.store() if optimal_result else 'failure'
         if debug_results:
             print(results['Optimal'])
 
         reset_model(jobs, servers)
 
+        # Fixed Optimal
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
+        fixed_result = branch_bound_algorithm(fixed_jobs, servers, feasibility=fixed_feasible_allocation)
         results['Fixed'] = fixed_result.store() if fixed_result else 'failure'
         if debug_results:
             print(results['Fixed'])
 
         reset_model(fixed_jobs, servers)
 
-        relaxed_result = relaxed_algorithm(jobs, servers, 60)
+        # Relaxed solution
+        relaxed_result = branch_bound_algorithm(jobs, [SuperServer(servers)])
         results['Relaxed'] = relaxed_result.store() if relaxed_result else 'failure'
         if debug_results:
             print(results['Relaxed'])

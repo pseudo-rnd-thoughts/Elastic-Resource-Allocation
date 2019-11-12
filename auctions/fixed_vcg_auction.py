@@ -15,13 +15,12 @@ from core.server import Server
 from core.fixed_job import FixedJob
 
 
-def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: int,
+def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server],
                       debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Combinatorial Double auction solved through VCG auction algorithm
     :param jobs: a list of jobs
     :param servers: a list of servers
-    :param time_limit:The time limit
     :param debug_running: debug the running
     :param debug_results: debug the results
     :return: the results
@@ -69,4 +68,4 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
     for job in allocated_jobs:
         allocate(job, -1, -1, -1, job_allocation[job], job_prices[job])
 
-    return Result('vcg', jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True)
+    return Result('vcg', jobs, servers, time() - start_time, show_money=True)

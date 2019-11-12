@@ -11,12 +11,9 @@ from typing import List, Dict, Tuple, Optional
 
 from branch_bound.feasibility_allocations import flexible_feasible_allocation
 from branch_bound.priority_queue import Comparison, PriorityQueue
-from core.fixed_job import FixedJob
 from core.job import Job
-from core.server import Server
 from core.result import Result
-
-from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
+from core.server import Server
 
 
 def print_allocation(job_server_allocations: Dict[Server, List[Job]]):

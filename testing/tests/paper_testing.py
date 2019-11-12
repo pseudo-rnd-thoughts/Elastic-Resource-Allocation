@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from auctions.critical_value_auction import critical_value_auction
 from core.core import ImageFormat
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job

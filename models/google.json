@@ -12,7 +12,8 @@
          "required_results_data_std":0,
          "value_mean":320.0,
          "value_std":0,
-         "deadline_mean":13225.0
+         "deadline_mean":13225.0,
+         "deadline_std": 0
       },
       {
          "name":"1",
@@ -25,7 +26,8 @@
          "required_results_data_std":0,
          "value_mean":640.0,
          "value_std":0,
-         "deadline_mean":14648.0
+         "deadline_mean":14648.0,
+         "deadline_std": 0
       },
       {
          "name":"2",
@@ -38,7 +40,8 @@
          "required_results_data_std":0,
          "value_mean":8000.0,
          "value_std":0,
-         "deadline_mean":5086.0
+         "deadline_mean":5086.0,
+         "deadline_std": 0
       },
       {
          "name":"3",
@@ -51,7 +54,8 @@
          "required_results_data_std":0,
          "value_mean":8160.0,
          "value_std":0,
-         "deadline_mean":6841.0
+         "deadline_mean":6841.0,
+         "deadline_std": 0
       },
       {
          "name":"4",
@@ -64,7 +68,8 @@
          "required_results_data_std":0,
          "value_mean":12000.0,
          "value_std":0,
-         "deadline_mean":5921.0
+         "deadline_mean":5921.0,
+         "deadline_std": 0
       },
       {
          "name":"11",
@@ -77,7 +82,8 @@
          "required_results_data_std":0,
          "value_mean":1000.0,
          "value_std":0,
-         "deadline_mean":283.0
+         "deadline_mean":283.0,
+         "deadline_std": 0
       },
       {
          "name":"16",
@@ -90,7 +96,8 @@
          "required_results_data_std":0,
          "value_mean":3000.0,
          "value_std":0,
-         "deadline_mean":311.0
+         "deadline_mean":311.0,
+         "deadline_std": 0
       },
       {
          "name":"28",
@@ -103,7 +110,8 @@
          "required_results_data_std":0,
          "value_mean":1520.0,
          "value_std":0,
-         "deadline_mean":656.0
+         "deadline_mean":656.0,
+         "deadline_std": 0
       },
       {
          "name":"29",
@@ -116,7 +124,8 @@
          "required_results_data_std":0,
          "value_mean":81000.0,
          "value_std":0,
-         "deadline_mean":469.0
+         "deadline_mean":469.0,
+         "deadline_std": 0
       },
       {
          "name":"30",
@@ -129,7 +138,8 @@
          "required_results_data_std":0,
          "value_mean":9600.0,
          "value_std":0,
-         "deadline_mean":157.0
+         "deadline_mean":157.0,
+         "deadline_std": 0
       },
       {
          "name":"31",
@@ -142,7 +152,8 @@
          "required_results_data_std":0,
          "value_mean":9600.0,
          "value_std":0,
-         "deadline_mean":137.0
+         "deadline_mean":137.0,
+         "deadline_std": 0
       },
       {
          "name":"32",
@@ -155,7 +166,8 @@
          "required_results_data_std":0,
          "value_mean":9600.0,
          "value_std":0,
-         "deadline_mean":139.0
+         "deadline_mean":139.0,
+         "deadline_std": 0
       },
       {
          "name":"36",
@@ -168,7 +180,8 @@
          "required_results_data_std":0,
          "value_mean":10000.0,
          "value_std":0,
-         "deadline_mean":178.0
+         "deadline_mean":178.0,
+         "deadline_std": 0
       },
       {
          "name":"38",
@@ -181,7 +194,8 @@
          "required_results_data_std":0,
          "value_mean":10000.0,
          "value_std":0,
-         "deadline_mean":149.0
+         "deadline_mean":149.0,
+         "deadline_std": 0
       },
       {
          "name":"60",
@@ -194,7 +208,8 @@
          "required_results_data_std":0,
          "value_mean":11600.0,
          "value_std":0,
-         "deadline_mean":91.0
+         "deadline_mean":91.0,
+         "deadline_std": 0
       },
       {
          "name":"66",
@@ -207,7 +222,8 @@
          "required_results_data_std":0,
          "value_mean":82620.0,
          "value_std":0,
-         "deadline_mean":6903.0
+         "deadline_mean":6903.0,
+         "deadline_std": 0
       },
       {
          "name":"72",
@@ -220,7 +236,8 @@
          "required_results_data_std":0,
          "value_mean":662580.0,
          "value_std":0,
-         "deadline_mean":12126.0
+         "deadline_mean":12126.0,
+         "deadline_std": 0
       },
       {
          "name":"74",
@@ -233,7 +250,8 @@
          "required_results_data_std":0,
          "value_mean":178200.0,
          "value_std":0,
-         "deadline_mean":2552.0
+         "deadline_mean":2552.0,
+         "deadline_std": 0
       },
       {
          "name":"75",
@@ -246,7 +264,8 @@
          "required_results_data_std":0,
          "value_mean":16500.0,
          "value_std":0,
-         "deadline_mean":506.0
+         "deadline_mean":506.0,
+         "deadline_std": 0
       },
       {
          "name":"76",
@@ -259,7 +278,8 @@
          "required_results_data_std":0,
          "value_mean":4200.0,
          "value_std":0,
-         "deadline_mean":334.0
+         "deadline_mean":334.0,
+         "deadline_std": 0
       },
       {
          "name":"103",
@@ -272,7 +292,8 @@
          "required_results_data_std":0,
          "value_mean":24300.0,
          "value_std":0,
-         "deadline_mean":171.0
+         "deadline_mean":171.0,
+         "deadline_std": 0
       },
       {
          "name":"104",
@@ -285,7 +306,8 @@
          "required_results_data_std":0,
          "value_mean":3150.0,
          "value_std":0,
-         "deadline_mean":76.0
+         "deadline_mean":76.0,
+         "deadline_std": 0
       },
       {
          "name":"113",
@@ -298,7 +320,8 @@
          "required_results_data_std":0,
          "value_mean":462150.0,
          "value_std":0,
-         "deadline_mean":168.0
+         "deadline_mean":168.0,
+         "deadline_std": 0
       },
       {
          "name":"132",
@@ -311,7 +334,8 @@
          "required_results_data_std":0,
          "value_mean":205590.0,
          "value_std":0,
-         "deadline_mean":919.0
+         "deadline_mean":919.0,
+         "deadline_std": 0
       },
       {
          "name":"134",
@@ -324,7 +348,8 @@
          "required_results_data_std":0,
          "value_mean":181500.0,
          "value_std":0,
-         "deadline_mean":7368.0
+         "deadline_mean":7368.0,
+         "deadline_std": 0
       },
       {
          "name":"138",
@@ -337,7 +362,8 @@
          "required_results_data_std":0,
          "value_mean":309060.0,
          "value_std":0,
-         "deadline_mean":392.0
+         "deadline_mean":392.0,
+         "deadline_std": 0
       },
       {
          "name":"154",
@@ -350,7 +376,8 @@
          "required_results_data_std":0,
          "value_mean":359775.0,
          "value_std":0,
-         "deadline_mean":2120.0
+         "deadline_mean":2120.0,
+         "deadline_std": 0
       },
       {
          "name":"155",
@@ -363,7 +390,8 @@
          "required_results_data_std":0,
          "value_mean":362850.0,
          "value_std":0,
-         "deadline_mean":2102.0
+         "deadline_mean":2102.0,
+         "deadline_std": 0
       },
       {
          "name":"156",
@@ -376,7 +404,8 @@
          "required_results_data_std":0,
          "value_mean":1245375.0,
          "value_std":0,
-         "deadline_mean":257.0
+         "deadline_mean":257.0,
+         "deadline_std": 0
       },
       {
          "name":"159",
@@ -389,7 +418,8 @@
          "required_results_data_std":0,
          "value_mean":775680.0,
          "value_std":0,
-         "deadline_mean":480.0
+         "deadline_mean":480.0,
+         "deadline_std": 0
       },
       {
          "name":"161",
@@ -402,7 +432,8 @@
          "required_results_data_std":0,
          "value_mean":1987740.0,
          "value_std":0,
-         "deadline_mean":2929.0
+         "deadline_mean":2929.0,
+         "deadline_std": 0
       },
       {
          "name":"196",
@@ -415,7 +446,8 @@
          "required_results_data_std":0,
          "value_mean":15200.0,
          "value_std":0,
-         "deadline_mean":364.0
+         "deadline_mean":364.0,
+         "deadline_std": 0
       },
       {
          "name":"197",
@@ -428,7 +460,8 @@
          "required_results_data_std":0,
          "value_mean":15200.0,
          "value_std":0,
-         "deadline_mean":360.0
+         "deadline_mean":360.0,
+         "deadline_std": 0
       },
       {
          "name":"199",
@@ -441,7 +474,8 @@
          "required_results_data_std":0,
          "value_mean":15200.0,
          "value_std":0,
-         "deadline_mean":386.0
+         "deadline_mean":386.0,
+         "deadline_std": 0
       },
       {
          "name":"211",
@@ -454,7 +488,8 @@
          "required_results_data_std":0,
          "value_mean":30400.0,
          "value_std":0,
-         "deadline_mean":764.0
+         "deadline_mean":764.0,
+         "deadline_std": 0
       },
       {
          "name":"212",
@@ -467,7 +502,8 @@
          "required_results_data_std":0,
          "value_mean":30400.0,
          "value_std":0,
-         "deadline_mean":847.0
+         "deadline_mean":847.0,
+         "deadline_std": 0
       },
       {
          "name":"227",
@@ -480,7 +516,8 @@
          "required_results_data_std":0,
          "value_mean":477900.0,
          "value_std":0,
-         "deadline_mean":12637.0
+         "deadline_mean":12637.0,
+         "deadline_std": 0
       },
       {
          "name":"230",
@@ -493,7 +530,8 @@
          "required_results_data_std":0,
          "value_mean":56000.0,
          "value_std":0,
-         "deadline_mean":716.0
+         "deadline_mean":716.0,
+         "deadline_std": 0
       },
       {
          "name":"237",
@@ -506,7 +544,8 @@
          "required_results_data_std":0,
          "value_mean":565600.0,
          "value_std":0,
-         "deadline_mean":8350.0
+         "deadline_mean":8350.0,
+         "deadline_std": 0
       },
       {
          "name":"240",
@@ -519,7 +558,8 @@
          "required_results_data_std":0,
          "value_mean":332100.0,
          "value_std":0,
-         "deadline_mean":260.0
+         "deadline_mean":260.0,
+         "deadline_std": 0
       },
       {
          "name":"243",
@@ -532,7 +572,8 @@
          "required_results_data_std":0,
          "value_mean":13251420.0,
          "value_std":0,
-         "deadline_mean":413.0
+         "deadline_mean":413.0,
+         "deadline_std": 0
       },
       {
          "name":"248",
@@ -545,7 +586,8 @@
          "required_results_data_std":0,
          "value_mean":714000.0,
          "value_std":0,
-         "deadline_mean":410.0
+         "deadline_mean":410.0,
+         "deadline_std": 0
       },
       {
          "name":"251",
@@ -558,7 +600,8 @@
          "required_results_data_std":0,
          "value_mean":155520.0,
          "value_std":0,
-         "deadline_mean":6077.0
+         "deadline_mean":6077.0,
+         "deadline_std": 0
       },
       {
          "name":"253",
@@ -571,7 +614,8 @@
          "required_results_data_std":0,
          "value_mean":155520.0,
          "value_std":0,
-         "deadline_mean":4552.0
+         "deadline_mean":4552.0,
+         "deadline_std": 0
       },
       {
          "name":"255",
@@ -584,7 +628,8 @@
          "required_results_data_std":0,
          "value_mean":1896000.0,
          "value_std":0,
-         "deadline_mean":1415.0
+         "deadline_mean":1415.0,
+         "deadline_std": 0
       },
       {
          "name":"256",
@@ -597,7 +642,8 @@
          "required_results_data_std":0,
          "value_mean":155520.0,
          "value_std":0,
-         "deadline_mean":4377.0
+         "deadline_mean":4377.0,
+         "deadline_std": 0
       },
       {
          "name":"257",
@@ -610,7 +656,8 @@
          "required_results_data_std":0,
          "value_mean":1896000.0,
          "value_std":0,
-         "deadline_mean":529.0
+         "deadline_mean":529.0,
+         "deadline_std": 0
       },
       {
          "name":"259",
@@ -623,7 +670,8 @@
          "required_results_data_std":0,
          "value_mean":1896000.0,
          "value_std":0,
-         "deadline_mean":605.0
+         "deadline_mean":605.0,
+         "deadline_std": 0
       },
       {
          "name":"260",
@@ -636,7 +684,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":1448.0
+         "deadline_mean":1448.0,
+         "deadline_std": 0
       },
       {
          "name":"261",
@@ -649,7 +698,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":1421.0
+         "deadline_mean":1421.0,
+         "deadline_std": 0
       },
       {
          "name":"262",
@@ -662,7 +712,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":1336.0
+         "deadline_mean":1336.0,
+         "deadline_std": 0
       },
       {
          "name":"263",
@@ -675,7 +726,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":540.0
+         "deadline_mean":540.0,
+         "deadline_std": 0
       },
       {
          "name":"264",
@@ -688,7 +740,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":516.0
+         "deadline_mean":516.0,
+         "deadline_std": 0
       },
       {
          "name":"265",
@@ -701,7 +754,8 @@
          "required_results_data_std":0,
          "value_mean":158760.0,
          "value_std":0,
-         "deadline_mean":2669.0
+         "deadline_mean":2669.0,
+         "deadline_std": 0
       },
       {
          "name":"267",
@@ -714,7 +768,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":563.0
+         "deadline_mean":563.0,
+         "deadline_std": 0
       },
       {
          "name":"268",
@@ -727,7 +782,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":534.0
+         "deadline_mean":534.0,
+         "deadline_std": 0
       },
       {
          "name":"269",
@@ -740,7 +796,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":686.0
+         "deadline_mean":686.0,
+         "deadline_std": 0
       },
       {
          "name":"270",
@@ -753,7 +810,8 @@
          "required_results_data_std":0,
          "value_mean":1935500.0,
          "value_std":0,
-         "deadline_mean":765.0
+         "deadline_mean":765.0,
+         "deadline_std": 0
       },
       {
          "name":"271",
@@ -766,7 +824,8 @@
          "required_results_data_std":0,
          "value_mean":1975000.0,
          "value_std":0,
-         "deadline_mean":994.0
+         "deadline_mean":994.0,
+         "deadline_std": 0
       },
       {
          "name":"272",
@@ -779,7 +838,8 @@
          "required_results_data_std":0,
          "value_mean":1975000.0,
          "value_std":0,
-         "deadline_mean":730.0
+         "deadline_mean":730.0,
+         "deadline_std": 0
       },
       {
          "name":"276",
@@ -792,7 +852,8 @@
          "required_results_data_std":0,
          "value_mean":6000.0,
          "value_std":0,
-         "deadline_mean":515.0
+         "deadline_mean":515.0,
+         "deadline_std": 0
       },
       {
          "name":"283",
@@ -805,7 +866,8 @@
          "required_results_data_std":0,
          "value_mean":413100.0,
          "value_std":0,
-         "deadline_mean":1107.0
+         "deadline_mean":1107.0,
+         "deadline_std": 0
       },
       {
          "name":"289",
@@ -818,7 +880,8 @@
          "required_results_data_std":0,
          "value_mean":613500.0,
          "value_std":0,
-         "deadline_mean":819.0
+         "deadline_mean":819.0,
+         "deadline_std": 0
       },
       {
          "name":"290",
@@ -831,7 +894,8 @@
          "required_results_data_std":0,
          "value_mean":1975000.0,
          "value_std":0,
-         "deadline_mean":447.0
+         "deadline_mean":447.0,
+         "deadline_std": 0
       },
       {
          "name":"291",
@@ -844,7 +908,8 @@
          "required_results_data_std":0,
          "value_mean":1975000.0,
          "value_std":0,
-         "deadline_mean":476.0
+         "deadline_mean":476.0,
+         "deadline_std": 0
       },
       {
          "name":"292",
@@ -857,7 +922,8 @@
          "required_results_data_std":0,
          "value_mean":2014500.0,
          "value_std":0,
-         "deadline_mean":522.0
+         "deadline_mean":522.0,
+         "deadline_std": 0
       },
       {
          "name":"295",
@@ -870,7 +936,8 @@
          "required_results_data_std":0,
          "value_mean":2014500.0,
          "value_std":0,
-         "deadline_mean":475.0
+         "deadline_mean":475.0,
+         "deadline_std": 0
       },
       {
          "name":"296",
@@ -883,7 +950,8 @@
          "required_results_data_std":0,
          "value_mean":2014500.0,
          "value_std":0,
-         "deadline_mean":565.0
+         "deadline_mean":565.0,
+         "deadline_std": 0
       },
       {
          "name":"300",
@@ -896,7 +964,8 @@
          "required_results_data_std":0,
          "value_mean":3222180.0,
          "value_std":0,
-         "deadline_mean":5183.0
+         "deadline_mean":5183.0,
+         "deadline_std": 0
       },
       {
          "name":"301",
@@ -909,7 +978,8 @@
          "required_results_data_std":0,
          "value_mean":2014500.0,
          "value_std":0,
-         "deadline_mean":442.0
+         "deadline_mean":442.0,
+         "deadline_std": 0
       },
       {
          "name":"303",
@@ -922,7 +992,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":1114.0
+         "deadline_mean":1114.0,
+         "deadline_std": 0
       },
       {
          "name":"305",
@@ -935,7 +1006,8 @@
          "required_results_data_std":0,
          "value_mean":3453840.0,
          "value_std":0,
-         "deadline_mean":10050.0
+         "deadline_mean":10050.0,
+         "deadline_std": 0
       },
       {
          "name":"308",
@@ -948,7 +1020,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":516.0
+         "deadline_mean":516.0,
+         "deadline_std": 0
       },
       {
          "name":"309",
@@ -961,7 +1034,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":598.0
+         "deadline_mean":598.0,
+         "deadline_std": 0
       },
       {
          "name":"310",
@@ -974,7 +1048,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":423.0
+         "deadline_mean":423.0,
+         "deadline_std": 0
       },
       {
          "name":"311",
@@ -987,7 +1062,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":467.0
+         "deadline_mean":467.0,
+         "deadline_std": 0
       },
       {
          "name":"312",
@@ -1000,7 +1076,8 @@
          "required_results_data_std":0,
          "value_mean":2054000.0,
          "value_std":0,
-         "deadline_mean":662.0
+         "deadline_mean":662.0,
+         "deadline_std": 0
       },
       {
          "name":"313",
@@ -1013,7 +1090,8 @@
          "required_results_data_std":0,
          "value_mean":2093500.0,
          "value_std":0,
-         "deadline_mean":442.0
+         "deadline_mean":442.0,
+         "deadline_std": 0
       },
       {
          "name":"314",
@@ -1026,7 +1104,8 @@
          "required_results_data_std":0,
          "value_mean":2093500.0,
          "value_std":0,
-         "deadline_mean":436.0
+         "deadline_mean":436.0,
+         "deadline_std": 0
       },
       {
          "name":"315",
@@ -1039,7 +1118,8 @@
          "required_results_data_std":0,
          "value_mean":3520260.0,
          "value_std":0,
-         "deadline_mean":3525.0
+         "deadline_mean":3525.0,
+         "deadline_std": 0
       },
       {
          "name":"316",
@@ -1052,7 +1132,8 @@
          "required_results_data_std":0,
          "value_mean":171720.0,
          "value_std":0,
-         "deadline_mean":5180.0
+         "deadline_mean":5180.0,
+         "deadline_std": 0
       },
       {
          "name":"317",
@@ -1065,7 +1146,8 @@
          "required_results_data_std":0,
          "value_mean":2093500.0,
          "value_std":0,
-         "deadline_mean":507.0
+         "deadline_mean":507.0,
+         "deadline_std": 0
       },
       {
          "name":"318",
@@ -1078,7 +1160,8 @@
          "required_results_data_std":0,
          "value_mean":3520260.0,
          "value_std":0,
-         "deadline_mean":3340.0
+         "deadline_mean":3340.0,
+         "deadline_std": 0
       },
       {
          "name":"319",
@@ -1091,7 +1174,8 @@
          "required_results_data_std":0,
          "value_mean":3520260.0,
          "value_std":0,
-         "deadline_mean":3591.0
+         "deadline_mean":3591.0,
+         "deadline_std": 0
       },
       {
          "name":"321",
@@ -1104,7 +1188,8 @@
          "required_results_data_std":0,
          "value_mean":3520260.0,
          "value_std":0,
-         "deadline_mean":4850.0
+         "deadline_mean":4850.0,
+         "deadline_std": 0
       },
       {
          "name":"322",
@@ -1117,7 +1202,8 @@
          "required_results_data_std":0,
          "value_mean":2093500.0,
          "value_std":0,
-         "deadline_mean":500.0
+         "deadline_mean":500.0,
+         "deadline_std": 0
       },
       {
          "name":"323",
@@ -1130,7 +1216,8 @@
          "required_results_data_std":0,
          "value_mean":3520260.0,
          "value_std":0,
-         "deadline_mean":3294.0
+         "deadline_mean":3294.0,
+         "deadline_std": 0
       },
       {
          "name":"324",
@@ -1143,7 +1230,8 @@
          "required_results_data_std":0,
          "value_mean":2133000.0,
          "value_std":0,
-         "deadline_mean":837.0
+         "deadline_mean":837.0,
+         "deadline_std": 0
       },
       {
          "name":"325",
@@ -1156,7 +1244,8 @@
          "required_results_data_std":0,
          "value_mean":43200.0,
          "value_std":0,
-         "deadline_mean":2714.0
+         "deadline_mean":2714.0,
+         "deadline_std": 0
       },
       {
          "name":"326",
@@ -1169,7 +1258,8 @@
          "required_results_data_std":0,
          "value_mean":151200.0,
          "value_std":0,
-         "deadline_mean":1246.0
+         "deadline_mean":1246.0,
+         "deadline_std": 0
       },
       {
          "name":"328",
@@ -1182,7 +1272,8 @@
          "required_results_data_std":0,
          "value_mean":2133000.0,
          "value_std":0,
-         "deadline_mean":704.0
+         "deadline_mean":704.0,
+         "deadline_std": 0
       },
       {
          "name":"329",
@@ -1195,7 +1286,8 @@
          "required_results_data_std":0,
          "value_mean":174960.0,
          "value_std":0,
-         "deadline_mean":3319.0
+         "deadline_mean":3319.0,
+         "deadline_std": 0
       },
       {
          "name":"330",
@@ -1208,7 +1300,8 @@
          "required_results_data_std":0,
          "value_mean":3586680.0,
          "value_std":0,
-         "deadline_mean":3467.0
+         "deadline_mean":3467.0,
+         "deadline_std": 0
       },
       {
          "name":"331",
@@ -1221,7 +1314,8 @@
          "required_results_data_std":0,
          "value_mean":3653100.0,
          "value_std":0,
-         "deadline_mean":5261.0
+         "deadline_mean":5261.0,
+         "deadline_std": 0
       },
       {
          "name":"334",
@@ -1234,7 +1328,8 @@
          "required_results_data_std":0,
          "value_mean":3653100.0,
          "value_std":0,
-         "deadline_mean":3487.0
+         "deadline_mean":3487.0,
+         "deadline_std": 0
       },
       {
          "name":"335",
@@ -1247,7 +1342,8 @@
          "required_results_data_std":0,
          "value_mean":2172500.0,
          "value_std":0,
-         "deadline_mean":1117.0
+         "deadline_mean":1117.0,
+         "deadline_std": 0
       },
       {
          "name":"336",
@@ -1260,7 +1356,8 @@
          "required_results_data_std":0,
          "value_mean":27839448.0,
          "value_std":0,
-         "deadline_mean":10390.0
+         "deadline_mean":10390.0,
+         "deadline_std": 0
       },
       {
          "name":"337",
@@ -1273,7 +1370,8 @@
          "required_results_data_std":0,
          "value_mean":277020.0,
          "value_std":0,
-         "deadline_mean":346.0
+         "deadline_mean":346.0,
+         "deadline_std": 0
       },
       {
          "name":"338",
@@ -1286,7 +1384,8 @@
          "required_results_data_std":0,
          "value_mean":187920.0,
          "value_std":0,
-         "deadline_mean":2426.0
+         "deadline_mean":2426.0,
+         "deadline_std": 0
       },
       {
          "name":"339",
@@ -1299,7 +1398,8 @@
          "required_results_data_std":0,
          "value_mean":715080.0,
          "value_std":0,
-         "deadline_mean":946.0
+         "deadline_mean":946.0,
+         "deadline_std": 0
       },
       {
          "name":"340",
@@ -1312,7 +1412,8 @@
          "required_results_data_std":0,
          "value_mean":21953369.0,
          "value_std":0,
-         "deadline_mean":11040.0
+         "deadline_mean":11040.0,
+         "deadline_std": 0
       },
       {
          "name":"341",
@@ -1325,7 +1426,8 @@
          "required_results_data_std":0,
          "value_mean":191160.0,
          "value_std":0,
-         "deadline_mean":6078.0
+         "deadline_mean":6078.0,
+         "deadline_std": 0
       },
       {
          "name":"342",
@@ -1338,7 +1440,8 @@
          "required_results_data_std":0,
          "value_mean":48000.0,
          "value_std":0,
-         "deadline_mean":323.0
+         "deadline_mean":323.0,
+         "deadline_std": 0
       },
       {
          "name":"344",
@@ -1351,7 +1454,8 @@
          "required_results_data_std":0,
          "value_mean":948000.0,
          "value_std":0,
-         "deadline_mean":3953.0
+         "deadline_mean":3953.0,
+         "deadline_std": 0
       },
       {
          "name":"349",
@@ -1364,7 +1468,8 @@
          "required_results_data_std":0,
          "value_mean":26295240.0,
          "value_std":0,
-         "deadline_mean":2388.0
+         "deadline_mean":2388.0,
+         "deadline_std": 0
       },
       {
          "name":"351",
@@ -1377,7 +1482,8 @@
          "required_results_data_std":0,
          "value_mean":23199540.0,
          "value_std":0,
-         "deadline_mean":10798.0
+         "deadline_mean":10798.0,
+         "deadline_std": 0
       },
       {
          "name":"352",
@@ -1390,7 +1496,8 @@
          "required_results_data_std":0,
          "value_mean":616100.0,
          "value_std":0,
-         "deadline_mean":822.0
+         "deadline_mean":822.0,
+         "deadline_std": 0
       },
       {
          "name":"354",
@@ -1403,7 +1510,8 @@
          "required_results_data_std":0,
          "value_mean":4118040.0,
          "value_std":0,
-         "deadline_mean":8917.0
+         "deadline_mean":8917.0,
+         "deadline_std": 0
       },
       {
          "name":"358",
@@ -1416,7 +1524,8 @@
          "required_results_data_std":0,
          "value_mean":4613600.0,
          "value_std":0,
-         "deadline_mean":1654.0
+         "deadline_mean":1654.0,
+         "deadline_std": 0
       },
       {
          "name":"360",
@@ -1429,7 +1538,8 @@
          "required_results_data_std":0,
          "value_mean":1587900.0,
          "value_std":0,
-         "deadline_mean":108.0
+         "deadline_mean":108.0,
+         "deadline_std": 0
       },
       {
          "name":"361",
@@ -1442,7 +1552,8 @@
          "required_results_data_std":0,
          "value_mean":921120.0,
          "value_std":0,
-         "deadline_mean":220.0
+         "deadline_mean":220.0,
+         "deadline_std": 0
       },
       {
          "name":"362",
@@ -1455,7 +1566,8 @@
          "required_results_data_std":0,
          "value_mean":921120.0,
          "value_std":0,
-         "deadline_mean":1018.0
+         "deadline_mean":1018.0,
+         "deadline_std": 0
       },
       {
          "name":"365",
@@ -1468,7 +1580,8 @@
          "required_results_data_std":0,
          "value_mean":1296000.0,
          "value_std":0,
-         "deadline_mean":203.0
+         "deadline_mean":203.0,
+         "deadline_std": 0
       },
       {
          "name":"369",
@@ -1481,7 +1594,8 @@
          "required_results_data_std":0,
          "value_mean":393600.0,
          "value_std":0,
-         "deadline_mean":845.0
+         "deadline_mean":845.0,
+         "deadline_std": 0
       },
       {
          "name":"377",
@@ -1494,7 +1608,8 @@
          "required_results_data_std":0,
          "value_mean":3785400.0,
          "value_std":0,
-         "deadline_mean":3984.0
+         "deadline_mean":3984.0,
+         "deadline_std": 0
       },
       {
          "name":"391",
@@ -1507,7 +1622,8 @@
          "required_results_data_std":0,
          "value_mean":3037500.0,
          "value_std":0,
-         "deadline_mean":238.0
+         "deadline_mean":238.0,
+         "deadline_std": 0
       },
       {
          "name":"396",
@@ -1520,7 +1636,8 @@
          "required_results_data_std":0,
          "value_mean":3604500.0,
          "value_std":0,
-         "deadline_mean":207.0
+         "deadline_mean":207.0,
+         "deadline_std": 0
       },
       {
          "name":"418",
@@ -1533,7 +1650,8 @@
          "required_results_data_std":0,
          "value_mean":3636900.0,
          "value_std":0,
-         "deadline_mean":1249.0
+         "deadline_mean":1249.0,
+         "deadline_std": 0
       },
       {
          "name":"423",
@@ -1546,7 +1664,8 @@
          "required_results_data_std":0,
          "value_mean":3677400.0,
          "value_std":0,
-         "deadline_mean":2547.0
+         "deadline_mean":2547.0,
+         "deadline_std": 0
       },
       {
          "name":"427",
@@ -1559,7 +1678,8 @@
          "required_results_data_std":0,
          "value_mean":3750300.0,
          "value_std":0,
-         "deadline_mean":2338.0
+         "deadline_mean":2338.0,
+         "deadline_std": 0
       },
       {
          "name":"428",
@@ -1572,7 +1692,8 @@
          "required_results_data_std":0,
          "value_mean":3774600.0,
          "value_std":0,
-         "deadline_mean":454.0
+         "deadline_mean":454.0,
+         "deadline_std": 0
       },
       {
          "name":"429",
@@ -1585,7 +1706,8 @@
          "required_results_data_std":0,
          "value_mean":3790800.0,
          "value_std":0,
-         "deadline_mean":2222.0
+         "deadline_mean":2222.0,
+         "deadline_std": 0
       },
       {
          "name":"431",
@@ -1598,7 +1720,8 @@
          "required_results_data_std":0,
          "value_mean":1228000.0,
          "value_std":0,
-         "deadline_mean":191.0
+         "deadline_mean":191.0,
+         "deadline_std": 0
       },
       {
          "name":"433",
@@ -1611,7 +1734,8 @@
          "required_results_data_std":0,
          "value_mean":240000.0,
          "value_std":0,
-         "deadline_mean":404.0
+         "deadline_mean":404.0,
+         "deadline_std": 0
       },
       {
          "name":"444",
@@ -1624,7 +1748,8 @@
          "required_results_data_std":0,
          "value_mean":1800.0,
          "value_std":0,
-         "deadline_mean":421.0
+         "deadline_mean":421.0,
+         "deadline_std": 0
       },
       {
          "name":"446",
@@ -1637,7 +1762,8 @@
          "required_results_data_std":0,
          "value_mean":2427000.0,
          "value_std":0,
-         "deadline_mean":13640.0
+         "deadline_mean":13640.0,
+         "deadline_std": 0
       },
       {
          "name":"454",
@@ -1650,7 +1776,8 @@
          "required_results_data_std":0,
          "value_mean":1237770.0,
          "value_std":0,
-         "deadline_mean":2284.0
+         "deadline_mean":2284.0,
+         "deadline_std": 0
       },
       {
          "name":"469",
@@ -1663,7 +1790,8 @@
          "required_results_data_std":0,
          "value_mean":22440.0,
          "value_std":0,
-         "deadline_mean":390.0
+         "deadline_mean":390.0,
+         "deadline_std": 0
       },
       {
          "name":"470",
@@ -1676,7 +1804,8 @@
          "required_results_data_std":0,
          "value_mean":660960.0,
          "value_std":0,
-         "deadline_mean":174.0
+         "deadline_mean":174.0,
+         "deadline_std": 0
       },
       {
          "name":"471",
@@ -1689,7 +1818,8 @@
          "required_results_data_std":0,
          "value_mean":1650360.0,
          "value_std":0,
-         "deadline_mean":6669.0
+         "deadline_mean":6669.0,
+         "deadline_std": 0
       },
       {
          "name":"473",
@@ -1702,7 +1832,8 @@
          "required_results_data_std":0,
          "value_mean":122400.0,
          "value_std":0,
-         "deadline_mean":3390.0
+         "deadline_mean":3390.0,
+         "deadline_std": 0
       },
       {
          "name":"474",
@@ -1715,7 +1846,8 @@
          "required_results_data_std":0,
          "value_mean":1990800.0,
          "value_std":0,
-         "deadline_mean":827.0
+         "deadline_mean":827.0,
+         "deadline_std": 0
       },
       {
          "name":"491",
@@ -1728,7 +1860,8 @@
          "required_results_data_std":0,
          "value_mean":11860000.0,
          "value_std":0,
-         "deadline_mean":1337.0
+         "deadline_mean":1337.0,
+         "deadline_std": 0
       },
       {
          "name":"498",
@@ -1741,7 +1874,8 @@
          "required_results_data_std":0,
          "value_mean":574000.0,
          "value_std":0,
-         "deadline_mean":7557.0
+         "deadline_mean":7557.0,
+         "deadline_std": 0
       },
       {
          "name":"500",
@@ -1754,7 +1888,8 @@
          "required_results_data_std":0,
          "value_mean":1131200.0,
          "value_std":0,
-         "deadline_mean":3745.0
+         "deadline_mean":3745.0,
+         "deadline_std": 0
       },
       {
          "name":"501",
@@ -1767,7 +1902,8 @@
          "required_results_data_std":0,
          "value_mean":4266000.0,
          "value_std":0,
-         "deadline_mean":34236.0
+         "deadline_mean":34236.0,
+         "deadline_std": 0
       },
       {
          "name":"506",
@@ -1780,7 +1916,8 @@
          "required_results_data_std":0,
          "value_mean":5801500.0,
          "value_std":0,
-         "deadline_mean":24905.0
+         "deadline_mean":24905.0,
+         "deadline_std": 0
       },
       {
          "name":"507",
@@ -1793,7 +1930,8 @@
          "required_results_data_std":0,
          "value_mean":12443500.0,
          "value_std":0,
-         "deadline_mean":9769.0
+         "deadline_mean":9769.0,
+         "deadline_std": 0
       },
       {
          "name":"516",
@@ -1806,7 +1944,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":869.0
+         "deadline_mean":869.0,
+         "deadline_std": 0
       },
       {
          "name":"546",
@@ -1819,7 +1958,8 @@
          "required_results_data_std":0,
          "value_mean":186300.0,
          "value_std":0,
-         "deadline_mean":597.0
+         "deadline_mean":597.0,
+         "deadline_std": 0
       },
       {
          "name":"547",
@@ -1832,7 +1972,8 @@
          "required_results_data_std":0,
          "value_mean":186300.0,
          "value_std":0,
-         "deadline_mean":498.0
+         "deadline_mean":498.0,
+         "deadline_std": 0
       },
       {
          "name":"551",
@@ -1845,7 +1986,8 @@
          "required_results_data_std":0,
          "value_mean":14200.0,
          "value_std":0,
-         "deadline_mean":235.0
+         "deadline_mean":235.0,
+         "deadline_std": 0
       },
       {
          "name":"554",
@@ -1858,7 +2000,8 @@
          "required_results_data_std":0,
          "value_mean":14400.0,
          "value_std":0,
-         "deadline_mean":279.0
+         "deadline_mean":279.0,
+         "deadline_std": 0
       },
       {
          "name":"555",
@@ -1871,7 +2014,8 @@
          "required_results_data_std":0,
          "value_mean":14600.0,
          "value_std":0,
-         "deadline_mean":237.0
+         "deadline_mean":237.0,
+         "deadline_std": 0
       },
       {
          "name":"556",
@@ -1884,7 +2028,8 @@
          "required_results_data_std":0,
          "value_mean":14600.0,
          "value_std":0,
-         "deadline_mean":313.0
+         "deadline_mean":313.0,
+         "deadline_std": 0
       },
       {
          "name":"557",
@@ -1897,7 +2042,8 @@
          "required_results_data_std":0,
          "value_mean":14800.0,
          "value_std":0,
-         "deadline_mean":225.0
+         "deadline_mean":225.0,
+         "deadline_std": 0
       },
       {
          "name":"561",
@@ -1910,7 +2056,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":732.0
+         "deadline_mean":732.0,
+         "deadline_std": 0
       },
       {
          "name":"563",
@@ -1923,7 +2070,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":628.0
+         "deadline_mean":628.0,
+         "deadline_std": 0
       },
       {
          "name":"566",
@@ -1936,7 +2084,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2325.0
+         "deadline_mean":2325.0,
+         "deadline_std": 0
       },
       {
          "name":"567",
@@ -1949,7 +2098,8 @@
          "required_results_data_std":0,
          "value_mean":2523960.0,
          "value_std":0,
-         "deadline_mean":3397.0
+         "deadline_mean":3397.0,
+         "deadline_std": 0
       },
       {
          "name":"568",
@@ -1962,7 +2112,8 @@
          "required_results_data_std":0,
          "value_mean":2381400.0,
          "value_std":0,
-         "deadline_mean":213.0
+         "deadline_mean":213.0,
+         "deadline_std": 0
       },
       {
          "name":"569",
@@ -1975,7 +2126,8 @@
          "required_results_data_std":0,
          "value_mean":2559600.0,
          "value_std":0,
-         "deadline_mean":265.0
+         "deadline_mean":265.0,
+         "deadline_std": 0
       },
       {
          "name":"571",
@@ -1988,7 +2140,8 @@
          "required_results_data_std":0,
          "value_mean":3649000.0,
          "value_std":0,
-         "deadline_mean":852.0
+         "deadline_mean":852.0,
+         "deadline_std": 0
       },
       {
          "name":"573",
@@ -2001,7 +2154,8 @@
          "required_results_data_std":0,
          "value_mean":8294400.0,
          "value_std":0,
-         "deadline_mean":2728.0
+         "deadline_mean":2728.0,
+         "deadline_std": 0
       },
       {
          "name":"574",
@@ -2014,7 +2168,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3039.0
+         "deadline_mean":3039.0,
+         "deadline_std": 0
       },
       {
          "name":"576",
@@ -2027,7 +2182,8 @@
          "required_results_data_std":0,
          "value_mean":486000.0,
          "value_std":0,
-         "deadline_mean":1380.0
+         "deadline_mean":1380.0,
+         "deadline_std": 0
       },
       {
          "name":"577",
@@ -2040,7 +2196,8 @@
          "required_results_data_std":0,
          "value_mean":4125900.0,
          "value_std":0,
-         "deadline_mean":2824.0
+         "deadline_mean":2824.0,
+         "deadline_std": 0
       },
       {
          "name":"580",
@@ -2053,7 +2210,8 @@
          "required_results_data_std":0,
          "value_mean":6220800.0,
          "value_std":0,
-         "deadline_mean":2008.0
+         "deadline_mean":2008.0,
+         "deadline_std": 0
       },
       {
          "name":"581",
@@ -2066,7 +2224,8 @@
          "required_results_data_std":0,
          "value_mean":11591680.0,
          "value_std":0,
-         "deadline_mean":8610.0
+         "deadline_mean":8610.0,
+         "deadline_std": 0
       },
       {
          "name":"597",
@@ -2079,7 +2238,8 @@
          "required_results_data_std":0,
          "value_mean":89100.0,
          "value_std":0,
-         "deadline_mean":946.0
+         "deadline_mean":946.0,
+         "deadline_std": 0
       },
       {
          "name":"598",
@@ -2092,7 +2252,8 @@
          "required_results_data_std":0,
          "value_mean":93150.0,
          "value_std":0,
-         "deadline_mean":811.0
+         "deadline_mean":811.0,
+         "deadline_std": 0
       },
       {
          "name":"599",
@@ -2105,7 +2266,8 @@
          "required_results_data_std":0,
          "value_mean":93150.0,
          "value_std":0,
-         "deadline_mean":848.0
+         "deadline_mean":848.0,
+         "deadline_std": 0
       },
       {
          "name":"600",
@@ -2118,7 +2280,8 @@
          "required_results_data_std":0,
          "value_mean":93150.0,
          "value_std":0,
-         "deadline_mean":755.0
+         "deadline_mean":755.0,
+         "deadline_std": 0
       },
       {
          "name":"601",
@@ -2131,7 +2294,8 @@
          "required_results_data_std":0,
          "value_mean":93150.0,
          "value_std":0,
-         "deadline_mean":808.0
+         "deadline_mean":808.0,
+         "deadline_std": 0
       },
       {
          "name":"602",
@@ -2144,7 +2308,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":936.0
+         "deadline_mean":936.0,
+         "deadline_std": 0
       },
       {
          "name":"604",
@@ -2157,7 +2322,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":926.0
+         "deadline_mean":926.0,
+         "deadline_std": 0
       },
       {
          "name":"606",
@@ -2170,7 +2336,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":970.0
+         "deadline_mean":970.0,
+         "deadline_std": 0
       },
       {
          "name":"608",
@@ -2183,7 +2350,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":908.0
+         "deadline_mean":908.0,
+         "deadline_std": 0
       },
       {
          "name":"609",
@@ -2196,7 +2364,8 @@
          "required_results_data_std":0,
          "value_mean":97200.0,
          "value_std":0,
-         "deadline_mean":837.0
+         "deadline_mean":837.0,
+         "deadline_std": 0
       },
       {
          "name":"610",
@@ -2209,7 +2378,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":672.0
+         "deadline_mean":672.0,
+         "deadline_std": 0
       },
       {
          "name":"612",
@@ -2222,7 +2392,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":753.0
+         "deadline_mean":753.0,
+         "deadline_std": 0
       },
       {
          "name":"613",
@@ -2235,7 +2406,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":819.0
+         "deadline_mean":819.0,
+         "deadline_std": 0
       },
       {
          "name":"614",
@@ -2248,7 +2420,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":797.0
+         "deadline_mean":797.0,
+         "deadline_std": 0
       },
       {
          "name":"615",
@@ -2261,7 +2434,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":807.0
+         "deadline_mean":807.0,
+         "deadline_std": 0
       },
       {
          "name":"616",
@@ -2274,7 +2448,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":861.0
+         "deadline_mean":861.0,
+         "deadline_std": 0
       },
       {
          "name":"617",
@@ -2287,7 +2462,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":738.0
+         "deadline_mean":738.0,
+         "deadline_std": 0
       },
       {
          "name":"618",
@@ -2300,7 +2476,8 @@
          "required_results_data_std":0,
          "value_mean":101250.0,
          "value_std":0,
-         "deadline_mean":871.0
+         "deadline_mean":871.0,
+         "deadline_std": 0
       },
       {
          "name":"620",
@@ -2313,7 +2490,8 @@
          "required_results_data_std":0,
          "value_mean":54450.0,
          "value_std":0,
-         "deadline_mean":500.0
+         "deadline_mean":500.0,
+         "deadline_std": 0
       },
       {
          "name":"621",
@@ -2326,7 +2504,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":542.0
+         "deadline_mean":542.0,
+         "deadline_std": 0
       },
       {
          "name":"622",
@@ -2339,7 +2518,8 @@
          "required_results_data_std":0,
          "value_mean":54450.0,
          "value_std":0,
-         "deadline_mean":578.0
+         "deadline_mean":578.0,
+         "deadline_std": 0
       },
       {
          "name":"623",
@@ -2352,7 +2532,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":554.0
+         "deadline_mean":554.0,
+         "deadline_std": 0
       },
       {
          "name":"624",
@@ -2365,7 +2546,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":562.0
+         "deadline_mean":562.0,
+         "deadline_std": 0
       },
       {
          "name":"625",
@@ -2378,7 +2560,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":586.0
+         "deadline_mean":586.0,
+         "deadline_std": 0
       },
       {
          "name":"626",
@@ -2391,7 +2574,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":1529.0
+         "deadline_mean":1529.0,
+         "deadline_std": 0
       },
       {
          "name":"628",
@@ -2404,7 +2588,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":593.0
+         "deadline_mean":593.0,
+         "deadline_std": 0
       },
       {
          "name":"629",
@@ -2417,7 +2602,8 @@
          "required_results_data_std":0,
          "value_mean":186300.0,
          "value_std":0,
-         "deadline_mean":583.0
+         "deadline_mean":583.0,
+         "deadline_std": 0
       },
       {
          "name":"630",
@@ -2430,7 +2616,8 @@
          "required_results_data_std":0,
          "value_mean":186300.0,
          "value_std":0,
-         "deadline_mean":513.0
+         "deadline_mean":513.0,
+         "deadline_std": 0
       },
       {
          "name":"631",
@@ -2443,7 +2630,8 @@
          "required_results_data_std":0,
          "value_mean":186300.0,
          "value_std":0,
-         "deadline_mean":558.0
+         "deadline_mean":558.0,
+         "deadline_std": 0
       },
       {
          "name":"632",
@@ -2456,7 +2644,8 @@
          "required_results_data_std":0,
          "value_mean":190350.0,
          "value_std":0,
-         "deadline_mean":489.0
+         "deadline_mean":489.0,
+         "deadline_std": 0
       },
       {
          "name":"633",
@@ -2469,7 +2658,8 @@
          "required_results_data_std":0,
          "value_mean":190350.0,
          "value_std":0,
-         "deadline_mean":550.0
+         "deadline_mean":550.0,
+         "deadline_std": 0
       },
       {
          "name":"634",
@@ -2482,7 +2672,8 @@
          "required_results_data_std":0,
          "value_mean":190350.0,
          "value_std":0,
-         "deadline_mean":634.0
+         "deadline_mean":634.0,
+         "deadline_std": 0
       },
       {
          "name":"635",
@@ -2495,7 +2686,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":740.0
+         "deadline_mean":740.0,
+         "deadline_std": 0
       },
       {
          "name":"636",
@@ -2508,7 +2700,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":556.0
+         "deadline_mean":556.0,
+         "deadline_std": 0
       },
       {
          "name":"637",
@@ -2521,7 +2714,8 @@
          "required_results_data_std":0,
          "value_mean":198450.0,
          "value_std":0,
-         "deadline_mean":558.0
+         "deadline_mean":558.0,
+         "deadline_std": 0
       },
       {
          "name":"638",
@@ -2534,7 +2728,8 @@
          "required_results_data_std":0,
          "value_mean":198450.0,
          "value_std":0,
-         "deadline_mean":553.0
+         "deadline_mean":553.0,
+         "deadline_std": 0
       },
       {
          "name":"639",
@@ -2547,7 +2742,8 @@
          "required_results_data_std":0,
          "value_mean":198450.0,
          "value_std":0,
-         "deadline_mean":586.0
+         "deadline_mean":586.0,
+         "deadline_std": 0
       },
       {
          "name":"640",
@@ -2560,7 +2756,8 @@
          "required_results_data_std":0,
          "value_mean":198450.0,
          "value_std":0,
-         "deadline_mean":558.0
+         "deadline_mean":558.0,
+         "deadline_std": 0
       },
       {
          "name":"641",
@@ -2573,7 +2770,8 @@
          "required_results_data_std":0,
          "value_mean":198450.0,
          "value_std":0,
-         "deadline_mean":561.0
+         "deadline_mean":561.0,
+         "deadline_std": 0
       },
       {
          "name":"643",
@@ -2586,7 +2784,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":571.0
+         "deadline_mean":571.0,
+         "deadline_std": 0
       },
       {
          "name":"644",
@@ -2599,7 +2798,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":585.0
+         "deadline_mean":585.0,
+         "deadline_std": 0
       },
       {
          "name":"645",
@@ -2612,7 +2812,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":605.0
+         "deadline_mean":605.0,
+         "deadline_std": 0
       },
       {
          "name":"646",
@@ -2625,7 +2826,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":580.0
+         "deadline_mean":580.0,
+         "deadline_std": 0
       },
       {
          "name":"648",
@@ -2638,7 +2840,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":541.0
+         "deadline_mean":541.0,
+         "deadline_std": 0
       },
       {
          "name":"649",
@@ -2651,7 +2854,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":542.0
+         "deadline_mean":542.0,
+         "deadline_std": 0
       },
       {
          "name":"650",
@@ -2664,7 +2868,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":548.0
+         "deadline_mean":548.0,
+         "deadline_std": 0
       },
       {
          "name":"651",
@@ -2677,7 +2882,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":543.0
+         "deadline_mean":543.0,
+         "deadline_std": 0
       },
       {
          "name":"652",
@@ -2690,7 +2896,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":634.0
+         "deadline_mean":634.0,
+         "deadline_std": 0
       },
       {
          "name":"653",
@@ -2703,7 +2910,8 @@
          "required_results_data_std":0,
          "value_mean":202500.0,
          "value_std":0,
-         "deadline_mean":565.0
+         "deadline_mean":565.0,
+         "deadline_std": 0
       },
       {
          "name":"654",
@@ -2716,7 +2924,8 @@
          "required_results_data_std":0,
          "value_mean":206550.0,
          "value_std":0,
-         "deadline_mean":763.0
+         "deadline_mean":763.0,
+         "deadline_std": 0
       },
       {
          "name":"655",
@@ -2729,7 +2938,8 @@
          "required_results_data_std":0,
          "value_mean":206550.0,
          "value_std":0,
-         "deadline_mean":1124.0
+         "deadline_mean":1124.0,
+         "deadline_std": 0
       },
       {
          "name":"656",
@@ -2742,7 +2952,8 @@
          "required_results_data_std":0,
          "value_mean":210600.0,
          "value_std":0,
-         "deadline_mean":456.0
+         "deadline_mean":456.0,
+         "deadline_std": 0
       },
       {
          "name":"657",
@@ -2755,7 +2966,8 @@
          "required_results_data_std":0,
          "value_mean":210600.0,
          "value_std":0,
-         "deadline_mean":570.0
+         "deadline_mean":570.0,
+         "deadline_std": 0
       },
       {
          "name":"658",
@@ -2768,7 +2980,8 @@
          "required_results_data_std":0,
          "value_mean":210600.0,
          "value_std":0,
-         "deadline_mean":492.0
+         "deadline_mean":492.0,
+         "deadline_std": 0
       },
       {
          "name":"660",
@@ -2781,7 +2994,8 @@
          "required_results_data_std":0,
          "value_mean":214650.0,
          "value_std":0,
-         "deadline_mean":574.0
+         "deadline_mean":574.0,
+         "deadline_std": 0
       },
       {
          "name":"661",
@@ -2794,7 +3008,8 @@
          "required_results_data_std":0,
          "value_mean":214650.0,
          "value_std":0,
-         "deadline_mean":369.0
+         "deadline_mean":369.0,
+         "deadline_std": 0
       },
       {
          "name":"662",
@@ -2807,7 +3022,8 @@
          "required_results_data_std":0,
          "value_mean":218700.0,
          "value_std":0,
-         "deadline_mean":347.0
+         "deadline_mean":347.0,
+         "deadline_std": 0
       },
       {
          "name":"663",
@@ -2820,7 +3036,8 @@
          "required_results_data_std":0,
          "value_mean":218700.0,
          "value_std":0,
-         "deadline_mean":440.0
+         "deadline_mean":440.0,
+         "deadline_std": 0
       },
       {
          "name":"664",
@@ -2833,7 +3050,8 @@
          "required_results_data_std":0,
          "value_mean":222750.0,
          "value_std":0,
-         "deadline_mean":628.0
+         "deadline_mean":628.0,
+         "deadline_std": 0
       },
       {
          "name":"665",
@@ -2846,7 +3064,8 @@
          "required_results_data_std":0,
          "value_mean":222750.0,
          "value_std":0,
-         "deadline_mean":389.0
+         "deadline_mean":389.0,
+         "deadline_std": 0
       },
       {
          "name":"666",
@@ -2859,7 +3078,8 @@
          "required_results_data_std":0,
          "value_mean":226800.0,
          "value_std":0,
-         "deadline_mean":560.0
+         "deadline_mean":560.0,
+         "deadline_std": 0
       },
       {
          "name":"667",
@@ -2872,7 +3092,8 @@
          "required_results_data_std":0,
          "value_mean":230850.0,
          "value_std":0,
-         "deadline_mean":356.0
+         "deadline_mean":356.0,
+         "deadline_std": 0
       },
       {
          "name":"668",
@@ -2885,7 +3106,8 @@
          "required_results_data_std":0,
          "value_mean":230850.0,
          "value_std":0,
-         "deadline_mean":532.0
+         "deadline_mean":532.0,
+         "deadline_std": 0
       },
       {
          "name":"670",
@@ -2898,7 +3120,8 @@
          "required_results_data_std":0,
          "value_mean":230850.0,
          "value_std":0,
-         "deadline_mean":400.0
+         "deadline_mean":400.0,
+         "deadline_std": 0
       },
       {
          "name":"671",
@@ -2911,7 +3134,8 @@
          "required_results_data_std":0,
          "value_mean":234900.0,
          "value_std":0,
-         "deadline_mean":427.0
+         "deadline_mean":427.0,
+         "deadline_std": 0
       },
       {
          "name":"672",
@@ -2924,7 +3148,8 @@
          "required_results_data_std":0,
          "value_mean":12200.0,
          "value_std":0,
-         "deadline_mean":10897.0
+         "deadline_mean":10897.0,
+         "deadline_std": 0
       },
       {
          "name":"673",
@@ -2937,7 +3162,8 @@
          "required_results_data_std":0,
          "value_mean":13200.0,
          "value_std":0,
-         "deadline_mean":230.0
+         "deadline_mean":230.0,
+         "deadline_std": 0
       },
       {
          "name":"679",
@@ -2950,7 +3176,8 @@
          "required_results_data_std":0,
          "value_mean":13400.0,
          "value_std":0,
-         "deadline_mean":271.0
+         "deadline_mean":271.0,
+         "deadline_std": 0
       },
       {
          "name":"680",
@@ -2963,7 +3190,8 @@
          "required_results_data_std":0,
          "value_mean":13400.0,
          "value_std":0,
-         "deadline_mean":347.0
+         "deadline_mean":347.0,
+         "deadline_std": 0
       },
       {
          "name":"681",
@@ -2976,7 +3204,8 @@
          "required_results_data_std":0,
          "value_mean":13400.0,
          "value_std":0,
-         "deadline_mean":268.0
+         "deadline_mean":268.0,
+         "deadline_std": 0
       },
       {
          "name":"690",
@@ -2989,7 +3218,8 @@
          "required_results_data_std":0,
          "value_mean":13800.0,
          "value_std":0,
-         "deadline_mean":227.0
+         "deadline_mean":227.0,
+         "deadline_std": 0
       },
       {
          "name":"691",
@@ -3002,7 +3232,8 @@
          "required_results_data_std":0,
          "value_mean":14000.0,
          "value_std":0,
-         "deadline_mean":344.0
+         "deadline_mean":344.0,
+         "deadline_std": 0
       },
       {
          "name":"693",
@@ -3015,7 +3246,8 @@
          "required_results_data_std":0,
          "value_mean":8760.0,
          "value_std":0,
-         "deadline_mean":1095.0
+         "deadline_mean":1095.0,
+         "deadline_std": 0
       },
       {
          "name":"699",
@@ -3028,7 +3260,8 @@
          "required_results_data_std":0,
          "value_mean":257530.0,
          "value_std":0,
-         "deadline_mean":795.0
+         "deadline_mean":795.0,
+         "deadline_std": 0
       },
       {
          "name":"700",
@@ -3041,7 +3274,8 @@
          "required_results_data_std":0,
          "value_mean":257530.0,
          "value_std":0,
-         "deadline_mean":672.0
+         "deadline_mean":672.0,
+         "deadline_std": 0
       },
       {
          "name":"701",
@@ -3054,7 +3288,8 @@
          "required_results_data_std":0,
          "value_mean":260360.0,
          "value_std":0,
-         "deadline_mean":811.0
+         "deadline_mean":811.0,
+         "deadline_std": 0
       },
       {
          "name":"705",
@@ -3067,7 +3302,8 @@
          "required_results_data_std":0,
          "value_mean":82620.0,
          "value_std":0,
-         "deadline_mean":1896.0
+         "deadline_mean":1896.0,
+         "deadline_std": 0
       },
       {
          "name":"707",
@@ -3080,7 +3316,8 @@
          "required_results_data_std":0,
          "value_mean":3987280.0,
          "value_std":0,
-         "deadline_mean":22990.0
+         "deadline_mean":22990.0,
+         "deadline_std": 0
       },
       {
          "name":"714",
@@ -3093,7 +3330,8 @@
          "required_results_data_std":0,
          "value_mean":4965260.0,
          "value_std":0,
-         "deadline_mean":42021.0
+         "deadline_mean":42021.0,
+         "deadline_std": 0
       },
       {
          "name":"715",
@@ -3106,7 +3344,8 @@
          "required_results_data_std":0,
          "value_mean":414720.0,
          "value_std":0,
-         "deadline_mean":2311.0
+         "deadline_mean":2311.0,
+         "deadline_std": 0
       },
       {
          "name":"753",
@@ -3119,7 +3358,8 @@
          "required_results_data_std":0,
          "value_mean":1290816.0,
          "value_std":0,
-         "deadline_mean":744.0
+         "deadline_mean":744.0,
+         "deadline_std": 0
       },
       {
          "name":"761",
@@ -3132,7 +3372,8 @@
          "required_results_data_std":0,
          "value_mean":1616355.0,
          "value_std":0,
-         "deadline_mean":1079.0
+         "deadline_mean":1079.0,
+         "deadline_std": 0
       },
       {
          "name":"764",
@@ -3145,7 +3386,8 @@
          "required_results_data_std":0,
          "value_mean":1616355.0,
          "value_std":0,
-         "deadline_mean":1025.0
+         "deadline_mean":1025.0,
+         "deadline_std": 0
       },
       {
          "name":"771",
@@ -3158,7 +3400,8 @@
          "required_results_data_std":0,
          "value_mean":1740690.0,
          "value_std":0,
-         "deadline_mean":1378.0
+         "deadline_mean":1378.0,
+         "deadline_std": 0
       },
       {
          "name":"775",
@@ -3171,7 +3414,8 @@
          "required_results_data_std":0,
          "value_mean":520058.0,
          "value_std":0,
-         "deadline_mean":2557.0
+         "deadline_mean":2557.0,
+         "deadline_std": 0
       },
       {
          "name":"780",
@@ -3184,7 +3428,8 @@
          "required_results_data_std":0,
          "value_mean":520058.0,
          "value_std":0,
-         "deadline_mean":815.0
+         "deadline_mean":815.0,
+         "deadline_std": 0
       },
       {
          "name":"783",
@@ -3197,7 +3442,8 @@
          "required_results_data_std":0,
          "value_mean":520058.0,
          "value_std":0,
-         "deadline_mean":841.0
+         "deadline_mean":841.0,
+         "deadline_std": 0
       },
       {
          "name":"794",
@@ -3210,7 +3456,8 @@
          "required_results_data_std":0,
          "value_mean":1740690.0,
          "value_std":0,
-         "deadline_mean":1522.0
+         "deadline_mean":1522.0,
+         "deadline_std": 0
       },
       {
          "name":"797",
@@ -3223,7 +3470,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":879.0
+         "deadline_mean":879.0,
+         "deadline_std": 0
       },
       {
          "name":"798",
@@ -3236,7 +3484,8 @@
          "required_results_data_std":0,
          "value_mean":557205.0,
          "value_std":0,
-         "deadline_mean":1157.0
+         "deadline_mean":1157.0,
+         "deadline_std": 0
       },
       {
          "name":"800",
@@ -3249,7 +3498,8 @@
          "required_results_data_std":0,
          "value_mean":1950.0,
          "value_std":0,
-         "deadline_mean":94.0
+         "deadline_mean":94.0,
+         "deadline_std": 0
       },
       {
          "name":"801",
@@ -3262,7 +3512,8 @@
          "required_results_data_std":0,
          "value_mean":1950.0,
          "value_std":0,
-         "deadline_mean":91.0
+         "deadline_mean":91.0,
+         "deadline_std": 0
       },
       {
          "name":"804",
@@ -3275,7 +3526,8 @@
          "required_results_data_std":0,
          "value_mean":1950.0,
          "value_std":0,
-         "deadline_mean":91.0
+         "deadline_mean":91.0,
+         "deadline_std": 0
       },
       {
          "name":"806",
@@ -3288,7 +3540,8 @@
          "required_results_data_std":0,
          "value_mean":2100.0,
          "value_std":0,
-         "deadline_mean":100.0
+         "deadline_mean":100.0,
+         "deadline_std": 0
       },
       {
          "name":"807",
@@ -3301,7 +3554,8 @@
          "required_results_data_std":0,
          "value_mean":2100.0,
          "value_std":0,
-         "deadline_mean":91.0
+         "deadline_mean":91.0,
+         "deadline_std": 0
       },
       {
          "name":"808",
@@ -3314,7 +3568,8 @@
          "required_results_data_std":0,
          "value_mean":2100.0,
          "value_std":0,
-         "deadline_mean":90.0
+         "deadline_mean":90.0,
+         "deadline_std": 0
       },
       {
          "name":"809",
@@ -3327,7 +3582,8 @@
          "required_results_data_std":0,
          "value_mean":2100.0,
          "value_std":0,
-         "deadline_mean":93.0
+         "deadline_mean":93.0,
+         "deadline_std": 0
       },
       {
          "name":"814",
@@ -3340,7 +3596,8 @@
          "required_results_data_std":0,
          "value_mean":176175.0,
          "value_std":0,
-         "deadline_mean":698.0
+         "deadline_mean":698.0,
+         "deadline_std": 0
       },
       {
          "name":"815",
@@ -3353,7 +3610,8 @@
          "required_results_data_std":0,
          "value_mean":176175.0,
          "value_std":0,
-         "deadline_mean":662.0
+         "deadline_mean":662.0,
+         "deadline_std": 0
       },
       {
          "name":"816",
@@ -3366,7 +3624,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":693.0
+         "deadline_mean":693.0,
+         "deadline_std": 0
       },
       {
          "name":"817",
@@ -3379,7 +3638,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":831.0
+         "deadline_mean":831.0,
+         "deadline_std": 0
       },
       {
          "name":"818",
@@ -3392,7 +3652,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":682.0
+         "deadline_mean":682.0,
+         "deadline_std": 0
       },
       {
          "name":"819",
@@ -3405,7 +3666,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":639.0
+         "deadline_mean":639.0,
+         "deadline_std": 0
       },
       {
          "name":"820",
@@ -3418,7 +3680,8 @@
          "required_results_data_std":0,
          "value_mean":182250.0,
          "value_std":0,
-         "deadline_mean":702.0
+         "deadline_mean":702.0,
+         "deadline_std": 0
       },
       {
          "name":"821",
@@ -3431,7 +3694,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":739.0
+         "deadline_mean":739.0,
+         "deadline_std": 0
       },
       {
          "name":"822",
@@ -3444,7 +3708,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":662.0
+         "deadline_mean":662.0,
+         "deadline_std": 0
       },
       {
          "name":"823",
@@ -3457,7 +3722,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":690.0
+         "deadline_mean":690.0,
+         "deadline_std": 0
       },
       {
          "name":"824",
@@ -3470,7 +3736,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":897.0
+         "deadline_mean":897.0,
+         "deadline_std": 0
       },
       {
          "name":"825",
@@ -3483,7 +3750,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":667.0
+         "deadline_mean":667.0,
+         "deadline_std": 0
       },
       {
          "name":"826",
@@ -3496,7 +3764,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":730.0
+         "deadline_mean":730.0,
+         "deadline_std": 0
       },
       {
          "name":"827",
@@ -3509,7 +3778,8 @@
          "required_results_data_std":0,
          "value_mean":188325.0,
          "value_std":0,
-         "deadline_mean":843.0
+         "deadline_mean":843.0,
+         "deadline_std": 0
       },
       {
          "name":"829",
@@ -3522,7 +3792,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":651.0
+         "deadline_mean":651.0,
+         "deadline_std": 0
       },
       {
          "name":"830",
@@ -3535,7 +3806,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":573.0
+         "deadline_mean":573.0,
+         "deadline_std": 0
       },
       {
          "name":"831",
@@ -3548,7 +3820,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":755.0
+         "deadline_mean":755.0,
+         "deadline_std": 0
       },
       {
          "name":"832",
@@ -3561,7 +3834,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":669.0
+         "deadline_mean":669.0,
+         "deadline_std": 0
       },
       {
          "name":"833",
@@ -3574,7 +3848,8 @@
          "required_results_data_std":0,
          "value_mean":194400.0,
          "value_std":0,
-         "deadline_mean":618.0
+         "deadline_mean":618.0,
+         "deadline_std": 0
       },
       {
          "name":"838",
@@ -3587,7 +3862,8 @@
          "required_results_data_std":0,
          "value_mean":7350.0,
          "value_std":0,
-         "deadline_mean":846.0
+         "deadline_mean":846.0,
+         "deadline_std": 0
       },
       {
          "name":"840",
@@ -3600,7 +3876,8 @@
          "required_results_data_std":0,
          "value_mean":87120.0,
          "value_std":0,
-         "deadline_mean":70.0
+         "deadline_mean":70.0,
+         "deadline_std": 0
       },
       {
          "name":"858",
@@ -3613,7 +3890,8 @@
          "required_results_data_std":0,
          "value_mean":308100.0,
          "value_std":0,
-         "deadline_mean":1178.0
+         "deadline_mean":1178.0,
+         "deadline_std": 0
       },
       {
          "name":"859",
@@ -3626,7 +3904,8 @@
          "required_results_data_std":0,
          "value_mean":465105.0,
          "value_std":0,
-         "deadline_mean":2467.0
+         "deadline_mean":2467.0,
+         "deadline_std": 0
       },
       {
          "name":"864",
@@ -3639,7 +3918,8 @@
          "required_results_data_std":0,
          "value_mean":2600100.0,
          "value_std":0,
-         "deadline_mean":2390.0
+         "deadline_mean":2390.0,
+         "deadline_std": 0
       },
       {
          "name":"868",
@@ -3652,7 +3932,8 @@
          "required_results_data_std":0,
          "value_mean":5590470.0,
          "value_std":0,
-         "deadline_mean":1187.0
+         "deadline_mean":1187.0,
+         "deadline_std": 0
       },
       {
          "name":"869",
@@ -3665,7 +3946,8 @@
          "required_results_data_std":0,
          "value_mean":14913990.0,
          "value_std":0,
-         "deadline_mean":753.0
+         "deadline_mean":753.0,
+         "deadline_std": 0
       },
       {
          "name":"871",
@@ -3678,7 +3960,8 @@
          "required_results_data_std":0,
          "value_mean":557205.0,
          "value_std":0,
-         "deadline_mean":1078.0
+         "deadline_mean":1078.0,
+         "deadline_std": 0
       },
       {
          "name":"872",
@@ -3691,7 +3974,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":2829.0
+         "deadline_mean":2829.0,
+         "deadline_std": 0
       },
       {
          "name":"873",
@@ -3704,7 +3988,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":3147.0
+         "deadline_mean":3147.0,
+         "deadline_std": 0
       },
       {
          "name":"874",
@@ -3717,7 +4002,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":904.0
+         "deadline_mean":904.0,
+         "deadline_std": 0
       },
       {
          "name":"875",
@@ -3730,7 +4016,8 @@
          "required_results_data_std":0,
          "value_mean":1865025.0,
          "value_std":0,
-         "deadline_mean":1248.0
+         "deadline_mean":1248.0,
+         "deadline_std": 0
       },
       {
          "name":"876",
@@ -3743,7 +4030,8 @@
          "required_results_data_std":0,
          "value_mean":1989360.0,
          "value_std":0,
-         "deadline_mean":903.0
+         "deadline_mean":903.0,
+         "deadline_std": 0
       },
       {
          "name":"877",
@@ -3756,7 +4044,8 @@
          "required_results_data_std":0,
          "value_mean":1989360.0,
          "value_std":0,
-         "deadline_mean":1138.0
+         "deadline_mean":1138.0,
+         "deadline_std": 0
       },
       {
          "name":"878",
@@ -3769,7 +4058,8 @@
          "required_results_data_std":0,
          "value_mean":1989360.0,
          "value_std":0,
-         "deadline_mean":1011.0
+         "deadline_mean":1011.0,
+         "deadline_std": 0
       },
       {
          "name":"879",
@@ -3782,7 +4072,8 @@
          "required_results_data_std":0,
          "value_mean":1989360.0,
          "value_std":0,
-         "deadline_mean":969.0
+         "deadline_mean":969.0,
+         "deadline_std": 0
       },
       {
          "name":"880",
@@ -3795,7 +4086,8 @@
          "required_results_data_std":0,
          "value_mean":1989360.0,
          "value_std":0,
-         "deadline_mean":871.0
+         "deadline_mean":871.0,
+         "deadline_std": 0
       },
       {
          "name":"881",
@@ -3808,7 +4100,8 @@
          "required_results_data_std":0,
          "value_mean":594352.0,
          "value_std":0,
-         "deadline_mean":1569.0
+         "deadline_mean":1569.0,
+         "deadline_std": 0
       },
       {
          "name":"885",
@@ -3821,7 +4114,8 @@
          "required_results_data_std":0,
          "value_mean":1778760.0,
          "value_std":0,
-         "deadline_mean":661.0
+         "deadline_mean":661.0,
+         "deadline_std": 0
       },
       {
          "name":"886",
@@ -3834,7 +4128,8 @@
          "required_results_data_std":0,
          "value_mean":407736.0,
          "value_std":0,
-         "deadline_mean":283.0
+         "deadline_mean":283.0,
+         "deadline_std": 0
       },
       {
          "name":"894",
@@ -3847,7 +4142,8 @@
          "required_results_data_std":0,
          "value_mean":142740.0,
          "value_std":0,
-         "deadline_mean":755.0
+         "deadline_mean":755.0,
+         "deadline_std": 0
       },
       {
          "name":"897",
@@ -3860,7 +4156,8 @@
          "required_results_data_std":0,
          "value_mean":145080.0,
          "value_std":0,
-         "deadline_mean":804.0
+         "deadline_mean":804.0,
+         "deadline_std": 0
       },
       {
          "name":"898",
@@ -3873,7 +4170,8 @@
          "required_results_data_std":0,
          "value_mean":147420.0,
          "value_std":0,
-         "deadline_mean":662.0
+         "deadline_mean":662.0,
+         "deadline_std": 0
       },
       {
          "name":"909",
@@ -3886,7 +4184,8 @@
          "required_results_data_std":0,
          "value_mean":81600.0,
          "value_std":0,
-         "deadline_mean":1692.0
+         "deadline_mean":1692.0,
+         "deadline_std": 0
       },
       {
          "name":"913",
@@ -3899,7 +4198,8 @@
          "required_results_data_std":0,
          "value_mean":1650360.0,
          "value_std":0,
-         "deadline_mean":2729.0
+         "deadline_mean":2729.0,
+         "deadline_std": 0
       },
       {
          "name":"916",
@@ -3912,7 +4212,8 @@
          "required_results_data_std":0,
          "value_mean":1125900.0,
          "value_std":0,
-         "deadline_mean":422.0
+         "deadline_mean":422.0,
+         "deadline_std": 0
       },
       {
          "name":"917",
@@ -3925,7 +4226,8 @@
          "required_results_data_std":0,
          "value_mean":1125900.0,
          "value_std":0,
-         "deadline_mean":453.0
+         "deadline_mean":453.0,
+         "deadline_std": 0
       },
       {
          "name":"918",
@@ -3938,7 +4240,8 @@
          "required_results_data_std":0,
          "value_mean":1158300.0,
          "value_std":0,
-         "deadline_mean":359.0
+         "deadline_mean":359.0,
+         "deadline_std": 0
       },
       {
          "name":"924",
@@ -3951,7 +4254,8 @@
          "required_results_data_std":0,
          "value_mean":1660500.0,
          "value_std":0,
-         "deadline_mean":433.0
+         "deadline_mean":433.0,
+         "deadline_std": 0
       },
       {
          "name":"927",
@@ -3964,7 +4268,8 @@
          "required_results_data_std":0,
          "value_mean":10610800.0,
          "value_std":0,
-         "deadline_mean":62.0
+         "deadline_mean":62.0,
+         "deadline_std": 0
       },
       {
          "name":"929",
@@ -3977,7 +4282,8 @@
          "required_results_data_std":0,
          "value_mean":9934520.0,
          "value_std":0,
-         "deadline_mean":3285.0
+         "deadline_mean":3285.0,
+         "deadline_std": 0
       },
       {
          "name":"932",
@@ -3990,7 +4296,8 @@
          "required_results_data_std":0,
          "value_mean":716100.0,
          "value_std":0,
-         "deadline_mean":1253.0
+         "deadline_mean":1253.0,
+         "deadline_std": 0
       },
       {
          "name":"935",
@@ -4003,7 +4310,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2232.0
+         "deadline_mean":2232.0,
+         "deadline_std": 0
       },
       {
          "name":"936",
@@ -4016,7 +4324,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2567.0
+         "deadline_mean":2567.0,
+         "deadline_std": 0
       },
       {
          "name":"937",
@@ -4029,7 +4338,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2501.0
+         "deadline_mean":2501.0,
+         "deadline_std": 0
       },
       {
          "name":"938",
@@ -4042,7 +4352,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2818.0
+         "deadline_mean":2818.0,
+         "deadline_std": 0
       },
       {
          "name":"939",
@@ -4055,7 +4366,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":3163.0
+         "deadline_mean":3163.0,
+         "deadline_std": 0
       },
       {
          "name":"940",
@@ -4068,7 +4380,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2954.0
+         "deadline_mean":2954.0,
+         "deadline_std": 0
       },
       {
          "name":"941",
@@ -4081,7 +4394,8 @@
          "required_results_data_std":0,
          "value_mean":17500.0,
          "value_std":0,
-         "deadline_mean":329.0
+         "deadline_mean":329.0,
+         "deadline_std": 0
       },
       {
          "name":"942",
@@ -4094,7 +4408,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2813.0
+         "deadline_mean":2813.0,
+         "deadline_std": 0
       },
       {
          "name":"945",
@@ -4107,7 +4422,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":3295.0
+         "deadline_mean":3295.0,
+         "deadline_std": 0
       },
       {
          "name":"946",
@@ -4120,7 +4436,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2569.0
+         "deadline_mean":2569.0,
+         "deadline_std": 0
       },
       {
          "name":"947",
@@ -4133,7 +4450,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":2807.0
+         "deadline_mean":2807.0,
+         "deadline_std": 0
       },
       {
          "name":"948",
@@ -4146,7 +4464,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":3743.0
+         "deadline_mean":3743.0,
+         "deadline_std": 0
       },
       {
          "name":"949",
@@ -4159,7 +4478,8 @@
          "required_results_data_std":0,
          "value_mean":56250.0,
          "value_std":0,
-         "deadline_mean":3273.0
+         "deadline_mean":3273.0,
+         "deadline_std": 0
       },
       {
          "name":"950",
@@ -4172,7 +4492,8 @@
          "required_results_data_std":0,
          "value_mean":1119250.0,
          "value_std":0,
-         "deadline_mean":4224.0
+         "deadline_mean":4224.0,
+         "deadline_std": 0
       },
       {
          "name":"951",
@@ -4185,7 +4506,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":3680.0
+         "deadline_mean":3680.0,
+         "deadline_std": 0
       },
       {
          "name":"953",
@@ -4198,7 +4520,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":3693.0
+         "deadline_mean":3693.0,
+         "deadline_std": 0
       },
       {
          "name":"954",
@@ -4211,7 +4534,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2651.0
+         "deadline_mean":2651.0,
+         "deadline_std": 0
       },
       {
          "name":"955",
@@ -4224,7 +4548,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2924.0
+         "deadline_mean":2924.0,
+         "deadline_std": 0
       },
       {
          "name":"956",
@@ -4237,7 +4562,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2709.0
+         "deadline_mean":2709.0,
+         "deadline_std": 0
       },
       {
          "name":"957",
@@ -4250,7 +4576,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2297.0
+         "deadline_mean":2297.0,
+         "deadline_std": 0
       },
       {
          "name":"958",
@@ -4263,7 +4590,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2331.0
+         "deadline_mean":2331.0,
+         "deadline_std": 0
       },
       {
          "name":"959",
@@ -4276,7 +4604,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2304.0
+         "deadline_mean":2304.0,
+         "deadline_std": 0
       },
       {
          "name":"960",
@@ -4289,7 +4618,8 @@
          "required_results_data_std":0,
          "value_mean":58500.0,
          "value_std":0,
-         "deadline_mean":2068.0
+         "deadline_mean":2068.0,
+         "deadline_std": 0
       },
       {
          "name":"961",
@@ -4302,7 +4632,8 @@
          "required_results_data_std":0,
          "value_mean":896670.0,
          "value_std":0,
-         "deadline_mean":892.0
+         "deadline_mean":892.0,
+         "deadline_std": 0
       },
       {
          "name":"963",
@@ -4315,7 +4646,8 @@
          "required_results_data_std":0,
          "value_mean":1200556.0,
          "value_std":0,
-         "deadline_mean":637.0
+         "deadline_mean":637.0,
+         "deadline_std": 0
       },
       {
          "name":"964",
@@ -4328,7 +4660,8 @@
          "required_results_data_std":0,
          "value_mean":1360738.0,
          "value_std":0,
-         "deadline_mean":509.0
+         "deadline_mean":509.0,
+         "deadline_std": 0
       },
       {
          "name":"967",
@@ -4341,7 +4674,8 @@
          "required_results_data_std":0,
          "value_mean":18000.0,
          "value_std":0,
-         "deadline_mean":493.0
+         "deadline_mean":493.0,
+         "deadline_std": 0
       },
       {
          "name":"968",
@@ -4354,7 +4688,8 @@
          "required_results_data_std":0,
          "value_mean":187110.0,
          "value_std":0,
-         "deadline_mean":162.0
+         "deadline_mean":162.0,
+         "deadline_std": 0
       },
       {
          "name":"970",
@@ -4367,7 +4702,8 @@
          "required_results_data_std":0,
          "value_mean":187110.0,
          "value_std":0,
-         "deadline_mean":180.0
+         "deadline_mean":180.0,
+         "deadline_std": 0
       },
       {
          "name":"971",
@@ -4380,7 +4716,8 @@
          "required_results_data_std":0,
          "value_mean":187110.0,
          "value_std":0,
-         "deadline_mean":169.0
+         "deadline_mean":169.0,
+         "deadline_std": 0
       },
       {
          "name":"975",
@@ -4393,7 +4730,8 @@
          "required_results_data_std":0,
          "value_mean":191970.0,
          "value_std":0,
-         "deadline_mean":106.0
+         "deadline_mean":106.0,
+         "deadline_std": 0
       },
       {
          "name":"977",
@@ -4406,7 +4744,8 @@
          "required_results_data_std":0,
          "value_mean":191970.0,
          "value_std":0,
-         "deadline_mean":121.0
+         "deadline_mean":121.0,
+         "deadline_std": 0
       },
       {
          "name":"992",
@@ -4419,7 +4758,8 @@
          "required_results_data_std":0,
          "value_mean":199260.0,
          "value_std":0,
-         "deadline_mean":135.0
+         "deadline_mean":135.0,
+         "deadline_std": 0
       },
       {
          "name":"1008",
@@ -4432,7 +4772,8 @@
          "required_results_data_std":0,
          "value_mean":211410.0,
          "value_std":0,
-         "deadline_mean":242.0
+         "deadline_mean":242.0,
+         "deadline_std": 0
       },
       {
          "name":"1009",
@@ -4445,7 +4786,8 @@
          "required_results_data_std":0,
          "value_mean":211410.0,
          "value_std":0,
-         "deadline_mean":251.0
+         "deadline_mean":251.0,
+         "deadline_std": 0
       },
       {
          "name":"1010",
@@ -4458,7 +4800,8 @@
          "required_results_data_std":0,
          "value_mean":213840.0,
          "value_std":0,
-         "deadline_mean":252.0
+         "deadline_mean":252.0,
+         "deadline_std": 0
       },
       {
          "name":"1011",
@@ -4471,7 +4814,8 @@
          "required_results_data_std":0,
          "value_mean":213840.0,
          "value_std":0,
-         "deadline_mean":283.0
+         "deadline_mean":283.0,
+         "deadline_std": 0
       },
       {
          "name":"1012",
@@ -4484,7 +4828,8 @@
          "required_results_data_std":0,
          "value_mean":213840.0,
          "value_std":0,
-         "deadline_mean":267.0
+         "deadline_mean":267.0,
+         "deadline_std": 0
       },
       {
          "name":"1013",
@@ -4497,7 +4842,8 @@
          "required_results_data_std":0,
          "value_mean":213840.0,
          "value_std":0,
-         "deadline_mean":258.0
+         "deadline_mean":258.0,
+         "deadline_std": 0
       },
       {
          "name":"1014",
@@ -4510,7 +4856,8 @@
          "required_results_data_std":0,
          "value_mean":216270.0,
          "value_std":0,
-         "deadline_mean":286.0
+         "deadline_mean":286.0,
+         "deadline_std": 0
       },
       {
          "name":"1016",
@@ -4523,7 +4870,8 @@
          "required_results_data_std":0,
          "value_mean":216270.0,
          "value_std":0,
-         "deadline_mean":209.0
+         "deadline_mean":209.0,
+         "deadline_std": 0
       },
       {
          "name":"1020",
@@ -4536,7 +4884,8 @@
          "required_results_data_std":0,
          "value_mean":238140.0,
          "value_std":0,
-         "deadline_mean":277.0
+         "deadline_mean":277.0,
+         "deadline_std": 0
       },
       {
          "name":"1021",
@@ -4549,7 +4898,8 @@
          "required_results_data_std":0,
          "value_mean":238140.0,
          "value_std":0,
-         "deadline_mean":227.0
+         "deadline_mean":227.0,
+         "deadline_std": 0
       },
       {
          "name":"1022",
@@ -4562,7 +4912,8 @@
          "required_results_data_std":0,
          "value_mean":238140.0,
          "value_std":0,
-         "deadline_mean":250.0
+         "deadline_mean":250.0,
+         "deadline_std": 0
       },
       {
          "name":"1023",
@@ -4575,7 +4926,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":291.0
+         "deadline_mean":291.0,
+         "deadline_std": 0
       },
       {
          "name":"1024",
@@ -4588,7 +4940,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":319.0
+         "deadline_mean":319.0,
+         "deadline_std": 0
       },
       {
          "name":"1027",
@@ -4601,7 +4954,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":281.0
+         "deadline_mean":281.0,
+         "deadline_std": 0
       },
       {
          "name":"1028",
@@ -4614,7 +4968,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":266.0
+         "deadline_mean":266.0,
+         "deadline_std": 0
       },
       {
          "name":"1029",
@@ -4627,7 +4982,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":278.0
+         "deadline_mean":278.0,
+         "deadline_std": 0
       },
       {
          "name":"1030",
@@ -4640,7 +4996,8 @@
          "required_results_data_std":0,
          "value_mean":243000.0,
          "value_std":0,
-         "deadline_mean":297.0
+         "deadline_mean":297.0,
+         "deadline_std": 0
       },
       {
          "name":"1037",
@@ -4653,7 +5010,8 @@
          "required_results_data_std":0,
          "value_mean":947700.0,
          "value_std":0,
-         "deadline_mean":600.0
+         "deadline_mean":600.0,
+         "deadline_std": 0
       },
       {
          "name":"1040",
@@ -4666,7 +5024,8 @@
          "required_results_data_std":0,
          "value_mean":2523960.0,
          "value_std":0,
-         "deadline_mean":2374.0
+         "deadline_mean":2374.0,
+         "deadline_std": 0
       },
       {
          "name":"1043",
@@ -4679,7 +5038,8 @@
          "required_results_data_std":0,
          "value_mean":1215000.0,
          "value_std":0,
-         "deadline_mean":157.0
+         "deadline_mean":157.0,
+         "deadline_std": 0
       },
       {
          "name":"1047",
@@ -4692,7 +5052,8 @@
          "required_results_data_std":0,
          "value_mean":1312200.0,
          "value_std":0,
-         "deadline_mean":192.0
+         "deadline_mean":192.0,
+         "deadline_std": 0
       },
       {
          "name":"1048",
@@ -4705,7 +5066,8 @@
          "required_results_data_std":0,
          "value_mean":1312200.0,
          "value_std":0,
-         "deadline_mean":199.0
+         "deadline_mean":199.0,
+         "deadline_std": 0
       },
       {
          "name":"1049",
@@ -4718,7 +5080,8 @@
          "required_results_data_std":0,
          "value_mean":1328400.0,
          "value_std":0,
-         "deadline_mean":360.0
+         "deadline_mean":360.0,
+         "deadline_std": 0
       },
       {
          "name":"1052",
@@ -4731,7 +5094,8 @@
          "required_results_data_std":0,
          "value_mean":1798200.0,
          "value_std":0,
-         "deadline_mean":664.0
+         "deadline_mean":664.0,
+         "deadline_std": 0
       },
       {
          "name":"1053",
@@ -4744,7 +5108,8 @@
          "required_results_data_std":0,
          "value_mean":1814400.0,
          "value_std":0,
-         "deadline_mean":463.0
+         "deadline_mean":463.0,
+         "deadline_std": 0
       },
       {
          "name":"1055",
@@ -4757,7 +5122,8 @@
          "required_results_data_std":0,
          "value_mean":1960200.0,
          "value_std":0,
-         "deadline_mean":560.0
+         "deadline_mean":560.0,
+         "deadline_std": 0
       },
       {
          "name":"1056",
@@ -4770,7 +5136,8 @@
          "required_results_data_std":0,
          "value_mean":1976400.0,
          "value_std":0,
-         "deadline_mean":297.0
+         "deadline_mean":297.0,
+         "deadline_std": 0
       },
       {
          "name":"1057",
@@ -4783,7 +5150,8 @@
          "required_results_data_std":0,
          "value_mean":2008800.0,
          "value_std":0,
-         "deadline_mean":637.0
+         "deadline_mean":637.0,
+         "deadline_std": 0
       },
       {
          "name":"1058",
@@ -4796,7 +5164,8 @@
          "required_results_data_std":0,
          "value_mean":2041200.0,
          "value_std":0,
-         "deadline_mean":595.0
+         "deadline_mean":595.0,
+         "deadline_std": 0
       },
       {
          "name":"1059",
@@ -4809,7 +5178,8 @@
          "required_results_data_std":0,
          "value_mean":2041200.0,
          "value_std":0,
-         "deadline_mean":1481.0
+         "deadline_mean":1481.0,
+         "deadline_std": 0
       },
       {
          "name":"1060",
@@ -4822,7 +5192,8 @@
          "required_results_data_std":0,
          "value_mean":2057400.0,
          "value_std":0,
-         "deadline_mean":374.0
+         "deadline_mean":374.0,
+         "deadline_std": 0
       },
       {
          "name":"1061",
@@ -4835,7 +5206,8 @@
          "required_results_data_std":0,
          "value_mean":2073600.0,
          "value_std":0,
-         "deadline_mean":605.0
+         "deadline_mean":605.0,
+         "deadline_std": 0
       },
       {
          "name":"1063",
@@ -4848,7 +5220,8 @@
          "required_results_data_std":0,
          "value_mean":2073600.0,
          "value_std":0,
-         "deadline_mean":627.0
+         "deadline_mean":627.0,
+         "deadline_std": 0
       },
       {
          "name":"1065",
@@ -4861,7 +5234,8 @@
          "required_results_data_std":0,
          "value_mean":2089800.0,
          "value_std":0,
-         "deadline_mean":370.0
+         "deadline_mean":370.0,
+         "deadline_std": 0
       },
       {
          "name":"1066",
@@ -4874,7 +5248,8 @@
          "required_results_data_std":0,
          "value_mean":2089800.0,
          "value_std":0,
-         "deadline_mean":421.0
+         "deadline_mean":421.0,
+         "deadline_std": 0
       },
       {
          "name":"1067",
@@ -4887,7 +5262,8 @@
          "required_results_data_std":0,
          "value_mean":2089800.0,
          "value_std":0,
-         "deadline_mean":512.0
+         "deadline_mean":512.0,
+         "deadline_std": 0
       },
       {
          "name":"1068",
@@ -4900,7 +5276,8 @@
          "required_results_data_std":0,
          "value_mean":2089800.0,
          "value_std":0,
-         "deadline_mean":683.0
+         "deadline_mean":683.0,
+         "deadline_std": 0
       },
       {
          "name":"1070",
@@ -4913,7 +5290,8 @@
          "required_results_data_std":0,
          "value_mean":2106000.0,
          "value_std":0,
-         "deadline_mean":455.0
+         "deadline_mean":455.0,
+         "deadline_std": 0
       },
       {
          "name":"1071",
@@ -4926,7 +5304,8 @@
          "required_results_data_std":0,
          "value_mean":2122200.0,
          "value_std":0,
-         "deadline_mean":492.0
+         "deadline_mean":492.0,
+         "deadline_std": 0
       },
       {
          "name":"1074",
@@ -4939,7 +5318,8 @@
          "required_results_data_std":0,
          "value_mean":2154600.0,
          "value_std":0,
-         "deadline_mean":561.0
+         "deadline_mean":561.0,
+         "deadline_std": 0
       },
       {
          "name":"1075",
@@ -4952,7 +5332,8 @@
          "required_results_data_std":0,
          "value_mean":2154600.0,
          "value_std":0,
-         "deadline_mean":617.0
+         "deadline_mean":617.0,
+         "deadline_std": 0
       },
       {
          "name":"1076",
@@ -4965,7 +5346,8 @@
          "required_results_data_std":0,
          "value_mean":2170800.0,
          "value_std":0,
-         "deadline_mean":703.0
+         "deadline_mean":703.0,
+         "deadline_std": 0
       },
       {
          "name":"1077",
@@ -4978,7 +5360,8 @@
          "required_results_data_std":0,
          "value_mean":2187000.0,
          "value_std":0,
-         "deadline_mean":606.0
+         "deadline_mean":606.0,
+         "deadline_std": 0
       },
       {
          "name":"1080",
@@ -4991,7 +5374,8 @@
          "required_results_data_std":0,
          "value_mean":2203200.0,
          "value_std":0,
-         "deadline_mean":733.0
+         "deadline_mean":733.0,
+         "deadline_std": 0
       },
       {
          "name":"1081",
@@ -5004,7 +5388,8 @@
          "required_results_data_std":0,
          "value_mean":2203200.0,
          "value_std":0,
-         "deadline_mean":329.0
+         "deadline_mean":329.0,
+         "deadline_std": 0
       },
       {
          "name":"1082",
@@ -5017,7 +5402,8 @@
          "required_results_data_std":0,
          "value_mean":2219400.0,
          "value_std":0,
-         "deadline_mean":637.0
+         "deadline_mean":637.0,
+         "deadline_std": 0
       },
       {
          "name":"1083",
@@ -5030,7 +5416,8 @@
          "required_results_data_std":0,
          "value_mean":2219400.0,
          "value_std":0,
-         "deadline_mean":516.0
+         "deadline_mean":516.0,
+         "deadline_std": 0
       },
       {
          "name":"1084",
@@ -5043,7 +5430,8 @@
          "required_results_data_std":0,
          "value_mean":2235600.0,
          "value_std":0,
-         "deadline_mean":523.0
+         "deadline_mean":523.0,
+         "deadline_std": 0
       },
       {
          "name":"1085",
@@ -5056,7 +5444,8 @@
          "required_results_data_std":0,
          "value_mean":2235600.0,
          "value_std":0,
-         "deadline_mean":686.0
+         "deadline_mean":686.0,
+         "deadline_std": 0
       },
       {
          "name":"1087",
@@ -5069,7 +5458,8 @@
          "required_results_data_std":0,
          "value_mean":2251800.0,
          "value_std":0,
-         "deadline_mean":547.0
+         "deadline_mean":547.0,
+         "deadline_std": 0
       },
       {
          "name":"1089",
@@ -5082,7 +5472,8 @@
          "required_results_data_std":0,
          "value_mean":2251800.0,
          "value_std":0,
-         "deadline_mean":329.0
+         "deadline_mean":329.0,
+         "deadline_std": 0
       },
       {
          "name":"1094",
@@ -5095,7 +5486,8 @@
          "required_results_data_std":0,
          "value_mean":2300400.0,
          "value_std":0,
-         "deadline_mean":333.0
+         "deadline_mean":333.0,
+         "deadline_std": 0
       },
       {
          "name":"1095",
@@ -5108,7 +5500,8 @@
          "required_results_data_std":0,
          "value_mean":2300400.0,
          "value_std":0,
-         "deadline_mean":704.0
+         "deadline_mean":704.0,
+         "deadline_std": 0
       },
       {
          "name":"1098",
@@ -5121,7 +5514,8 @@
          "required_results_data_std":0,
          "value_mean":2316600.0,
          "value_std":0,
-         "deadline_mean":657.0
+         "deadline_mean":657.0,
+         "deadline_std": 0
       },
       {
          "name":"1101",
@@ -5134,7 +5528,8 @@
          "required_results_data_std":0,
          "value_mean":2332800.0,
          "value_std":0,
-         "deadline_mean":286.0
+         "deadline_mean":286.0,
+         "deadline_std": 0
       },
       {
          "name":"1102",
@@ -5147,7 +5542,8 @@
          "required_results_data_std":0,
          "value_mean":2332800.0,
          "value_std":0,
-         "deadline_mean":239.0
+         "deadline_mean":239.0,
+         "deadline_std": 0
       },
       {
          "name":"1104",
@@ -5160,7 +5556,8 @@
          "required_results_data_std":0,
          "value_mean":2332800.0,
          "value_std":0,
-         "deadline_mean":232.0
+         "deadline_mean":232.0,
+         "deadline_std": 0
       },
       {
          "name":"1106",
@@ -5173,7 +5570,8 @@
          "required_results_data_std":0,
          "value_mean":2349000.0,
          "value_std":0,
-         "deadline_mean":691.0
+         "deadline_mean":691.0,
+         "deadline_std": 0
       },
       {
          "name":"1108",
@@ -5186,7 +5584,8 @@
          "required_results_data_std":0,
          "value_mean":2349000.0,
          "value_std":0,
-         "deadline_mean":254.0
+         "deadline_mean":254.0,
+         "deadline_std": 0
       },
       {
          "name":"1109",
@@ -5199,7 +5598,8 @@
          "required_results_data_std":0,
          "value_mean":2349000.0,
          "value_std":0,
-         "deadline_mean":699.0
+         "deadline_mean":699.0,
+         "deadline_std": 0
       },
       {
          "name":"1111",
@@ -5212,7 +5612,8 @@
          "required_results_data_std":0,
          "value_mean":2365200.0,
          "value_std":0,
-         "deadline_mean":827.0
+         "deadline_mean":827.0,
+         "deadline_std": 0
       },
       {
          "name":"1113",
@@ -5225,7 +5626,8 @@
          "required_results_data_std":0,
          "value_mean":2381400.0,
          "value_std":0,
-         "deadline_mean":288.0
+         "deadline_mean":288.0,
+         "deadline_std": 0
       },
       {
          "name":"1114",
@@ -5238,7 +5640,8 @@
          "required_results_data_std":0,
          "value_mean":2381400.0,
          "value_std":0,
-         "deadline_mean":275.0
+         "deadline_mean":275.0,
+         "deadline_std": 0
       },
       {
          "name":"1117",
@@ -5251,7 +5654,8 @@
          "required_results_data_std":0,
          "value_mean":2397600.0,
          "value_std":0,
-         "deadline_mean":389.0
+         "deadline_mean":389.0,
+         "deadline_std": 0
       },
       {
          "name":"1121",
@@ -5264,7 +5668,8 @@
          "required_results_data_std":0,
          "value_mean":2413800.0,
          "value_std":0,
-         "deadline_mean":611.0
+         "deadline_mean":611.0,
+         "deadline_std": 0
       },
       {
          "name":"1122",
@@ -5277,7 +5682,8 @@
          "required_results_data_std":0,
          "value_mean":2413800.0,
          "value_std":0,
-         "deadline_mean":548.0
+         "deadline_mean":548.0,
+         "deadline_std": 0
       },
       {
          "name":"1125",
@@ -5290,7 +5696,8 @@
          "required_results_data_std":0,
          "value_mean":2430000.0,
          "value_std":0,
-         "deadline_mean":733.0
+         "deadline_mean":733.0,
+         "deadline_std": 0
       },
       {
          "name":"1131",
@@ -5303,7 +5710,8 @@
          "required_results_data_std":0,
          "value_mean":2446200.0,
          "value_std":0,
-         "deadline_mean":599.0
+         "deadline_mean":599.0,
+         "deadline_std": 0
       },
       {
          "name":"1132",
@@ -5316,7 +5724,8 @@
          "required_results_data_std":0,
          "value_mean":2446200.0,
          "value_std":0,
-         "deadline_mean":513.0
+         "deadline_mean":513.0,
+         "deadline_std": 0
       },
       {
          "name":"1133",
@@ -5329,7 +5738,8 @@
          "required_results_data_std":0,
          "value_mean":2446200.0,
          "value_std":0,
-         "deadline_mean":1556.0
+         "deadline_mean":1556.0,
+         "deadline_std": 0
       },
       {
          "name":"1142",
@@ -5342,7 +5752,8 @@
          "required_results_data_std":0,
          "value_mean":2494800.0,
          "value_std":0,
-         "deadline_mean":202.0
+         "deadline_mean":202.0,
+         "deadline_std": 0
       },
       {
          "name":"1146",
@@ -5355,7 +5766,8 @@
          "required_results_data_std":0,
          "value_mean":2494800.0,
          "value_std":0,
-         "deadline_mean":766.0
+         "deadline_mean":766.0,
+         "deadline_std": 0
       },
       {
          "name":"1148",
@@ -5368,7 +5780,8 @@
          "required_results_data_std":0,
          "value_mean":2511000.0,
          "value_std":0,
-         "deadline_mean":297.0
+         "deadline_mean":297.0,
+         "deadline_std": 0
       },
       {
          "name":"1151",
@@ -5381,7 +5794,8 @@
          "required_results_data_std":0,
          "value_mean":2527200.0,
          "value_std":0,
-         "deadline_mean":246.0
+         "deadline_mean":246.0,
+         "deadline_std": 0
       },
       {
          "name":"1153",
@@ -5394,7 +5808,8 @@
          "required_results_data_std":0,
          "value_mean":2543400.0,
          "value_std":0,
-         "deadline_mean":2226.0
+         "deadline_mean":2226.0,
+         "deadline_std": 0
       },
       {
          "name":"1155",
@@ -5407,7 +5822,8 @@
          "required_results_data_std":0,
          "value_mean":2543400.0,
          "value_std":0,
-         "deadline_mean":348.0
+         "deadline_mean":348.0,
+         "deadline_std": 0
       },
       {
          "name":"1157",
@@ -5420,7 +5836,8 @@
          "required_results_data_std":0,
          "value_mean":2559600.0,
          "value_std":0,
-         "deadline_mean":302.0
+         "deadline_mean":302.0,
+         "deadline_std": 0
       },
       {
          "name":"1160",
@@ -5433,7 +5850,8 @@
          "required_results_data_std":0,
          "value_mean":2559600.0,
          "value_std":0,
-         "deadline_mean":291.0
+         "deadline_mean":291.0,
+         "deadline_std": 0
       },
       {
          "name":"1162",
@@ -5446,7 +5864,8 @@
          "required_results_data_std":0,
          "value_mean":2575800.0,
          "value_std":0,
-         "deadline_mean":321.0
+         "deadline_mean":321.0,
+         "deadline_std": 0
       },
       {
          "name":"1163",
@@ -5459,7 +5878,8 @@
          "required_results_data_std":0,
          "value_mean":2575800.0,
          "value_std":0,
-         "deadline_mean":327.0
+         "deadline_mean":327.0,
+         "deadline_std": 0
       },
       {
          "name":"1171",
@@ -5472,7 +5892,8 @@
          "required_results_data_std":0,
          "value_mean":2608200.0,
          "value_std":0,
-         "deadline_mean":288.0
+         "deadline_mean":288.0,
+         "deadline_std": 0
       },
       {
          "name":"1172",
@@ -5485,7 +5906,8 @@
          "required_results_data_std":0,
          "value_mean":2608200.0,
          "value_std":0,
-         "deadline_mean":1218.0
+         "deadline_mean":1218.0,
+         "deadline_std": 0
       },
       {
          "name":"1173",
@@ -5498,7 +5920,8 @@
          "required_results_data_std":0,
          "value_mean":2608200.0,
          "value_std":0,
-         "deadline_mean":503.0
+         "deadline_mean":503.0,
+         "deadline_std": 0
       },
       {
          "name":"1177",
@@ -5511,7 +5934,8 @@
          "required_results_data_std":0,
          "value_mean":2640600.0,
          "value_std":0,
-         "deadline_mean":299.0
+         "deadline_mean":299.0,
+         "deadline_std": 0
       },
       {
          "name":"1181",
@@ -5524,7 +5948,8 @@
          "required_results_data_std":0,
          "value_mean":3649000.0,
          "value_std":0,
-         "deadline_mean":730.0
+         "deadline_mean":730.0,
+         "deadline_std": 0
       },
       {
          "name":"1185",
@@ -5537,7 +5962,8 @@
          "required_results_data_std":0,
          "value_mean":9946800.0,
          "value_std":0,
-         "deadline_mean":1688.0
+         "deadline_mean":1688.0,
+         "deadline_std": 0
       },
       {
          "name":"1187",
@@ -5550,7 +5976,8 @@
          "required_results_data_std":0,
          "value_mean":2653560.0,
          "value_std":0,
-         "deadline_mean":255.0
+         "deadline_mean":255.0,
+         "deadline_std": 0
       },
       {
          "name":"1188",
@@ -5563,7 +5990,8 @@
          "required_results_data_std":0,
          "value_mean":2719899.0,
          "value_std":0,
-         "deadline_mean":327.0
+         "deadline_mean":327.0,
+         "deadline_std": 0
       },
       {
          "name":"1189",
@@ -5576,7 +6004,8 @@
          "required_results_data_std":0,
          "value_mean":577854.0,
          "value_std":0,
-         "deadline_mean":705.0
+         "deadline_mean":705.0,
+         "deadline_std": 0
       },
       {
          "name":"1193",
@@ -5589,7 +6018,8 @@
          "required_results_data_std":0,
          "value_mean":2188539.0,
          "value_std":0,
-         "deadline_mean":398.0
+         "deadline_mean":398.0,
+         "deadline_std": 0
       },
       {
          "name":"1194",
@@ -5602,7 +6032,8 @@
          "required_results_data_std":0,
          "value_mean":993840.0,
          "value_std":0,
-         "deadline_mean":3222.0
+         "deadline_mean":3222.0,
+         "deadline_std": 0
       },
       {
          "name":"1195",
@@ -5615,7 +6046,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":969.0
+         "deadline_mean":969.0,
+         "deadline_std": 0
       },
       {
          "name":"1196",
@@ -5628,7 +6060,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":802.0
+         "deadline_mean":802.0,
+         "deadline_std": 0
       },
       {
          "name":"1198",
@@ -5641,7 +6074,8 @@
          "required_results_data_std":0,
          "value_mean":5565672.0,
          "value_std":0,
-         "deadline_mean":791.0
+         "deadline_mean":791.0,
+         "deadline_std": 0
       },
       {
          "name":"1199",
@@ -5654,7 +6088,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":942.0
+         "deadline_mean":942.0,
+         "deadline_std": 0
       },
       {
          "name":"1200",
@@ -5667,7 +6102,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":901.0
+         "deadline_mean":901.0,
+         "deadline_std": 0
       },
       {
          "name":"1201",
@@ -5680,7 +6116,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":801.0
+         "deadline_mean":801.0,
+         "deadline_std": 0
       },
       {
          "name":"1202",
@@ -5693,7 +6130,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":918.0
+         "deadline_mean":918.0,
+         "deadline_std": 0
       },
       {
          "name":"1203",
@@ -5706,7 +6144,8 @@
          "required_results_data_std":0,
          "value_mean":509040.0,
          "value_std":0,
-         "deadline_mean":928.0
+         "deadline_mean":928.0,
+         "deadline_std": 0
       },
       {
          "name":"1204",
@@ -5719,7 +6158,8 @@
          "required_results_data_std":0,
          "value_mean":521160.0,
          "value_std":0,
-         "deadline_mean":925.0
+         "deadline_mean":925.0,
+         "deadline_std": 0
       },
       {
          "name":"1205",
@@ -5732,7 +6172,8 @@
          "required_results_data_std":0,
          "value_mean":4541574.0,
          "value_std":0,
-         "deadline_mean":1531.0
+         "deadline_mean":1531.0,
+         "deadline_std": 0
       },
       {
          "name":"1208",
@@ -5745,7 +6186,8 @@
          "required_results_data_std":0,
          "value_mean":521160.0,
          "value_std":0,
-         "deadline_mean":1872.0
+         "deadline_mean":1872.0,
+         "deadline_std": 0
       },
       {
          "name":"1209",
@@ -5758,7 +6200,8 @@
          "required_results_data_std":0,
          "value_mean":533280.0,
          "value_std":0,
-         "deadline_mean":1670.0
+         "deadline_mean":1670.0,
+         "deadline_std": 0
       },
       {
          "name":"1210",
@@ -5771,7 +6214,8 @@
          "required_results_data_std":0,
          "value_mean":533280.0,
          "value_std":0,
-         "deadline_mean":1479.0
+         "deadline_mean":1479.0,
+         "deadline_std": 0
       },
       {
          "name":"1211",
@@ -5784,7 +6228,8 @@
          "required_results_data_std":0,
          "value_mean":620136.0,
          "value_std":0,
-         "deadline_mean":621.0
+         "deadline_mean":621.0,
+         "deadline_std": 0
       },
       {
          "name":"1212",
@@ -5797,7 +6242,8 @@
          "required_results_data_std":0,
          "value_mean":533280.0,
          "value_std":0,
-         "deadline_mean":1716.0
+         "deadline_mean":1716.0,
+         "deadline_std": 0
       },
       {
          "name":"1213",
@@ -5810,7 +6256,8 @@
          "required_results_data_std":0,
          "value_mean":533280.0,
          "value_std":0,
-         "deadline_mean":2243.0
+         "deadline_mean":2243.0,
+         "deadline_std": 0
       },
       {
          "name":"1214",
@@ -5823,7 +6270,8 @@
          "required_results_data_std":0,
          "value_mean":533280.0,
          "value_std":0,
-         "deadline_mean":1729.0
+         "deadline_mean":1729.0,
+         "deadline_std": 0
       },
       {
          "name":"1215",
@@ -5836,7 +6284,8 @@
          "required_results_data_std":0,
          "value_mean":499365.0,
          "value_std":0,
-         "deadline_mean":711.0
+         "deadline_mean":711.0,
+         "deadline_std": 0
       },
       {
          "name":"1216",
@@ -5849,7 +6298,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":3691.0
+         "deadline_mean":3691.0,
+         "deadline_std": 0
       },
       {
          "name":"1217",
@@ -5862,7 +6312,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":3581.0
+         "deadline_mean":3581.0,
+         "deadline_std": 0
       },
       {
          "name":"1218",
@@ -5875,7 +6326,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":3833.0
+         "deadline_mean":3833.0,
+         "deadline_std": 0
       },
       {
          "name":"1219",
@@ -5888,7 +6340,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":4163.0
+         "deadline_mean":4163.0,
+         "deadline_std": 0
       },
       {
          "name":"1222",
@@ -5901,7 +6354,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":3643.0
+         "deadline_mean":3643.0,
+         "deadline_std": 0
       },
       {
          "name":"1224",
@@ -5914,7 +6368,8 @@
          "required_results_data_std":0,
          "value_mean":3878346.0,
          "value_std":0,
-         "deadline_mean":3210.0
+         "deadline_mean":3210.0,
+         "deadline_std": 0
       },
       {
          "name":"1225",
@@ -5927,7 +6382,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3660.0
+         "deadline_mean":3660.0,
+         "deadline_std": 0
       },
       {
          "name":"1226",
@@ -5940,7 +6396,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3104.0
+         "deadline_mean":3104.0,
+         "deadline_std": 0
       },
       {
          "name":"1227",
@@ -5953,7 +6410,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3684.0
+         "deadline_mean":3684.0,
+         "deadline_std": 0
       },
       {
          "name":"1228",
@@ -5966,7 +6424,8 @@
          "required_results_data_std":0,
          "value_mean":1190640.0,
          "value_std":0,
-         "deadline_mean":1628.0
+         "deadline_mean":1628.0,
+         "deadline_std": 0
       },
       {
          "name":"1229",
@@ -5979,7 +6438,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2687.0
+         "deadline_mean":2687.0,
+         "deadline_std": 0
       },
       {
          "name":"1230",
@@ -5992,7 +6452,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2623.0
+         "deadline_mean":2623.0,
+         "deadline_std": 0
       },
       {
          "name":"1231",
@@ -6005,7 +6466,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3140.0
+         "deadline_mean":3140.0,
+         "deadline_std": 0
       },
       {
          "name":"1232",
@@ -6018,7 +6480,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2395.0
+         "deadline_mean":2395.0,
+         "deadline_std": 0
       },
       {
          "name":"1233",
@@ -6031,7 +6494,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2486.0
+         "deadline_mean":2486.0,
+         "deadline_std": 0
       },
       {
          "name":"1234",
@@ -6044,7 +6508,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2838.0
+         "deadline_mean":2838.0,
+         "deadline_std": 0
       },
       {
          "name":"1235",
@@ -6057,7 +6522,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2692.0
+         "deadline_mean":2692.0,
+         "deadline_std": 0
       },
       {
          "name":"1236",
@@ -6070,7 +6536,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3257.0
+         "deadline_mean":3257.0,
+         "deadline_std": 0
       },
       {
          "name":"1237",
@@ -6083,7 +6550,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":2984.0
+         "deadline_mean":2984.0,
+         "deadline_std": 0
       },
       {
          "name":"1238",
@@ -6096,7 +6564,8 @@
          "required_results_data_std":0,
          "value_mean":3960864.0,
          "value_std":0,
-         "deadline_mean":3051.0
+         "deadline_mean":3051.0,
+         "deadline_std": 0
       },
       {
          "name":"1239",
@@ -6109,7 +6578,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3432.0
+         "deadline_mean":3432.0,
+         "deadline_std": 0
       },
       {
          "name":"1240",
@@ -6122,7 +6592,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3406.0
+         "deadline_mean":3406.0,
+         "deadline_std": 0
       },
       {
          "name":"1241",
@@ -6135,7 +6606,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3356.0
+         "deadline_mean":3356.0,
+         "deadline_std": 0
       },
       {
          "name":"1242",
@@ -6148,7 +6620,8 @@
          "required_results_data_std":0,
          "value_mean":593880.0,
          "value_std":0,
-         "deadline_mean":1578.0
+         "deadline_mean":1578.0,
+         "deadline_std": 0
       },
       {
          "name":"1243",
@@ -6161,7 +6634,8 @@
          "required_results_data_std":0,
          "value_mean":593880.0,
          "value_std":0,
-         "deadline_mean":1909.0
+         "deadline_mean":1909.0,
+         "deadline_std": 0
       },
       {
          "name":"1244",
@@ -6174,7 +6648,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3132.0
+         "deadline_mean":3132.0,
+         "deadline_std": 0
       },
       {
          "name":"1245",
@@ -6187,7 +6662,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":2810.0
+         "deadline_mean":2810.0,
+         "deadline_std": 0
       },
       {
          "name":"1246",
@@ -6200,7 +6676,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":2856.0
+         "deadline_mean":2856.0,
+         "deadline_std": 0
       },
       {
          "name":"1247",
@@ -6213,7 +6690,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":2686.0
+         "deadline_mean":2686.0,
+         "deadline_std": 0
       },
       {
          "name":"1248",
@@ -6226,7 +6704,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":2675.0
+         "deadline_mean":2675.0,
+         "deadline_std": 0
       },
       {
          "name":"1249",
@@ -6239,7 +6718,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":4053.0
+         "deadline_mean":4053.0,
+         "deadline_std": 0
       },
       {
          "name":"1250",
@@ -6252,7 +6732,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3133.0
+         "deadline_mean":3133.0,
+         "deadline_std": 0
       },
       {
          "name":"1251",
@@ -6265,7 +6746,8 @@
          "required_results_data_std":0,
          "value_mean":4043382.0,
          "value_std":0,
-         "deadline_mean":3002.0
+         "deadline_mean":3002.0,
+         "deadline_std": 0
       },
       {
          "name":"1252",
@@ -6278,7 +6760,8 @@
          "required_results_data_std":0,
          "value_mean":4125900.0,
          "value_std":0,
-         "deadline_mean":3088.0
+         "deadline_mean":3088.0,
+         "deadline_std": 0
       },
       {
          "name":"1262",
@@ -6291,7 +6774,8 @@
          "required_results_data_std":0,
          "value_mean":76500.0,
          "value_std":0,
-         "deadline_mean":112.0
+         "deadline_mean":112.0,
+         "deadline_std": 0
       },
       {
          "name":"1264",
@@ -6304,7 +6788,8 @@
          "required_results_data_std":0,
          "value_mean":55000.0,
          "value_std":0,
-         "deadline_mean":1348.0
+         "deadline_mean":1348.0,
+         "deadline_std": 0
       },
       {
          "name":"1265",
@@ -6317,7 +6802,8 @@
          "required_results_data_std":0,
          "value_mean":84000.0,
          "value_std":0,
-         "deadline_mean":461.0
+         "deadline_mean":461.0,
+         "deadline_std": 0
       },
       {
          "name":"1277",
@@ -6330,7 +6816,8 @@
          "required_results_data_std":0,
          "value_mean":4125900.0,
          "value_std":0,
-         "deadline_mean":2980.0
+         "deadline_mean":2980.0,
+         "deadline_std": 0
       },
       {
          "name":"1278",
@@ -6343,7 +6830,8 @@
          "required_results_data_std":0,
          "value_mean":169500.0,
          "value_std":0,
-         "deadline_mean":3809.0
+         "deadline_mean":3809.0,
+         "deadline_std": 0
       },
       {
          "name":"1283",
@@ -6356,7 +6844,8 @@
          "required_results_data_std":0,
          "value_mean":4827303.0,
          "value_std":0,
-         "deadline_mean":294.0
+         "deadline_mean":294.0,
+         "deadline_std": 0
       },
       {
          "name":"1285",
@@ -6369,7 +6858,8 @@
          "required_results_data_std":0,
          "value_mean":7127352.0,
          "value_std":0,
-         "deadline_mean":262.0
+         "deadline_mean":262.0,
+         "deadline_std": 0
       },
       {
          "name":"1286",
@@ -6382,7 +6872,8 @@
          "required_results_data_std":0,
          "value_mean":7127352.0,
          "value_std":0,
-         "deadline_mean":259.0
+         "deadline_mean":259.0,
+         "deadline_std": 0
       },
       {
          "name":"1287",
@@ -6395,7 +6886,8 @@
          "required_results_data_std":0,
          "value_mean":7127352.0,
          "value_std":0,
-         "deadline_mean":242.0
+         "deadline_mean":242.0,
+         "deadline_std": 0
       },
       {
          "name":"1288",
@@ -6408,7 +6900,8 @@
          "required_results_data_std":0,
          "value_mean":7824384.0,
          "value_std":0,
-         "deadline_mean":10036.0
+         "deadline_mean":10036.0,
+         "deadline_std": 0
       },
       {
          "name":"1289",
@@ -6421,7 +6914,8 @@
          "required_results_data_std":0,
          "value_mean":7824384.0,
          "value_std":0,
-         "deadline_mean":8255.0
+         "deadline_mean":8255.0,
+         "deadline_std": 0
       },
       {
          "name":"1290",
@@ -6434,7 +6928,8 @@
          "required_results_data_std":0,
          "value_mean":7824384.0,
          "value_std":0,
-         "deadline_mean":14641.0
+         "deadline_mean":14641.0,
+         "deadline_std": 0
       },
       {
          "name":"1291",
@@ -6447,7 +6942,8 @@
          "required_results_data_std":0,
          "value_mean":7127352.0,
          "value_std":0,
-         "deadline_mean":293.0
+         "deadline_mean":293.0,
+         "deadline_std": 0
       },
       {
          "name":"1292",
@@ -6460,7 +6956,8 @@
          "required_results_data_std":0,
          "value_mean":7824384.0,
          "value_std":0,
-         "deadline_mean":11967.0
+         "deadline_mean":11967.0,
+         "deadline_std": 0
       },
       {
          "name":"1293",
@@ -6473,7 +6970,8 @@
          "required_results_data_std":0,
          "value_mean":7969280.0,
          "value_std":0,
-         "deadline_mean":11160.0
+         "deadline_mean":11160.0,
+         "deadline_std": 0
       },
       {
          "name":"1294",
@@ -6486,7 +6984,8 @@
          "required_results_data_std":0,
          "value_mean":45529880.0,
          "value_std":0,
-         "deadline_mean":6877.0
+         "deadline_mean":6877.0,
+         "deadline_std": 0
       },
       {
          "name":"1295",
@@ -6499,7 +6998,8 @@
          "required_results_data_std":0,
          "value_mean":7969280.0,
          "value_std":0,
-         "deadline_mean":8300.0
+         "deadline_mean":8300.0,
+         "deadline_std": 0
       },
       {
          "name":"1296",
@@ -6512,7 +7012,8 @@
          "required_results_data_std":0,
          "value_mean":10464080.0,
          "value_std":0,
-         "deadline_mean":470.0
+         "deadline_mean":470.0,
+         "deadline_std": 0
       },
       {
          "name":"1297",
@@ -6525,7 +7026,8 @@
          "required_results_data_std":0,
          "value_mean":7969280.0,
          "value_std":0,
-         "deadline_mean":9548.0
+         "deadline_mean":9548.0,
+         "deadline_std": 0
       },
       {
          "name":"1298",
@@ -6538,7 +7040,8 @@
          "required_results_data_std":0,
          "value_mean":7969280.0,
          "value_std":0,
-         "deadline_mean":7145.0
+         "deadline_mean":7145.0,
+         "deadline_std": 0
       },
       {
          "name":"1299",
@@ -6551,7 +7054,8 @@
          "required_results_data_std":0,
          "value_mean":8114176.0,
          "value_std":0,
-         "deadline_mean":8769.0
+         "deadline_mean":8769.0,
+         "deadline_std": 0
       },
       {
          "name":"1300",
@@ -6564,7 +7068,8 @@
          "required_results_data_std":0,
          "value_mean":8114176.0,
          "value_std":0,
-         "deadline_mean":9920.0
+         "deadline_mean":9920.0,
+         "deadline_std": 0
       },
       {
          "name":"1301",
@@ -6577,7 +7082,8 @@
          "required_results_data_std":0,
          "value_mean":8114176.0,
          "value_std":0,
-         "deadline_mean":7536.0
+         "deadline_mean":7536.0,
+         "deadline_std": 0
       },
       {
          "name":"1302",
@@ -6590,7 +7096,8 @@
          "required_results_data_std":0,
          "value_mean":10613856.0,
          "value_std":0,
-         "deadline_mean":614.0
+         "deadline_mean":614.0,
+         "deadline_std": 0
       },
       {
          "name":"1303",
@@ -6603,7 +7110,8 @@
          "required_results_data_std":0,
          "value_mean":1413885.0,
          "value_std":0,
-         "deadline_mean":6042.0
+         "deadline_mean":6042.0,
+         "deadline_std": 0
       },
       {
          "name":"1304",
@@ -6616,7 +7124,8 @@
          "required_results_data_std":0,
          "value_mean":8259072.0,
          "value_std":0,
-         "deadline_mean":8739.0
+         "deadline_mean":8739.0,
+         "deadline_std": 0
       },
       {
          "name":"1306",
@@ -6629,7 +7138,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":4426.0
+         "deadline_mean":4426.0,
+         "deadline_std": 0
       },
       {
          "name":"1307",
@@ -6642,7 +7152,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":2185.0
+         "deadline_mean":2185.0,
+         "deadline_std": 0
       },
       {
          "name":"1308",
@@ -6655,7 +7166,8 @@
          "required_results_data_std":0,
          "value_mean":8403968.0,
          "value_std":0,
-         "deadline_mean":7728.0
+         "deadline_mean":7728.0,
+         "deadline_std": 0
       },
       {
          "name":"1309",
@@ -6668,7 +7180,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":2359.0
+         "deadline_mean":2359.0,
+         "deadline_std": 0
       },
       {
          "name":"1310",
@@ -6681,7 +7194,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":2689.0
+         "deadline_mean":2689.0,
+         "deadline_std": 0
       },
       {
          "name":"1311",
@@ -6694,7 +7208,8 @@
          "required_results_data_std":0,
          "value_mean":8403968.0,
          "value_std":0,
-         "deadline_mean":8034.0
+         "deadline_mean":8034.0,
+         "deadline_std": 0
       },
       {
          "name":"1312",
@@ -6707,7 +7222,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":2308.0
+         "deadline_mean":2308.0,
+         "deadline_std": 0
       },
       {
          "name":"1313",
@@ -6720,7 +7236,8 @@
          "required_results_data_std":0,
          "value_mean":1438690.0,
          "value_std":0,
-         "deadline_mean":2470.0
+         "deadline_mean":2470.0,
+         "deadline_std": 0
       },
       {
          "name":"1314",
@@ -6733,7 +7250,8 @@
          "required_results_data_std":0,
          "value_mean":8548864.0,
          "value_std":0,
-         "deadline_mean":8361.0
+         "deadline_mean":8361.0,
+         "deadline_std": 0
       },
       {
          "name":"1315",
@@ -6746,7 +7264,8 @@
          "required_results_data_std":0,
          "value_mean":8548864.0,
          "value_std":0,
-         "deadline_mean":10178.0
+         "deadline_mean":10178.0,
+         "deadline_std": 0
       },
       {
          "name":"1317",
@@ -6759,7 +7278,8 @@
          "required_results_data_std":0,
          "value_mean":1488300.0,
          "value_std":0,
-         "deadline_mean":5000.0
+         "deadline_mean":5000.0,
+         "deadline_std": 0
       },
       {
          "name":"1318",
@@ -6772,7 +7292,8 @@
          "required_results_data_std":0,
          "value_mean":3183300.0,
          "value_std":0,
-         "deadline_mean":430.0
+         "deadline_mean":430.0,
+         "deadline_std": 0
       },
       {
          "name":"1321",
@@ -6785,7 +7306,8 @@
          "required_results_data_std":0,
          "value_mean":6220800.0,
          "value_std":0,
-         "deadline_mean":1839.0
+         "deadline_mean":1839.0,
+         "deadline_std": 0
       },
       {
          "name":"1322",
@@ -6798,7 +7320,8 @@
          "required_results_data_std":0,
          "value_mean":4060200.0,
          "value_std":0,
-         "deadline_mean":1376.0
+         "deadline_mean":1376.0,
+         "deadline_std": 0
       },
       {
          "name":"1323",
@@ -6811,7 +7334,8 @@
          "required_results_data_std":0,
          "value_mean":4508640.0,
          "value_std":0,
-         "deadline_mean":3626.0
+         "deadline_mean":3626.0,
+         "deadline_std": 0
       },
       {
          "name":"1324",
@@ -6824,7 +7348,8 @@
          "required_results_data_std":0,
          "value_mean":4545000.0,
          "value_std":0,
-         "deadline_mean":1229.0
+         "deadline_mean":1229.0,
+         "deadline_std": 0
       },
       {
          "name":"1326",
@@ -6837,7 +7362,8 @@
          "required_results_data_std":0,
          "value_mean":27328020.0,
          "value_std":0,
-         "deadline_mean":4113.0
+         "deadline_mean":4113.0,
+         "deadline_std": 0
       },
       {
          "name":"1327",
@@ -6850,7 +7376,8 @@
          "required_results_data_std":0,
          "value_mean":3333000.0,
          "value_std":0,
-         "deadline_mean":3832.0
+         "deadline_mean":3832.0,
+         "deadline_std": 0
       },
       {
          "name":"1330",
@@ -6863,7 +7390,8 @@
          "required_results_data_std":0,
          "value_mean":387100.0,
          "value_std":0,
-         "deadline_mean":214.0
+         "deadline_mean":214.0,
+         "deadline_std": 0
       },
       {
          "name":"1331",
@@ -6876,7 +7404,8 @@
          "required_results_data_std":0,
          "value_mean":453460.0,
          "value_std":0,
-         "deadline_mean":262.0
+         "deadline_mean":262.0,
+         "deadline_std": 0
       },
       {
          "name":"1332",
@@ -6889,7 +7418,8 @@
          "required_results_data_std":0,
          "value_mean":497700.0,
          "value_std":0,
-         "deadline_mean":353.0
+         "deadline_mean":353.0,
+         "deadline_std": 0
       },
       {
          "name":"1334",
@@ -6902,7 +7432,8 @@
          "required_results_data_std":0,
          "value_mean":1134000.0,
          "value_std":0,
-         "deadline_mean":356.0
+         "deadline_mean":356.0,
+         "deadline_std": 0
       },
       {
          "name":"1335",
@@ -6915,7 +7446,8 @@
          "required_results_data_std":0,
          "value_mean":729960.0,
          "value_std":0,
-         "deadline_mean":787.0
+         "deadline_mean":787.0,
+         "deadline_std": 0
       },
       {
          "name":"1336",
@@ -6928,7 +7460,8 @@
          "required_results_data_std":0,
          "value_mean":785260.0,
          "value_std":0,
-         "deadline_mean":1111.0
+         "deadline_mean":1111.0,
+         "deadline_std": 0
       },
       {
          "name":"1339",
@@ -6941,7 +7474,8 @@
          "required_results_data_std":0,
          "value_mean":14309680.0,
          "value_std":0,
-         "deadline_mean":364.0
+         "deadline_mean":364.0,
+         "deadline_std": 0
       },
       {
          "name":"1340",
@@ -6954,7 +7488,8 @@
          "required_results_data_std":0,
          "value_mean":5776260.0,
          "value_std":0,
-         "deadline_mean":1211.0
+         "deadline_mean":1211.0,
+         "deadline_std": 0
       },
       {
          "name":"1342",
@@ -6967,7 +7502,8 @@
          "required_results_data_std":0,
          "value_mean":15443120.0,
          "value_std":0,
-         "deadline_mean":488.0
+         "deadline_mean":488.0,
+         "deadline_std": 0
       },
       {
          "name":"1354",
@@ -6980,7 +7516,8 @@
          "required_results_data_std":0,
          "value_mean":15168750.0,
          "value_std":0,
-         "deadline_mean":1713.0
+         "deadline_mean":1713.0,
+         "deadline_std": 0
       },
       {
          "name":"1355",
@@ -6993,7 +7530,8 @@
          "required_results_data_std":0,
          "value_mean":15000.0,
          "value_std":0,
-         "deadline_mean":2553.0
+         "deadline_mean":2553.0,
+         "deadline_std": 0
       },
       {
          "name":"1356",
@@ -7006,7 +7544,8 @@
          "required_results_data_std":0,
          "value_mean":1909985.0,
          "value_std":0,
-         "deadline_mean":449.0
+         "deadline_mean":449.0,
+         "deadline_std": 0
       },
       {
          "name":"1359",
@@ -7019,7 +7558,8 @@
          "required_results_data_std":0,
          "value_mean":1477440.0,
          "value_std":0,
-         "deadline_mean":295.0
+         "deadline_mean":295.0,
+         "deadline_std": 0
       },
       {
          "name":"1360",
@@ -7032,7 +7572,8 @@
          "required_results_data_std":0,
          "value_mean":1555200.0,
          "value_std":0,
-         "deadline_mean":279.0
+         "deadline_mean":279.0,
+         "deadline_std": 0
       },
       {
          "name":"1361",
@@ -7045,7 +7586,8 @@
          "required_results_data_std":0,
          "value_mean":1607040.0,
          "value_std":0,
-         "deadline_mean":362.0
+         "deadline_mean":362.0,
+         "deadline_std": 0
       },
       {
          "name":"1363",
@@ -7058,7 +7600,8 @@
          "required_results_data_std":0,
          "value_mean":11591680.0,
          "value_std":0,
-         "deadline_mean":8836.0
+         "deadline_mean":8836.0,
+         "deadline_std": 0
       },
       {
          "name":"1367",
@@ -7071,7 +7614,8 @@
          "required_results_data_std":0,
          "value_mean":2004750.0,
          "value_std":0,
-         "deadline_mean":105.0
+         "deadline_mean":105.0,
+         "deadline_std": 0
       },
       {
          "name":"1373",
@@ -7084,7 +7628,8 @@
          "required_results_data_std":0,
          "value_mean":805800.0,
          "value_std":0,
-         "deadline_mean":80698.0
+         "deadline_mean":80698.0,
+         "deadline_std": 0
       },
       {
          "name":"1397",
@@ -7097,7 +7642,8 @@
          "required_results_data_std":0,
          "value_mean":2070500.0,
          "value_std":0,
-         "deadline_mean":51156.0
+         "deadline_mean":51156.0,
+         "deadline_std": 0
       },
       {
          "name":"1406",
@@ -7110,7 +7656,8 @@
          "required_results_data_std":0,
          "value_mean":2475000.0,
          "value_std":0,
-         "deadline_mean":4433.0
+         "deadline_mean":4433.0,
+         "deadline_std": 0
       },
       {
          "name":"1407",
@@ -7123,7 +7670,8 @@
          "required_results_data_std":0,
          "value_mean":6925000.0,
          "value_std":0,
-         "deadline_mean":2196.0
+         "deadline_mean":2196.0,
+         "deadline_std": 0
       },
       {
          "name":"1419",
@@ -7136,7 +7684,8 @@
          "required_results_data_std":0,
          "value_mean":4147200.0,
          "value_std":0,
-         "deadline_mean":9122.0
+         "deadline_mean":9122.0,
+         "deadline_std": 0
       },
       {
          "name":"1420",
@@ -7149,7 +7698,8 @@
          "required_results_data_std":0,
          "value_mean":6195200.0,
          "value_std":0,
-         "deadline_mean":4727.0
+         "deadline_mean":4727.0,
+         "deadline_std": 0
       },
       {
          "name":"1436",
@@ -7162,7 +7712,8 @@
          "required_results_data_std":0,
          "value_mean":26877960.0,
          "value_std":0,
-         "deadline_mean":12853.0
+         "deadline_mean":12853.0,
+         "deadline_std": 0
       },
       {
          "name":"1496",
@@ -7175,7 +7726,8 @@
          "required_results_data_std":0,
          "value_mean":37330500.0,
          "value_std":0,
-         "deadline_mean":12398.0
+         "deadline_mean":12398.0,
+         "deadline_std": 0
       },
       {
          "name":"1502",
@@ -7188,7 +7740,8 @@
          "required_results_data_std":0,
          "value_mean":512000.0,
          "value_std":0,
-         "deadline_mean":234.0
+         "deadline_mean":234.0,
+         "deadline_std": 0
       },
       {
          "name":"1507",
@@ -7201,7 +7754,8 @@
          "required_results_data_std":0,
          "value_mean":1228000.0,
          "value_std":0,
-         "deadline_mean":8289.0
+         "deadline_mean":8289.0,
+         "deadline_std": 0
       },
       {
          "name":"1508",
@@ -7214,7 +7768,8 @@
          "required_results_data_std":0,
          "value_mean":14463200.0,
          "value_std":0,
-         "deadline_mean":51856.0
+         "deadline_mean":51856.0,
+         "deadline_std": 0
       },
       {
          "name":"1540",
@@ -7227,7 +7782,8 @@
          "required_results_data_std":0,
          "value_mean":242400.0,
          "value_std":0,
-         "deadline_mean":209.0
+         "deadline_mean":209.0,
+         "deadline_std": 0
       },
       {
          "name":"1541",
@@ -7240,7 +7796,8 @@
          "required_results_data_std":0,
          "value_mean":1496650.0,
          "value_std":0,
-         "deadline_mean":756.0
+         "deadline_mean":756.0,
+         "deadline_std": 0
       },
       {
          "name":"1544",
@@ -7253,7 +7810,8 @@
          "required_results_data_std":0,
          "value_mean":2265200.0,
          "value_std":0,
-         "deadline_mean":391.0
+         "deadline_mean":391.0,
+         "deadline_std": 0
       },
       {
          "name":"1545",
@@ -7266,7 +7824,8 @@
          "required_results_data_std":0,
          "value_mean":2305650.0,
          "value_std":0,
-         "deadline_mean":1108.0
+         "deadline_mean":1108.0,
+         "deadline_std": 0
       },
       {
          "name":"1546",
@@ -7279,7 +7838,8 @@
          "required_results_data_std":0,
          "value_mean":5902464.0,
          "value_std":0,
-         "deadline_mean":2629.0
+         "deadline_mean":2629.0,
+         "deadline_std": 0
       },
       {
          "name":"1547",
@@ -7292,7 +7852,8 @@
          "required_results_data_std":0,
          "value_mean":5902464.0,
          "value_std":0,
-         "deadline_mean":2215.0
+         "deadline_mean":2215.0,
+         "deadline_std": 0
       },
       {
          "name":"1548",
@@ -7305,7 +7866,8 @@
          "required_results_data_std":0,
          "value_mean":939600.0,
          "value_std":0,
-         "deadline_mean":3303.0
+         "deadline_mean":3303.0,
+         "deadline_std": 0
       },
       {
          "name":"1550",
@@ -7318,7 +7880,8 @@
          "required_results_data_std":0,
          "value_mean":6109568.0,
          "value_std":0,
-         "deadline_mean":5944.0
+         "deadline_mean":5944.0,
+         "deadline_std": 0
       },
       {
          "name":"1555",
@@ -7331,7 +7894,8 @@
          "required_results_data_std":0,
          "value_mean":589680.0,
          "value_std":0,
-         "deadline_mean":576.0
+         "deadline_mean":576.0,
+         "deadline_std": 0
       },
       {
          "name":"1558",
@@ -7344,7 +7908,8 @@
          "required_results_data_std":0,
          "value_mean":952560.0,
          "value_std":0,
-         "deadline_mean":524.0
+         "deadline_mean":524.0,
+         "deadline_std": 0
       },
       {
          "name":"1559",
@@ -7357,7 +7922,8 @@
          "required_results_data_std":0,
          "value_mean":2604980.0,
          "value_std":0,
-         "deadline_mean":421.0
+         "deadline_mean":421.0,
+         "deadline_std": 0
       },
       {
          "name":"1560",
@@ -7370,7 +7936,8 @@
          "required_results_data_std":0,
          "value_mean":2604980.0,
          "value_std":0,
-         "deadline_mean":395.0
+         "deadline_mean":395.0,
+         "deadline_std": 0
       },
       {
          "name":"1565",
@@ -7383,7 +7950,8 @@
          "required_results_data_std":0,
          "value_mean":4247250.0,
          "value_std":0,
-         "deadline_mean":299.0
+         "deadline_mean":299.0,
+         "deadline_std": 0
       },
       {
          "name":"1566",
@@ -7396,7 +7964,8 @@
          "required_results_data_std":0,
          "value_mean":4926810.0,
          "value_std":0,
-         "deadline_mean":433.0
+         "deadline_mean":433.0,
+         "deadline_std": 0
       },
       {
          "name":"1567",
@@ -7409,7 +7978,8 @@
          "required_results_data_std":0,
          "value_mean":4926810.0,
          "value_std":0,
-         "deadline_mean":419.0
+         "deadline_mean":419.0,
+         "deadline_std": 0
       },
       {
          "name":"1568",
@@ -7422,7 +7992,8 @@
          "required_results_data_std":0,
          "value_mean":4983440.0,
          "value_std":0,
-         "deadline_mean":498.0
+         "deadline_mean":498.0,
+         "deadline_std": 0
       },
       {
          "name":"1599",
@@ -7435,7 +8006,8 @@
          "required_results_data_std":0,
          "value_mean":1227000.0,
          "value_std":0,
-         "deadline_mean":607.0
+         "deadline_mean":607.0,
+         "deadline_std": 0
       },
       {
          "name":"1600",
@@ -7448,7 +8020,8 @@
          "required_results_data_std":0,
          "value_mean":6000.0,
          "value_std":0,
-         "deadline_mean":141.0
+         "deadline_mean":141.0,
+         "deadline_std": 0
       }
    ],
    "server_dist":[
