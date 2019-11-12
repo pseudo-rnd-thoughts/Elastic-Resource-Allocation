@@ -1,0 +1,31 @@
+{
+  "name": "fog_v2",
+  "job_dist": [
+    {
+      "name": "job",
+      "probability": 1,
+      "required_storage_mean": 100,
+      "required_storage_std": 15,
+      "required_computation_mean": 100,
+      "required_computation_std": 15,
+      "required_results_data_mean": 50,
+      "required_results_data_std": 10,
+      "value_mean": 50,
+      "value_std": 20,
+      "deadline_mean": 10,
+      "deadline_std": 2
+    }
+  ],
+  "server_dist": [
+    {
+      "name": "server",
+      "probability": 1,
+      "maximum_storage_mean": 450,
+      "maximum_storage_std": 50,
+      "maximum_computation_mean": 75,
+      "maximum_computation_std": 20,
+      "maximum_bandwidth_mean": 280,
+      "maximum_bandwidth_std": 40
+    }
+  ]
+}
