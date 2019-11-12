@@ -46,7 +46,7 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
         [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
           for job in allocated_jobs] for server in servers],
         index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
-    resource_df = [loading_df]
+    resource_df = [loading_df, compute_df, sending_df]
 
     hatching = '/'
 
@@ -82,7 +82,7 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     axe.add_artist(l1)
 
     save_plot(analysis_filename("", title.lower().replace(" ", "_")), "allocation",
-              image_formats=save_formats)
+              image_formats=save_formats, lgd=lgd)
     plt.show()
 
 

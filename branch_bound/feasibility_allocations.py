@@ -60,7 +60,7 @@ def fixed_feasible_allocation(job_server_allocations: Dict[Server, List[FixedJob
     """
     for server, jobs in job_server_allocations.items():
         if sum(job.required_storage for job in jobs) > server.storage_capacity or \
-                sum(job.compute_speed for job in jobs) > server.computation_capacity is False or \
+                sum(job.compute_speed for job in jobs) > server.computation_capacity or \
                 sum((job.loading_speed + job.sending_speed) for job in jobs) > server.bandwidth_capacity:
             return None
 
