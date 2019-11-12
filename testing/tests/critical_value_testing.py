@@ -45,7 +45,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        vcg_result = vcg_auction(jobs, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(jobs, servers)
 
@@ -108,7 +108,7 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        vcg_result = vcg_auction(jobs, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(jobs, servers)
 
@@ -154,7 +154,7 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
         jobs, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        vcg_result = vcg_auction(jobs, servers)
         results['VCG'] = vcg_result.store() if vcg_result else 'failure'
         if debug_results:
             print(results['VCG'])

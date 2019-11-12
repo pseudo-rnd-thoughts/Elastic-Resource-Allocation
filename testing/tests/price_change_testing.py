@@ -43,7 +43,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        vcg_result = vcg_auction(jobs, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         if debug_results:
             print(auction_results['vcg'])
@@ -107,7 +107,7 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
         auction_results = {}
 
         # Calculate the fixed vcg auction
-        vcg_result = vcg_auction(jobs, servers, vcg_time_limit)
+        vcg_result = vcg_auction(jobs, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(jobs, servers)
 

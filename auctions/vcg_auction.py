@@ -13,13 +13,12 @@ from core.result import Result
 from core.server import Server
 
 
-def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
+def vcg_auction(jobs: List[Job], servers: List[Server],
                 debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
     :param jobs: A list of jobs
     :param servers: A list of servers
-    :param time_limit: The time to run the optimal for
     :param debug_running: Debug what is being calculated
     :param debug_results: Debug the results for each job and server
     """
@@ -70,4 +69,4 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         job.allocate(s, w, r, server, price=job_prices[job])
         server.allocate_job(job)
 
-    return Result('vcg', jobs, servers, time() - start_time, individual_compute_time=time_limit, show_money=True)
+    return Result('vcg', jobs, servers, time() - start_time, show_money=True)
