@@ -22,10 +22,10 @@
       "probability": 1,
       "maximum_storage_mean": 450,
       "maximum_storage_std": 50,
-      "maximum_computation_mean": 75,
-      "maximum_computation_std": 20,
-      "maximum_bandwidth_mean": 280,
-      "maximum_bandwidth_std": 40
+      "maximum_computation_mean": 70,
+      "maximum_computation_std": 25,
+      "maximum_bandwidth_mean": 290,
+      "maximum_bandwidth_std": 45
     }
   ]
 }

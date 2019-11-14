@@ -6,7 +6,7 @@ from typing import Dict, List
 
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
-from core.core import ImageFormat
+from core.core import ImageFormat, load_args
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job
 from core.model import reset_model, load_dist, ModelDist
@@ -173,11 +173,32 @@ def debug_allocation_graph():
                             save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
 
+def model_test(model_dist: ModelDist):
+    for _ in range(5):
+        jobs, servers = model_dist.create()
+        
+        optimal = optimal_algorithm(jobs, servers, 15)
+        
+        reset_model(jobs, servers)
+        
+        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+        fixed = fixed_optimal_algorithm(fixed_jobs, servers, 15)
+        
+        reset_model(fixed_jobs, servers)
+        
+        greedy = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+        
+        print("Optimal: {}, Fixed: {}, Greedy: {}, {}".format(1, fixed.sum_value / optimal.sum_value,
+                                                              greedy.sum_value / optimal.sum_value,
+                                                              optimal.data['percentage jobs']))
+    
+
 if __name__ == "__main__":
-    # args = load_args()
+    args = load_args()
 
-    # model_name, job_dist, server_dist = load_dist(args['model'])
-    # loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, job_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    example_flexible_fixed_test()
+    model_test(loaded_model_dist)
+    # example_flexible_fixed_test()
     # debug_allocation_graph()
