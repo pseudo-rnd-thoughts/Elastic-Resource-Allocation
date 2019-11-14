@@ -24,8 +24,8 @@ def resource_ratio_testing(model_dist: ModelDist, repeat: int, repeats: int = 10
         for ratio in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
             ratio_results = {}
             for server in servers:
-                server.computation_capacity = int(total_resources[server] * ratio)
-                server.bandwidth_capacity = int(total_resources[server] * (1 - ratio))
+                server.update_capacities(int(total_resources[server] * ratio),
+                                         int(total_resources[server] * (1 - ratio)))
                 
             optimal_results = optimal_algorithm(jobs, servers, 180)
             ratio_results['optimal'] = optimal_results.store(ratio=ratio,

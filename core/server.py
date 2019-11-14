@@ -139,18 +139,20 @@ class Server(object):
         :param job: The job being allocated
         """
         assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
-            "Job {} - loading: {}, compute: {}, sending: {}"\
+            "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}"\
             .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
         assert self.available_storage >= job.required_storage, \
-            "Server {} available storage {}, job required storage {}"\
+            "Server storage failure for Server {} available storage {}, job required storage {}"\
             .format(self.name, self.available_storage, job.required_storage)
         assert self.available_computation >= job.compute_speed, \
-            "Server {} available computation {}, job compute speed {}"\
+            "Server computation failure for Server {} available computation {}, job compute speed {}"\
             .format(self.name, self.available_computation, job.compute_speed)
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
-            "Server {} available bandwidth {}, job loading speed {} and sending speed {}"\
+            "Server available bandwidth failure for Server {} available bandwidth {}, " \
+            "job loading speed {} and sending speed {}"\
             .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
-        assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}"\
+        assert job not in self.allocated_jobs, \
+            "Job {} is already allocated to the server {}"\
             .format(job.name, self.name)
 
         self.allocated_jobs.append(job)
@@ -183,6 +185,18 @@ class Server(object):
                       int(max(1, self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
                       int(max(1, self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
                       self.price_change)
+    
+    def update_capacities(self, computation_capacity: int, bandwidth_capacity: int):
+        """
+        Update the computational and bandwidth capacities of the server
+        :param computation_capacity: The new computational capacity
+        :param bandwidth_capacity: The new bandwidth capacity
+        """
+        self.computation_capacity = computation_capacity
+        self.available_computation = computation_capacity
+        
+        self.bandwidth_capacity = bandwidth_capacity
+        self.available_bandwidth = bandwidth_capacity
 
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:
