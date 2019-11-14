@@ -8,6 +8,7 @@ from typing import Iterable
 
 from tqdm import tqdm
 
+from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.fixed_vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
@@ -15,6 +16,9 @@ from auctions.vcg_auction import vcg_auction
 from core.core import load_args, results_filename, set_price_change
 from core.model import reset_model, ModelDist, load_dist
 from core.fixed_job import FixedJob, FixedSumSpeeds
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, JobSumResources
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 
 
 def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
@@ -67,6 +71,23 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
             if debug_results:
                 print(auction_results['price change {}'.format(price_change)])
 
+        reset_model(jobs, servers)
+        
+        critical_value_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
+            for ss in [SumResources(), SumResources(True),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in critical_value_policies:
+            critical_value_result = critical_value_auction(jobs, servers, vd, ss, ra)
+            auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+            if debug_results:
+                print(auction_results[critical_value_result.algorithm_name])
+    
+            reset_model(jobs, servers)
         # Append the auction results to the data
         data.append(auction_results)
         print(auction_results)
