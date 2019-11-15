@@ -104,7 +104,7 @@ def branch_bound_algorithm(jobs: List[Job], servers: List[Server], feasibility=f
         if best_lower_bound < upper_bound:
             if debug_checking_allocation:
                 print("Checking - Lower bound: {}, Upper bound: {}, pos: {}".format(lower_bound, upper_bound, pos))
-                print_allocation(allocation)
+                # print_allocation(allocation)
 
             # Check if the allocation is feasible
             job_speeds = feasibility(allocation)

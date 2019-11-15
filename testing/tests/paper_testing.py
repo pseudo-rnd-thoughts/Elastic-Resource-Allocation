@@ -74,7 +74,7 @@ def example_flexible_fixed_test():
         Job("Task 1",  required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
         Job("Task 2",  required_storage=75,  required_computation=125, required_results_data=40, deadline=10, value=90),
         Job("Task 3",  required_storage=125, required_computation=110, required_results_data=45, deadline=10, value=110),
-        Job("Task 4",  required_storage=100, required_computation=75,  required_results_data=60, deadline=10, value=75),
+        Job("Task 4",  required_storage=100, required_computation=75,  required_results_data=35, deadline=10, value=75),
         Job("Task 5",  required_storage=85,  required_computation=90,  required_results_data=55, deadline=10, value=125),
         Job("Task 6",  required_storage=75,  required_computation=120, required_results_data=40, deadline=10, value=100),
         Job("Task 7",  required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
@@ -86,9 +86,9 @@ def example_flexible_fixed_test():
     ]
     
     servers = [
-        Server("Server 1", storage_capacity=420, computation_capacity=85, bandwidth_capacity=230),
-        Server("Server 2", storage_capacity=450, computation_capacity=90, bandwidth_capacity=210),
-        Server("Server 3", storage_capacity=450, computation_capacity=250, bandwidth_capacity=140)
+        Server("Server 1", storage_capacity=500, computation_capacity=85, bandwidth_capacity=230),
+        Server("Server 2", storage_capacity=500, computation_capacity=90, bandwidth_capacity=210),
+        Server("Server 3", storage_capacity=500, computation_capacity=250, bandwidth_capacity=150)
     ]
     
     optimal_result = optimal_algorithm(jobs, servers, 20)
