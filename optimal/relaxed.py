@@ -13,6 +13,7 @@ from core.core import print_model, print_model_solution
 from core.job import Job
 from core.result import Result
 from core.server import Server
+from core.super_server import SuperServer
 
 
 def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
@@ -34,10 +35,7 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
     sending_speeds: Dict[Job, CpoVariable] = {}
     job_allocation: Dict[Job, CpoVariable] = {}
 
-    super_server = Server('Super Server',
-                          sum(server.storage_capacity for server in servers),
-                          sum(server.computation_capacity for server in servers),
-                          sum(server.bandwidth_capacity for server in servers))
+    super_server = SuperServer(servers)
 
     for job in jobs:
         loading_speeds[job] = model.integer_var(min=1, max=super_server.bandwidth_capacity,

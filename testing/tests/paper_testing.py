@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from typing import Dict, List
 
-from branch_bound.branch_bound import branch_bound_algorithm
-from branch_bound.feasibility_allocations import fixed_feasible_allocation
-from core.core import ImageFormat, load_args
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from core.core import ImageFormat, load_args, results_filename
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.job import Job
 from core.model import reset_model, load_dist, ModelDist
@@ -18,6 +18,7 @@ from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityDeadlinePerResource
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
+from optimal.relaxed import relaxed_algorithm
 from testing.analysis.greedy_analysis import plot_allocation_results
 
 
@@ -119,85 +120,39 @@ def example_flexible_fixed_test():
     print_results({'Optimal': optimal_result, 'Fixed': fixed_result, 'Greedy': greedy_results})
 
 
-def fog_model_testing():
-    """
-    FOG model testing
-    """
-    model_name, job_dist, server_dist = load_dist("../../models/fog.json")
-    model_dist = ModelDist(model_name, job_dist, 12, server_dist, 3)
-    
-    percent = []
-    for _ in range(30):
+def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
+    data = []
+    for _ in range(repeats):
         jobs, servers = model_dist.create()
-        optimal_result = optimal_algorithm(jobs, servers, 15)
-        
-        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
+
+        results = {}
+        optimal_result = optimal_algorithm(jobs, servers, 180)
+        results['optimal'] = optimal_result.store()
         reset_model(jobs, servers)
-        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 15)
-        
-        percent.append(round(fixed_result.sum_value / optimal_result.sum_value, 3))
-        print_results({'Optimal': optimal_result, 'Fixed': fixed_result})
-        print()
-    
-    print(sorted(percent))
-    
-
-def debug_allocation_graph():
-    jobs = [
-        Job("Alpha", required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
-        Job("Beta", required_storage=75, required_computation=125, required_results_data=40, deadline=10, value=90),
-        Job("Charlie", required_storage=125, required_computation=110, required_results_data=45, deadline=10, value=110),
-        Job("Delta", required_storage=100, required_computation=75, required_results_data=60, deadline=10, value=75),
-        Job("Echo", required_storage=85, required_computation=90, required_results_data=55, deadline=10, value=125),
-        Job("Foxtrot", required_storage=75, required_computation=120, required_results_data=40, deadline=10, value=100),
-        Job("Golf", required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
-        Job("Hotel", required_storage=115, required_computation=75, required_results_data=55, deadline=10, value=110),
-        Job("India", required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
-        Job("Juliet", required_storage=90, required_computation=120, required_results_data=40, deadline=10, value=90),
-        Job("Kilo", required_storage=110, required_computation=90, required_results_data=45, deadline=10, value=100),
-        Job("Lima", required_storage=100, required_computation=80, required_results_data=55, deadline=10, value=100)
-    ]
-    
-    servers = [
-        Server("X-Ray", storage_capacity=400, computation_capacity=95, bandwidth_capacity=220),
-        Server("Yankee", storage_capacity=450, computation_capacity=85, bandwidth_capacity=210),
-        Server("Zulu", storage_capacity=375, computation_capacity=250, bandwidth_capacity=170)
-    ]
-    
-    greedy_results = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-
-    print("\n\nGreedy")
-    print_job_full(jobs)
-    plot_allocation_results(jobs, servers, "Greedy Allocation",
-                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
-
-
-def model_test(model_dist: ModelDist):
-    for _ in range(5):
-        jobs, servers = model_dist.create()
-        
-        optimal = optimal_algorithm(jobs, servers, 15)
-        
+        relaxed_result = relaxed_algorithm(jobs, servers, 60)
+        results['relaxed'] = relaxed_result.store()
         reset_model(jobs, servers)
-        
         fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed = fixed_optimal_algorithm(fixed_jobs, servers, 15)
-        
-        reset_model(fixed_jobs, servers)
-        
-        greedy = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-        
-        print("Optimal: {}, Fixed: {}, Greedy: {}, {}".format(1, fixed.sum_value / optimal.sum_value,
-                                                              greedy.sum_value / optimal.sum_value,
-                                                              optimal.data['percentage jobs']))
-    
+        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
+        results['fixed'] = fixed_result.store()
+        reset_model(jobs, servers)
+
+        for price_change in [1, 2, 3, 5, 10]:
+            dia_result = decentralised_iterative_auction(jobs, servers, 5)
+            results['dia {}'.format(price_change)] = dia_result.store()
+
+        data.append(results)
+
+        # Save the results to the file
+        filename = results_filename('paper', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
+
 
 if __name__ == "__main__":
-    # args = load_args()
+    args = load_args()
 
-    # model_name, job_dist, server_dist = load_dist(args['model'])
-    # loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, job_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    # model_test(loaded_model_dist)
     example_flexible_fixed_test()
-    # debug_allocation_graph()

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Price Change Test" type="PythonConfigurationType" factoryName="Python" folderName="Tests">
+  <configuration default="false" name="Price Change Test" type="PythonConfigurationType" factoryName="Python" folderName="PaperTests">
     <module name="excel_internship" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
