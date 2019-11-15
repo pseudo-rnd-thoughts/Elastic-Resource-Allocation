@@ -86,22 +86,21 @@ def example_flexible_fixed_test():
     ]
     
     servers = [
-        Server("Server 1", storage_capacity=400, computation_capacity=100, bandwidth_capacity=220),
-        Server("Server 2", storage_capacity=450, computation_capacity=100, bandwidth_capacity=210),
-        Server("Server 3", storage_capacity=375, computation_capacity=90, bandwidth_capacity=250)
+        Server("Server 1", storage_capacity=420, computation_capacity=85, bandwidth_capacity=230),
+        Server("Server 2", storage_capacity=450, computation_capacity=90, bandwidth_capacity=210),
+        Server("Server 3", storage_capacity=450, computation_capacity=250, bandwidth_capacity=140)
     ]
     
-    optimal_result = branch_bound_algorithm(jobs, servers, debug_update_lower_bound=True)
+    optimal_result = optimal_algorithm(jobs, servers, 20)
     print("Flexible")
     print(optimal_result.store())
     print_job_full(jobs)
     plot_allocation_results(jobs, servers, "Flexible Optimal Allocation",
-                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
+                            save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF], minimum_allocation=True)
     reset_model(jobs, servers)
     
     fixed_jobs = [FixedJob(job, FixedSumSpeeds(), False) for job in jobs]
-    fixed_result = branch_bound_algorithm(fixed_jobs, servers, feasibility=fixed_feasible_allocation,
-                                          debug_update_lower_bound=True)
+    fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 20)
     print("\n\nFixed")
     print(fixed_result.store())
     print_job_full(fixed_jobs)
@@ -160,9 +159,9 @@ def debug_allocation_graph():
     ]
     
     servers = [
-        Server("X-Ray", storage_capacity=400, computation_capacity=100, bandwidth_capacity=220),
-        Server("Yankee", storage_capacity=450, computation_capacity=100, bandwidth_capacity=210),
-        Server("Zulu", storage_capacity=375, computation_capacity=90, bandwidth_capacity=250)
+        Server("X-Ray", storage_capacity=400, computation_capacity=95, bandwidth_capacity=220),
+        Server("Yankee", storage_capacity=450, computation_capacity=85, bandwidth_capacity=210),
+        Server("Zulu", storage_capacity=375, computation_capacity=250, bandwidth_capacity=170)
     ]
     
     greedy_results = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
@@ -194,11 +193,11 @@ def model_test(model_dist: ModelDist):
     
 
 if __name__ == "__main__":
-    args = load_args()
+    # args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    # model_name, job_dist, server_dist = load_dist(args['model'])
+    # loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    model_test(loaded_model_dist)
-    # example_flexible_fixed_test()
+    # model_test(loaded_model_dist)
+    example_flexible_fixed_test()
     # debug_allocation_graph()

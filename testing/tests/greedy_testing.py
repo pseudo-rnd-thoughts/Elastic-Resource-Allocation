@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
-from core.SuperServer import SuperServer
+from core.super_server import SuperServer
 from core.core import results_filename, load_args
 from core.fixed_job import FixedJob, FixedSumSpeeds
 from core.model import reset_model, ModelDist, load_dist
