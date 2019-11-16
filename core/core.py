@@ -205,7 +205,7 @@ def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
     :return: Tuple of the location of the file and the model type
     """
     return "../results/{}/{}.json".format(folder, filename), \
-           re.findall(r"j\d+_s\d+", filename)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
+           re.findall(r"j\d+_s\d+", filename)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Tasks: "), \
            filename.replace(re.findall(r"_j\d+_s\d+_\d+", filename)[0], "")
 
 

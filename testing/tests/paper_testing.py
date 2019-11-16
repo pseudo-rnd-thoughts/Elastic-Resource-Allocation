@@ -13,9 +13,9 @@ from core.model import reset_model, load_dist, ModelDist
 from core.result import Result
 from core.server import Server
 from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.value_density import UtilityDeadlinePerResource
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, JobSumResources
+from greedy.value_density import UtilityDeadlinePerResource, UtilityPerResources, UtilityResourcePerDeadline, Value
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
@@ -147,6 +147,39 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
 
         # Save the results to the file
         filename = results_filename('paper', model_dist.file_name, repeat)
+        with open(filename, 'w') as file:
+            json.dump(data, file)
+
+
+def paper_testing_2(model_dist: ModelDist, repeat: int, repeats: int = 100):
+    data = []
+    for _ in range(repeats):
+        results = {}
+
+        jobs, servers = model_dist.create()
+
+        greedy_policies = [
+            (vd, ss, ra)
+            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
+            for ss in [SumResources(), SumResources(True),
+                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
+                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+            for ra in [SumPercentage(), SumSpeed()]
+        ]
+        for (vd, ss, ra) in greedy_policies:
+            try:
+                greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
+                results[greedy_result.algorithm_name] = greedy_result.store()
+
+            except Exception as e:
+                print(e)
+
+            reset_model(jobs, servers)
+
+        data.append(results)
+
+        # Save the results to the file
+        filename = results_filename('greedy', model_dist.file_name, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
