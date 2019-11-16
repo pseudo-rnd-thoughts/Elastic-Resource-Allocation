@@ -54,6 +54,8 @@ def optimal_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
             dia_result = decentralised_iterative_auction(jobs, servers, 5)
             results['dia {}'.format(price_change)] = dia_result.store()
 
+            reset_model(jobs, servers)
+            
         data.append(results)
 
         # Save the results to the file
