@@ -155,4 +155,5 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
-    example_flexible_fixed_test()
+    # example_flexible_fixed_test()
+    paper_testing(loaded_model_dist, args['repeat'])
