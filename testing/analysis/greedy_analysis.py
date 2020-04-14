@@ -80,7 +80,7 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05], title='Server resources')
     axe.add_artist(l1)
 
-    save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "testing/figures/allocation",
+    save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "./testing/figures/allocation",
               image_format=save_format)
     plt.show()
 
