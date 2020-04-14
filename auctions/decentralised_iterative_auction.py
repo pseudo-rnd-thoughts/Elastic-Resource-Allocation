@@ -149,6 +149,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
             allocate(job, loading[job], compute[job], sending[job], server, job.price)
         else:
             unallocated_jobs.append(job)
+            job.reset_allocation()
             messages += 1
 
         if debug_allocations:
