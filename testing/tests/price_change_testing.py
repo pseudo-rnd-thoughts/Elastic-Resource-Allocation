@@ -10,10 +10,10 @@ from tqdm import tqdm
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.fixed_vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
-
 from core.core import load_args, results_filename
-from core.model import reset_model, ModelDist, load_dist
 from core.fixed_job import FixedJob, FixedSumSpeeds
+from core.model import reset_model, ModelDist, load_dist
+
 
 def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_changes=(1, 2, 3, 5, 7, 10),
                               vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,

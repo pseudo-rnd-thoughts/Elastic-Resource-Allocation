@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import csv
+import json
 
 
 def csv_convert(file: str):
@@ -17,15 +17,15 @@ def csv_convert(file: str):
         new_file = file.strip('.txt') + '.csv'
         with open(new_file, 'w', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter='', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            
+
             for pos, line in enumerate(data):
                 for name, results in line.items():
                     new_line = [pos, name]
                     for _, result in results.items():
                         new_line.append(result)
-                        
+
                     csv_writer.writerow(new_line)
-                    
+
 
 def json_convert(file):
     """

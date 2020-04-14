@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import List
 
-from core.job import Job
-from core.server import Server
 from core.core import load_args
-from core.model import ModelDist, load_dist, reset_model
 from core.fixed_job import FixedJob, FixedSumSpeeds
-from optimal.optimal import optimal_algorithm
+from core.job import Job
+from core.model import ModelDist, load_dist, reset_model
+from core.server import Server
 from optimal.fixed_optimal import fixed_optimal_algorithm
+from optimal.optimal import optimal_algorithm
 
 
 def print_job_full(jobs: List[Job]):
@@ -34,11 +34,10 @@ def print_server_full(servers: List[Server]):
     print("{:<{name_len}}| Storage Percent | Computation Percent | Bandwidth Percent | Jobs"
           .format("Name", name_len=max_server_name_len))
     for server in servers:
-        print("{:^{name_len}}|{:^14.3f}|{:^14.3f}|{:^14.3f}| {}"
-              .format(server.name, (1 - server.available_storage) / server.storage_capacity,
-                      (1 - server.available_computation) / server.computation_capacity,
-                      (1 - server.available_bandwidth) / server.bandwidth_capacity,
-                      ','.join([job.name for job in server.allocated_jobs]), name_len=max_server_name_len))
+        print(f"{server.name:^{max_server_name_len}}|{(1 - server.available_storage) / server.storage_capacity:^14.3f}|"
+              f"{(1 - server.available_computation) / server.computation_capacity:^14.3f}|"
+              f"{(1 - server.available_bandwidth) / server.bandwidth_capacity:^14.3f}| "
+              f"{','.join([job.name for job in server.allocated_jobs])}")
 
 
 def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
@@ -49,7 +48,8 @@ def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
         max_server_name_len = max(len(server.name) for server in servers) + 1
         print("{:^{name_len}}| Storage | Computation | Bandwidth".format("Name", name_len=max_server_name_len))
         for server in servers:
-            print("{:<{name_len}}|{:^9}|{:^13}|{:^11}".format(server.name, server.storage_capacity, server.computation_capacity,
+            print("{:<{name_len}}|{:^9}|{:^13}|{:^11}".format(server.name, server.storage_capacity,
+                                                              server.computation_capacity,
                                                               server.bandwidth_capacity, name_len=max_server_name_len))
 
         optimal_results = optimal_algorithm(jobs, servers, 15)
@@ -71,18 +71,18 @@ def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
 
 def forced_fixed_comparison():
     jobs = [
-        Job("Alice",   required_storage=75,  required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Bob",     required_storage=100, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Clarke",  required_storage=90,  required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Dug",     required_storage=85,  required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Eve",     required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Felix",   required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Alice", required_storage=75, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Bob", required_storage=100, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Clarke", required_storage=90, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Dug", required_storage=85, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Eve", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Felix", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
         Job("Gregory", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Hatty",   required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Iris",    required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("James",   required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Kelly",   required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Liam",    required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Hatty", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Iris", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("James", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Kelly", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Job("Liam", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
     ]
     servers = [
         Server("North", storage_capacity=350, computation_capacity=1, bandwidth_capacity=1),

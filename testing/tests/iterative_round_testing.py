@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
-from typing import List, Callable
 import json
+from typing import List, Callable
 
 from tqdm import tqdm
 
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from core.core import results_filename, load_args
 from core.job import Job
 from core.model import ModelDist, load_dist, reset_model
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 
 
 def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[[Job], int]], price_changes: List[int],
@@ -48,11 +48,11 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[
     with open(filename, 'w') as file:
         json.dump(data, file)
     print("Successful, data saved to " + filename)
-    
+
 
 def basic_test(model_dist: ModelDist):
     jobs, servers = model_dist.create()
-    
+
     job_initial = 0
     price_change = 1
     for server in servers:
@@ -68,6 +68,7 @@ if __name__ == "__main__":
     model_name, job_dist, server_dist = load_dist(args['model'])
     loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
 
+
     def cost_lambda(c):
         """
         Create a lambda function for the cost
@@ -75,6 +76,8 @@ if __name__ == "__main__":
         :return: The lambda function
         """
         return lambda x: c
+
+
     job_initial_cost = [
         cost_lambda(cost) for cost in range(0, int(sum(dist.value_mean for dist in job_dist) / len(job_dist)), 10)
     ]

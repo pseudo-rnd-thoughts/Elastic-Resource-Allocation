@@ -38,14 +38,14 @@ class Server(object):
         :return: If it can run
         """
         return self.available_storage >= job.required_storage \
-            and self.available_computation >= 1 \
-            and self.available_bandwidth >= 2 and \
-            any(job.required_storage * self.available_computation * r +
-                s * job.required_computation * r +
-                s * self.available_computation * job.required_results_data
-                <= job.deadline * s * self.available_computation * r
-                for s in range(1, self.available_bandwidth + 1)
-                for r in range(1, self.available_bandwidth - s + 1))
+               and self.available_computation >= 1 \
+               and self.available_bandwidth >= 2 and \
+               any(job.required_storage * self.available_computation * r +
+                   s * job.required_computation * r +
+                   s * self.available_computation * job.required_results_data
+                   <= job.deadline * s * self.available_computation * r
+                   for s in range(1, self.available_bandwidth + 1)
+                   for r in range(1, self.available_bandwidth - s + 1))
 
     # noinspection DuplicatedCode
     def can_empty_run(self, job: Job) -> bool:
@@ -70,18 +70,18 @@ class Server(object):
         :param job: The job being allocated
         """
         assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
-            "Job {} - loading: {}, compute: {}, sending: {}"\
-            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
+            "Job {} - loading: {}, compute: {}, sending: {}" \
+                .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
         assert self.available_storage >= job.required_storage, \
-            "Server {} available storage {}, job required storage {}"\
-            .format(self.name, self.available_storage, job.required_storage)
+            "Server {} available storage {}, job required storage {}" \
+                .format(self.name, self.available_storage, job.required_storage)
         assert self.available_computation >= job.compute_speed, \
-            "Server {} available computation {}, job compute speed {}"\
-            .format(self.name, self.available_computation, job.compute_speed)
+            "Server {} available computation {}, job compute speed {}" \
+                .format(self.name, self.available_computation, job.compute_speed)
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
-            "Server {} available bandwidth {}, job loading speed {} and sending speed {}"\
-            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
-        assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}"\
+            "Server {} available bandwidth {}, job loading speed {} and sending speed {}" \
+                .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
+        assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}" \
             .format(job.name, self.name)
 
         self.allocated_jobs.append(job)

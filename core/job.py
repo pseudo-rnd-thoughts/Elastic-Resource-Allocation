@@ -46,14 +46,14 @@ class Job(object):
         """
         # Check that the allocation information is correct
         assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
-            "Job {} with loading {} compute {} sending {}"\
-            .format(self.name, loading_speed, compute_speed, sending_speed)
+            "Job {} with loading {} compute {} sending {}" \
+                .format(self.name, loading_speed, compute_speed, sending_speed)
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
         assert self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed, \
+               loading_speed * self.required_computation * sending_speed + \
+               loading_speed * compute_speed * self.required_results_data <= \
+               self.deadline * loading_speed * compute_speed * sending_speed, \
             "Job {} requirement storage {} computation {} results data {} " \
             "with loading {} compute {} sending {} speed and deadline {} time taken {}" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
@@ -63,7 +63,7 @@ class Job(object):
                         loading_speed * compute_speed * self.required_results_data)
 
         # Check that a server is not already allocated
-        assert self.running_server is None, "Job {} is already allocated to {}"\
+        assert self.running_server is None, "Job {} is already allocated to {}" \
             .format(self.name, self.running_server.name)
 
         self.loading_speed = loading_speed

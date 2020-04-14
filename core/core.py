@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import re
 import pickle
+import re
 import sys
 from enum import Enum, auto
 from random import choice, getstate as random_state
@@ -188,7 +188,8 @@ def print_model(jobs: List[Job], servers: List[Server]):
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity, server.computation_capacity,
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity,
+                                                          server.computation_capacity,
                                                           server.bandwidth_capacity,
                                                           ', '.join([job.name for job in server.allocated_jobs])))
 
@@ -227,7 +228,7 @@ def save_plot(name: str, test_name: str, additional: str = "", image_format: Ima
     :param lgd: The legend to be added to the plot when saved
     """
     if lgd:
-        lgd = (lgd, )
+        lgd = (lgd,)
     if image_format == ImageFormat.EPS:
         filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
         print("Save file location: " + filename)

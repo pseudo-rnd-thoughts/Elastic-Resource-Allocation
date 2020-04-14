@@ -9,7 +9,6 @@ from typing import Callable
 from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-
 from core.core import results_filename, list_item_replacement, load_args
 from core.job import Job, job_diff
 from core.model import ModelDist, reset_model, load_dist

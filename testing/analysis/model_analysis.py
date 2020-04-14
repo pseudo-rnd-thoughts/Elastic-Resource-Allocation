@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import List
 
-from core.server import Server
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
 from core.job import Job
 from core.model import load_dist, ModelDist
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+from core.server import Server
 
 
 def plot_job_distribution(model_dists: List[ModelDist], repeats: int = 10000):
@@ -99,7 +99,8 @@ def plot_servers(servers: List[Server]):
     Plots the severs on a graph
     :param servers: A list of servers to plot
     """
-    data = [[server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity] for server in servers]
+    data = [[server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity] for server in
+            servers]
     df = pd.DataFrame(data, columns=['Name', 'Storage', 'Computation', 'Bandwidth'])
     wide_df = pd.melt(df, id_vars=['Name']).sort_values(['variable', 'value'])
     wide_df.rename(columns={'variable': 'Resource'}, inplace=True)

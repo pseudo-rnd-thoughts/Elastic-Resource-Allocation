@@ -11,17 +11,15 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from core.core import print_job_allocation
-from core.job import Job
-from core.server import Server
-from core.model import load_dist, ModelDist, reset_model
-from optimal.optimal import optimal_algorithm
-from greedy.greedy import greedy_algorithm
-from greedy.value_density import ResourceSum
-from greedy.server_selection_policy import SumResources
-from greedy.resource_allocation_policy import SumPercentage
-
 from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
+from core.job import Job
+from core.model import load_dist, ModelDist, reset_model
+from core.server import Server
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.value_density import ResourceSum
+from optimal.optimal import optimal_algorithm
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -78,8 +76,8 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     for i in range(3):
         n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
 
-    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.25])
-    plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05])
+    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.25], title='Tasks')
+    plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05], title='Server resources')
     axe.add_artist(l1)
 
     save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "allocation", image_format=save_format)

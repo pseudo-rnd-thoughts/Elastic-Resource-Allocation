@@ -1,9 +1,10 @@
 """Task events analysis"""
 
 from datetime import datetime
-from memory_profiler import profile
 
 import pandas as pd
+from memory_profiler import profile
+
 
 @profile
 def analysis():

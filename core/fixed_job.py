@@ -5,17 +5,17 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import List
 
+from docplex.cp.model import CpoModel
+
 from core.job import Job
 from core.server import Server
-
-from docplex.cp.model import CpoModel
 
 
 class FixedJob(Job):
     """Job with a fixing resource usage speed"""
 
     def __init__(self, job: Job, servers: List[Server], fixed_value: FixedValue):
-        super().__init__("fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
+        super().__init__("Fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(servers, fixed_value)
@@ -35,8 +35,8 @@ class FixedJob(Job):
         model_solution = model.solve(log_output=None)
 
         return model_solution.get_value(loading_speed), \
-            model_solution.get_value(compute_speed), \
-            model_solution.get_value(sending_speed)
+               model_solution.get_value(compute_speed), \
+               model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = 0):

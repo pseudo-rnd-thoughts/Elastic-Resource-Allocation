@@ -16,7 +16,7 @@ def optimality_testing(model_dist: ModelDist):
 
     print("Models")
     print_model(jobs, servers)
-    for time_limit in [10, 30, 60, 5*60, 15*60, 60*60, 24*60*60]:
+    for time_limit in [10, 30, 60, 5 * 60, 15 * 60, 60 * 60, 24 * 60 * 60]:
         print("\n\nTime Limit: {}".format(time_limit))
         result = optimal_algorithm(jobs, servers, time_limit)
         print(result.store())

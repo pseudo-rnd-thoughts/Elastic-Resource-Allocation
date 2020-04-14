@@ -6,11 +6,11 @@ from time import time
 from typing import List, Dict, Optional
 
 from core.core import allocate, list_copy_remove
+from core.fixed_job import FixedJob
 from core.job import Job
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
-from core.fixed_job import FixedJob
 from optimal.fixed_optimal import fixed_optimal_algorithm
 
 
@@ -59,7 +59,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
         if optimal_prime is None:
             return None
         else:
-            job_prices[job] = optimal_solution - optimal_prime
+            job_prices[job] = optimal_solution.sum_value - optimal_prime.sum_value
             if debug_results:
                 print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 

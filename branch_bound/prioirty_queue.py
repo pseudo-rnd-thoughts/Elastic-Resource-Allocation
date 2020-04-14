@@ -98,7 +98,7 @@ class PriorityQueue(Generic[T]):
         :param pos:
         :return:
         """
-        return 2*pos + 1
+        return 2 * pos + 1
 
     @staticmethod
     def right(pos: int) -> int:
@@ -107,7 +107,7 @@ class PriorityQueue(Generic[T]):
         :param pos:
         :return:
         """
-        return 2*pos + 2
+        return 2 * pos + 2
 
     def swap(self, child: int, parent: int):
         """

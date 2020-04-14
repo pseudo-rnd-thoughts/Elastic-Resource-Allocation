@@ -6,9 +6,9 @@ import json
 from typing import List
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import numpy as np
 
 from core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 

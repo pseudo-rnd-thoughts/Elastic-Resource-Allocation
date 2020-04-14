@@ -1,4 +1,4 @@
- Running PBS prologue script on green0337
+Running PBS prologue script on green0337
 
  ===============================================================================
  Job started on Wed Oct  9 13:11:23 BST 2019

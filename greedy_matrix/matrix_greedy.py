@@ -9,7 +9,6 @@ from core.core import allocate
 from core.job import Job
 from core.result import Result
 from core.server import Server
-
 from greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
@@ -75,4 +74,4 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
                     print("Pop job {} and server {}".format(job.name, allocated_server.name))
                 allocation_value_matrix.pop((job, allocated_server))
 
-    return Result("Matrix Greedy " + allocation_value_policy.name, jobs, servers, solve_time=time()-start_time)
+    return Result("Matrix Greedy " + allocation_value_policy.name, jobs, servers, solve_time=time() - start_time)

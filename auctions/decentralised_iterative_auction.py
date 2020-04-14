@@ -93,14 +93,14 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
 
     # Get the max server profit that the model finds
     max_server_profit = model_solution.get_objective_values()[0]
-    
+
     # Calculate the job price through a vcg similar function
     job_price = server.revenue - max_server_profit + server.price_change
     if job_price < initial_cost:  # Add an initial cost the job if the price is less than a set price
         if debug_initial_cost:
             print("Price set to {} due to initial cost".format(initial_cost))
         job_price = initial_cost
-        
+
     print("Server: {}, Revenue: {}, Profit: {}, Price: {}, {}".format(server.name, server.revenue, max_server_profit,
                                                                       job_price, len(server.allocated_jobs)))
 
@@ -164,8 +164,8 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
 
 
 def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time_limit: int,
-                                    initial_cost: int = 0,
-                                    debug_allocation: bool = False, debug_results: bool = False) -> Result:
+                                    initial_cost: Callable[[Job], int], debug_allocation: bool = False,
+                                    debug_results: bool = False) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
     :param jobs: A list of jobs

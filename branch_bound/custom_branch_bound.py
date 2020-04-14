@@ -8,11 +8,11 @@ from __future__ import annotations
 
 from typing import List, Dict, Tuple, Optional
 
-from core.job import Job
-from core.server import Server
-from core.result import Result
-
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
+
+from core.job import Job
+from core.result import Result
+from core.server import Server
 
 
 def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Optional[Dict[Job, Tuple[int, int, int]]]:

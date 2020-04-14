@@ -6,17 +6,16 @@ import json
 
 from tqdm import tqdm
 
-from core.core import results_filename, load_args
-from core.model import ModelDist, reset_model, load_dist
-from core.fixed_job import FixedJob, FixedSumSpeeds
-from greedy.value_density import policies as value_densities
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
-
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.critical_value_auction import critical_value_auction
-from auctions.vcg_auction import vcg_auction
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from auctions.fixed_vcg_auction import fixed_vcg_auction
+from auctions.vcg_auction import vcg_auction
+from core.core import results_filename, load_args
+from core.fixed_job import FixedJob, FixedSumSpeeds
+from core.model import ModelDist, reset_model, load_dist
+from greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy.server_selection_policy import policies as server_selection_policies
+from greedy.value_density import policies as value_densities
 
 
 def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 3,
