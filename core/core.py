@@ -8,7 +8,7 @@ import sys
 from enum import Enum, auto
 from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
-
+import os
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
@@ -218,29 +218,33 @@ class ImageFormat(Enum):
     NONE = auto()
 
 
-def save_plot(name: str, test_name: str, additional: str = "", image_format: ImageFormat = ImageFormat.NONE, lgd=None):
+def save_plot(name: str, test_folder: str, additional: str = "",
+              image_format: ImageFormat = ImageFormat.NONE, lgd=None):
     """
     Saves the plot to a file of the particular image format
     :param name: The plot name
-    :param test_name: The test name
+    :param test_folder: The test name
     :param additional: Additional information to add to the filename
     :param image_format: The image format
     :param lgd: The legend to be added to the plot when saved
     """
+    os.mkdir(f'{test_folder}/eps/')
+    os.mkdir(f'{test_folder}/png/')
+
     if lgd:
         lgd = (lgd,)
     if image_format == ImageFormat.EPS:
-        filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
+        filename = f'{test_folder}/eps/{name}{additional}.eps'
         print("Save file location: " + filename)
         plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.PNG:
-        filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
+        filename = f'{test_folder}/png/{name}{additional}.png'
         print("Save file location: " + filename)
         plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.BOTH:
-        save_plot(name, test_name, additional, ImageFormat.EPS, lgd)
-        save_plot(name, test_name, additional, ImageFormat.PNG, lgd)
+        save_plot(name, test_folder, additional, ImageFormat.EPS, lgd)
+        save_plot(name, test_folder, additional, ImageFormat.PNG, lgd)
     elif image_format == ImageFormat.PDF:
-        filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
+        filename = f'{test_folder}/eps/{name}{additional}.pdf'
         print("Save file location: " + filename)
         plt.savefig(filename, format='pdf')
