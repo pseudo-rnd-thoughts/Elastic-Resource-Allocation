@@ -1,6 +1,8 @@
 \section{Introduction}
 
+
 \section{Related Work}
+
 
 \section{Problem case}
 With the addition of a job deadline and flexibility for the resources allocation for a job by the servers means that
@@ -13,50 +15,56 @@ variant of the knapsacking problem.
 
 Optimisation
 \begin{equation}
-max \sum^J_j U_j (\sum^I_i x_{ij})
+    max \sum^J_j U_j (\sum^I_i x_{ij})
 \end{equation}
 
 Jobs servers allocations
 \begin{equation}
-\sum^I_i x_{ij} \leq 1 && \forall j = 1,\dots,J
+    \sum^I_i x_{ij} \leq 1 && \forall j = 1,\dots,J
 \end{equation}
 \begin{equation}
-x_{ij} \in \{0, 1\} && \forall j = 1,\dots,J; i = 1,\dots,I
+    x_{ij} \in \{0, 1\} && \forall j = 1,\dots,J; i = 1,\dots,I
 \end{equation}
 
 Server resource constraints
 \begin{equation}
-\sum^J_j S_j x_{ij} \leq S_i && \forall i = 1,\dots,I
+    \sum^J_j S_j x_{ij} \leq S_i && \forall i = 1,\dots,I
 \end{equation}
 
 \begin{equation}
-\sum^J_j w_j x_{ij} \leq W_i && \forall i = 1,\dots,I
+    \sum^J_j w_j x_{ij} \leq W_i && \forall i = 1,\dots,I
 \end{equation}
 
 \begin{equation}
-\sum^J_j (r_j + s_j) x_{ij} \leq R_i && \forall i = 1,\dots,I
+    \sum^J_j (r_j + s_j) x_{ij} \leq R_i && \forall i = 1,\dots,I
 \end{equation}
 
 Deadline
 \begin{equation}
-\frac{S_j}{s_j} + \frac{W_j}{w_j} + \frac{R_j}{r_j} \leq D_j && \forall i = 1,\dots,I; j = 1,\dots,J
+    \frac{S_j}{s_j} + \frac{W_j}{w_j} + \frac{R_j}{r_j} \leq D_j && \forall i = 1,\dots,I; j = 1,\dots,J
 \end{equation}
+
 
 \section{Greedy Algorithm}
 In previous research, 0-1 multi-dimensional knapsacking problems are shown to have a no fully polynomial time
 approximation however this algorithm achieve over 95\% of the optimal solution.
+
 \subsection{Algorithm}
 
 \subsection{Lower bound proof}
 If we take each job and server combinatorial and solve find a valid allocation if it is possible then add to a graph
 linking the job to the server with a weight of the job value. We can find the maximum weighted matching of jobs to
 server that will give a lower bound of m/n where m is the number of servers and n is the number of jobs. \\
+
+
 \section{Iterative auction}
 In real life, server would wish to be payed for the work that they complete with a majority of previous research
 considering this case solved through combinatorial double auction however due to the flexibility we are unable to
+
 \subsection{Algorithm}
 
 \subsection{Properties}
+
 
 \section{Results}
 \begin{figure}
@@ -71,6 +79,7 @@ considering this case solved through combinatorial double auction however due to
 \subsection{Auctions}
 % VCG, Single, Multiple, mutations, CDA
 % Different model settings and sizes
+
 
 \section{Discussion}
 

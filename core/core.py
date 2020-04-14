@@ -228,9 +228,6 @@ def save_plot(name: str, test_folder: str, additional: str = "",
     :param image_format: The image format
     :param lgd: The legend to be added to the plot when saved
     """
-    os.mkdir(f'{test_folder}/eps/')
-    os.mkdir(f'{test_folder}/png/')
-
     if lgd:
         lgd = (lgd,)
     if image_format == ImageFormat.EPS:
