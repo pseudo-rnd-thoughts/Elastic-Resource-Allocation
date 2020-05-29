@@ -7,14 +7,14 @@ from typing import Dict, Tuple
 
 from tqdm import tqdm
 
-from src.core import load_args, results_filename
-from src.core import reset_model, ModelDist, load_dist
-from src.greedy import greedy_algorithm
+from src.core.core import load_args, results_filename
+from src.core.model import reset_model, ModelDist, load_dist
+from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy import all_policies as value_densities
-from src.greedy_matrix import policies as matrix_policies
+from src.greedy.value_density import all_policies as value_densities
 from src.greedy_matrix import matrix_greedy
+from src.greedy_matrix.allocation_value_policy import policies as matrix_policies
 from src.optimal.optimal import optimal_algorithm
 from src.optimal.relaxed import relaxed_algorithm
 

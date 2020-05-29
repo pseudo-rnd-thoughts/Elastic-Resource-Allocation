@@ -4,19 +4,19 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from src.core import ImageFormat
+from analysis.greedy_analysis import plot_allocation_results
+from src.core.core import ImageFormat
 from src.core.fixed_job import FixedJob, FixedSumSpeeds
-from src.core import Job
-from src.core import reset_model
-from src.core import Result
+from src.core.job import Job
+from src.core.model import reset_model
+from src.core.result import Result
 from src.core.server import Server
-from src.greedy import greedy_algorithm
+from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
-from src.greedy import ResourceSum
+from src.greedy.value_density import ResourceSum
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 from src.optimal.optimal import optimal_algorithm
-from testing.analysis.greedy_analysis import plot_allocation_results
 
 
 def print_results(results: Dict[str, Result]):

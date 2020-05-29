@@ -7,7 +7,7 @@ from math import exp
 from random import choice
 from typing import List, Optional
 
-from src.core import Job
+from src.core.job import Job
 from src.core.server import Server
 from src.greedy.resource_allocation_policy import ResourceAllocationPolicy, policies as resource_allocation_policies
 

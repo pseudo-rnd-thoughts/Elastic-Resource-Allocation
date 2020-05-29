@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from src.core import load_args, print_model
-from src.core import ModelDist, load_dist, reset_model
+from src.core.core import load_args, print_model
+from src.core.model import ModelDist, load_dist, reset_model
 from src.optimal.optimal import optimal_algorithm
 
 

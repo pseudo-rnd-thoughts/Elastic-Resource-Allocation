@@ -7,7 +7,7 @@ from typing import List
 
 from docplex.cp.model import CpoModel
 
-from src.core import Job
+from src.core.job import Job
 from src.core.server import Server
 
 

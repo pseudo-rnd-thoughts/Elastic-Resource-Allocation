@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from src.core import Job
-from src.core import load_dist, ModelDist
+from src.core.job import Job
+from src.core.model import load_dist, ModelDist
 from src.core.server import Server
 
 

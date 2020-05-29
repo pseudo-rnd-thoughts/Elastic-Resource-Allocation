@@ -6,7 +6,7 @@ from random import gauss
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.core import Job
+    from src.core.job import Job
 
 
 class Server(object):

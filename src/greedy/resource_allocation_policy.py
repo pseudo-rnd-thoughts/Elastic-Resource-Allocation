@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from math import exp
 from typing import Tuple
 
-from src.core import Job
+from src.core.job import Job
 from src.core.server import Server
 
 

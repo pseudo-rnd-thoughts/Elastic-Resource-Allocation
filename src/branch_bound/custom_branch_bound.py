@@ -10,8 +10,8 @@ from typing import List, Dict, Tuple, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
 
-from src.core import Job
-from src.core import Result
+from src.core.job import Job
+from src.core.result import Result
 from src.core.server import Server
 
 

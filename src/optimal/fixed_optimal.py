@@ -7,9 +7,9 @@ from typing import List, Optional
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core import print_model_solution, allocate
+from src.core.core import print_model_solution, allocate
 from src.core.fixed_job import FixedJob
-from src.core import Result
+from src.core.result import Result
 from src.core.server import Server
 
 

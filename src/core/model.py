@@ -6,7 +6,7 @@ import json
 from random import gauss, random
 from typing import List, Tuple, Dict, Union
 
-from src.core import Job
+from src.core.job import Job
 from src.core.server import Server
 
 

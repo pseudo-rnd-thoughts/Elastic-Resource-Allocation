@@ -5,11 +5,11 @@ from __future__ import annotations
 from time import time
 from typing import List, Tuple
 
-from src.core import allocate
-from src.core import Job
-from src.core import Result
+from src.core.core import allocate
+from src.core.job import Job
+from src.core.result import Result
 from src.core.server import Server
-from src.greedy_matrix import AllocationValuePolicy
+from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
 def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:

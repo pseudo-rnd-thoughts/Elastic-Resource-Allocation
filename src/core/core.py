@@ -8,11 +8,12 @@ import sys
 from enum import Enum, auto
 from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
+
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from src.core import Job
-from src.core import ModelDist
+from src.core.job import Job
+from src.core.model import ModelDist
 from src.core.server import Server
 
 T = TypeVar('T')

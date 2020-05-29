@@ -11,14 +11,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from src.core import decode_filename, save_plot, analysis_filename, ImageFormat
-from src.core import Job
-from src.core import load_dist, ModelDist, reset_model
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.job import Job
+from src.core.model import load_dist, ModelDist, reset_model
 from src.core.server import Server
-from src.greedy import greedy_algorithm
+from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
-from src.greedy import ResourceSum
+from src.greedy.value_density import ResourceSum
 from src.optimal.optimal import optimal_algorithm
 
 matplotlib.rcParams['font.family'] = "monospace"

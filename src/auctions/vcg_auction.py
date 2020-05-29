@@ -5,10 +5,10 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Tuple, Optional
 
-from src.core import list_copy_remove
-from src.core import Job
-from src.core import reset_model
-from src.core import Result
+from src.core.core import list_copy_remove
+from src.core.job import Job
+from src.core.model import reset_model
+from src.core.result import Result
 from src.core.server import Server
 from src.optimal.optimal import optimal_algorithm
 

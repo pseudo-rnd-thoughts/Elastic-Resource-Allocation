@@ -1,0 +1,58 @@
+\section{Introduction}\label{sec:introduction}
+In the last few years, cloud computing~\cite{cloud_cite} has become a popular solution for running data-intensive
+applications remotely. However, larger scale data-centres are not a feasible in application domains that require low
+latency or high security and privacy. To deal with such domains, \emph{fog/edge computing} has emerged as a
+complementary paradigm allowing tasks to be executed at the edge of networks, close to the user, in small data-centers,
+known as \emph{edge clouds}.
+
+As the Internet-of-things grows, fog/edge cloud computing is a key enabling technology in particular for applications
+in smart cities, disaster response scenarios, home automation systems, etc. In these applications, low-powered devices
+generate data or tasks that can't be processed locally but are impractical to use with standard cloud computing
+services. More specifically, in smart cities, these devices could be smart traffic light systems that collect data from
+roadside sensors to optimise the traffic light sequence to minimise vehicle waiting times; or to analyse videos feeds
+from CCTV cameras of suspicious behaviour. In disaster response, sensor data from autonomous vehicles can be aggregated
+to produce real-time maps of devastated areas to help first responders better understand the situation and search for
+survivors.
+
+To accomplish these tasks, there are typically several types of resources that are needed, including communication
+bandwidth, computational power and data storage resources~\citep{vaji_infocom}, and tasks are generally
+delay-sensitive, i.e., have a specific completion deadline. When accomplished, different tasks carry different values
+for their owners (e.g., the users of IoT devices or other stakeholders such as the police or traffic authority). This
+value will depend on the importance of the task, e.g., analysing current levels of air pollution may be less important
+than preventing a large-scale traffic jam at peak times or tracking a criminal on the run. Given that edge clouds are
+often highly constrained in their resources~\cite{edge_limitations}, we are interested in allocating tasks to edge
+cloud servers to maximize the overall social welfare achieved (i.e., the sum of completed task values). This is
+particularly challenging, because users in edge clouds are typically self-interested and may behave
+strategically~\cite{Bi2019} or may prefer not to reveal private information about their values to a central allocation
+mechanism~\cite{Pai2013}.
+
+An important shortcoming of existing work of resource allocation in edge cloud computing is that it assumes tasks have
+strict resource requirements -- that is, each task must be allocate a fixed amount of CPU cycles or bandwidth by a
+server. This can cause bottlenecks for certain resources when multiple tasks over-request resources. However, in
+practice tasks have flexibility in how resources are allocated given the task is computed within a time limit. This
+ability to flexibility allocate resource is additionally important in the case of edge computing due to the limited
+resource capacities that servers have in comparison to large data-centre. Using this idea of task resource flexibility,
+in this paper, we proposed a new optimisation problem that is incompatible with previous research. Therefore three
+mechanisms are proposed for the problem: a greedy mechanism, an incentive compatible centralised auction and a novel
+decentralised iterative auction that achieve ~95\% of the theoretical optimal.
+
+%% Make an addition to why this flexibility breaks everything previously
+
+\section{Related work}\label{sec:related-work}
+There is a considerable amount of research in the area of resource allocation and pricing in cloud computing, some of
+which use auction mechanisms to deal with competition~\cite{KUMAR2017234,Zhang2017,Du2019,Bi2019}. % Put a couple of more references.
+However, these approaches assume that users request a fixed amount of resources system resources and processing rates,
+with the cloud provider having no control over the speeds, only the servers that the task was allocated to. In our
+work, tasks' owners report deadlines and overall data and computation requirements, allowing the edge cloud server to
+distribute its resources more efficiently based on each task's requirements.
+
+Our problem is related to multidimensional knapsack problems. In particular, \citet{Nip2017} consider flexibility in
+the allocation, with linear constraints that are used for elastic weights. The paper provides a pseudo-polynomial time
+complexity algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is
+similar to their, but differ due to constraints with our using non-linear not linear constraints.
+
+Other closely related work on resource allocation in edge clouds~\cite{vaji_infocom} considers both the placement of
+code/data needed to run a specific task, as well as the scheduling of tasks to different edge clouds. The goal there is
+to maximize the expected rate of successfully accomplished tasks over time. Our work is different both in the setup and
+the objective function. Our objective is to maximize the value over all tasks. In terms of the setup, they assume that
+data/code can be shared and they do not consider the elasticity of resources.

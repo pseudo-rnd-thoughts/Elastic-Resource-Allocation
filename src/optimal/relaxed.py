@@ -9,9 +9,9 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core import print_model, print_model_solution
-from src.core import Job
-from src.core import Result
+from src.core.core import print_model, print_model_solution
+from src.core.job import Job
+from src.core.result import Result
 from src.core.server import Server
 
 

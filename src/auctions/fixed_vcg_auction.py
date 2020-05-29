@@ -5,11 +5,11 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Optional
 
-from src.core import allocate, list_copy_remove
+from src.core.core import allocate, list_copy_remove
 from src.core.fixed_job import FixedJob
-from src.core import Job
-from src.core import reset_model
-from src.core import Result
+from src.core.job import Job
+from src.core.model import reset_model
+from src.core.result import Result
 from src.core.server import Server
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 

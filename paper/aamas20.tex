@@ -28,7 +28,8 @@
 \setcopyright{ifaamas}  % do not change this line!
 \acmDOI{doi}  % do noadat change this line!
 \acmISBN{}  % do not change this line!
-\acmConference[AAMAS'20]{Proc.\@ of the 19th International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2020), B.~An, N.~Yorke-Smith, A.~El~Fallah~Seghrouchni, G.~Sukthankar (eds.)}{May 2020}{Auckland, New Zealand}  % do not change this line!
+\acmConference[AAMAS'20]{Proc.\@ of the 19th International Conference on Autonomous Agents and Multiagent Systems
+    (AAMAS 2020), B.~An, N.~Yorke-Smith, A.~El~Fallah~Seghrouchni, G.~Sukthankar (eds.)}{May 2020}{Auckland, New Zealand}  % do not change this line!
 \acmYear{2020}  % do not change this line!
 \copyrightyear{2020}  % do not change this line!
 \acmPrice{}  % do not change this line!
@@ -36,19 +37,19 @@
 
 %% the rest of your preamble here
 \lstset{
-  basicstyle=\ttfamily,
-  columns=fullflexible,
-  frame=single,
-  breaklines=true,
-  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
-  basicstyle=\small,
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    frame=single,
+    breaklines=true,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    basicstyle=\small,
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
-\title{Auction-based Mechanisms for Allocating Elastic Resources in Edge Clouds}
+    \title{Auction-based Mechanisms for Allocating Elastic Resources in Edge Clouds}
 %\titlenote{Produces the permission block, and copyright information}
 
 % AAMAS: as appropriate, uncomment one subtitle line; check the CFP
@@ -65,26 +66,27 @@
 
 
 % AAMAS: submissions are anonymous for most tracks
-\author{Paper \#1263}  % put your paper number here!
+    \author{Paper \#1263}  % put your paper number here!
 
 %% example of author block for camera ready version of accepted papers: don't use for anonymous submissions
 %
 
-\begin{abstract}  % put your abstract here!
-Edge cloud computing enables computational task to be process at the edge of the network using limited computational
-resource in comparison to larger remote data centres. Because of this, resource allocation and management is
-significantly more important. Existing resource allocations approaches usually assumed that tasks have inelastic
-resource requirements (i.e., a fixed amount of bandwidth and computation requirements) however this may result in
-inefficient resource usage due to unbalanced requirements from tasks resulting in resource bottlenecks. To address
-this, we propose a novel approach that takes advantage of the elastic nature of resource as time taken for an operation
-to occur is proportional to the resource allocated. This however make previous research incompatible with this problem.
-Therefore we describe this problem formally, show that it is NP-Hard and propose a scalable approximation algorithm.
-To deal with self-interested user, we demonstrate a centralised auction mechanism that is incentive compatible using
-the approximation algorithm. Moreover, we propose a novel decentralised iterative auction mechanism that doesn't
-require users to reveal their private task value but is not incentive compatible. In extensive simulations, we show
-that considering the elasticity of resources leads to a gain in utility of around 20\% compared to existing approaches
-with the proposed approaches typically achieving 95\% of the theoretical optimal.
-\end{abstract}
+    \begin{abstract}  % put your abstract here!
+        Edge cloud computing enables computational task to be process at the edge of the network using limited
+        computational resource in comparison to larger remote data centres. Because of this, resource allocation and
+        management is significantly more important. Existing resource allocations approaches usually assumed that tasks
+        have inelastic resource requirements (i.e., a fixed amount of bandwidth and computation requirements) however
+        this may result in inefficient resource usage due to unbalanced requirements from tasks resulting in resource
+        bottlenecks. To address this, we propose a novel approach that takes advantage of the elastic nature of
+        resource as time taken for an operation to occur is proportional to the resource allocated. This however make
+        previous research incompatible with this problem. Therefore we describe this problem formally, show that it is
+        NP-Hard and propose a scalable approximation algorithm. To deal with self-interested user, we demonstrate a
+        centralised auction mechanism that is incentive compatible using the approximation algorithm. Moreover, we
+        propose a novel decentralised iterative auction mechanism that doesn't require users to reveal their private
+        task value but is not incentive compatible. In extensive simulations, we show that considering the elasticity
+        of resources leads to a gain in utility of around 20\% compared to existing approaches with the proposed
+        approaches typically achieving 95\% of the theoretical optimal.
+    \end{abstract}
 
 
 % AAMAS: the ACM CCS are not needed within AAMAS papers
@@ -124,18 +126,20 @@ with the proposed approaches typically achieving 95\% of the theoretical optimal
 %\ccsdesc[100]{Networks~Network reliability}
 
 
-\keywords{Edge clouds; elastic resources; auctions}  % put your semicolon-separated keywords here!
+    \keywords{Edge clouds; elastic resources; auctions}  % put your semicolon-separated keywords here!
 
-\maketitle
+    \maketitle
 
-%% start of main body of paper
-
-\include{paper}
+    %% start of main body of paper
+    \input{sections/1_introduction}
+    \input{sections/2_problem_formulation}
+    \input{sections/3_algorithms}
+    \input{sections/4_evidence}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% bibliography: see CFP for number of permitted pages
-\balance
-\bibliographystyle{ACM-Reference-Format}  % do not change this line!
-\bibliography{bibliography}  % put name of your .bib file here
+    %% bibliography: see CFP for number of permitted pages
+    \balance
+    \bibliographystyle{ACM-Reference-Format}  % do not change this line!
+    \bibliography{bibliography}  % put name of your .bib file here
 
 \end{document}

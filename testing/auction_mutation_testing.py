@@ -8,10 +8,10 @@ from typing import Callable
 
 from tqdm import tqdm
 
-from src.auctions import decentralised_iterative_auction
-from src.core import results_filename, list_item_replacement, load_args
-from src.core import Job, job_diff
-from src.core import ModelDist, reset_model, load_dist
+from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from src.core.core import results_filename, list_item_replacement, load_args
+from src.core.job import Job, job_diff
+from src.core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,

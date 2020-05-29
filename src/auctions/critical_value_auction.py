@@ -5,15 +5,15 @@ from __future__ import annotations
 from time import time
 from typing import List
 
-from src.core import print_job_values
-from src.core import Job
-from src.core import reset_model
-from src.core import Result
+from src.core.core import print_job_values
+from src.core.job import Job
+from src.core.model import reset_model
+from src.core.result import Result
 from src.core.server import Server
-from src.greedy import allocate_jobs
+from src.greedy.greedy import allocate_jobs
 from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
 from src.greedy.server_selection_policy import ServerSelectionPolicy
-from src.greedy import ValueDensity
+from src.greedy.value_density import ValueDensity
 
 
 def calculate_critical_value(critical_job: Job, ranked_jobs: List[Job], servers: List[Server],

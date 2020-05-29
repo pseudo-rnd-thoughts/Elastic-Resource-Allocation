@@ -10,9 +10,9 @@ from typing import List, Dict, Callable
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core import allocate, print_model_solution
-from src.core import Job
-from src.core import Result
+from src.core.core import allocate, print_model_solution
+from src.core.job import Job
+from src.core.result import Result
 from src.core.server import Server
 
 

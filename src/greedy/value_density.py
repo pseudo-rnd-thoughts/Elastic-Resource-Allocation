@@ -7,7 +7,7 @@ from math import exp, sqrt
 from random import random
 from typing import List
 
-from src.core import Job
+from src.core.job import Job
 
 
 class ValueDensity(ABC):

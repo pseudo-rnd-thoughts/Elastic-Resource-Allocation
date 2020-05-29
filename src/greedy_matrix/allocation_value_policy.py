@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from math import exp
 
-from src.core import Job
+from src.core.job import Job
 from src.core.server import Server
 
 

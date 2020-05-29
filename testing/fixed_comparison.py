@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import List
 
-from src.core import load_args
+from src.core.core import load_args
 from src.core.fixed_job import FixedJob, FixedSumSpeeds
-from src.core import Job
-from src.core import ModelDist, load_dist, reset_model
+from src.core.job import Job
+from src.core.model import ModelDist, load_dist, reset_model
 from src.core.server import Server
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 from src.optimal.optimal import optimal_algorithm
