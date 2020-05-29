@@ -1,5 +1,5 @@
 \section{Flexible Resource Allocation Mechanisms}\label{sec:flexible-resource-allocation-mechanisms}
-Due to the optimisation problem in section~\ref{sec:system-model} previous work described in
+Due to the optimisation problem in section~\ref{subsec:system-model} previous work described in
 section~\ref{sec:related-work} is incompatible with this model. Therefore in this section, we propose several
 mechanisms for solving the resource allocation problem with elastic resources. First, we discuss a centralized greedy
 algorithm (detailed in Section~\ref{subsec:greedy-mechanism}) with a $\frac{1}{\left|J\right|}$ performance guarantee
@@ -42,11 +42,11 @@ that perform best over a range of settings.
 \end{proof}
 
 Figure~\ref{fig:greedy_allocation} is an example allocation using the greedy algorithm using the model from
-tables~\ref{table:example_servers_properties} and \ref{table:example_tasks_properties} achieving the optimal social
+tables~\ref{table:example_servers_properties} and~\ref{table:example_tasks_properties} achieving the optimal social
 welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{fig/allocation/greedy_allocation.pdf}
-    \caption{Example Greedy allocation using model from table \ref{table:jobs} and \ref{table:servers}}
+    \includegraphics[width=\linewidth]{figs/allocation/greedy_allocation.pdf}
+    \caption{Example Greedy allocation using model from table~\ref{table:jobs} and~\ref{table:servers}}
     \label{fig:greedy_allocation}
 \end{figure}
 
@@ -207,23 +207,23 @@ price's are reset then appended to the set of unallocated jobs.
         \REQUIRE $R(i, k)$ is a function returning the list of tasks not able to run if task $k$ is allocated to server $i$
         \REQUIRE $\leftarrow_R$ will randomly select an element from a set
         \WHILE{$|J| > 0$}
-        \STATE{$j \leftarrow_R J$}
-        \STATE{$p, i \leftarrow argmin_{i \in I} P(i, j)$}
-        \IF{$p \leq v_j$}
-        \STATE{$p_j \leftarrow p$}
-        \STATE{$x_{i, j} \leftarrow 1$}
-        \FORALL{$j^{'} \in R(i, j)$}
-        \STATE{$x_{i, j^{'}} \leftarrow 0$}
-        \STATE{$p_j^{'} \leftarrow 0$}
-        \STATE{$J \leftarrow J \cup j^{'}$}
-        \ENDFOR
-        \ENDIF
-        \STATE{$J \leftarrow J \setminus \{j\}$}
+            \STATE{$j \leftarrow_R J$}
+            \STATE{$p, i \leftarrow argmin_{i \in I} P(i, j)$}
+            \IF{$p \leq v_j$}
+                \STATE{$p_j \leftarrow p$}
+                \STATE{$x_{i, j} \leftarrow 1$}
+                \FORALL{$j^{'} \in R(i, j)$}
+                    \STATE{$x_{i, j^{'}} \leftarrow 0$}
+                    \STATE{$p_j^{'} \leftarrow 0$}
+                    \STATE{$J \leftarrow J \cup j^{'}$}
+                \ENDFOR
+            \ENDIF
+            \STATE{$J \leftarrow J \setminus \{j\}$}
         \ENDWHILE
     \end{algorithmic}
 \end{algorithm}
 
-\subsection{Attributes of proposed algorithms}
+\subsection{Attributes of proposed algorithms}\label{subsec:attributes-of-proposed-algorithms}
 In this paper, we have presented three mechanisms to solve the optimisation problem proposed in
 section~\ref{subsec:optimisation-problem}. The table~\ref{tab:attributes_algorithms} considers a range of
 important attributes of the proposed algorithm to allow easy comparison between the Greedy mechanism (GM),

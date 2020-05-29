@@ -1,0 +1,157 @@
+%%
+%% sample document for AAMAS'19 conference
+%%
+%% modified from sample-sigconf.tex
+%%
+%% see ACM instructions acmguide.pdf
+%%
+%% AAMAS-specific questions? F.A.Oliehoek@tudelft.nl
+%%
+
+\pdfminorversion=7  % Fixes .eps image files
+
+\documentclass[sigconf]{aamas}  % do not change this line!
+
+%% your usepackages here, for example:
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{appendix}
+\usepackage{soul}
+\usepackage{balance}
+\usepackage[]{todonotes}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+%% do not change the following lines
+\usepackage{flushend}
+\setcopyright{ifaamas}  % do not change this line!
+\acmDOI{doi}  % do not change this line!
+\acmISBN{}  % do not change this line!
+\acmConference[AAMAS'20]{Proc.\@ of the 19th International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2020), B.~An, N.~Yorke-Smith, A.~El~Fallah~Seghrouchni, G.~Sukthankar (eds.)}{May 2020}{Auckland, New Zealand}  % do not change this line!
+\acmYear{2020}  % do not change this line!
+\copyrightyear{2020}  % do not change this line!
+\acmPrice{}  % do not change this line!
+
+%% the rest of your preamble here
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+    \title{Auction-based Mechanisms for Allocating Elastic Resources in Edge Clouds}  % put your title here!
+    %\titlenote{Produces the permission block, and copyright information}
+
+    % AAMAS: as appropriate, uncomment one subtitle line; check the CFP
+    %\subtitle{Extended Abstract}
+    %\subtitle{Blue Sky Ideas Track}
+    %\subtitle{JAAMAS Track}
+    %\subtitle{Demonstration}
+    %\subtitle{Doctoral Consortium}
+
+    % AAMAS: submissions are anonymous for most tracks
+    \author{Paper \#XXX}  % put your paper number here!
+
+    %% example of author block for camera ready version of accepted papers: don't use for anonymous submissions
+    %
+    %\author{Ben Trovato}
+    %\authornote{Dr.~Trovato insisted his name be first.}
+    %\orcid{1234-5678-9012}
+    %\affiliation{%
+    %  \institution{Institute for Clarity in Documentation}
+    %  \streetaddress{P.O. Box 1212}
+    %  \city{Dublin}
+    %  \state{Ohio}
+    %  \postcode{43017-6221}
+    %}
+    %\email{trovato@corporation.com}
+    %
+    %\author{G.K.M. Tobin}
+    %\authornote{The secretary disavows any knowledge of this author's actions.}
+    %\affiliation{%
+    %  \institution{Institute for Clarity in Documentation}
+    %  \streetaddress{P.O. Box 1212}
+    %  \city{Dublin}
+    %  \state{Ohio}
+    %  \postcode{43017-6221}
+    %}
+    %\email{webmaster@marysville-ohio.com}
+    %
+    %\author{Lars Th{\o}rv{\"a}ld}
+    %\authornote{This author is the
+    %  one who did all the really hard work.}
+    %\affiliation{%
+    %  \institution{The Th{\o}rv{\"a}ld Group}
+    %  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
+    %  \city{Hekla}
+    %  \country{Iceland}}
+    %\email{larst@affiliation.org}
+    %
+    %\author{Valerie B\'eranger}
+    %\affiliation{%
+    %  \institution{Inria Paris-Rocquencourt}
+    %  \city{Rocquencourt}
+    %  \country{France}
+    %}
+    %\author{Aparna Patel}
+    %\affiliation{%
+    % \institution{Rajiv Gandhi University}
+    % \streetaddress{Rono-Hills}
+    % \city{Doimukh}
+    % \state{Arunachal Pradesh}
+    % \country{India}}
+    %\author{Huifen Chan}
+    %\affiliation{%
+    %  \institution{Tsinghua University}
+    %  \streetaddress{30 Shuangqing Rd}
+    %  \city{Haidian Qu}
+    %  \state{Beijing Shi}
+    %  \country{China}
+    %}
+    %
+    %\author{Charles Palmer}
+    %\affiliation{%
+    %  \institution{Palmer Research Laboratories}
+    %  \streetaddress{8600 Datapoint Drive}
+    %  \city{San Antonio}
+    %  \state{Texas}
+    %  \postcode{78229}}
+    %\email{cpalmer@prl.com}
+    %
+    %\author{John Smith}
+    %\affiliation{\institution{The Th{\o}rv{\"a}ld Group}}
+    %\email{jsmith@affiliation.org}
+    %
+    %\author{Julius P.~Kumquat}
+    %\affiliation{\institution{The Kumquat Consortium}}
+    %\email{jpkumquat@consortium.net}
+    %
+    %% The example's default list of authors is too long for headers
+    %\renewcommand{\shortauthors}{B. Trovato et al.}
+
+
+    \input{sections/0_abstract.tex}
+
+    \keywords{Edge clouds; elastic resources; auctions}  % put your semicolon-separated keywords here!
+
+    \maketitle
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% start of main body of paper
+
+    \input{sections/1_introduction.tex}
+    \input{sections/2_problem_formulation.tex}
+    \input{sections/3_algorithms.tex}
+    \input{sections/4_evidence.tex}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% bibliography: see CFP for number of permitted pages
+
+    \bibliographystyle{ACM-Reference-Format}  % do not change this line!
+    \bibliography{sections/references}  % put name of your .bib file here
+
+\end{document}
