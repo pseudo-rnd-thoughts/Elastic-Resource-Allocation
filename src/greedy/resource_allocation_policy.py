@@ -19,6 +19,7 @@ class ResourceAllocationPolicy(ABC):
     def allocate(self, job: Job, server: Server) -> Tuple[int, int, int]:
         """
         Determines the resource speed for the job on the server but finding the smallest
+
         :param job: The job
         :param server: The server
         :return: A tuple of resource speeds
@@ -36,6 +37,7 @@ class ResourceAllocationPolicy(ABC):
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
+
         :param job: A job
         :param server: A server
         :param loading_speed: The loading speed of the storage

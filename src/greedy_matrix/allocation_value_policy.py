@@ -21,6 +21,7 @@ class AllocationValuePolicy(object):
     def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         Evaluation with all information
+
         :param job: A job
         :param server: A server
         :param loading_speed: A loading speed

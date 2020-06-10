@@ -22,6 +22,7 @@ def calculate_critical_value(critical_job: Job, ranked_jobs: List[Job], servers:
                              debug_bound: bool = False) -> float:
     """
     Calculates the critical values of the job
+
     :param critical_job: The job to find the critical value
     :param ranked_jobs: A sorted list of jobs
     :param servers: A list of servers
@@ -56,6 +57,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
                            debug_critical_bound: bool = False, debug_critical_value: bool = False) -> Result:
     """
     Critical value auction
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param value_density: The value density function

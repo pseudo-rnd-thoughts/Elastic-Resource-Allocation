@@ -20,6 +20,7 @@ def assert_solution(loading_speeds: Dict[Job, int], compute_speeds: Dict[Job, in
                     allocations: Dict[Job, bool]):
     """
     Assert that the solution is valid
+
     :param loading_speeds: The loading speeds
     :param compute_speeds: The compute speeds
     :param sending_speeds: The sending speeds
@@ -37,6 +38,7 @@ def evaluate_job_price(new_job: Job, server: Server, time_limit: int, initial_co
                        debug_results: bool = False, debug_initial_cost: bool = False):
     """
     Evaluates the job price to run on server using a vcg mechanism
+
     :param new_job: A new job
     :param server: A server
     :param time_limit: The solve time limit
@@ -126,6 +128,7 @@ def allocate_jobs(job_price: float, new_job: Job, server: Server,
                   debug_allocations: bool = False, debug_result: bool = False) -> int:
     """
     Allocates a job to a server based on the last allocation
+
     :param job_price: The new job price
     :param new_job: The new job
     :param server: The server the job is allocated to
@@ -168,6 +171,7 @@ def decentralised_iterative_auction(jobs: List[Job], servers: List[Server], time
                                     debug_results: bool = False) -> Result:
     """
     A iterative auctions created by Seb Stein and Mark Towers
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The solve time limit

@@ -18,6 +18,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
                       debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Combinatorial Double auction solved through VCG auction algorithm
+
     :param jobs: a list of jobs
     :param servers: a list of servers
     :param time_limit:The time limit

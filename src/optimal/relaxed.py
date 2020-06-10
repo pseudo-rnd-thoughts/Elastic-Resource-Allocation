@@ -19,6 +19,7 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
                       debug_time: bool = False) -> Optional[Result]:
     """
     Runs the optimal algorithm solution
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The time limit to solve

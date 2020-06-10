@@ -22,6 +22,7 @@ class ServerSelectionPolicy(ABC):
     def select(self, job: Job, servers: List[Server]) -> Optional[Server]:
         """
         Select the server that maximises the value function
+
         :param job: The job
         :param servers: The list of servers
         :return: The selected server
@@ -37,6 +38,7 @@ class ServerSelectionPolicy(ABC):
     def value(self, job: Job, server: Server) -> float:
         """
         The value of the server and job combination
+
         :param job: The job
         :param server: The server
         :return: The value of the combination

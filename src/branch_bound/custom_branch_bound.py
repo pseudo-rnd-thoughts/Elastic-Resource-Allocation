@@ -18,8 +18,9 @@ from src.core.server import Server
 def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Optional[Dict[Job, Tuple[int, int, int]]]:
     """
     Checks whether a job to server allocation is a feasible solution to the problem
-    :param job_server_allocations:
-    :return:
+
+    :param job_server_allocations: Current job server allocation
+    :return: If valid solution exists then return allocation
     """
     model = CpoModel("Allocation Feasibility")
 
@@ -59,13 +60,14 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
     """
     Generates all of the candidates from a prior allocation using the list of jobs and servers
     using the current position in the job list for which jobs to use
-    :param allocation:
-    :param job:
-    :param servers:
-    :param pos:
-    :param lower_bound:
-    :param upper_bound:
-    :param best_lower_bound:
+
+    :param allocation: Current allocation
+    :param job: List of jobs
+    :param servers: List of servers
+    :param pos: Position
+    :param lower_bound: Lower bound
+    :param upper_bound: Upper bound
+    :param best_lower_bound: Current best lower bound
     :return: A list of tuples of the allocation, position, lower bound, upper bound
     """
     new_candidates = []
@@ -83,10 +85,11 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
 
 def branch_bound(jobs: List[Job], servers: List[Server]) -> Result:
     """
+    Run branch and bound
 
-    :param jobs:
-    :param servers:
-    :return:
+    :param jobs: List of jobs
+    :param servers: List of servers
+    :return: New results
     """
     best_lower_bound: float = 0
     best_allocation: Optional[Dict[Server, List[Job]]] = None

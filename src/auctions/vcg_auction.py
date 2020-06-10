@@ -17,6 +17,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
                 debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The time to run the optimal for

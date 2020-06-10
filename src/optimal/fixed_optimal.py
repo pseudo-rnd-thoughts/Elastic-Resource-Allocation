@@ -16,6 +16,7 @@ from src.core.server import Server
 def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit: int) -> Optional[Result]:
     """
     Finds the optimal solution
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param time_limit: The time limit to solve with

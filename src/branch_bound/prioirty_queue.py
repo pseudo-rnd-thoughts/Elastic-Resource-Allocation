@@ -30,8 +30,9 @@ class PriorityQueue(Generic[T]):
 
     def pop(self) -> T:
         """
+        Remove top element from the queue
 
-        :return:
+        :return: Top element of the queue
         """
         if self.size == 1:
             return self.queue.pop(0)
@@ -58,9 +59,9 @@ class PriorityQueue(Generic[T]):
 
     def push(self, data: T):
         """
+        Pushes new element to the queue
 
-        :param data:
-        :return:
+        :param data: New element
         """
         self.queue.append(data)
         self.size += 1
@@ -75,9 +76,9 @@ class PriorityQueue(Generic[T]):
 
     def push_all(self, data: List[T]):
         """
+        Pushes a list of element to the queue
 
-        :param data:
-        :return:
+        :param data: List of elements
         """
         for d in data:
             self.push(d)
@@ -85,36 +86,39 @@ class PriorityQueue(Generic[T]):
     @staticmethod
     def parent(pos: int) -> int:
         """
+        Position of the parent for an element
 
-        :param pos:
-        :return:
+        :param pos: Element position
+        :return: Parent element position
         """
         return (pos - 1) // 2
 
     @staticmethod
     def left(pos: int) -> int:
         """
+        Position of the left to an element
 
-        :param pos:
-        :return:
+        :param pos: Element position
+        :return: Left element position
         """
         return 2 * pos + 1
 
     @staticmethod
     def right(pos: int) -> int:
         """
+        Position of the right to an element
 
-        :param pos:
-        :return:
+        :param pos: Element position
+        :return: Right element position
         """
         return 2 * pos + 2
 
     def swap(self, child: int, parent: int):
         """
+        Swap an child and parent element
 
-        :param child:
-        :param parent:
-        :return:
+        :param child: Child element position
+        :param parent: Parent element position
         """
         temp = self.queue[child]
         self.queue[child] = self.queue[parent]
@@ -122,8 +126,9 @@ class PriorityQueue(Generic[T]):
 
     def __str__(self) -> str:
         """
+        Converts the queue to a string
 
-        :return:
+        :return: String representing the queue
         """
 
         return '[' + ', '.join(self.queue) + ']'

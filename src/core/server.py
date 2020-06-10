@@ -34,6 +34,7 @@ class Server(object):
     def can_run(self, job: Job) -> bool:
         """
         Checks if a job can be run on a server if it dedicates all of it's available resources to the job
+
         :param job: The job to test
         :return: If it can run
         """
@@ -51,36 +52,38 @@ class Server(object):
     def can_empty_run(self, job: Job) -> bool:
         """
         Checks if a job can be run on a server if it dedicates all of it's possible resources to the job
+
         :param job: The job to test
         :return: If it can run
         """
         return self.storage_capacity >= job.required_storage \
-               and self.computation_capacity >= 1 \
-               and self.bandwidth_capacity >= 2 and \
-               any(job.required_storage * self.computation_capacity * r +
-                   s * job.required_computation * r +
-                   s * self.computation_capacity * job.required_results_data
-                   <= job.deadline * s * self.available_computation * r
-                   for s in range(1, self.bandwidth_capacity + 1)
-                   for r in range(1, self.bandwidth_capacity - s + 1))
+            and self.computation_capacity >= 1 \
+            and self.bandwidth_capacity >= 2 and \
+            any(job.required_storage * self.computation_capacity * r +
+                s * job.required_computation * r +
+                s * self.computation_capacity * job.required_results_data
+                <= job.deadline * s * self.available_computation * r
+                for s in range(1, self.bandwidth_capacity + 1)
+                for r in range(1, self.bandwidth_capacity - s + 1))
 
     def allocate_job(self, job: Job):
         """
         Updates the server attributes for when it is allocated within jobs
+
         :param job: The job being allocated
         """
         assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
             "Job {} - loading: {}, compute: {}, sending: {}" \
-                .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
+            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
         assert self.available_storage >= job.required_storage, \
             "Server {} available storage {}, job required storage {}" \
-                .format(self.name, self.available_storage, job.required_storage)
+            .format(self.name, self.available_storage, job.required_storage)
         assert self.available_computation >= job.compute_speed, \
             "Server {} available computation {}, job compute speed {}" \
-                .format(self.name, self.available_computation, job.compute_speed)
+            .format(self.name, self.available_computation, job.compute_speed)
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
             "Server {} available bandwidth {}, job loading speed {} and sending speed {}" \
-                .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
+            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
         assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}" \
             .format(job.name, self.name)
 
@@ -108,6 +111,7 @@ class Server(object):
     def mutate(self, percent) -> Server:
         """
         Mutate the server by a percentage
+
         :param percent: The percentage to increase the max resources by
         """
         return Server('mutated {}'.format(self.name),

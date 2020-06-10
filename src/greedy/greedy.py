@@ -21,6 +21,7 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
     """
     A greedy algorithm to allocate jobs to servers aiming to maximise the total utility,
         the models is stored with the servers and jobs so no return is required
+
     :param jobs: List of jobs
     :param servers: List of servers
     :param value_density: The value density function
@@ -53,6 +54,7 @@ def allocate_jobs(jobs: List[Job], servers: List[Server], server_selection_polic
                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
     """
     Allocate the jobs to the servers based on the server selection policy and resource allocation policies
+
     :param jobs: The list of jobs
     :param servers: The list of servers
     :param server_selection_policy: The server selection policy

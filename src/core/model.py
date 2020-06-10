@@ -13,6 +13,7 @@ from src.core.server import Server
 def positive_gaussian_dist(mean, std) -> int:
     """
     Uses gaussian distribution to generate a random number greater than 0 for a resource
+
     :param mean: Gaussian mean
     :param std: Gaussian standard deviation
     :return: A float of random gaussian distribution
@@ -47,6 +48,7 @@ class JobDist(object):
     def create_job(self, name) -> Job:
         """
         Creates a new job with name (unique identifier)
+
         :param name: The name of the job
         :return: A new job object
         """
@@ -61,6 +63,7 @@ class JobDist(object):
     def save(self) -> Dict[str, Union[str, int]]:
         """
         Save the job dist
+
         :return: The Json code for the job dist
         """
         return {
@@ -100,6 +103,7 @@ class ServerDist(object):
     def create_server(self, name) -> Server:
         """
         Creates a new server with name (unique identifier)
+
         :param name: The name of the server
         :return: A new job object
         """
@@ -112,6 +116,7 @@ class ServerDist(object):
     def save(self) -> Dict[str, Union[str, int]]:
         """
         Save the server dist
+
         :return: The Json code for the server dist
         """
         return {
@@ -144,6 +149,7 @@ class ModelDist(object):
     def create(self) -> Tuple[List[Job], List[Server]]:
         """
         Creates a list of jobs and servers from a job and server distribution
+
         :return: A list of jobs and list of servers
         """
         jobs: List[Job] = []
@@ -172,6 +178,7 @@ class ModelDist(object):
 def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     """
     Loads jobs and server distributions from a file
+
     :param filename: The filename to load from
     :return: A tuple of the list of random job distributions and random server distributions
     """
@@ -203,6 +210,7 @@ def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
 def reset_model(jobs: List[Job], servers: List[Server]):
     """
     Resets all of the jobs and servers back after an allocation
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     """

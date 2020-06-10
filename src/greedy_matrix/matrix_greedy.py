@@ -15,6 +15,7 @@ from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
 def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:
     """
     Calculates the value of a server job allocation with the resources allocated
+
     :param job: A job
     :param server: A server
     :param value: The value policy
@@ -32,6 +33,7 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
                   debug_allocation: bool = False, debug_pop: bool = False) -> Result:
     """
     A greedy algorithm that uses the idea of a matrix
+
     :param jobs: A list of jobs
     :param servers: A list of servers
     :param allocation_value_policy: The value matrix policy

@@ -35,13 +35,14 @@ class FixedJob(Job):
         model_solution = model.solve(log_output=None)
 
         return model_solution.get_value(loading_speed), \
-               model_solution.get_value(compute_speed), \
-               model_solution.get_value(sending_speed)
+            model_solution.get_value(compute_speed), \
+            model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = 0):
         """
         Overrides the allocate function from job to just allocate the running server and the price
+
         :param loading_speed: Ignored
         :param compute_speed: Ignored
         :param sending_speed: Ignored
@@ -72,6 +73,7 @@ class FixedValue(ABC):
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
         """
         Evaluate how good certain speeds
+
         :param loading_speed: Loading speed
         :param compute_speed: Compute speed
         :param sending_speed: Sending speed

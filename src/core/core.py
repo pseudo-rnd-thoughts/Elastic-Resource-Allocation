@@ -5,11 +5,9 @@ from __future__ import annotations
 import pickle
 import re
 import sys
-from enum import Enum, auto
 from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
-import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
 from src.core.job import Job
@@ -205,43 +203,3 @@ def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     return "../results/{}/{}.json".format(folder, encoded_file), \
            re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
            encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
-
-
-class ImageFormat(Enum):
-    """
-    Image format
-    """
-    EPS = auto()
-    PNG = auto()
-    PDF = auto()
-    BOTH = auto()
-    NONE = auto()
-
-
-def save_plot(name: str, test_folder: str, additional: str = "",
-              image_format: ImageFormat = ImageFormat.NONE, lgd=None):
-    """
-    Saves the plot to a file of the particular image format
-    :param name: The plot name
-    :param test_folder: The test name
-    :param additional: Additional information to add to the filename
-    :param image_format: The image format
-    :param lgd: The legend to be added to the plot when saved
-    """
-    if lgd:
-        lgd = (lgd,)
-    if image_format == ImageFormat.EPS:
-        filename = f'{test_folder}/eps/{name}{additional}.eps'
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.PNG:
-        filename = f'{test_folder}/png/{name}{additional}.png'
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.BOTH:
-        save_plot(name, test_folder, additional, ImageFormat.EPS, lgd)
-        save_plot(name, test_folder, additional, ImageFormat.PNG, lgd)
-    elif image_format == ImageFormat.PDF:
-        filename = f'{test_folder}/eps/{name}{additional}.pdf'
-        print("Save file location: " + filename)
-        plt.savefig(filename, format='pdf')

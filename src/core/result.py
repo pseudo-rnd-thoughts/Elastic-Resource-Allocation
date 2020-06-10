@@ -56,6 +56,7 @@ class Result(object):
     def store(self, **kwargs):
         """
         Returns the results values for storage
+
         :return: The results values
         """
         for key, value in kwargs.items():
