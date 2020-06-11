@@ -20,6 +20,7 @@ T = TypeVar('T')
 def rand_list_max(args: Iterable[T], key=None) -> T:
     """
     Finds the maximum value in a list of values, if multiple values are all equal then choice a random value
+
     :param args: A list of values
     :param key: The key value function
     :return: A random maximum value
@@ -42,6 +43,7 @@ def rand_list_max(args: Iterable[T], key=None) -> T:
 def load_args() -> Dict[str, Union[str, int]]:
     """
     Gets all of the arguments and places in a dictionary
+
     :return: All of the arguments in a dictionary
     """
     assert len(sys.argv) == 5, "Args: {}".format(sys.argv)
@@ -60,6 +62,7 @@ def load_args() -> Dict[str, Union[str, int]]:
 def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) -> str:
     """
     Generates the save filename for testing results
+
     :param test_name: The test name
     :param model_dist: The model distribution
     :param repeat: The repeat number
@@ -74,6 +77,7 @@ def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) 
 def analysis_filename(test_name: str, axis: str) -> str:
     """
     Generates the save filename for Analysis plot results
+
     :param test_name: The test name
     :param axis: The axis name
     :return: The concatenation of the test name and the axis
@@ -84,6 +88,7 @@ def analysis_filename(test_name: str, axis: str) -> str:
 def print_job_values(job_values: List[Tuple[Task, float]]):
     """
     Print the job utility values
+
     :param job_values: A list of tuples with the job and its value
     """
     print("\t\tTasks")
@@ -101,6 +106,7 @@ def print_job_values(job_values: List[Tuple[Task, float]]):
 def print_job_allocation(jobs: List[Task]):
     """
     Prints the job allocation resource speeds
+
     :param jobs: List of jobs
     """
     print("Task Allocation")
@@ -117,6 +123,7 @@ def print_job_allocation(jobs: List[Task]):
 def allocate(job: Task, loading: int, compute: int, sending: int, server: Server, price: float = 0):
     """
     Allocate a job to a server
+
     :param job: The job
     :param loading: The loading speed
     :param compute: The compute speed
@@ -131,6 +138,7 @@ def allocate(job: Task, loading: int, compute: int, sending: int, server: Server
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
     """
     Replace the item in the list
+
     :param lists: The list
     :param old_item: The item to remove
     :param new_item: The item to append
@@ -142,6 +150,7 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
 def list_copy_remove(lists: List[T], item: T) -> List[T]:
     """
     Copy the list and remove an item
+
     :param lists: The list
     :param item: The item to remove
     :return: The copied list without the item
@@ -154,6 +163,7 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
 def save_random_state(filename):
     """
     Save the random state to the filename
+
     :param filename: The filename to save the state to
     """
     with open(filename, 'w') as file:
@@ -163,6 +173,7 @@ def save_random_state(filename):
 def print_model_solution(model_solution: CpoSolveResult):
     """
     Print the model solution information
+
     :param model_solution: The model solution
     """
     print("Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
@@ -175,6 +186,7 @@ def print_model_solution(model_solution: CpoSolveResult):
 def print_model(jobs: List[Task], servers: List[Server]):
     """
     Print the model
+
     :param jobs: The list of jobs
     :param servers: The list of servers
     """
@@ -196,6 +208,7 @@ def print_model(jobs: List[Task], servers: List[Server]):
 def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     """
     Decodes the filename to recover the file location, the model name and the greedy name
+
     :param folder: The data folder
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
