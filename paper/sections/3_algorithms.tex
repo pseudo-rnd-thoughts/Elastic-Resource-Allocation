@@ -1,6 +1,8 @@
 \section{Flexible Resource Allocation Mechanisms}\label{sec:flexible-resource-allocation-mechanisms}
+%% TODO the knapsack problem can be solved using a dynamic programming solution then
+
 Due to the optimisation problem in section~\ref{subsec:system-model} previous work described in
-section~\ref{sec:related-work} is incompatible with this model. Therefore in this section, we propose several
+section~\ref{subsec:system-model} is incompatible with this model. Therefore in this section, we propose several
 mechanisms for solving the resource allocation problem with elastic resources. First, we discuss a centralized greedy
 algorithm (detailed in Section~\ref{subsec:greedy-mechanism}) with a $\frac{1}{\left|J\right|}$ performance guarantee
 and polynomial run-time. Then, we consider settings where task users are self-interested and may either report their
@@ -11,7 +13,7 @@ with such cases, we propose two auction-based mechanisms, one of which can be ex
 
 \subsection{Greedy Mechanism}\label{subsec:greedy-mechanism}
 As solving the allocation problem with elastic resources is NP-hard, we here propose a greedy algorithm
-(Algorithm~\ref{alg:greedy_mechanism}) that considers tasks individually, based on an appropriate task value density
+(Algorithm~\ref{alg:greedy-mechanism}) that considers tasks individually, based on an appropriate task value density
 function and resource weight functions.
 
 More specifically, the greedy algorithm has two stages; first to sort the tasks based on value density and second to
@@ -21,13 +23,13 @@ stage uses the sorted list of tasks to iterate through applying two heuristics t
 resources. The first of these heuristics is called the server selection heuristic that values how good it would be
 for the task to be allocated to the server. Using the server selection heuristic, the best available server for the
 task can be found. The second heuristic, called the resource allocation heuristic, finds the best permutations of
-resource to minimise a resource weighting function i.e. the percentage of server resources used by the task.
+resource to minimise a resource weighting function i.e\. the percentage of server resources used by the task.
 
 For this algorithm, the lower bound of the algorithm is $\frac{1}{\left|J\right|}$ (where $\left|J\right|$ is the
 number of tasks) where the value density heuristic just considers the value of a task and any server selection or
 resource allocation heuristic are used. However in testing, we found that the task value heuristic is not the best
 value density heuristic as it does not consider the effect of deadlines or the required resources of the task. In
-Section~\ref{sec:empirical-evaluation}, we considered a wide range of heuristics and show the results of the heuristics
+Section~\ref{sec:empirical-results}, we considered a wide range of heuristics and show the results of the heuristics
 that perform best over a range of settings.
 
 \begin{theorem}
@@ -41,18 +43,20 @@ that perform best over a range of settings.
     bound of the algorithm is $\frac{1}{n}$ of the optimal social welfare.
 \end{proof}
 
-Figure~\ref{fig:greedy_allocation} is an example allocation using the greedy algorithm using the model from
-tables~\ref{table:example_servers_properties} and~\ref{table:example_tasks_properties} achieving the optimal social
+Figure~\ref{fig:greedy-allocation} is an example allocation using the greedy algorithm using the model from
+tables~\ref{tab:example-servers-properties} and~\ref{tab:example-tasks-properties} achieving the optimal social
 welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
+
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{figs/allocation/greedy_allocation.pdf}
-    \caption{Example Greedy allocation using model from table~\ref{table:jobs} and~\ref{table:servers}}
-    \label{fig:greedy_allocation}
+    \includegraphics[width=\linewidth]{figs/allocation/greedy_algorithm.png}
+    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
+        and~\ref{tab:example-servers-properties}}
+    \label{fig:greedy-allocation}
 \end{figure}
 
 \begin{algorithm}
     \caption{Pseudo code of Greedy Mechanism}
-    \label{alg:greedy_mechanism}
+    \label{alg:greedy-mechanism}
     \begin{algorithmic}
         \REQUIRE $J$ is the set of tasks and $I$ is the set of servers
         \REQUIRE $S^{'}_i$, $W^{'}_i$ and $R^{'}_i$ is the available resources (storage, computation and bandwidth respectively) of server $i$
@@ -72,7 +76,7 @@ welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
     \end{algorithmic}
 \end{algorithm}
 
-Using the greedy mechanism (algorithm~\ref{alg:greedy_mechanism}), the time complexity is polynomial,
+Using the greedy mechanism (algorithm~\ref{alg:greedy-mechanism}), the time complexity is polynomial,
 $O(\left|J\right| \left|I\right|)$.
 \begin{theorem}
     Time complexity of the greedy mechanism is $O(\left|J\right| \left|I\right|)$, where $\left|J\right|$ is the number
@@ -126,45 +130,45 @@ that the auction is strategyproof.
 \subsection{Decentralised Iterative Auction}\label{subsec:decentralised-iterative-auction}
 In some application of edge cloud computing, keeping the value of a task a secret is important for example
 military-tactical networks. Therefore we propose a novel decentralised iterative auction based on the pricing principle
-of the VCG auction~\citep{vickrey, Clarke, groves}. VCG auctions calculates the price of a tasks by finding the
+of the VCG auction~\cite{vickrey,Clarke,groves}. VCG auctions calculates the price of a tasks by finding the
 difference in social welfare if the task is considered in the allocation and when the task isn't. Our proposed novel
 auction uses the same principle, except without requiring a task value, by calculating a task's price by finding the
 difference between the current server revenue and the revenue when the task is required to be allocated with zero value.
 
 Our auction uses this principle by iteratively letting a task advertise its requirements to all of the servers, who
 respond with their price to run the task. This price is equal to the server's current revenue minus the solution to the
-problem in section~\ref{subsubsec:decentralised_iterative_problem} plus a small value referred to as the price change
+problem in section~\ref{subsubsec:decentralised-iterative-problem} plus a small value referred to as the price change
 variable. The reason for the price change variable is to increase the revenue of the server (otherwise the total
 revenue of the server doesn't increase by accepting the task) and is be chosen by the server. Once all of the servers
 have responded, the task can compare the minimum server prices to its private value. If the price is less then the
 task will accept the server with the lowest price, otherwise the task must stop advertising as the price for the task
 to run on any server is greater than its reserve price preventing the task from ever being allocated again.
 
-\subsubsection{Server revenue optimisation problem}\label{subsubsec:decentralised_iterative_problem}
+\subsubsection{Server revenue optimisation problem}\label{subsubsec:decentralised-iterative-problem}
 To find the optimal revenue for a server $m$ given a new task $n^{'}$ and set of currently allocated tasks $N$ has a
 similar formulation to the optimisation problem in section~\ref{subsec:optimisation-problem}. Except with an additional
 variable for the task price $p_n$ for each task $n$.
 
 \begin{align}
-    \max & \sum_{\forall n \in N} p_n x_n\label{eq:dia_objective}\\
+    \max & \sum_{\forall n \in N} p_n x_n\label{eq:dia-objective}\\
     \mbox{s.t.} \nonumber \\
-    & \sum_{\forall n \in N} s_n x_n + s_{n^{'}} \leq S_m,\label{eq:dia_server_storage_constraint}\\
-    & \sum_{\forall n \in N} w^{'}_n x_n + w_{n^{'}} \leq W_m, \label{eq:dia_server_computation_constraint}\\
-    & \sum_{\forall n \in N} (r^{'}_n + s^{'}_n) \cdot x_n + (r^{'}_{n^{'}} + s^{'}_{n^{'}}) \leq R_m, \label{eq:dia_server_communication_constraint}\\
-    & \frac{s_n}{s^{'}_n} + \frac{w_n}{w^{'}_n} + \frac{r_n}{r^{'}_n} \leq d_n, &~ \forall n \in N \cup \{n^{'}\} \label{eq:dia_task_deadline}\\
-    & 0 < s^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia_loading_speeds}\\
-    & 0 < w^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia_compute_speeds}\\
-    & 0 < r^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia_sending_speeds}\\
-    & x_n \in \{0,1\} &~ \forall{n \in N} \label{eq:dia_job_allocation}
+    & \sum_{\forall n \in N} s_n x_n + s_{n^{'}} \leq S_m,\label{eq:dia-server-storage-constraint}\\
+    & \sum_{\forall n \in N} w^{'}_n x_n + w_{n^{'}} \leq W_m, \label{eq:dia-server-computation-constraint}\\
+    & \sum_{\forall n \in N} (r^{'}_n + s^{'}_n) \cdot x_n + (r^{'}_{n^{'}} + s^{'}_{n^{'}}) \leq R_m, \label{eq:dia-server-communication-constraint}\\
+    & \frac{s_n}{s^{'}_n} + \frac{w_n}{w^{'}_n} + \frac{r_n}{r^{'}_n} \leq d_n, &~ \forall n \in N \cup \{n^{'}\} \label{eq:dia-task-deadline}\\
+    & 0 < s^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-loading-speeds}\\
+    & 0 < w^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-compute-speeds}\\
+    & 0 < r^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-sending-speeds}\\
+    & x_n \in \{0,1\} &~ \forall{n \in N} \label{eq:dia-job-allocation}
 \end{align}
 
-The objective (Eq.~\eqref{eq:dia_objective}) is to maximize the price of all currently allocated tasks (not including
+The objective (Eq.~\eqref{eq:dia-objective}) is to maximize the price of all currently allocated tasks (not including
 the new task as the price is zero). The server resource capacity constraints
-(Eqs.~\eqref{eq:dia_server_storage_constraint},~\eqref{eq:dia_server_computation_constraint}
-and~\eqref{eq:dia_server_communication_constraint}) are similar to the constraints in the standard model set out in
+(Eqs.~\eqref{eq:dia-server-storage-constraint},~\eqref{eq:dia-server-computation-constraint}
+and~\eqref{eq:dia-server-communication-constraint}) are similar to the constraints in the standard model set out in
 section~\ref{subsec:optimisation-problem} except with the assumption that the task $n^{'}$ is running so there is no
 need to consider if it is running or not. The deadline and non-negative resource speeds constraints
-(\ref{eq:dia_task_deadline},~\ref{eq:dia_loading_speeds},~\ref{eq:dia_compute_speeds} and~\ref{eq:dia_sending_speeds})
+(\ref{eq:dia-task-deadline},~\ref{eq:dia-loading-speeds},~\ref{eq:dia-compute-speeds} and~\ref{eq:dia-sending-speeds})
 are all the same equation as the standard formulation for all of the tasks plus the new task. As this formulation only
 considers a single server, the task allocation constraint is not consider.
 
@@ -186,7 +190,7 @@ For our proposed auction, we consider four important properties in auction theor
 
 The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
 unallocated job to find the price if the job was currently allocated on a server. This is done through first solving
-the program in section~\ref{subsubsec:decentralised_iterative_problem} which calculates the new revenue if the task was
+the program in section~\ref{subsubsec:decentralised-iterative-problem} which calculates the new revenue if the task was
 forced to be allocated with a price of zero. The task price is equal to the current server revenue minus the new
 revenue with the task allocated plus a price change variable in order to increase the revenue of the server. The
 minimum price returned by $P(i, k)$ is then compared to the job's maximum reserve price (that would be private in the
@@ -201,7 +205,7 @@ price's are reset then appended to the set of unallocated jobs.
     \begin{algorithmic}
         \REQUIRE $I$ is the set of servers
         \REQUIRE $J$ is the set of unallocated tasks, which initial is the set of all tasks to be allocated
-        \REQUIRE $P(i, k)$ is solution to the problem in section~\ref{subsubsec:decentralised_iterative_problem}
+        \REQUIRE $P(i, k)$ is solution to the problem in section~\ref{subsubsec:decentralised-iterative-problem}
         using the server $i$ and new task $k$.
         The server's current tasks is known to itself and its current revenue from tasks so not passed as arguments.
         \REQUIRE $R(i, k)$ is a function returning the list of tasks not able to run if task $k$ is allocated to server $i$
@@ -233,7 +237,7 @@ Critical Value auction(CVA) and Decentralised Iterative auction (DIA).
     \centering
     \begin{tabular}{|p{2.2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        Attribute & GM & CVA & DIA \\ \hline \hline
+        Attribute & GM & CVA & DIA \\ \hline
         Truthfulness & & Yes & No \\ \hline
         Optimality & No & No & No \\ \hline
         Scalability & Yes & Yes & No \\ \hline

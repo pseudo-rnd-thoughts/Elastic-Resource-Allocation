@@ -5,13 +5,12 @@ from enum import Enum, auto
 from typing import List
 
 import matplotlib.pyplot as plt
-from matplotlib import rc
 import numpy as np
 import pandas as pd
+from matplotlib import rc
 
-from src.core.core import analysis_filename
-from src.core.task import Task
 from src.core.server import Server
+from src.core.task import Task
 
 rc('text', usetex=True)
 
@@ -57,29 +56,29 @@ def save_plot(name: str, test_folder: str, additional: str = "",
         plt.savefig(filename, format='pdf')
 
 
-def plot_allocation_results(jobs: List[Task], servers: List[Server], title: str,
+def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
                             save_format: ImageFormat = ImageFormat.NONE):
     """
     Plots the allocation results
 
-    :param jobs: List of jobs
+    :param tasks: List of tasks
     :param servers: List of servers
     :param title: Title for the graph
     :param save_format: Save format
     """
-    allocated_jobs = [job for job in jobs if job.running_server]
+    allocated_tasks = [task for task in tasks if task.running_server]
     loading_df = pd.DataFrame(
-        [[job.required_storage / server.storage_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[task.required_storage / server.storage_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     compute_df = pd.DataFrame(
-        [[job.compute_speed / server.computation_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[task.compute_speed / server.computation_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     sending_df = pd.DataFrame(
-        [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[(task.loading_speed + task.sending_speed) / server.bandwidth_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     resources_df = [loading_df, compute_df, sending_df]
 
     n_col, n_ind = len(resources_df[0].columns), len(resources_df[0].index)
@@ -103,16 +102,16 @@ def plot_allocation_results(jobs: List[Task], servers: List[Server], title: str,
 
     axe.set_ylabel(r'\textbf{Resource Usage}', fontsize=12)
     axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    axe.set_yticklabels(['0\\%', '20\\%', '40\\%', '60\\%', '80\\%', '100\\%'])
+    axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'])
 
     axe.set_title(title, fontsize=18)
 
+    pos = -0.1 if sum(task.running_server is not None for task in tasks) else 0.0
     server_resources_legend = [axe.bar(0, 0, color="gray", hatch=hatching * i) for i in range(3)]
-    tasks_legend = axe.legend(h[:n_col], _l[:n_col], loc=[1.025, 0.35], title=r'\textbf{Tasks}')
+    tasks_legend = axe.legend(h[:n_col], _l[:n_col], loc=[1.025, pos + 0.325], title=r'\textbf{Tasks}')
     plt.legend(server_resources_legend, ['Storage', 'Computation', 'Bandwidth'],
-               loc=[1.025, 0.05], title=r'\textbf{Server resources}')
+               loc=[1.025, pos], title=r'\textbf{Server resources}')
     axe.add_artist(tasks_legend)
 
-    save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "./figures/allocation",
-              image_format=save_format)
+    save_plot(title.lower().replace(" ", "_"), "./figures/allocation", image_format=save_format)
     plt.show()

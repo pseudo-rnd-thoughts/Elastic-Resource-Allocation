@@ -15,7 +15,7 @@ class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
     def __init__(self, job: Task, servers: List[Server], fixed_value: FixedValue):
-        super().__init__("Fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
+        super().__init__(job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(servers, fixed_value)
