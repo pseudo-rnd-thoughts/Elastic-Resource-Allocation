@@ -11,7 +11,7 @@ from src.auctions.decentralised_iterative_auction import decentralised_iterative
 from src.auctions.fixed_vcg_auction import fixed_vcg_auction
 from src.auctions.vcg_auction import vcg_auction
 from src.core.core import results_filename, load_args
-from src.core.fixed_job import FixedJob, FixedSumSpeeds
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.core.model import ModelDist, reset_model, load_dist
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
@@ -48,7 +48,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedTask(job, servers, FixedSumSpeeds()) for job in jobs]
         fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
         reset_model(jobs, servers)
@@ -89,9 +89,9 @@ def debug(model_dist: ModelDist):
                                     resource_allocation_policies[0],
                                     debug_job_value=True, debug_greedy_allocation=True, debug_critical_value=True)
     print(result.store())
-    print("\t\tJob result prices")
+    print("\t\tTask result prices")
     for job in jobs:
-        print("Job {}: {}".format(job.name, job.price))
+        print("Task {}: {}".format(job.name, job.price))
     """
     # Tests the critical value
     for value_density in value_densities:

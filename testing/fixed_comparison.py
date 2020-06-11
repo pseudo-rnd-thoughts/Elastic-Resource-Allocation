@@ -5,16 +5,16 @@ from __future__ import annotations
 from typing import List
 
 from src.core.core import load_args
-from src.core.fixed_job import FixedJob, FixedSumSpeeds
-from src.core.job import Job
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.core.task import Task
 from src.core.model import ModelDist, load_dist, reset_model
 from src.core.server import Server
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 from src.optimal.optimal import optimal_algorithm
 
 
-def print_job_full(jobs: List[Job]):
-    print("\t\tJobs")
+def print_job_full(jobs: List[Task]):
+    print("\t\tTasks")
     max_job_name_len = max(len(job.name) for job in jobs) + 1
     print("{:<{name_len}}| Value | Storage | Computation | Results | Deadline | Loading | Compute | Sending | Server"
           .format("Name", name_len=max_job_name_len))
@@ -31,7 +31,7 @@ def print_job_full(jobs: List[Job]):
 def print_server_full(servers: List[Server]):
     print("\t\tServers")
     max_server_name_len = max(len(server.name) for server in servers) + 1
-    print("{:<{name_len}}| Storage Percent | Computation Percent | Bandwidth Percent | Jobs"
+    print("{:<{name_len}}| Storage Percent | Computation Percent | Bandwidth Percent | Tasks"
           .format("Name", name_len=max_server_name_len))
     for server in servers:
         print(f"{server.name:^{max_server_name_len}}|{(1 - server.available_storage) / server.storage_capacity:^14.3f}|"
@@ -57,7 +57,7 @@ def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
         print_job_full(jobs)
         reset_model(jobs, servers)
 
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedTask(job, servers, FixedSumSpeeds()) for job in jobs]
         print("Running fixed optimal algorithm")
         fixed_results = fixed_optimal_algorithm(fixed_jobs, servers, 15)
         print("Fixed Solution")
@@ -71,18 +71,18 @@ def fixed_comparison(model_dist: ModelDist, repeat: int, repeats: int = 1):
 
 def forced_fixed_comparison():
     jobs = [
-        Job("Alice", required_storage=75, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Bob", required_storage=100, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Clarke", required_storage=90, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Dug", required_storage=85, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Eve", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Felix", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Gregory", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Hatty", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Iris", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("James", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Kelly", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
-        Job("Liam", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Alice", required_storage=75, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Bob", required_storage=100, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Clarke", required_storage=90, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Dug", required_storage=85, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Eve", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Felix", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Gregory", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Hatty", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Iris", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("James", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Kelly", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
+        Task("Liam", required_storage=1, required_computation=1, required_results_data=1, deadline=1, value=1),
     ]
     servers = [
         Server("North", storage_capacity=350, computation_capacity=1, bandwidth_capacity=1),
@@ -95,7 +95,7 @@ def forced_fixed_comparison():
     print_server_full(servers)
     reset_model(jobs, servers)
 
-    fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+    fixed_jobs = [FixedTask(job, servers, FixedSumSpeeds()) for job in jobs]
     print("Running fixed optimal algorithm")
     fixed_results = fixed_optimal_algorithm(fixed_jobs, servers, 15)
     print("Fixed Solution")

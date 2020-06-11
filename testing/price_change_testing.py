@@ -11,7 +11,7 @@ from src.auctions import decentralised_iterative_auction
 from src.auctions import fixed_vcg_auction
 from src.auctions import vcg_auction
 from src.core.core import load_args, results_filename
-from src.core.fixed_job import FixedJob, FixedSumSpeeds
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.core.model import reset_model, ModelDist, load_dist
 
 
@@ -45,7 +45,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
         reset_model(jobs, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, servers, FixedSumSpeeds()) for job in jobs]
+        fixed_jobs = [FixedTask(job, servers, FixedSumSpeeds()) for job in jobs]
         fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
 

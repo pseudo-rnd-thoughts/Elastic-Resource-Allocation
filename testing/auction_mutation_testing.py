@@ -10,12 +10,12 @@ from tqdm import tqdm
 
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from src.core.core import results_filename, list_item_replacement, load_args
-from src.core.job import Job, job_diff
+from src.core.task import Task, job_diff
 from src.core.model import ModelDist, reset_model, load_dist
 
 
 def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 2,
-                     time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0,
+                     time_limit: int = 15, initial_cost: Callable[[Task], int] = lambda x: 0,
                      mutate_percent: float = 0.05, mutate_repeats: int = 10):
     """
     Servers are mutated by a percent and the iterative auction run again checking the utility difference
@@ -51,7 +51,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
             reset_model(jobs, servers)
 
             # Choice a random job and mutate it
-            job: Job = choice(jobs)
+            job: Task = choice(jobs)
             mutant_job = job.mutate(mutate_percent)
 
             # Replace the job with the mutant job in the job list
@@ -78,7 +78,7 @@ def mutated_job_test(model_dist: ModelDist, repeat: int, repeats: int = 50, pric
 
 
 def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=5, percent: float = 0.15,
-                           time_limit: int = 15, initial_cost: Callable[[Job], int] = lambda x: 0):
+                           time_limit: int = 15, initial_cost: Callable[[Task], int] = lambda x: 0):
     """
     Tests all of the mutations for an iterative auction
     :param model_dist: The model distribution
@@ -89,7 +89,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
     :param initial_cost: The initial cost of the job
     """
     print("All mutation auction tests with {} jobs and {} servers, time limit {} sec and initial cost {} "
-          .format(model_dist.num_jobs, model_dist.num_servers, time_limit, initial_cost(Job("", 0, 0, 0, 0, 0))))
+          .format(model_dist.num_jobs, model_dist.num_servers, time_limit, initial_cost(Task("", 0, 0, 0, 0, 0))))
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the jobs and servers
@@ -122,7 +122,7 @@ def all_job_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_jobs=
                     for value in range(int(job.value * negative_percent), job.value + 1):
                         for deadline in range(int(job.deadline * negative_percent), job.deadline + 1):
                             # Create the new mutated job and create new jobs list with the mutant job replacing the job
-                            mutant_job = Job('mutated ' + job.name + ' job', required_storage, required_computation,
+                            mutant_job = Task('mutated ' + job.name + ' job', required_storage, required_computation,
                                              required_results_data, value, deadline)
                             list_item_replacement(jobs, job, mutant_job)
 

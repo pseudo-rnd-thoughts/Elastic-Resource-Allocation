@@ -9,11 +9,11 @@ from tqdm import tqdm
 
 from src.auctions import decentralised_iterative_auction
 from src.core.core import results_filename, load_args
-from src.core.job import Job
+from src.core.task import Task
 from src.core.model import ModelDist, load_dist, reset_model
 
 
-def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[[Job], int]], price_changes: List[int],
+def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[Callable[[Task], int]], price_changes: List[int],
                repeats: int = 50, time_limit: int = 15):
     """
     Round test
