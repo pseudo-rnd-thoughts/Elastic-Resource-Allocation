@@ -5,12 +5,15 @@ from enum import Enum, auto
 from typing import List
 
 import matplotlib.pyplot as plt
+from matplotlib import rc
 import numpy as np
 import pandas as pd
 
 from src.core.core import analysis_filename
-from src.core.job import Job
+from src.core.task import Task
 from src.core.server import Server
+
+rc('text', usetex=True)
 
 
 class ImageFormat(Enum):
@@ -54,7 +57,7 @@ def save_plot(name: str, test_folder: str, additional: str = "",
         plt.savefig(filename, format='pdf')
 
 
-def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
+def plot_allocation_results(jobs: List[Task], servers: List[Server], title: str,
                             save_format: ImageFormat = ImageFormat.NONE):
     """
     Plots the allocation results
@@ -77,39 +80,38 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
         [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
           for job in allocated_jobs] for server in servers],
         index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
-    resource_df = [loading_df, compute_df, sending_df]
+    resources_df = [loading_df, compute_df, sending_df]
 
+    n_col, n_ind = len(resources_df[0].columns), len(resources_df[0].index)
     hatching = '/'
 
-    n_col = len(resource_df[0].columns)
-    n_ind = len(resource_df[0].index)
     axe = plt.subplot(111)
-
-    for df in resource_df:  # for each data frame
-        axe = df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)  # make bar plots
+    for resource_df in resources_df:  # for each data frame
+        axe = resource_df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)
 
     h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
-    for i in range(0, 3 * n_col, n_col):  # len(h) = n_col * n_df
+    for i in range(0, 3 * n_col, n_col):
         for j, pa in enumerate(h[i:i + n_col]):
-            for rect in pa.patches:  # for each index
-                rect.set_x(rect.get_x() + 1 / float(3 + 1) * i / float(n_col))
-                rect.set_hatch(hatching * int(i / n_col))  # edited part
+            for rect in pa.patches:
+                rect.set_x(rect.get_x() + 1 / float(3 + 1) * i / float(n_col) - 0.125)
+                rect.set_hatch(hatching * int(i / n_col))
                 rect.set_width(1 / float(3 + 1))
 
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2.)
-    axe.set_xticklabels(resource_df[0].index, rotation=0)
-    axe.set_title(title)
-    axe.set_xlabel("Servers")
-    axe.set_ylabel("Resource usage (%)")
+    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2. - 0.125)
+    axe.set_xticklabels(resources_df[0].index, rotation=0)
+    axe.set_xlabel(r'\textbf{Servers}', fontsize=12)
 
-    # Add invisible data to add another legend
-    n = []
-    for i in range(3):
-        n.append(axe.bar(0, 0, color="gray", hatch=hatching * i))
+    axe.set_ylabel(r'\textbf{Resource Usage}', fontsize=12)
+    axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    axe.set_yticklabels(['0\\%', '20\\%', '40\\%', '60\\%', '80\\%', '100\\%'])
 
-    l1 = axe.legend(h[:n_col], _l[:n_col], loc=[1.01, 0.25], title='Tasks')
-    plt.legend(n, ['Storage', 'Computation', 'Bandwidth'], loc=[1.01, 0.05], title='Server resources')
-    axe.add_artist(l1)
+    axe.set_title(title, fontsize=18)
+
+    server_resources_legend = [axe.bar(0, 0, color="gray", hatch=hatching * i) for i in range(3)]
+    tasks_legend = axe.legend(h[:n_col], _l[:n_col], loc=[1.025, 0.35], title=r'\textbf{Tasks}')
+    plt.legend(server_resources_legend, ['Storage', 'Computation', 'Bandwidth'],
+               loc=[1.025, 0.05], title=r'\textbf{Server resources}')
+    axe.add_artist(tasks_legend)
 
     save_plot(analysis_filename("allocation", title.lower().replace(" ", "_")), "./figures/allocation",
               image_format=save_format)
