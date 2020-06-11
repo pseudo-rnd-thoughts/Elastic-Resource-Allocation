@@ -46,14 +46,14 @@ def load_args() -> Dict[str, Union[str, int]]:
 
     :return: All of the arguments in a dictionary
     """
-    assert len(sys.argv) == 5, "Args: {}".format(sys.argv)
-    assert sys.argv[2].isdigit(), "Tasks: {}".format(sys.argv[2])
-    assert sys.argv[3].isdigit(), "Servers: {}".format(sys.argv[3])
-    assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
+    assert len(sys.argv) == 5, f'Args: {sys.argv}'
+    assert sys.argv[2].isdigit(), f'Tasks: {sys.argv[2]}'
+    assert sys.argv[3].isdigit(), f'Servers: {sys.argv[3]}'
+    assert sys.argv[4].isdigit(), f'Repeat: {sys.argv[4]}'
 
     return {
-        'model': 'models/' + sys.argv[1] + '.json',
-        'jobs': int(sys.argv[2]),
+        'model': f'models/{sys.argv[1]}.json',
+        'tasks': int(sys.argv[2]),
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
     }
@@ -69,9 +69,9 @@ def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) 
     :return: The concatenation of the test name, model distribution name and the repeat
     """
     if repeat is None:
-        return '{}_{}.json'.format(test_name, model_dist)
+        return f'{test_name}_{model_dist}.json'
     else:
-        return '{}_{}_{}.json'.format(test_name, model_dist, repeat)
+        return f'{test_name}_{model_dist}_{repeat}.json'
 
 
 def analysis_filename(test_name: str, axis: str) -> str:
@@ -82,57 +82,54 @@ def analysis_filename(test_name: str, axis: str) -> str:
     :param axis: The axis name
     :return: The concatenation of the test name and the axis
     """
-    return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
+    return f'{test_name}_{axis.lower().replace(" ", "_")}'
 
 
-def print_job_values(job_values: List[Tuple[Task, float]]):
+def print_task_values(task_values: List[Tuple[Task, float]]):
     """
-    Print the job utility values
+    Print the task utility values
 
-    :param job_values: A list of tuples with the job and its value
+    :param task_values: A list of tuples with the task and its value
     """
-    print("\t\tTasks")
-    max_job_name_len = max(len(job.name) for job, value in job_values) + 1
-    print("{:<{name_len}}| Value | Storage | Compute | models | Value | Deadline "
-          .format("Id", name_len=max_job_name_len))
-    for job, value in job_values:
+    print('\t\tTasks')
+    max_task_name_len = max(len(task.name) for task, value in task_values) + 1
+    print(f"{'Id':<{max_task_name_len}}| Value | Storage | Compute | models | Value | Deadline ")
+    for task, value in task_values:
         # noinspection PyStringFormat
-        print("{:<{name_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^7.1f}|{:^8}"
-              .format(job.name, value, job.required_storage, job.required_computation,
-                      job.required_results_data, job.value, job.deadline, name_len=max_job_name_len))
+        print(f'{task.name:<{max_task_name_len}}|{value:^7.3f}|{task.required_storage:^9}|{task.required_computation:^9}|'
+              f'{task.required_results_data:^8}|{task.value:^7.1f}|{task.deadline:^8}')
     print()
 
 
-def print_job_allocation(jobs: List[Task]):
+def print_task_allocation(tasks: List[Task]):
     """
-    Prints the job allocation resource speeds
+    Prints the task allocation resource speeds
 
-    :param jobs: List of jobs
+    :param tasks: List of tasks
     """
-    print("Task Allocation")
-    max_job_name_len = max(len(job.name) for job in jobs) + 1
-    for job in jobs:
-        if job.running_server:
-            print("Task {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
-                  .format(job.name, job.running_server.name, job.loading_speed, job.compute_speed, job.sending_speed,
-                          name_len=max_job_name_len))
+    print('Task Allocation')
+    max_task_name_len = max(len(task.name) for task in tasks) + 1
+    for task in tasks:
+        if task.running_server:
+            print(f'Task {task.name:<{max_task_name_len}} - Server {task.running_server.name}, '
+                  f'loading: {task.loading_speed}, compute: {task.compute_speed}, sending: {task.sending_speed}')
         else:
-            print("Task {} - None".format(job.name))
+            print(f'Task {task.name} - None')
 
 
-def allocate(job: Task, loading: int, compute: int, sending: int, server: Server, price: float = 0):
+def allocate(task: Task, loading: int, compute: int, sending: int, server: Server, price: float = 0):
     """
-    Allocate a job to a server
+    Allocate a task to a server
 
-    :param job: The job
+    :param task: The task
     :param loading: The loading speed
     :param compute: The compute speed
     :param sending: The sending speed
     :param server: The server
     :param price: The price
     """
-    job.allocate(loading, compute, sending, server, price)
-    server.allocate_job(job)
+    task.allocate(loading, compute, sending, server, price)
+    server.allocate_task(task)
 
 
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
@@ -160,7 +157,7 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     return list_copy
 
 
-def save_random_state(filename):
+def save_random_state(filename: str):
     """
     Save the random state to the filename
 
@@ -176,32 +173,28 @@ def print_model_solution(model_solution: CpoSolveResult):
 
     :param model_solution: The model solution
     """
-    print("Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
-                                                     model_solution.get_fail_status()))
-    print("Search status: {}, Stop Cause: {}, Solve Time: {} secs".format(model_solution.get_search_status(),
-                                                                          model_solution.get_stop_cause(),
-                                                                          round(model_solution.get_solve_time(), 2)))
+    print(f'Solve status: {model_solution.get_solve_status()}, Fail status: {model_solution.get_fail_status()}')
+    print(f'Search status: {model_solution.get_search_status()}, Stop Cause: {model_solution.get_stop_cause()}, '
+          f'Solve Time: {round(model_solution.get_solve_time(), 2)} secs')
 
 
-def print_model(jobs: List[Task], servers: List[Server]):
+def print_model(tasks: List[Task], servers: List[Server]):
     """
     Print the model
 
-    :param jobs: The list of jobs
+    :param tasks: The list of tasks
     :param servers: The list of servers
     """
     print("Task Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
-    for job in jobs:
-        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
-              .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
-                      job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
+    for task in tasks:
+        print(f'{task.name:^9s}|{task.required_storage:^9d}|{task.required_computation:^13d}|'
+              f'{task.required_results_data:^14d}|{task.value:^7.1f}|{task.loading_speed:^9d}|{task.compute_speed:^9d}|'
+              f'{task.sending_speed:^9d}|{task.deadline:^10d}| {task.price:.2f}')
 
-    print("\nServer Name | Storage | Computation | Bandwidth | Allocated Tasks")
+    print('\nServer Name | Storage | Computation | Bandwidth | Allocated Tasks')
     for server in servers:
-        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity,
-                                                          server.computation_capacity,
-                                                          server.bandwidth_capacity,
-                                                          ', '.join([job.name for job in server.allocated_jobs])))
+        print(f"{server.name:^12s}|{server.storage_capacity:^9d}|{server.computation_capacity:^13d}|"
+              f"{server.bandwidth_capacity:^11d}| {', '.join([task.name for task in server.allocated_tasks])}")
 
 
 # noinspection LongLine
@@ -213,6 +206,6 @@ def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     :param encoded_file: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return "../results/{}/{}.json".format(folder, encoded_file), \
-           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Tasks: "), \
-           encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")
+    return f'../results/{folder}/{encoded_file}.json', \
+           re.findall(r'j\d+_s\d+', encoded_file)[0].replace('_', ' ').replace('s', 'Servers: ').replace('j', 'Tasks: '), \
+           encoded_file.replace(re.findall(r'_j\d+_s\d+_0', encoded_file)[0], '')

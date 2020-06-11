@@ -131,4 +131,4 @@ class PriorityQueue(Generic[T]):
         :return: String representing the queue
         """
 
-        return '[' + ', '.join(self.queue) + ']'
+        return f"[{', '.join(self.queue)}]"

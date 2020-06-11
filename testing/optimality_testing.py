@@ -10,26 +10,27 @@ from src.optimal.optimal import optimal_algorithm
 def optimality_testing(model_dist: ModelDist):
     """
     Optimality testing
+
     :param model_dist: The model distribution
     """
-    jobs, servers = model_dist.create()
+    tasks, servers = model_dist.create()
 
     print("Models")
-    print_model(jobs, servers)
+    print_model(tasks, servers)
     for time_limit in [10, 30, 60, 5 * 60, 15 * 60, 60 * 60, 24 * 60 * 60]:
-        print("\n\nTime Limit: {}".format(time_limit))
-        result = optimal_algorithm(jobs, servers, time_limit)
+        print(f'\n\nTime Limit: {time_limit}')
+        result = optimal_algorithm(tasks, servers, time_limit)
         print(result.store())
         if result.data['solve_status'] == 'Optimal':
-            print("Solved completely at time limit: {}".format(time_limit))
+            print(f'Solved completely at time limit: {time_limit}')
             break
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
 
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     optimality_testing(loaded_model_dist)

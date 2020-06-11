@@ -19,27 +19,27 @@ class ServerSelectionPolicy(ABC):
         self.name = name
         self.maximise = maximise
 
-    def select(self, job: Task, servers: List[Server]) -> Optional[Server]:
+    def select(self, task: Task, servers: List[Server]) -> Optional[Server]:
         """
         Select the server that maximises the value function
 
-        :param job: The job
+        :param task: The task
         :param servers: The list of servers
         :return: The selected server
         """
         if self.maximise:
-            return max(((server, self.value(job, server)) for server in servers if server.can_run(job)),
+            return max(((server, self.value(task, server)) for server in servers if server.can_run(task)),
                        key=lambda sv: sv[1], default=[None])[0]
         else:
-            return min(((server, self.value(job, server)) for server in servers if server.can_run(job)),
+            return min(((server, self.value(task, server)) for server in servers if server.can_run(task)),
                        key=lambda sv: sv[1], default=[None])[0]
 
     @abstractmethod
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """
-        The value of the server and job combination
+        The value of the server and task combination
 
-        :param job: The job
+        :param task: The task
         :param server: The server
         :return: The value of the combination
         """
@@ -50,9 +50,9 @@ class SumResources(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__("Sum", maximise)
+        super().__init__('Sum', maximise)
 
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
         return server.available_storage + server.available_computation + server.available_bandwidth
 
@@ -61,9 +61,9 @@ class ProductResources(ServerSelectionPolicy):
     """The product of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__("Product", maximise)
+        super().__init__('Product', maximise)
 
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
         return server.available_storage * server.available_computation * server.available_bandwidth
 
@@ -72,9 +72,9 @@ class SumExpResource(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__("Exponential Sum", maximise)
+        super().__init__('Exponential Sum', maximise)
 
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
         return exp(server.available_storage) + exp(server.available_computation) + exp(server.available_bandwidth)
 
@@ -83,35 +83,35 @@ class Random(ServerSelectionPolicy):
     """A random number"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__("Random", maximise)
+        super().__init__('Random', maximise)
 
-    def select(self, job: Task, servers: List[Server]) -> Optional[Server]:
+    def select(self, task: Task, servers: List[Server]) -> Optional[Server]:
         """Selects the server"""
-        runnable_servers = [server for server in servers if server.can_run(job)]
+        runnable_servers = [server for server in servers if server.can_run(task)]
         if runnable_servers:
             return choice(runnable_servers)
         else:
             return None
 
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """Value function"""
-        raise NotImplementedError("Value function not implemented")
+        raise NotImplementedError('Value function not implemented')
 
 
 class TaskSumResources(ServerSelectionPolicy):
     """Task Sum resources usage"""
 
     def __init__(self, resource_allocation_policy: ResourceAllocationPolicy, maximise: bool = False):
-        super().__init__("Task Sum of {}".format(resource_allocation_policy.name), maximise)
+        super().__init__(f'Task Sum of {resource_allocation_policy.name}', maximise)
 
         self.resource_allocation_policy = resource_allocation_policy
 
-    def value(self, job: Task, server: Server) -> float:
+    def value(self, task: Task, server: Server) -> float:
         """Value function"""
-        loading, compute, sending = self.resource_allocation_policy.allocate(job, server)
-        return job.required_storage / server.available_storage + \
-               compute / server.available_computation + \
-               (loading + sending) / server.available_bandwidth
+        loading, compute, sending = self.resource_allocation_policy.allocate(task, server)
+        return task.required_storage / server.available_storage + \
+            compute / server.available_computation + \
+            (loading + sending) / server.available_bandwidth
 
 
 policies = [

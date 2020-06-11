@@ -1,3 +1,4 @@
+"""Visualises resource allocation of tasks to servers"""
 
 from __future__ import annotations
 
@@ -41,18 +42,18 @@ def save_plot(name: str, test_folder: str, additional: str = "",
         lgd = (lgd,)
     if image_format == ImageFormat.EPS:
         filename = f'{test_folder}/eps/{name}{additional}.eps'
-        print("Save file location: " + filename)
+        print(f'Save file location: {filename}')
         plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.PNG:
         filename = f'{test_folder}/png/{name}{additional}.png'
-        print("Save file location: " + filename)
+        print(f'Save file location: {filename}')
         plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
     elif image_format == ImageFormat.BOTH:
         save_plot(name, test_folder, additional, ImageFormat.EPS, lgd)
         save_plot(name, test_folder, additional, ImageFormat.PNG, lgd)
     elif image_format == ImageFormat.PDF:
         filename = f'{test_folder}/eps/{name}{additional}.pdf'
-        print("Save file location: " + filename)
+        print(f'Save file location: {filename}')
         plt.savefig(filename, format='pdf')
 
 
@@ -86,7 +87,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
 
     axe = plt.subplot(111)
     for resource_df in resources_df:  # for each data frame
-        axe = resource_df.plot(kind="bar", linewidth=0, stacked=True, ax=axe, legend=False, grid=False)
+        axe = resource_df.plot(kind='bar', linewidth=0, stacked=True, ax=axe, legend=False, grid=False)
 
     h, _l = axe.get_legend_handles_labels()  # get the handles we want to modify
     for i in range(0, 3 * n_col, n_col):
@@ -113,5 +114,5 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                loc=[1.025, pos], title=r'\textbf{Server resources}')
     axe.add_artist(tasks_legend)
 
-    save_plot(title.lower().replace(" ", "_"), "./figures/allocation", image_format=save_format)
+    save_plot(title.lower().replace(' ', '_'), './figures/allocation', image_format=save_format)
     plt.show()

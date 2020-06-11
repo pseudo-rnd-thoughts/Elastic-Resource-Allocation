@@ -17,169 +17,169 @@ class ValueDensity(ABC):
         self.name = name
 
     @abstractmethod
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
         pass
 
     @abstractmethod
-    def inverse(self, job: Task, density: float) -> float:
-        """Inverse of the value density function for the job value"""
+    def inverse(self, task: Task, density: float) -> float:
+        """Inverse of the value density function for the task value"""
         pass
 
 
 class ResourceSum(ValueDensity):
-    """The sum of a job's required resources"""
+    """The sum of a task's required resources"""
 
     def __init__(self):
-        super().__init__("Sum")
+        super().__init__('Sum')
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.required_storage + job.required_computation + job.required_results_data
+        return task.required_storage + task.required_computation + task.required_results_data
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class ResourceProduct(ValueDensity):
-    """The product of a job's required resources"""
+    """The product of a task's required resources"""
 
     def __init__(self):
-        super().__init__("Product")
+        super().__init__('Product')
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.required_storage * job.required_computation * job.required_results_data
+        return task.required_storage * task.required_computation * task.required_results_data
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class ResourceExpSum(ValueDensity):
-    """The sum of exponential of a job's required resources"""
+    """The sum of exponential of a task's required resources"""
 
     def __init__(self):
-        super().__init__("Exponential Sum")
+        super().__init__('Exponential Sum')
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return exp(job.required_storage) + exp(job.required_computation) + exp(job.required_results_data)
+        return exp(task.required_storage) + exp(task.required_computation) + exp(task.required_results_data)
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class ResourceSqrt(ValueDensity):
-    """The sum of square root of a job's required resources"""
+    """The sum of square root of a task's required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__("Sqrt {}".format(resource_func.name))
+        super().__init__(f'Sqrt {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value Density"""
-        return sqrt(self.resource_func.evaluate(job))
+        return sqrt(self.resource_func.evaluate(task))
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class UtilityPerResources(ValueDensity):
     """The utility divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__("Utility / {}".format(resource_func.name))
+        super().__init__(f'Utility / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.value / self.resource_func.evaluate(job)
+        return task.value / self.resource_func.evaluate(task)
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        return density * self.resource_func.evaluate(job)
+        return density * self.resource_func.evaluate(task)
 
 
 class DeadlinePerResources(ValueDensity):
     """The deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__("Deadline / {}".format(resource_func.name))
+        super().__init__(f'Deadline / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.deadline / self.resource_func.evaluate(job)
+        return task.deadline / self.resource_func.evaluate(task)
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class UtilityDeadlinePerResource(ValueDensity):
     """The product of utility and deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__("Utility * deadline / {}".format(resource_func.name))
+        super().__init__(f'Utility * deadline / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.value * job.deadline / self.resource_func.evaluate(job)
+        return task.value * task.deadline / self.resource_func.evaluate(task)
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise density * self.resource_func.evaluate(job) / job.deadline
+        raise density * self.resource_func.evaluate(task) / task.deadline
 
 
 class UtilityResourcePerDeadline(ValueDensity):
     """The product of utility and deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__("Utility * {} / deadline".format(resource_func.name))
+        super().__init__(f'Utility * {resource_func.name} / deadline')
         self.resource_func = resource_func
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.value * self.resource_func.evaluate(job) / job.deadline
+        return task.value * self.resource_func.evaluate(task) / task.deadline
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise density * job.deadline / self.resource_func.evaluate(job)
+        raise density * task.deadline / self.resource_func.evaluate(task)
 
 
 class Random(ValueDensity):
     """Random number generator"""
 
     def __init__(self):
-        super().__init__("Random")
+        super().__init__('Random')
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
         return random()
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        raise Exception("Not supported function of inverse")
+        raise Exception('Not supported function of inverse')
 
 
 class Storage(ValueDensity):
     """Sorted by Storage resource requirement"""
 
     def __init__(self):
-        super().__init__("Storage Requirement")
+        super().__init__('Storage Requirement')
 
-    def evaluate(self, job: Task) -> float:
+    def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return job.value / job.required_storage
+        return task.value / task.required_storage
 
-    def inverse(self, job: Task, density: float) -> float:
+    def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
-        return density * job.required_storage
+        return density * task.required_storage
 
 
 # Functions you actually want to use

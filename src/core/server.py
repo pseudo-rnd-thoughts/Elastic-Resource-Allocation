@@ -14,8 +14,8 @@ class Server(object):
     Server object with a name and resources allocated
     """
 
-    revenue: float = 0  # This is the total price of the job's allocated
-    value: float = 0  # This is the total value of the job's allocated
+    revenue: float = 0  # This is the total price of the task's allocated
+    value: float = 0  # This is the total value of the task's allocated
 
     def __init__(self, name: str, storage_capacity: int, computation_capacity: int, bandwidth_capacity: int,
                  price_change: int = 1):
@@ -26,80 +26,75 @@ class Server(object):
         self.price_change: int = price_change
 
         # Allocation information
-        self.allocated_jobs: List[Task] = []
+        self.allocated_tasks: List[Task] = []
         self.available_storage: int = storage_capacity
         self.available_computation: int = computation_capacity
         self.available_bandwidth: int = bandwidth_capacity
 
-    def can_run(self, job: Task) -> bool:
+    def can_run(self, task: Task) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of it's available resources to the job
+        Checks if a task can be run on a server if it dedicates all of it's available resources to the task
 
-        :param job: The job to test
+        :param task: The task to test
         :return: If it can run
         """
-        return self.available_storage >= job.required_storage \
-               and self.available_computation >= 1 \
-               and self.available_bandwidth >= 2 and \
-               any(job.required_storage * self.available_computation * r +
-                   s * job.required_computation * r +
-                   s * self.available_computation * job.required_results_data
-                   <= job.deadline * s * self.available_computation * r
-                   for s in range(1, self.available_bandwidth + 1)
-                   for r in range(1, self.available_bandwidth - s + 1))
+        return self.available_storage >= task.required_storage \
+            and self.available_computation >= 1 \
+            and self.available_bandwidth >= 2 and \
+            any(task.required_storage * self.available_computation * r + s * task.required_computation * r +
+                s * self.available_computation * task.required_results_data
+                <= task.deadline * s * self.available_computation * r
+                for s in range(1, self.available_bandwidth + 1)
+                for r in range(1, self.available_bandwidth - s + 1))
 
     # noinspection DuplicatedCode
-    def can_empty_run(self, job: Task) -> bool:
+    def can_empty_run(self, task: Task) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of it's possible resources to the job
+        Checks if a task can be run on a server if it dedicates all of it's possible resources to the task
 
-        :param job: The job to test
+        :param task: The task to test
         :return: If it can run
         """
-        return self.storage_capacity >= job.required_storage \
+        return self.storage_capacity >= task.required_storage \
             and self.computation_capacity >= 1 \
             and self.bandwidth_capacity >= 2 and \
-            any(job.required_storage * self.computation_capacity * r +
-                s * job.required_computation * r +
-                s * self.computation_capacity * job.required_results_data
-                <= job.deadline * s * self.available_computation * r
+            any(task.required_storage * self.computation_capacity * r +
+                s * task.required_computation * r +
+                s * self.computation_capacity * task.required_results_data
+                <= task.deadline * s * self.available_computation * r
                 for s in range(1, self.bandwidth_capacity + 1)
                 for r in range(1, self.bandwidth_capacity - s + 1))
 
-    def allocate_job(self, job: Task):
+    def allocate_task(self, task: Task):
         """
-        Updates the server attributes for when it is allocated within jobs
+        Updates the server attributes for when it is allocated within tasks
 
-        :param job: The job being allocated
+        :param task: The task being allocated
         """
-        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
-            "Task {} - loading: {}, compute: {}, sending: {}" \
-            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
-        assert self.available_storage >= job.required_storage, \
-            "Server {} available storage {}, job required storage {}" \
-            .format(self.name, self.available_storage, job.required_storage)
-        assert self.available_computation >= job.compute_speed, \
-            "Server {} available computation {}, job compute speed {}" \
-            .format(self.name, self.available_computation, job.compute_speed)
-        assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
-            "Server {} available bandwidth {}, job loading speed {} and sending speed {}" \
-            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
-        assert job not in self.allocated_jobs, "Task {} is already allocated to the server {}" \
-            .format(job.name, self.name)
+        assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
+            f'Task {task.name} - loading: {task.loading_speed}, compute: {task.compute_speed}, sending: {task.sending_speed}'
+        assert self.available_storage >= task.required_storage, \
+            f'Server {self.name} available storage {self.available_storage}, task required storage {task.required_storage}'
+        assert self.available_computation >= task.compute_speed, \
+            f'Server {self.name} available computation {self.available_computation}, task compute speed {task.compute_speed}'
+        assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
+            f'Server {self.name} available bandwidth {self.available_bandwidth}, ' \
+            f'task loading speed {task.loading_speed} and sending speed {task.sending_speed}'
+        assert task not in self.allocated_tasks, f'Task {task.name} is already allocated to the server {self.name}'
 
-        self.allocated_jobs.append(job)
-        self.available_storage -= job.required_storage
-        self.available_computation -= job.compute_speed
-        self.available_bandwidth -= (job.loading_speed + job.sending_speed)
+        self.allocated_tasks.append(task)
+        self.available_storage -= task.required_storage
+        self.available_computation -= task.compute_speed
+        self.available_bandwidth -= (task.loading_speed + task.sending_speed)
 
-        self.revenue += job.price
-        self.value += job.value
+        self.revenue += task.price
+        self.value += task.value
 
     def reset_allocations(self):
         """
         Resets the allocation information
         """
-        self.allocated_jobs = []
+        self.allocated_tasks = []
 
         self.available_storage = self.storage_capacity
         self.available_computation = self.computation_capacity
@@ -114,7 +109,7 @@ class Server(object):
 
         :param percent: The percentage to increase the max resources by
         """
-        return Server('mutated {}'.format(self.name),
+        return Server(f'mutated {self.name}',
                       int(max(1, self.storage_capacity - abs(gauss(0, self.storage_capacity * percent)))),
                       int(max(1, self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
                       int(max(1, self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
@@ -122,8 +117,13 @@ class Server(object):
 
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:
-    """The difference between two severs"""
-    return "{}: {}, {}, {}".format(normal_server.name,
-                                   normal_server.storage_capacity - mutate_server.storage_capacity,
-                                   normal_server.computation_capacity - mutate_server.computation_capacity,
-                                   normal_server.bandwidth_capacity - mutate_server.bandwidth_capacity)
+    """
+    The difference in server attributes between two servers
+
+    :param normal_server: The normal server
+    :param mutate_server: The mutated server
+    :return: String representing the difference between two servers
+    """
+    return f'{normal_server.name}: {normal_server.storage_capacity - mutate_server.storage_capacity}, ' \
+           f'{normal_server.computation_capacity - mutate_server.computation_capacity}, ' \
+           f'{normal_server.bandwidth_capacity - mutate_server.bandwidth_capacity}'

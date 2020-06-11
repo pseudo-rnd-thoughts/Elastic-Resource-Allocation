@@ -7,24 +7,31 @@ from typing import List
 
 from docplex.cp.model import CpoModel
 
-from src.core.task import Task
 from src.core.server import Server
+from src.core.task import Task
 
 
 class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
-    def __init__(self, job: Task, servers: List[Server], fixed_value: FixedValue):
-        super().__init__(job.name, job.required_storage, job.required_computation, job.required_results_data,
-                         job.value, job.deadline)
-        self.original_job = job
+    def __init__(self, task: Task, servers: List[Server], fixed_value: FixedValue):
+        Task.__init__(self, task.name, task.required_storage, task.required_computation, task.required_results_data,
+                      task.value, task.deadline)
+        self.original_task = task
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(servers, fixed_value)
 
     def find_fixed_speeds(self, servers: List[Server], fixed_value: FixedValue):
-        model = CpoModel("Speeds")
-        loading_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
-        compute_speed = model.integer_var(min=1, max=max(server.storage_capacity for server in servers))
-        sending_speed = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
+        """
+        Finds the optimal fixed task speeds based on the fixed value function
+
+        :param servers: List of servers to know max values to speed search
+        :param fixed_value: The fixed value function for objective function
+        :return: Optimal loading, compute and sending speeds
+        """
+        model = CpoModel('Speeds')
+        loading_speed: int = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
+        compute_speed: int = model.integer_var(min=1, max=max(server.storage_capacity for server in servers))
+        sending_speed: int = model.integer_var(min=1, max=max(server.bandwidth_capacity for server in servers) - 1)
 
         model.add(self.required_storage / loading_speed +
                   self.required_computation / compute_speed +
@@ -41,13 +48,13 @@ class FixedTask(Task):
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = 0):
         """
-        Overrides the allocate function from job to just allocate the running server and the price
+        Overrides the allocate function from task to just allocate the running server and the price
 
         :param loading_speed: Ignored
         :param compute_speed: Ignored
         :param sending_speed: Ignored
-        :param running_server: The server the job is running on
-        :param price: The price of the job
+        :param running_server: The server the task is running on
+        :param price: The price of the task
         """
         assert self.running_server is None
 
@@ -56,17 +63,17 @@ class FixedTask(Task):
 
     def reset_allocation(self):
         """
-        Overrides the reset_allocation function from job to just change the server not resource speeds
+        Overrides the reset_allocation function from task to just change the server not resource speeds
         """
         self.running_server = None
 
 
 class FixedValue(ABC):
     """
-    Fixed Value policy for the fixed job to select the speed
+    Fixed Value policy for the fixed task to select the speed
     """
 
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
     @abstractmethod
@@ -86,7 +93,7 @@ class FixedSumSpeeds(FixedValue):
     """Fixed sum of speeds"""
 
     def __init__(self):
-        super().__init__("Sum speeds")
+        FixedValue.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
         """Evaluation of how good it is"""

@@ -16,11 +16,11 @@ class ResourceAllocationPolicy(ABC):
     def __init__(self, name):
         self.name = name
 
-    def allocate(self, job: Task, server: Server) -> Tuple[int, int, int]:
+    def allocate(self, task: Task, server: Server) -> Tuple[int, int, int]:
         """
-        Determines the resource speed for the job on the server but finding the smallest
+        Determines the resource speed for the task on the server but finding the smallest
 
-        :param job: The job
+        :param task: The task
         :param server: The server
         :return: A tuple of resource speeds
         """
@@ -28,17 +28,17 @@ class ResourceAllocationPolicy(ABC):
                     for s in range(1, server.available_bandwidth + 1)
                     for w in range(1, server.available_computation + 1)
                     for r in range(1, server.available_bandwidth - s + 1)
-                    if job.required_storage * w * r + s * job.required_computation * r +
-                    s * w * job.required_results_data <= job.deadline * s * w * r),
-                   key=lambda bid: self.resource_evaluator(job, server, bid[0], bid[1], bid[2]))
+                    if task.required_storage * w * r + s * task.required_computation * r +
+                    s * w * task.required_results_data <= task.deadline * s * w * r),
+                   key=lambda bid: self.resource_evaluator(task, server, bid[0], bid[1], bid[2]))
 
     @abstractmethod
-    def resource_evaluator(self, job: Task, server: Server,
+    def resource_evaluator(self, task: Task, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
 
-        :param job: A job
+        :param task: A task
         :param server: A server
         :param loading_speed: The loading speed of the storage
         :param compute_speed: The compute speed of the required computation
@@ -52,13 +52,13 @@ class SumPercentage(ResourceAllocationPolicy):
     """The sum of percentage"""
 
     def __init__(self):
-        super().__init__("Percentage Sum")
+        super().__init__('Percentage Sum')
 
-    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
-               (loading_speed + sending_speed) / server.available_bandwidth
+            (loading_speed + sending_speed) / server.available_bandwidth
 
 
 class SumExpPercentage(ResourceAllocationPolicy):
@@ -67,20 +67,20 @@ class SumExpPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Expo percentage sum")
 
-    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return exp(compute_speed / server.available_computation) + \
-               exp((loading_speed + sending_speed) / server.available_bandwidth)
+            exp((loading_speed + sending_speed) / server.available_bandwidth)
 
 
 class SumSpeed(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
     def __init__(self):
-        super().__init__("Sum of speeds")
+        super().__init__('Sum of speeds')
 
-    def resource_evaluator(self, job: Task, server: Server,
+    def resource_evaluator(self, task: Task, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
@@ -90,14 +90,14 @@ class DeadlinePercent(ResourceAllocationPolicy):
     """Ratio of speeds divided by deadline"""
 
     def __init__(self):
-        super().__init__("Deadline Percent")
+        super().__init__('Deadline Percent')
 
-    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
-        return (job.required_storage / loading_speed +
-                job.required_computation / compute_speed +
-                job.required_results_data / sending_speed) / job.deadline
+        return (task.required_storage / loading_speed +
+                task.required_computation / compute_speed +
+                task.required_results_data / sending_speed) / task.deadline
 
 
 policies = (
