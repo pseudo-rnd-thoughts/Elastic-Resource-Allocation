@@ -10,12 +10,12 @@ from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import print_model, print_model_solution
-from src.core.job import Job
+from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
 
 
-def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
+def relaxed_algorithm(jobs: List[Task], servers: List[Server], time_limit: int,
                       debug_time: bool = False) -> Optional[Result]:
     """
     Runs the optimal algorithm solution
@@ -28,12 +28,12 @@ def relaxed_algorithm(jobs: List[Job], servers: List[Server], time_limit: int,
     """
     start_time = time()
 
-    model = CpoModel("Server Job Allocation")
+    model = CpoModel("Server Task Allocation")
 
-    loading_speeds: Dict[Job, CpoVariable] = {}
-    compute_speeds: Dict[Job, CpoVariable] = {}
-    sending_speeds: Dict[Job, CpoVariable] = {}
-    job_allocation: Dict[Job, CpoVariable] = {}
+    loading_speeds: Dict[Task, CpoVariable] = {}
+    compute_speeds: Dict[Task, CpoVariable] = {}
+    sending_speeds: Dict[Task, CpoVariable] = {}
+    job_allocation: Dict[Task, CpoVariable] = {}
 
     super_server = Server('Super Server',
                           sum(server.storage_capacity for server in servers),

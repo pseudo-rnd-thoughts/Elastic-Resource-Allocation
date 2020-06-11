@@ -6,7 +6,7 @@ from random import gauss
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.core.job import Job
+    from src.core.task import Task
 
 
 class Server(object):
@@ -26,12 +26,12 @@ class Server(object):
         self.price_change: int = price_change
 
         # Allocation information
-        self.allocated_jobs: List[Job] = []
+        self.allocated_jobs: List[Task] = []
         self.available_storage: int = storage_capacity
         self.available_computation: int = computation_capacity
         self.available_bandwidth: int = bandwidth_capacity
 
-    def can_run(self, job: Job) -> bool:
+    def can_run(self, job: Task) -> bool:
         """
         Checks if a job can be run on a server if it dedicates all of it's available resources to the job
 
@@ -49,7 +49,7 @@ class Server(object):
                    for r in range(1, self.available_bandwidth - s + 1))
 
     # noinspection DuplicatedCode
-    def can_empty_run(self, job: Job) -> bool:
+    def can_empty_run(self, job: Task) -> bool:
         """
         Checks if a job can be run on a server if it dedicates all of it's possible resources to the job
 
@@ -66,14 +66,14 @@ class Server(object):
                 for s in range(1, self.bandwidth_capacity + 1)
                 for r in range(1, self.bandwidth_capacity - s + 1))
 
-    def allocate_job(self, job: Job):
+    def allocate_job(self, job: Task):
         """
         Updates the server attributes for when it is allocated within jobs
 
         :param job: The job being allocated
         """
         assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
-            "Job {} - loading: {}, compute: {}, sending: {}" \
+            "Task {} - loading: {}, compute: {}, sending: {}" \
             .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
         assert self.available_storage >= job.required_storage, \
             "Server {} available storage {}, job required storage {}" \
@@ -84,7 +84,7 @@ class Server(object):
         assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
             "Server {} available bandwidth {}, job loading speed {} and sending speed {}" \
             .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
-        assert job not in self.allocated_jobs, "Job {} is already allocated to the server {}" \
+        assert job not in self.allocated_jobs, "Task {} is already allocated to the server {}" \
             .format(job.name, self.name)
 
         self.allocated_jobs.append(job)

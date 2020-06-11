@@ -1,4 +1,4 @@
-"""Fixed Job class"""
+"""Fixed Task class"""
 
 from __future__ import annotations
 
@@ -7,14 +7,14 @@ from typing import List
 
 from docplex.cp.model import CpoModel
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.server import Server
 
 
-class FixedJob(Job):
-    """Job with a fixing resource usage speed"""
+class FixedTask(Task):
+    """Task with a fixing resource usage speed"""
 
-    def __init__(self, job: Job, servers: List[Server], fixed_value: FixedValue):
+    def __init__(self, job: Task, servers: List[Server], fixed_value: FixedValue):
         super().__init__("Fixed " + job.name, job.required_storage, job.required_computation, job.required_results_data,
                          job.value, job.deadline)
         self.original_job = job

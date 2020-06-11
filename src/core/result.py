@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from typing import List
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.server import Server
 
 
 class Result(object):
     """Generic results class"""
 
-    def __init__(self, algorithm_name: str, jobs: List[Job], servers: List[Server], solve_time: float,
+    def __init__(self, algorithm_name: str, jobs: List[Task], servers: List[Server], solve_time: float,
                  show_money: bool = False, **kwargs):
         self.algorithm_name = algorithm_name
 

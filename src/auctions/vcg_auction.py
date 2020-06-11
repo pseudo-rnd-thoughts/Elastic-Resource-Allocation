@@ -6,14 +6,14 @@ from time import time
 from typing import List, Dict, Tuple, Optional
 
 from src.core.core import list_copy_remove
-from src.core.job import Job
+from src.core.task import Task
 from src.core.model import reset_model
 from src.core.result import Result
 from src.core.server import Server
 from src.optimal.optimal import optimal_algorithm
 
 
-def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
+def vcg_auction(jobs: List[Task], servers: List[Server], time_limit: int,
                 debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
@@ -27,7 +27,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
     start_time = time()
 
     # Price information
-    job_prices: Dict[Job, float] = {}
+    job_prices: Dict[Task, float] = {}
 
     # Find the optimal solution
     if debug_running:
@@ -40,7 +40,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
 
     # Save the job and server information from the optimal solution
     allocated_jobs = [job for job in jobs if job.running_server]
-    job_info: Dict[Job, Tuple[int, int, int, Server]] = {
+    job_info: Dict[Task, Tuple[int, int, int, Server]] = {
         job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server) for job in jobs
     }
 
@@ -62,7 +62,7 @@ def vcg_auction(jobs: List[Job], servers: List[Server], time_limit: int,
         else:
             job_prices[job] = optimal_solution.sum_value - optimal_prime.sum_value
             if debug_results:
-                print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
+                print("Task {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 
     # Reset the model and allocates all of the their info from the original optimal solution
     reset_model(jobs, servers)

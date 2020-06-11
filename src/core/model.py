@@ -6,7 +6,7 @@ import json
 from random import gauss, random
 from typing import List, Tuple, Dict, Union
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.server import Server
 
 
@@ -21,7 +21,7 @@ def positive_gaussian_dist(mean, std) -> int:
     return max(1, int(gauss(mean, std)))
 
 
-class JobDist(object):
+class TaskDist(object):
     """
     Random job distribution using gaussian (normal distribution)
     """
@@ -45,7 +45,7 @@ class JobDist(object):
         self.deadline_mean = deadline_mean
         self.deadline_std = deadline_std
 
-    def create_job(self, name) -> Job:
+    def create_job(self, name) -> Task:
         """
         Creates a new job with name (unique identifier)
 
@@ -53,7 +53,7 @@ class JobDist(object):
         :return: A new job object
         """
         job_name = "{} {}".format(self.dist_name, name)
-        return Job(name=job_name,
+        return Task(name=job_name,
                    required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
                    required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
                    required_results_data=positive_gaussian_dist(self.results_data_mean, self.results_data_std),
@@ -136,7 +136,7 @@ class ModelDist(object):
     num_jobs = 0
     num_servers = 0
 
-    def __init__(self, dist_name: str, job_dists: List[JobDist], num_jobs: int,
+    def __init__(self, dist_name: str, job_dists: List[TaskDist], num_jobs: int,
                  server_dists: List[ServerDist], num_servers: int):
         self.file_name = "{}_j{}_s{}".format(dist_name, num_jobs, num_servers)
         self.dist_name = dist_name
@@ -146,13 +146,13 @@ class ModelDist(object):
         self.server_dists = server_dists
         self.num_servers = num_servers
 
-    def create(self) -> Tuple[List[Job], List[Server]]:
+    def create(self) -> Tuple[List[Task], List[Server]]:
         """
         Creates a list of jobs and servers from a job and server distribution
 
         :return: A list of jobs and list of servers
         """
-        jobs: List[Job] = []
+        jobs: List[Task] = []
         for job_pos in range(self.num_jobs):
             prob = random()
             for job_dist in self.job_dists:
@@ -175,7 +175,7 @@ class ModelDist(object):
         return jobs, servers
 
 
-def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
+def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
     """
     Loads jobs and server distributions from a file
 
@@ -186,8 +186,8 @@ def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     with open(filename) as file:
         data = json.load(file)
 
-        job_dists: List[JobDist] = [
-            JobDist(dist['name'], dist['probability'],
+        job_dists: List[TaskDist] = [
+            TaskDist(dist['name'], dist['probability'],
                     dist['required_storage_mean'], dist['required_storage_std'],
                     dist['required_computation_mean'], dist['required_computation_std'],
                     dist['required_results_data_mean'], dist['required_results_data_std'],
@@ -207,7 +207,7 @@ def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
         return data['name'], job_dists, server_dists
 
 
-def reset_model(jobs: List[Job], servers: List[Server]):
+def reset_model(jobs: List[Task], servers: List[Server]):
     """
     Resets all of the jobs and servers back after an allocation
 

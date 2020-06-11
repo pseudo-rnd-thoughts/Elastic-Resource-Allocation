@@ -10,12 +10,12 @@ from typing import List, Dict, Tuple, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
 
 
-def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Optional[Dict[Job, Tuple[int, int, int]]]:
+def feasible_allocation(job_server_allocations: Dict[Server, List[Task]]) -> Optional[Dict[Task, Tuple[int, int, int]]]:
     """
     Checks whether a job to server allocation is a feasible solution to the problem
 
@@ -24,18 +24,18 @@ def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Opti
     """
     model = CpoModel("Allocation Feasibility")
 
-    loading_speeds: Dict[Job, CpoVariable] = {}
-    compute_speeds: Dict[Job, CpoVariable] = {}
-    sending_speeds: Dict[Job, CpoVariable] = {}
+    loading_speeds: Dict[Task, CpoVariable] = {}
+    compute_speeds: Dict[Task, CpoVariable] = {}
+    sending_speeds: Dict[Task, CpoVariable] = {}
 
     for server, jobs in job_server_allocations.items():
         for job in jobs:
             loading_speeds[job] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                    name='Job {} loading speed'.format(job.name))
+                                                    name='Task {} loading speed'.format(job.name))
             compute_speeds[job] = model.integer_var(min=1, max=server.computation_capacity,
-                                                    name='Job {} compute speed'.format(job.name))
+                                                    name='Task {} compute speed'.format(job.name))
             sending_speeds[job] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                    name='Job {} sending speed'.format(job.name))
+                                                    name='Task {} sending speed'.format(job.name))
 
             model.add((job.required_storage / loading_speeds[job]) +
                       (job.required_computation / compute_speeds[job]) +
@@ -54,9 +54,9 @@ def feasible_allocation(job_server_allocations: Dict[Server, List[Job]]) -> Opti
         return None
 
 
-def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: List[Server], pos: int,
+def generate_candidates(allocation: Dict[Server, List[Task]], job: Task, servers: List[Server], pos: int,
                         lower_bound: float, upper_bound: float,
-                        best_lower_bound: float) -> List[Tuple[float, float, Dict[Server, List[Job]], int]]:
+                        best_lower_bound: float) -> List[Tuple[float, float, Dict[Server, List[Task]], int]]:
     """
     Generates all of the candidates from a prior allocation using the list of jobs and servers
     using the current position in the job list for which jobs to use
@@ -83,7 +83,7 @@ def generate_candidates(allocation: Dict[Server, List[Job]], job: Job, servers: 
     return new_candidates
 
 
-def branch_bound(jobs: List[Job], servers: List[Server]) -> Result:
+def branch_bound(jobs: List[Task], servers: List[Server]) -> Result:
     """
     Run branch and bound
 
@@ -92,10 +92,10 @@ def branch_bound(jobs: List[Job], servers: List[Server]) -> Result:
     :return: New results
     """
     best_lower_bound: float = 0
-    best_allocation: Optional[Dict[Server, List[Job]]] = None
-    best_speeds: Optional[Dict[Job, Tuple[int, int, int]]] = None
+    best_allocation: Optional[Dict[Server, List[Task]]] = None
+    best_speeds: Optional[Dict[Task, Tuple[int, int, int]]] = None
 
-    candidates: List[Tuple[float, float, Dict[Server, List[Job]], int]] = generate_candidates(
+    candidates: List[Tuple[float, float, Dict[Server, List[Task]], int]] = generate_candidates(
         {server: [] for server in servers}, jobs[0], servers, 1, 0, sum(job.value for job in jobs), best_lower_bound)
 
     while candidates:

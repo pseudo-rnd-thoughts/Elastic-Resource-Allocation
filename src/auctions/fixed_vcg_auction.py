@@ -6,15 +6,15 @@ from time import time
 from typing import List, Dict, Optional
 
 from src.core.core import allocate, list_copy_remove
-from src.core.fixed_job import FixedJob
-from src.core.job import Job
+from src.core.fixed_task import FixedTask
+from src.core.task import Task
 from src.core.model import reset_model
 from src.core.result import Result
 from src.core.server import Server
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 
 
-def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: int,
+def fixed_vcg_auction(jobs: List[FixedTask], servers: List[Server], time_limit: int,
                       debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Combinatorial Double auction solved through VCG auction algorithm
@@ -29,7 +29,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
     start_time = time()
 
     # Price information
-    job_prices: Dict[Job, float] = {}
+    job_prices: Dict[Task, float] = {}
 
     # Find the optimal solution
     if debug_running:
@@ -42,7 +42,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
 
     # Save the job and server information from the optimal solution
     allocated_jobs = [job for job in jobs if job.running_server]
-    job_allocation: Dict[Job, Server] = {job: job.running_server for job in jobs}
+    job_allocation: Dict[Task, Server] = {job: job.running_server for job in jobs}
 
     if debug_running:
         print("Allocated jobs: {}".format(", ".join([job.name for job in allocated_jobs])))
@@ -62,7 +62,7 @@ def fixed_vcg_auction(jobs: List[FixedJob], servers: List[Server], time_limit: i
         else:
             job_prices[job] = optimal_solution.sum_value - optimal_prime.sum_value
             if debug_results:
-                print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
+                print("Task {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
 
     # Resets all of the jobs and servers and allocates all of their info from the original optimal solution
     reset_model(jobs, servers)

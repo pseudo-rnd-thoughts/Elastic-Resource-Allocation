@@ -6,7 +6,7 @@ from time import time
 from typing import List
 
 from src.core.core import print_job_allocation, print_job_values
-from src.core.job import Job
+from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
 from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
@@ -14,7 +14,7 @@ from src.greedy.server_selection_policy import ServerSelectionPolicy
 from src.greedy.value_density import ValueDensity
 
 
-def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: ValueDensity,
+def greedy_algorithm(jobs: List[Task], servers: List[Server], value_density: ValueDensity,
                      server_selection_policy: ServerSelectionPolicy,
                      resource_allocation_policy: ResourceAllocationPolicy, debug_job_values: bool = False,
                      debug_job_allocation: bool = False) -> Result:
@@ -50,7 +50,7 @@ def greedy_algorithm(jobs: List[Job], servers: List[Server], value_density: Valu
                   resource_allocation_policy=resource_allocation_policy.name)
 
 
-def allocate_jobs(jobs: List[Job], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
+def allocate_jobs(jobs: List[Task], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
     """
     Allocate the jobs to the servers based on the server selection policy and resource allocation policies

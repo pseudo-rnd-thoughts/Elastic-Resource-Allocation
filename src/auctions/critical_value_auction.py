@@ -6,7 +6,7 @@ from time import time
 from typing import List
 
 from src.core.core import print_job_values
-from src.core.job import Job
+from src.core.task import Task
 from src.core.model import reset_model
 from src.core.result import Result
 from src.core.server import Server
@@ -16,7 +16,7 @@ from src.greedy.server_selection_policy import ServerSelectionPolicy
 from src.greedy.value_density import ValueDensity
 
 
-def calculate_critical_value(critical_job: Job, ranked_jobs: List[Job], servers: List[Server],
+def calculate_critical_value(critical_job: Task, ranked_jobs: List[Task], servers: List[Server],
                              value_density: ValueDensity, server_selection_policy: ServerSelectionPolicy,
                              resource_allocation_policy: ResourceAllocationPolicy,
                              debug_bound: bool = False) -> float:
@@ -43,14 +43,14 @@ def calculate_critical_value(critical_job: Job, ranked_jobs: List[Job], servers:
 
         if critical_job.running_server:
             if debug_bound:
-                print("Job allocated to server " + critical_job.running_server.name + " at position " + str(pos))
+                print("Task allocated to server " + critical_job.running_server.name + " at position " + str(pos))
         else:
             density = value_density.evaluate(ranked_jobs[pos - 1])
             return value_density.inverse(critical_job, density)
     return 0
 
 
-def critical_value_auction(jobs: List[Job], servers: List[Server],
+def critical_value_auction(jobs: List[Task], servers: List[Server],
                            value_density: ValueDensity, server_selection_policy: ServerSelectionPolicy,
                            resource_allocation_policy: ResourceAllocationPolicy,
                            debug_job_value: bool = False, debug_greedy_allocation: bool = False,
@@ -91,7 +91,7 @@ def critical_value_auction(jobs: List[Job], servers: List[Server],
                                                             server_selection_policy, resource_allocation_policy,
                                                             debug_bound=debug_critical_bound)
         if debug_critical_value:
-            print("Job {} critical value = {:.3f}".format(job.name, job_critical_values[job]))
+            print("Task {} critical value = {:.3f}".format(job.name, job_critical_values[job]))
 
     # Allocate the jobs and set the price to the critical value
     for job, (s, w, r, server) in allocation_data.items():

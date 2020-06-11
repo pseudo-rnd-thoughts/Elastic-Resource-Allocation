@@ -1,4 +1,4 @@
-"""Job object implementation"""
+"""Task object implementation"""
 
 from __future__ import annotations
 
@@ -9,30 +9,33 @@ if TYPE_CHECKING:
     from src.core.server import Server
 
 
-class Job(object):
+class Task(object):
     """
-    Job object with name and required resources to use (storage, computation and models data)
+    Task object with name and required resources to use (storage, computation and models data)
     When the job is allocated to a server then the resources speed and server are set
 
     Constructor arguments are final as they dont need changing after initialisation
     """
 
-    # Allocation information
-    loading_speed: int = 0
-    compute_speed: int = 0
-    sending_speed: int = 0
-    running_server: Optional[Server] = None
-
-    price: float = 0  # This is for auctions only
-
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 value: float, deadline: int):
-        self.name: str = name
-        self.required_storage: int = required_storage
-        self.required_computation: int = required_computation
-        self.required_results_data: int = required_results_data
-        self.value: float = value
-        self.deadline: int = deadline
+                 value: float, deadline: int, loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
+                 running_server: Optional[Server] = None, price: float = 0):
+        self.name = name
+
+        self.required_storage = required_storage
+        self.required_computation = required_computation
+        self.required_results_data = required_results_data
+
+        self.value = value
+        self.price = price
+
+        self.deadline = deadline
+
+        self.loading_speed = loading_speed
+        self.compute_speed = compute_speed
+        self.sending_speed = sending_speed
+
+        self.running_server = running_server
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
@@ -47,7 +50,7 @@ class Job(object):
         """
         # Check that the allocation information is correct
         assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
-            "Job {} with loading {} compute {} sending {}" \
+            "Task {} with loading {} compute {} sending {}" \
             .format(self.name, loading_speed, compute_speed, sending_speed)
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
@@ -55,7 +58,7 @@ class Job(object):
             loading_speed * self.required_computation * sending_speed + \
             loading_speed * compute_speed * self.required_results_data <= \
             self.deadline * loading_speed * compute_speed * sending_speed, \
-            "Job {} requirement storage {} computation {} results data {} " \
+            "Task {} requirement storage {} computation {} results data {} " \
             "with loading {} compute {} sending {} speed and deadline {} time taken {}" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
                         loading_speed, compute_speed, sending_speed, self.deadline,
@@ -64,7 +67,7 @@ class Job(object):
                         loading_speed * compute_speed * self.required_results_data)
 
         # Check that a server is not already allocated
-        assert self.running_server is None, "Job {} is already allocated to {}" \
+        assert self.running_server is None, "Task {} is already allocated to {}" \
             .format(self.name, self.running_server.name)
 
         self.loading_speed = loading_speed
@@ -93,32 +96,32 @@ class Job(object):
         """
         return self.value - self.price
 
-    def mutate(self, percent) -> Job:
+    def mutate(self, percent) -> Task:
         """
         Mutate the server by a percentage
 
         :param percent: The percentage to increase the max resources by
         """
-        return Job('mutated {}'.format(self.name),
-                   int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
-                   int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
-                   int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
-                   int(max(1, self.deadline - abs(gauss(0, self.required_results_data * percent)))),
-                   int(max(1, self.value - abs(gauss(0, self.required_results_data * percent)))))
+        return Task('mutated {}'.format(self.name),
+                    int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
+                    int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
+                    int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
+                    int(max(1, self.deadline - abs(gauss(0, self.required_results_data * percent)))),
+                    int(max(1, self.value - abs(gauss(0, self.required_results_data * percent)))))
 
     def __str__(self) -> str:
         if self.loading_speed > 0:
-            return "Job {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}, " \
+            return "Task {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}, " \
                    "allocated loading: {}, compute: {}, sending: {} speeds" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
                         self.deadline, self.value, self.loading_speed, self.compute_speed, self.sending_speed)
         else:
-            return "Job {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}" \
+            return "Task {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
                         self.deadline, self.value)
 
 
-def job_diff(normal_job: Job, mutate_job: Job) -> str:
+def job_diff(normal_job: Task, mutate_job: Task) -> str:
     """The difference between two jobs"""
     return "{} - {}: {}, {}, {}, {}, {}".format(normal_job.name, mutate_job.name,
                                                 mutate_job.required_storage - normal_job.required_storage,

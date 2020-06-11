@@ -10,7 +10,7 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
 from docplex.cp.solution import CpoSolveResult
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.model import ModelDist
 from src.core.server import Server
 
@@ -45,7 +45,7 @@ def load_args() -> Dict[str, Union[str, int]]:
     :return: All of the arguments in a dictionary
     """
     assert len(sys.argv) == 5, "Args: {}".format(sys.argv)
-    assert sys.argv[2].isdigit(), "Jobs: {}".format(sys.argv[2])
+    assert sys.argv[2].isdigit(), "Tasks: {}".format(sys.argv[2])
     assert sys.argv[3].isdigit(), "Servers: {}".format(sys.argv[3])
     assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
 
@@ -81,12 +81,12 @@ def analysis_filename(test_name: str, axis: str) -> str:
     return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
 
 
-def print_job_values(job_values: List[Tuple[Job, float]]):
+def print_job_values(job_values: List[Tuple[Task, float]]):
     """
     Print the job utility values
     :param job_values: A list of tuples with the job and its value
     """
-    print("\t\tJobs")
+    print("\t\tTasks")
     max_job_name_len = max(len(job.name) for job, value in job_values) + 1
     print("{:<{name_len}}| Value | Storage | Compute | models | Value | Deadline "
           .format("Id", name_len=max_job_name_len))
@@ -98,23 +98,23 @@ def print_job_values(job_values: List[Tuple[Job, float]]):
     print()
 
 
-def print_job_allocation(jobs: List[Job]):
+def print_job_allocation(jobs: List[Task]):
     """
     Prints the job allocation resource speeds
     :param jobs: List of jobs
     """
-    print("Job Allocation")
+    print("Task Allocation")
     max_job_name_len = max(len(job.name) for job in jobs) + 1
     for job in jobs:
         if job.running_server:
-            print("Job {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
+            print("Task {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
                   .format(job.name, job.running_server.name, job.loading_speed, job.compute_speed, job.sending_speed,
                           name_len=max_job_name_len))
         else:
-            print("Job {} - None".format(job.name))
+            print("Task {} - None".format(job.name))
 
 
-def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = 0):
+def allocate(job: Task, loading: int, compute: int, sending: int, server: Server, price: float = 0):
     """
     Allocate a job to a server
     :param job: The job
@@ -172,19 +172,19 @@ def print_model_solution(model_solution: CpoSolveResult):
                                                                           round(model_solution.get_solve_time(), 2)))
 
 
-def print_model(jobs: List[Job], servers: List[Server]):
+def print_model(jobs: List[Task], servers: List[Server]):
     """
     Print the model
     :param jobs: The list of jobs
     :param servers: The list of servers
     """
-    print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
+    print("Task Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for job in jobs:
         print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
               .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
                       job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
 
-    print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
+    print("\nServer Name | Storage | Computation | Bandwidth | Allocated Tasks")
     for server in servers:
         print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}".format(server.name, server.storage_capacity,
                                                           server.computation_capacity,
@@ -201,5 +201,5 @@ def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
     :return: Tuple of the location of the file and the model type
     """
     return "../results/{}/{}.json".format(folder, encoded_file), \
-           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Jobs: "), \
+           re.findall(r"j\d+_s\d+", encoded_file)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Tasks: "), \
            encoded_file.replace(re.findall(r"_j\d+_s\d+_0", encoded_file)[0], "")

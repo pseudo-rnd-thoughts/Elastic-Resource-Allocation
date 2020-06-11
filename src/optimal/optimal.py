@@ -8,12 +8,12 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import print_model_solution, print_model
-from src.core.job import Job
+from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
 
 
-def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -> Optional[Result]:
+def optimal_algorithm(jobs: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
     """
     Runs the optimal algorithm solution
 
@@ -27,10 +27,10 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
     model = CpoModel("Optimal")
 
     # The resource speed variables and the allocation variables
-    loading_speeds: Dict[Job, CpoVariable] = {}
-    compute_speeds: Dict[Job, CpoVariable] = {}
-    sending_speeds: Dict[Job, CpoVariable] = {}
-    server_job_allocation: Dict[Tuple[Job, Server], CpoVariable] = {}
+    loading_speeds: Dict[Task, CpoVariable] = {}
+    compute_speeds: Dict[Task, CpoVariable] = {}
+    sending_speeds: Dict[Task, CpoVariable] = {}
+    server_job_allocation: Dict[Tuple[Task, Server], CpoVariable] = {}
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
@@ -48,7 +48,7 @@ def optimal_algorithm(jobs: List[Job], servers: List[Server], time_limit: int) -
 
         # The job allocation variables and add the allocation constraint
         for server in servers:
-            server_job_allocation[(job, server)] = model.binary_var(name="Job {} Server {}"
+            server_job_allocation[(job, server)] = model.binary_var(name="Task {} Server {}"
                                                                     .format(job.name, server.name))
         model.add(sum(server_job_allocation[(job, server)] for server in servers) <= 1)
 

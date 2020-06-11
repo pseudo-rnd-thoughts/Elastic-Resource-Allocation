@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from math import exp
 from typing import Tuple
 
-from src.core.job import Job
+from src.core.task import Task
 from src.core.server import Server
 
 
@@ -16,7 +16,7 @@ class ResourceAllocationPolicy(ABC):
     def __init__(self, name):
         self.name = name
 
-    def allocate(self, job: Job, server: Server) -> Tuple[int, int, int]:
+    def allocate(self, job: Task, server: Server) -> Tuple[int, int, int]:
         """
         Determines the resource speed for the job on the server but finding the smallest
 
@@ -33,7 +33,7 @@ class ResourceAllocationPolicy(ABC):
                    key=lambda bid: self.resource_evaluator(job, server, bid[0], bid[1], bid[2]))
 
     @abstractmethod
-    def resource_evaluator(self, job: Job, server: Server,
+    def resource_evaluator(self, job: Task, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
@@ -54,7 +54,7 @@ class SumPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Percentage Sum")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
@@ -67,7 +67,7 @@ class SumExpPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Expo percentage sum")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return exp(compute_speed / server.available_computation) + \
@@ -80,7 +80,7 @@ class SumSpeed(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Sum of speeds")
 
-    def resource_evaluator(self, job: Job, server: Server,
+    def resource_evaluator(self, job: Task, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
@@ -92,7 +92,7 @@ class DeadlinePercent(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Deadline Percent")
 
-    def resource_evaluator(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, job: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return (job.required_storage / loading_speed +

@@ -8,12 +8,12 @@ from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import print_model_solution, allocate
-from src.core.fixed_job import FixedJob
+from src.core.fixed_task import FixedTask
 from src.core.result import Result
 from src.core.server import Server
 
 
-def fixed_optimal_algorithm(jobs: List[FixedJob], servers: List[Server], time_limit: int) -> Optional[Result]:
+def fixed_optimal_algorithm(jobs: List[FixedTask], servers: List[Server], time_limit: int) -> Optional[Result]:
     """
     Finds the optimal solution
 

@@ -6,13 +6,13 @@ from time import time
 from typing import List, Tuple
 
 from src.core.core import allocate
-from src.core.job import Job
+from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
 from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
-def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:
+def allocate_resources(job: Task, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:
     """
     Calculates the value of a server job allocation with the resources allocated
 
@@ -29,7 +29,7 @@ def allocate_resources(job: Job, server: Server, value: AllocationValuePolicy) -
                 s * w * job.required_results_data <= job.deadline * s * w * r), key=lambda x: x[0])
 
 
-def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
+def matrix_greedy(jobs: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
                   debug_allocation: bool = False, debug_pop: bool = False) -> Result:
     """
     A greedy algorithm that uses the idea of a matrix
@@ -53,7 +53,7 @@ def matrix_greedy(jobs: List[Job], servers: List[Server], allocation_value_polic
         (allocated_job, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
         allocate(allocated_job, s, w, r, allocated_server)
         if debug_allocation:
-            print("Job {} on Server {} with value {:.3f}, loading {} compute {} sending {}"
+            print("Task {} on Server {} with value {:.3f}, loading {} compute {} sending {}"
                   .format(allocated_job.name, allocated_server.name, v, s, w, r))
 
         # Remove the job from the allocation matrix
