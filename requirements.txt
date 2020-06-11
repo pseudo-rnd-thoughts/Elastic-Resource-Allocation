@@ -1,0 +1,8 @@
+jupyter
+pandas
+seaborn
+matplotlib
+numpy
+docplex
+cplex
+tqdm
