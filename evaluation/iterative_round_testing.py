@@ -9,13 +9,14 @@ from tqdm import tqdm
 
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from src.core.core import results_filename, load_args, set_price_change
-from src.core.model import ModelDist, load_dist, reset_model
+from src.model.model_distribution import ModelDist, load_dist, reset_model
 
 
 def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], price_changes: List[int],
                repeats: int = 50, time_limit: int = 15):
     """
     Round test
+
     :param model_dist: The model distribution
     :param repeat: The repeat
     :param initial_costs: The initial cost functions
@@ -36,7 +37,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
 
                 results = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
                 if results is not None:
-                    auction_results['cost {}, change {}'.format(initial_cost, price_change)] = \
+                    auction_results[f'cost {initial_cost}, change {price_change}'] = \
                         results.store(initial_cost=initial_cost, price_change=price_change)
                 reset_model(tasks, servers)
 
@@ -52,13 +53,14 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
                       debug_results: bool = False):
     """
     Testing the number of rounds required to convergence on the price
+
     :param model_dist: The model distribution
     :param repeat: The repeat number
     :param repeats: The number of repeats
     :param time_limit: The time limit for the auctions
     :param debug_results: If to debug the results
     """
-    print("Round Num testing for {} tasks and {} servers".format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Round Num testing for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
     initial_costs = [0, 5, 10, 15, 20]
     price_changes = [1, 2,  5,  8, 10]
@@ -72,7 +74,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
             for price_change in price_changes:
                 set_price_change(servers, price_change)
 
-                name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
+                name = f'Initial Cost {initial_cost} Price Change {price_change}'
                 result = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
                 results[name] = result.store(price_change=price_change)
                 
@@ -88,7 +90,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
     filename = results_filename('round_num', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 if __name__ == "__main__":

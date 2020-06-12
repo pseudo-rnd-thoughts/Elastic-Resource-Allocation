@@ -8,7 +8,7 @@ from src.core.server import Server
 from src.core.task import Task
 
 
-class Result(object):
+class Result:
     """Generic results class"""
 
     def __init__(self, algorithm_name: str, tasks: List[Task], servers: List[Server], solve_time: float,

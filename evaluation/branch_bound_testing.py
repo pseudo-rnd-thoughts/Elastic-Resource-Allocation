@@ -5,7 +5,7 @@ from __future__ import annotations
 from src.auctions.vcg_auction import vcg_auction
 from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.core.core import load_args
-from src.core.model import ModelDist, load_dist, reset_model
+from src.model.model_distribution import ModelDist, load_dist, reset_model
 from src.optimal.optimal import optimal_algorithm
 
 

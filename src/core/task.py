@@ -38,6 +38,7 @@ class Task(object):
                  price: float = None):
         """
         Sets the task attribute for when it is allocated to a server
+        
         :param loading_speed: The loading speed of the task
         :param compute_speed: The computational speed of the task
         :param sending_speed: The sending speed of the tasks
@@ -46,25 +47,21 @@ class Task(object):
         """
         # Check that the allocation information is correct
         assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
-            "Allocation information is incorrect for Task {} with loading {} compute {} sending {}" \
-            .format(self.name, loading_speed, compute_speed, sending_speed)
+            f'Allocation information is incorrect for Task {self.name} with loading {loading_speed} ' \
+            f'compute {compute_speed} sending {sending_speed}'
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
-        assert self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed, \
-            "Deadline assertion failure Task {} requirement storage {} computation {} results data {} " \
-            "with loading {} compute {} sending {} speed and deadline {} time taken {}" \
-                .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
-                        loading_speed, compute_speed, sending_speed, self.deadline,
-                        self.required_storage * compute_speed * sending_speed +
-                        loading_speed * self.required_computation * sending_speed +
-                        loading_speed * compute_speed * self.required_results_data)
+        time_taken = self.required_storage * compute_speed * sending_speed + \
+             loading_speed * self.required_computation * sending_speed + \
+             loading_speed * compute_speed * self.required_results_data
+        assert time_taken <= self.deadline * loading_speed * compute_speed * sending_speed, \
+            f'Deadline assertion failure Task {self.name} requirement storage {self.required_storage} ' \
+            f'computation {self.required_computation} results data {self.required_results_data} with ' \
+            f'loading {loading_speed} compute {compute_speed} sending {sending_speed} speed and deadline {self.deadline} ' \
+            f'time taken {time_taken}' 
 
         # Check that a server is not already allocated
-        assert self.running_server is None, \
-            "Task {} is already allocated to {}".format(self.name, self.running_server.name)
+        assert self.running_server is None, f"Task {self.name} is already allocated to {self.running_server.name}"
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed
@@ -89,6 +86,7 @@ class Task(object):
     def utility(self):
         """
         The social welfare of the task
+        
         :return: The task value minus task price
         """
         return self.value - self.price
@@ -96,9 +94,10 @@ class Task(object):
     def mutate(self, percent) -> Task:
         """
         Mutate the server by a percentage
+        
         :param percent: The percentage to increase the max resources by
         """
-        return Task('mutated {}'.format(self.name),
+        return Task(f'mutated {self.name}',
                     int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
                     int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
                     int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
@@ -107,21 +106,24 @@ class Task(object):
 
     def __str__(self) -> str:
         if self.loading_speed > 0:
-            return "Task {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}, " \
-                   "allocated loading: {}, compute: {}, sending: {} speeds" \
-                .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
-                        self.deadline, self.value, self.loading_speed, self.compute_speed, self.sending_speed)
+            return f'Task {self.name} - Required storage: {self.required_storage}, ' \
+                   f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
+                   f'deadline: {self.deadline}, value: {self.value}, allocated loading: {self.loading_speed}, ' \
+                   f'compute: {self.compute_speed}, sending: {self.sending_speed} speeds'
         else:
-            return "Task {} - Required storage: {}, computation: {}, results data: {}, deadline: {}, value: {}" \
-                .format(self.name, self.required_storage, self.required_computation, self.required_results_data,
-                        self.deadline, self.value)
+            return f'Task {self.name} - Required storage: {self.required_storage}, ' \
+                   f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
+                   f'deadline: {self.deadline}, value: {self.value}'
 
 
 def task_diff(normal_task: Task, mutate_task: Task) -> str:
-    """The difference between two tasks"""
-    return "{} - {}: {}, {}, {}, {}, {}".format(normal_task.name, mutate_task.name,
-                                                mutate_task.required_storage - normal_task.required_storage,
-                                                mutate_task.required_computation - normal_task.required_computation,
-                                                mutate_task.required_results_data - normal_task.required_results_data,
-                                                normal_task.deadline - mutate_task.deadline,
-                                                normal_task.value - mutate_task.value)
+    """
+    Returns a string representation of the task attribute difference between a normal task and a mutated task
+    
+    :param normal_task: The normal task
+    :param mutate_task: The mutated task
+    """
+    return f'{normal_task.name} - {mutate_task.name}: {mutate_task.required_storage - normal_task.required_storage}, ' \
+           f'{mutate_task.required_computation - normal_task.required_computation}, ' \
+           f'{mutate_task.required_results_data - normal_task.required_results_data}, ' \
+           f'{normal_task.deadline - mutate_task.deadline}, {normal_task.value - mutate_task.value}'

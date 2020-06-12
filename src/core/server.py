@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from src.core.task import Task
 
 
-class Server(object):
+class Server:
     """
     Server object with a name and resources allocated
     """
@@ -35,6 +35,7 @@ class Server(object):
     def can_run(self, task: Task) -> bool:
         """
         Checks if a task can be run on a server if it dedicates all of it's available resources to the task
+
         :param task: The task to test
         :return: If it can run
         """
@@ -86,6 +87,7 @@ class Server(object):
     def can_empty_run(self, task: Task) -> bool:
         """
         Checks if a task can be run on a server if it dedicates all of it's possible resources to the task
+
         :param task: The task to test
         :return: If it can run
         """
@@ -136,24 +138,23 @@ class Server(object):
     def allocate_task(self, task: Task):
         """
         Updates the server attributes for when it is allocated within tasks
+
         :param task: The task being allocated
         """
         assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
-            "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}" \
-            .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
+            f'Job speed failure for Job {task.name} - loading: {task.loading_speed}, ' \
+            f'compute: {task.compute_speed}, sending: {task.sending_speed}'
         assert self.available_storage >= task.required_storage, \
-            "Server storage failure for Server {} available storage {}, task required storage {}" \
-            .format(self.name, self.available_storage, task.required_storage)
+            f'Server storage failure for Server {self.name} available storage {self.available_storage}, ' \
+            f'task required storage {task.required_storage}'
         assert self.available_computation >= task.compute_speed, \
-            "Server computation failure for Server {} available computation {}, task compute speed {}" \
-            .format(self.name, self.available_computation, task.compute_speed)
+            f'Server computation failure for Server {self.name} available computation {self.available_computation}, ' \
+            f'task compute speed {task.compute_speed}'
         assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
-            "Server available bandwidth failure for Server {} available bandwidth {}, " \
-            "task loading speed {} and sending speed {}" \
-            .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
+            f'Server available bandwidth failure for Server {self.name} available bandwidth {self.available_bandwidth}, ' \
+            f'task loading speed {task.loading_speed} and sending speed {task.sending_speed}'
         assert task not in self.allocated_tasks, \
-            "Job {} is already allocated to the server {}" \
-            .format(task.name, self.name)
+            f'Job {task.name} is already allocated to the server {self.name}'
 
         self.allocated_tasks.append(task)
         self.available_storage -= task.required_storage
@@ -175,12 +176,13 @@ class Server(object):
         self.revenue = 0
         self.value = 0
 
-    def mutate(self, percent) -> Server:
+    def mutate(self, percent: float) -> Server:
         """
         Mutate the server by a percentage
+
         :param percent: The percentage to increase the max resources by
         """
-        return Server('mutated {}'.format(self.name),
+        return Server(f'mutated {self.name}',
                       int(max(1, self.storage_capacity - abs(gauss(0, self.storage_capacity * percent)))),
                       int(max(1, self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
                       int(max(1, self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
@@ -189,6 +191,7 @@ class Server(object):
     def update_capacities(self, computation_capacity: int, bandwidth_capacity: int):
         """
         Update the computational and bandwidth capacities of the server
+
         :param computation_capacity: The new computational capacity
         :param bandwidth_capacity: The new bandwidth capacity
         """
@@ -201,7 +204,6 @@ class Server(object):
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:
     """The difference between two severs"""
-    return "{}: {}, {}, {}".format(normal_server.name,
-                                   normal_server.storage_capacity - mutate_server.storage_capacity,
-                                   normal_server.computation_capacity - mutate_server.computation_capacity,
-                                   normal_server.bandwidth_capacity - mutate_server.bandwidth_capacity)
+    return f'{normal_server.name}: {normal_server.storage_capacity - mutate_server.storage_capacity}, ' \
+           f'{normal_server.computation_capacity - mutate_server.computation_capacity}, ' \
+           f'{normal_server.bandwidth_capacity - mutate_server.bandwidth_capacity}'

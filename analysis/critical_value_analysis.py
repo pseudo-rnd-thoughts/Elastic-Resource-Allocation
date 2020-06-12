@@ -17,13 +17,14 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
                             save_formats: Iterable[ImageFormat] = ()):
     """
     Analysis of the critical value analysis
+
     :param encoded_filenames: The list of encoded filenames
     :param x_axis: The x axis to plot
     :param title: The title of the graph
     :param save_formats: List of save formats
     """
     data = []
-    test_name: str = ""
+    test_name: str = ''
     model_names: List[str] = []
 
     for encoded_filename in encoded_filenames:
@@ -35,9 +36,9 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
 
             for pos, result in enumerate(critical_value_data):
                 for algorithm_name, critical_value_result in result.items():
-                    if algorithm_name == "price change 3":
-                        data.append((model_name, pos, "Iterative Auction", critical_value_result['total money'], 1,
-                                     "", "", "", critical_value_result['solve_time']))
+                    if algorithm_name == 'price change 3':
+                        data.append((model_name, pos, 'Iterative Auction', critical_value_result['total money'], 1,
+                                     '', '', '', critical_value_result['solve_time']))
                     else:
                         data.append((model_name, pos, algorithm_name,
                                      critical_value_result['total money'],
@@ -52,7 +53,7 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
                                      'Solve Time'])
 
     g = sns.FacetGrid(df, col='Model', height=6, sharex=False)
-    g: sns.FacetGrid = (g.map(sns.barplot, x_axis, 'Algorithm Name').set_titles("{col_name}"))
+    g: sns.FacetGrid = (g.map(sns.barplot, x_axis, 'Algorithm Name').set_titles('{col_name}'))
 
     for pos, model in enumerate(model_names):
         values = [np.mean(df[(df['Model'] == model) & (df['Algorithm Name'] == algo)][x_axis])
@@ -62,7 +63,7 @@ def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: st
     g.fig.subplots_adjust(top=0.92)
     g.fig.suptitle(title)
 
-    save_plot(analysis_filename(test_name, x_axis), "critical_value", image_formats=save_formats)
+    save_plot(analysis_filename(test_name, x_axis), 'critical_value', image_formats=save_formats)
     plt.show()
 
 
@@ -70,17 +71,17 @@ if __name__ == "__main__":
     # No old results
 
     basic = [
-        "critical_values_results_basic_j12_s2_0",
-        # "critical_values_results_basic_j15_s2_0",
-        "critical_values_results_basic_j15_s3_0",
-        "critical_values_results_basic_j25_s5_0"
+        'critical_values_results_basic_j12_s2_0',
+        # 'critical_values_results_basic_j15_s2_0',
+        'critical_values_results_basic_j15_s3_0',
+        'critical_values_results_basic_j25_s5_0'
     ]
 
     paper = [
-        "flexible_auction_fog_j15_s3_0",
-        "flexible_auction_fog_j25_s5_0"
+        'flexible_auction_fog_j15_s3_0',
+        'flexible_auction_fog_j25_s5_0'
     ]
 
     for attribute in ['Total Money', 'Best Total Money', 'Solve Time']:
-        critical_value_analysis(paper, attribute, '{} of Fog model'.format(attribute),
+        critical_value_analysis(paper, attribute, f'{attribute} of Fog model',
                                 save_formats=[ImageFormat.EPS, ImageFormat.PNG])

@@ -37,9 +37,9 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
     """
     model = CpoModel("Matrix value")
 
-    loading_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="loading speed")
-    compute_speed = model.integer_var(min=1, max=server.available_computation, name="compute speed")
-    sending_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name="sending speed")
+    loading_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name='loading speed')
+    compute_speed = model.integer_var(min=1, max=server.available_computation, name='compute speed')
+    sending_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name='sending speed')
 
     model.add(task.required_storage / loading_speed + task.required_computation / compute_speed +
               task.required_results_data / sending_speed <= task.deadline)
@@ -78,14 +78,14 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
         (allocated_task, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
         allocate(allocated_task, s, w, r, allocated_server)
         if debug_allocation:
-            print("Job {} on Server {} with value {:.3f}, loading {} compute {} sending {}"
-                  .format(allocated_task.name, allocated_server.name, v, s, w, r))
+            print(f'Job {allocated_task.name} on Server {allocated_server.name} with value {v:.3f}, '
+                  f'loading {s} compute {w} sending {r}')
 
         # Remove the task from the allocation matrix
         for server in servers:
             if (allocated_task, server) in allocation_value_matrix:
                 if debug_pop:
-                    print("Pop task {} and server {}".format(allocated_task.name, server.name))
+                    print(f'Pop task {allocated_task.name} and server {server.name}')
                 allocation_value_matrix.pop((allocated_task, server))
 
         # Remove the task from the unallocated tasks and check if the allocated server can now not run any of the tasks
@@ -98,6 +98,6 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
             # If task cant be run then remove the task
             elif (task, allocated_server) in allocation_value_matrix:
                 if debug_pop:
-                    print("Pop task {} and server {}".format(task.name, allocated_server.name))
+                    print(f'Pop task {task.name} and server {allocated_server.name}')
                 allocation_value_matrix.pop((task, allocated_server))
-    return Result("Matrix Greedy " + allocation_value_policy.name, tasks, servers, solve_time=time() - start_time)
+    return Result(f'Matrix Greedy {allocation_value_policy.name}', tasks, servers, solve_time=time() - start_time)

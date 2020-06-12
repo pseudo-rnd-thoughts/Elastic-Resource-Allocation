@@ -1,7 +1,7 @@
 """
 Branch and bound algorithm that uses Cplex and domain knowledge to find the optimal solution to the problem case
-Lower bound is the current social welfare
-Upper bound is the possible sum of all tasks
+
+Lower bound is the current social welfare, Upper bound is the possible sum of all tasks
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from src.core.task import Task
 
 
 def print_allocation(task_server_allocations: Dict[Server, List[Task]]):
-    print(', '.join(['{} -> [{}]'.format(server.name, ', '.join([task.name for task in tasks]))
+    print(', '.join([f'{server.name} -> [{", ".join([task.name for task in tasks])}]'
                      for server, tasks in task_server_allocations.items()]))
 
 
@@ -30,6 +30,7 @@ def generate_candidates(allocation: Dict[Server, List[Task]], tasks: List[Task],
                         debug_new_candidates: bool = False) -> List[Tuple[float, float, Dict[Server, List[Task]], int]]:
     """
     Generates new candidates of all of the allocations that the task can run on any of the servers
+
     :param allocation: The allocations of tasks to servers
     :param tasks: List of the tasks
     :param servers: List of the servers
@@ -52,8 +53,8 @@ def generate_candidates(allocation: Dict[Server, List[Task]], tasks: List[Task],
         new_candidates.append((lower_bound + task.value, upper_bound, allocation_copy, pos + 1))
 
         if debug_new_candidates:
-            print("New candidates for {} - Lower bound: {}, upper bound: {}, pos: {}"
-                  .format(server.name, lower_bound + task.value, upper_bound, pos + 1))
+            print(f'New candidates for {server.name} - Lower bound: {lower_bound + task.value}, '
+                  f'upper bound: {upper_bound}, pos: {pos + 1}')
             print_allocation(allocation_copy)
 
     # Non-allocation to a server if the new upper bound is greater than the current best lower bound
@@ -68,6 +69,7 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
                            debug_update_lower_bound: bool = False, debug_feasibility: bool = False) -> Result:
     """
     Branch and bound based algorithm
+
     :param tasks: A list of tasks
     :param servers: A list of servers
     :param feasibility: Feasibility function
@@ -104,19 +106,19 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
 
         if best_lower_bound < upper_bound:
             if debug_checking_allocation:
-                print("Checking - Lower bound: {}, Upper bound: {}, pos: {}".format(lower_bound, upper_bound, pos))
+                print(f'Checking - Lower bound: {lower_bound}, Upper bound: {upper_bound}, pos: {pos}')
                 # print_allocation(allocation)
 
             # Check if the allocation is feasible
             task_speeds = feasibility(allocation)
             if debug_feasibility:
-                print("Allocation feasibility: {}".format(task_speeds is not None))
+                print(f'Allocation feasibility: {task_speeds is not None}')
 
             if task_speeds:
                 # Update the lower bound if better
                 if best_lower_bound < lower_bound:
                     if debug_update_lower_bound:
-                        print("Update - New Lower bound: {}".format(lower_bound))
+                        print(f'Update - New Lower bound: {lower_bound}')
 
                     best_allocation = allocation
                     best_speeds = task_speeds
@@ -134,4 +136,4 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
                                     best_speeds[allocated_task][2], server)
             server.allocate_task(allocated_task)
 
-    return Result("Branch & Bound", tasks, servers, time() - start_time)
+    return Result('Branch & Bound', tasks, servers, time() - start_time)

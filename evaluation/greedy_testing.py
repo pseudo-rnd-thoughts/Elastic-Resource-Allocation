@@ -13,9 +13,9 @@ from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
 from src.core.super_server import SuperServer
 from src.core.core import results_filename, load_args
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.core.model import reset_model, ModelDist, load_dist
-from src.greedy.greedy import greedy_algorithm
+from src.model.model_distribution import ModelDist, reset_model, load_dist
 
+from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 
@@ -41,6 +41,7 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
                          optimal_time_limit: int = 30, fixed_time_limit: int = 30, relaxed_time_limit: int = 30):
     """
     Greedy test with optimal found
+
     :param model_dist: The model distribution
     :param repeat: The repeat
     :param repeats: Number of model runs
@@ -48,8 +49,7 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     :param fixed_time_limit: The compute time for the fixed optimal algorithm
     :param relaxed_time_limit: The compute time for the relaxed algorithm
     """
-    print("Greedy test with optimal calculated for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Greedy test with optimal calculated for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
 
     # Loop, for each run all of the algorithms
@@ -61,20 +61,20 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         # Find the optimal solution
         optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
         algorithm_results[optimal_result.algorithm_name] = optimal_result.store() \
-            if optimal_result is not None else "failure"
+            if optimal_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Find the fixed solution
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
         fixed_result = fixed_optimal_algorithm(fixed_tasks, servers, fixed_time_limit)
         algorithm_results[fixed_result.algorithm_name] = fixed_result.store() \
-            if fixed_result is not None else "failure"
+            if fixed_result is not None else 'failure'
         reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
         algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store() \
-            if relaxed_result is not None else "failure"
+            if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Loop over all of the greedy policies permutations
@@ -99,18 +99,18 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     filename = results_filename('optimal_greedy_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
     """
     All policies test
+
     :param model_dist: The model distributions
     :param repeat: The repeat
     :param repeats: The number of repeats
     """
-    print("Greedy test of all policies for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Greedy test of all policies for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
 
     # Loop, for each run all of the algorithms
@@ -126,7 +126,7 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
                     greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
                     algorithm_results[greedy_result.algorithm_name] = greedy_result.store()
-                    print("{} -> {}".format(greedy_result.algorithm_name, greedy_result.store()))
+                    print(f'{greedy_result.algorithm_name} -> {greedy_result.store()}')
                     reset_model(tasks, servers)
 
         # Add the results to the data
@@ -136,13 +136,14 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
     filename = results_filename('all_greedy_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
                     optimal_time_limit: int = 300, relaxed_time_limit: int = 150):
     """
     Allocation test
+
     :param model_dist: The model distribution
     :param repeat: The repeat number
     :param repeats: The number of repeats
@@ -153,6 +154,7 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     def task_data() -> Dict[str, Tuple[int, int, int, str]]:
         """
         Generate the important task data
+
         :return: The dictionary of task data
         """
         return {
@@ -163,6 +165,7 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     def model_data():
         """
         Generate the json for saving the model data usd
+
         :return: The json for the
         """
         return (
@@ -172,8 +175,8 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
              for server in servers}
         )
 
-    print("Allocation testing using the results of the greedy, relaxed and optimal{} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Allocation testing using the results of the greedy, relaxed and optimal {model_dist.num_tasks} tasks and '
+          f'{model_dist.num_servers} servers')
     data = []
 
     # Loop, for each run all of the algorithms
@@ -185,13 +188,13 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
         # Find the optimal solution
         optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
         algorithm_results[optimal_result.algorithm_name] = optimal_result.store(tasks_data=task_data()) \
-            if optimal_result is not None else "failure"
+            if optimal_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
         algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store(tasks_data=task_data()) \
-            if relaxed_result is not None else "failure"
+            if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Loop over all of the greedy policies permutations
@@ -216,19 +219,20 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     filename = results_filename('optimal_greedy_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
     """
     Testing to be used in the paper
+
     :param model_dist: Model distribution
     :param repeat: The repeat
     :param repeats: The number of repeats
     :param debug_results: If to debug the results
     """
-    print("Greedy testing with optimal, fixed and relaxed for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Greedy testing with optimal, fixed and relaxed for {model_dist.num_tasks} tasks and ' 
+          f'{model_dist.num_servers} servers')
     data = []
     for _ in tqdm(range(repeats)):
         tasks, servers = model_dist.create()

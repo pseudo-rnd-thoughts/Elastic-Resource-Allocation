@@ -185,6 +185,7 @@ class PriorityQueue(Generic[T]):
     def assert_tree(self, pos: int = 0, check: bool = True):
         """
         Checks that the tree is correct
+
         :param pos: The position in the queue to check
         :param check: If to check the tree, an optimisation parameter
         """
@@ -194,15 +195,13 @@ class PriorityQueue(Generic[T]):
         left = self.left(pos)
         if left < self.size:
             assert self.comparator(self.queue[pos], self.queue[left]) != Comparison.LESS, \
-                "Assert tree in pos: {} ({}) is less than left: {} ({}), [{}]" \
-                .format(pos, left, self.to_string(self.queue[pos]), self.to_string(self.queue[left]),
-                        ','.join([self.to_string(element) for element in self.queue]))
+                f"Assert tree in pos: {pos} ({left}) is less than left: {self.to_string(self.queue[pos])} " \
+                f"({self.to_string(self.queue[left])}), [{','.join([self.to_string(element) for element in self.queue])}]"
             self.assert_tree(left)
 
         right = self.right(pos)
         if right < self.size:
             assert self.comparator(self.queue[pos], self.queue[right]) != Comparison.LESS, \
-                "Assert tree in pos: {} ({}) is less than right: {} ({}), [{}]" \
-                .format(pos, left, self.to_string(self.queue[pos]), self.to_string(self.queue[right]),
-                        ','.join([self.to_string(element) for element in self.queue]))
+                f"Assert tree in pos: {pos} ({left}) is less than right: {self.to_string(self.queue[pos])} " \
+                f"({self.to_string(self.queue[right])}), [{','.join([self.to_string(element) for element in self.queue])}]"
             self.assert_tree(right)

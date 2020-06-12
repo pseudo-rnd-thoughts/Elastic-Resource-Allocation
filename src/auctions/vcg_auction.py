@@ -17,6 +17,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server],
                 debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
+
     :param tasks: A list of tasks
     :param servers: A list of servers
     :param debug_running: Debug what is being calculated
@@ -29,12 +30,12 @@ def vcg_auction(tasks: List[Task], servers: List[Server],
 
     # Find the optimal solution
     if debug_running:
-        print("Finding optimal")
+        print('Finding optimal')
     optimal_solution = branch_bound_algorithm(tasks, servers)
     if optimal_solution is None:
         return None
     elif debug_results:
-        print("Optimal total utility: {}".format(optimal_solution.sum_value))
+        print(f'Optimal total utility: {optimal_solution.sum_value}')
 
     # Save the task and server information from the optimal solution
     allocated_tasks = [task for task in tasks if task.running_server]
@@ -43,7 +44,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server],
     }
 
     if debug_running:
-        print("Allocated tasks: {}".format(", ".join([task.name for task in allocated_tasks])))
+        print(f"Allocated tasks: {', '.join([task.name for task in allocated_tasks])}")
 
     # For each allocated task, find the sum of values if the task doesnt exist
     for task in allocated_tasks:
@@ -53,14 +54,14 @@ def vcg_auction(tasks: List[Task], servers: List[Server],
 
         # Find the optimal solution where the task doesnt exist
         if debug_running:
-            print("Solving for without task {}".format(task.name))
+            print(f'Solving for without task {task.name}')
         optimal_prime = branch_bound_algorithm(tasks_prime, servers)
         if optimal_prime is None:
             return None
         else:
             task_prices[task] = optimal_solution.sum_value - optimal_prime.sum_value
             if debug_results:
-                print("Job {}: £{:.1f}, Value: {} ".format(task.name, task_prices[task], task.value))
+                print(f'Job {task.name}: £{task_prices[task]:.1f}, Value: {task.value} ')
 
     # Reset the model and allocates all of the their info from the original optimal solution
     reset_model(tasks, servers)
@@ -69,4 +70,4 @@ def vcg_auction(tasks: List[Task], servers: List[Server],
         task.allocate(s, w, r, server, price=task_prices[task])
         server.allocate_task(task)
 
-    return Result('vcg', tasks, servers, time() - start_time, show_money=True)
+    return Result('VCG', tasks, servers, time() - start_time, show_money=True)

@@ -16,6 +16,7 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
                                  time_limit: int = 60) -> Optional[Dict[Task, Tuple[int, int, int]]]:
     """
     Checks whether a task to server allocation is a feasible solution to the problem
+
     :param task_server_allocations: The current task allocation
     :param time_limit: The time limit to solve the problem within
     :return: An optional dictionary of the task to the tuple of resource speeds
@@ -29,11 +30,11 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
     for server, tasks in task_server_allocations.items():
         for task in tasks:
             loading_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name='Job {} loading speed'.format(task.name))
+                                                     name=f'Job {task.name} loading speed')
             compute_speeds[task] = model.integer_var(min=1, max=server.computation_capacity,
-                                                     name='Job {} compute speed'.format(task.name))
+                                                     name=f'Job {task.name} compute speed')
             sending_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name='Job {} sending speed'.format(task.name))
+                                                     name=f'Job {task.name} sending speed')
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -57,6 +58,7 @@ def fixed_feasible_allocation(task_server_allocations: Dict[Server, List[FixedTa
         -> Optional[Dict[FixedTask, Tuple[int, int, int]]]:
     """
     Checks whether a task to server allocation is a feasible solution to the problem
+
     :param task_server_allocations: The current task allocation
     :return: An optional dictionary of the task to the tuple of resource speeds
     """

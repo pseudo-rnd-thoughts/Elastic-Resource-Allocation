@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from src.core.model import load_dist, ModelDist
+from src.model.model_distribution import load_dist, ModelDist
 from src.core.server import Server
 from src.core.task import Task
 
@@ -39,11 +39,11 @@ def plot_task_distribution(model_dists: List[ModelDist], repeats: int = 10000):
         for _ in range(repeats):
             tasks = model_dist.create()[0]
             for task in tasks:
-                data.append((model_dist.dist_name, "Storage", task.required_storage))
-                data.append((model_dist.dist_name, "Computation", task.required_computation))
-                data.append((model_dist.dist_name, "Bandwidth", task.required_results_data))
-                data.append((model_dist.dist_name, "Value", task.value))
-                data.append((model_dist.dist_name, "Deadline", task.deadline))
+                data.append((model_dist.dist_name, 'Storage', task.required_storage))
+                data.append((model_dist.dist_name, 'Computation', task.required_computation))
+                data.append((model_dist.dist_name, 'Bandwidth', task.required_results_data))
+                data.append((model_dist.dist_name, 'Value', task.value))
+                data.append((model_dist.dist_name, 'Deadline', task.deadline))
 
     df = pd.DataFrame(data, columns=['Model', 'Resource', 'Value'])
 
@@ -56,6 +56,7 @@ def plot_task_distribution(model_dists: List[ModelDist], repeats: int = 10000):
 def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     """
     Plots the server distribution of a list of models
+
     :param model_dists: A list of model distributions
     :param repeats: The number of repeats
     """
@@ -68,13 +69,14 @@ def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
     df.rename(columns={'variable': 'Resource', 'value': 'Value'}, inplace=True)
 
     sns.violinplot('Resource', 'Value', hue='Model', data=df)
-    plt.title("Server Distribution")
+    plt.title('Server Distribution')
     plt.show()
 
 
 def plot_tasks(tasks: List[Task], plot_utility_deadline: bool = True):
     """
     Plots the tasks on a graph
+
     :param tasks: A list of tasks to plot
     :param plot_utility_deadline: Plots the utility and deadline
     """
@@ -90,13 +92,14 @@ def plot_tasks(tasks: List[Task], plot_utility_deadline: bool = True):
     wide_df.rename(columns={'variable': 'Resource'}, inplace=True)
     sns.barplot(x='value', y='Name', hue='Resource', data=wide_df)
     plt.ylabel('Name')
-    plt.title("Tasks")
+    plt.title('Tasks')
     plt.show()
 
 
 def plot_servers(servers: List[Server]):
     """
     Plots the severs on a graph
+
     :param servers: A list of servers to plot
     """
     data = [[server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity]
@@ -106,7 +109,7 @@ def plot_servers(servers: List[Server]):
     wide_df.rename(columns={'variable': 'Resource'}, inplace=True)
     sns.barplot(x='Name', y='value', hue='Resource', data=wide_df)
     plt.xlabel('Name')
-    plt.title("Servers")
+    plt.title('Servers')
     plt.show()
 
 

@@ -13,7 +13,7 @@ from src.auctions.vcg_auction import vcg_auction
 
 from src.core.core import results_filename, load_args
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.core.model import ModelDist, reset_model, load_dist
+from src.model.model_distribution import ModelDist, reset_model, load_dist
 
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -38,8 +38,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     :param fixed_vcg_time_limit:
     :param decentralised_iterative_time_limit: The decentralised iterative time limit
     """
-    print("Critical Value testing for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Critical Value testing for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
 
     data = []
 
@@ -64,7 +63,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
         for server in servers:
             server.price_change = price_change
         iterative_result = decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
-        auction_results['price change {}'.format(price_change)] = iterative_result.store()
+        auction_results[f'price change {price_change}'] = iterative_result.store()
         reset_model(tasks, servers)
         
         # Tests the critical value
@@ -77,8 +76,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
                                                                        resource_allocation_policy)
                         auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
                     except Exception as e:
-                        print("Critical Error")
-                        print(e)
+                        print('Critical Error', e)
                     
                     reset_model(tasks, servers)
 
@@ -89,21 +87,21 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     filename = results_filename('critical_values_results', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int = 50,
                                 vcg_time_limit: int = 60, fixed_vcg_time_limit: int = 60):
     """
     All policies test for critical value
+
     :param model_dist: The model dist
     :param repeat: The repeat
     :param repeats: The number of repeats
     :param vcg_time_limit: The VCG time limit
     :param fixed_vcg_time_limit: THe Fixed VCG time limit
     """
-    print("Critical value test of all policies for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Critical value test of all policies for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
     
     # Loop, for each run all of the algorithms
@@ -139,21 +137,22 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
     filename = results_filename('all_critical_value_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
-    print("Successful, data saved to " + filename)
+    print(f'Successful, data saved to {filename}')
 
 
 def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_time_limit: int = 15,
                     debug_results: bool = False):
     """
     Critical value auction testing
+
     :param model_dist: The model distribution
     :param repeat: The repeat number
     :param repeats: The number of repeats
     :param vcg_time_limit: The VCG time limit
     :param debug_results: If to debug the results
     """
-    print("Auction testing with optimal, fixed and relaxed for {} tasks and {} servers"
-          .format(model_dist.num_tasks, model_dist.num_servers))
+    print(f'Auction testing with optimal, fixed and relaxed for {model_dist.num_tasks} tasks and '
+          f'{model_dist.num_servers} servers')
     data = []
     for _ in tqdm(range(repeats)):
         tasks, servers = model_dist.create()

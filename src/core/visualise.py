@@ -10,16 +10,16 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
-from src.core.core import ImageFormat, analysis_filename, save_plot
+from src.core.core import ImageFormat, save_plot
 from src.core.server import Server
 from src.core.task import Task
 
-matplotlib.rcParams['font.family'] = "monospace"
+matplotlib.rcParams['font.family'] = 'monospace'
 
 
 def minimise_resource_allocation(servers: List[Server]):
     for server in servers:
-        model = CpoModel("MinimumAllocation")
+        model = CpoModel('MinimumAllocation')
 
         loading_speeds: Dict[Task, CpoVariable] = {}
         compute_speeds: Dict[Task, CpoVariable] = {}
@@ -31,11 +31,11 @@ def minimise_resource_allocation(servers: List[Server]):
         # Loop over each task to allocate the variables and add the deadline constraints
         for task in server.allocated_tasks:
             loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
-                                                     name="{} loading speed".format(task.name))
+                                                     name=f'{task.name} loading speed')
             compute_speeds[task] = model.integer_var(min=1, max=max_computation,
-                                                     name="{} compute speed".format(task.name))
+                                                     name=f'{task.name} compute speed')
             sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
-                                                     name="{} sending speed".format(task.name))
+                                                     name=f'{task.name} sending speed')
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -65,6 +65,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                             save_formats: Iterable[ImageFormat] = (), minimum_allocation: bool = False):
     """
     Plots the allocation results
+
     :param tasks: List of tasks
     :param servers: List of servers
     :param title: The title
@@ -90,7 +91,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     resources_df = [loading_df, compute_df, sending_df]
 
     n_col, n_ind = len(resources_df[0].columns), len(resources_df[0].index)
-    hatching = r'\'
+    hatching = '\\'
 
     axe = plt.subplot(111)
     for resource_df in resources_df:  # for each data frame
@@ -121,5 +122,5 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                loc=[1.025, pos], title=r'\textbf{Server resources}')
     axe.add_artist(tasks_legend)
 
-    save_plot(title.lower().replace(' ', '_'), './figures/allocation', image_format=save_format)
+    save_plot(title.lower().replace(' ', '_'), './figures/allocation', image_formats=save_formats)
     plt.show()

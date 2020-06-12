@@ -1,7 +1,7 @@
 """
 Branch and bound algorithm that uses Cplex and domain knowledge to find the optimal solution to the problem case
-Lower bound is the current social welfare
-Upper bound is the possible sum of all tasks
+
+Lower bound is the current social welfare, Upper bound is the possible sum of all tasks
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ def feasible_allocation(task_server_allocations: Dict[Server, List[Task]]) \
     :param task_server_allocations: Current task server allocation
     :return: If valid solution exists then return allocation
     """
-    model = CpoModel("Allocation Feasibility")
+    model = CpoModel('Allocation Feasibility')
 
     loading_speeds: Dict[Task, CpoVariable] = {}
     compute_speeds: Dict[Task, CpoVariable] = {}
@@ -32,11 +32,11 @@ def feasible_allocation(task_server_allocations: Dict[Server, List[Task]]) \
     for server, tasks in task_server_allocations.items():
         for task in tasks:
             loading_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name='Task {} loading speed'.format(task.name))
+                                                     name=f'Task {task.name} loading speed')
             compute_speeds[task] = model.integer_var(min=1, max=server.computation_capacity,
-                                                     name='Task {} compute speed'.format(task.name))
+                                                     name=f'Task {task.name} compute speed')
             sending_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name='Task {} sending speed'.format(task.name))
+                                                     name=f'Task {task.name} sending speed')
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -48,9 +48,11 @@ def feasible_allocation(task_server_allocations: Dict[Server, List[Task]]) \
 
     model_solution = model.solve(log_context=None)
     if model_solution.get_search_status() == SOLVE_STATUS_FEASIBLE:
-        return {task: (model_solution.get_value(loading_speeds[task]), model_solution.get_value(compute_speeds[task]),
-                       model_solution.get_value(sending_speeds[task]))
-                for tasks in task_server_allocations.values() for task in tasks}
+        return {
+            task: (model_solution.get_value(loading_speeds[task]), model_solution.get_value(compute_speeds[task]),
+                   model_solution.get_value(sending_speeds[task]))
+            for tasks in task_server_allocations.values() for task in tasks
+        }
     else:
         return None
 

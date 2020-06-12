@@ -1,4 +1,3 @@
-"""A single shot auction in a centralised way"""
 """
 Implementation of a critical value auction using the greedy algorithm in order to determine allocation
 

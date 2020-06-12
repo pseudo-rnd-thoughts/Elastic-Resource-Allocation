@@ -1,14 +1,15 @@
+
 import json
 
 from tqdm import tqdm
 
 from src.core.core import load_args, results_filename
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.core.model import load_dist, ModelDist, reset_model
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from src.greedy.server_selection_policy import SumResources, TaskSumResources
 from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+from src.model.model_distribution import load_dist, ModelDist, reset_model
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 from src.optimal.optimal import optimal_algorithm
 
@@ -60,7 +61,7 @@ def resource_ratio_testing(model_dist: ModelDist, repeat: int, repeats: int = 10
 
                 reset_model(tasks, servers)
 
-            results['ratio {}'.format(ratio)] = ratio_results
+            results[f'ratio {ratio}'] = ratio_results
         data.append(results)
 
         # Save the results to the file

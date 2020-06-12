@@ -9,7 +9,7 @@ from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
 from src.core.core import load_args, print_model, results_filename
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.core.model import ModelDist, load_dist, reset_model
+from src.model.model_distribution import ModelDist, load_dist, reset_model
 from src.core.super_server import SuperServer
 from src.optimal.optimal import optimal_algorithm
 
@@ -17,18 +17,19 @@ from src.optimal.optimal import optimal_algorithm
 def optimality_testing(model_dist: ModelDist):
     """
     Optimality testing
+
     :param model_dist: The model distribution
     """
     tasks, servers = model_dist.create()
 
-    print("Models")
+    print('Models')
     print_model(tasks, servers)
     for time_limit in [10, 30, 60, 5*60, 15*60, 60*60, 24*60*60]:
-        print("\n\nTime Limit: {}".format(time_limit))
+        print(f'\n\nTime Limit: {time_limit}')
         result = optimal_algorithm(tasks, servers, time_limit)
         print(result.store())
         if result.data['solve_status'] == 'Optimal':
-            print("Solved completely at time limit: {}".format(time_limit))
+            print(f'Solved completely at time limit: {time_limit}')
             break
         reset_model(tasks, servers)
 
@@ -52,7 +53,7 @@ def optimal_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
 
         for price_change in [1, 2, 3, 5, 10]:
             dia_result = decentralised_iterative_auction(tasks, servers, 5)
-            results['dia {}'.format(price_change)] = dia_result.store()
+            results[f'dia {price_change}'] = dia_result.store()
 
             reset_model(tasks, servers)
 

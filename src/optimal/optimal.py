@@ -22,9 +22,9 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
     :param time_limit: The time limit to solve
     :return: The result from optimal solution
     """
-    assert time_limit > 0, "Time limit: {}".format(time_limit)
+    assert time_limit > 0, f'Time limit: {time_limit}'
 
-    model = CpoModel("Optimal")
+    model = CpoModel('Optimal')
 
     # The resource speed variables and the allocation variables
     loading_speeds: Dict[Task, CpoVariable] = {}
@@ -38,9 +38,9 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(task.name))
-        compute_speeds[task] = model.integer_var(min=1, max=max_computation, name="{} compute speed".format(task.name))
-        sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(task.name))
+        loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} loading speed')
+        compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
+        sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} sending speed')
 
         model.add((task.required_storage / loading_speeds[task]) +
                   (task.required_computation / compute_speeds[task]) +
@@ -48,8 +48,7 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
 
         # The task allocation variables and add the allocation constraint
         for server in servers:
-            server_task_allocation[(task, server)] = model.binary_var(name="Job {} Server {}"
-                                                                      .format(task.name, server.name))
+            server_task_allocation[(task, server)] = model.binary_var(name=f'Job {task.name} Server {server.name}')
         model.add(sum(server_task_allocation[(task, server)] for server in servers) <= 1)
 
     # For each server, add the resource constraint
@@ -70,7 +69,7 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print("Optimal algorithm failed")
+        print('Optimal algorithm failed')
         print_model_solution(model_solution)
         print_model(tasks, servers)
         return None
@@ -85,9 +84,9 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
                                   model_solution.get_value(sending_speeds[task]), server)
                     server.allocate_task(task)
     except (AssertionError, KeyError) as e:
-        print("Error:", e)
+        print('Error:', e)
         print_model_solution(model_solution)
         return None
 
-    return Result("Optimal", tasks, servers, round(model_solution.get_solve_time(), 2),
+    return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                   solve_status=model_solution.get_solve_status())

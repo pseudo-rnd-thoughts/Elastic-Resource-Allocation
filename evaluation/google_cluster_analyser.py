@@ -11,20 +11,20 @@ def analysis():
     """
     Analysis the task events file
     """
-    print("Start loading csv at {}".format(datetime.now()))
+    print(f'Start loading csv at {datetime.now()}')
     df: pd.DataFrame = pd.read_csv('complete_task_events.csv', header=None,
                                    names=['timestamp', 'missing info', 'job ID', 'task index within the job',
                                           'machine ID', 'event type', 'user name', 'scheduling class', 'priority',
                                           'resource request for CPU cores', 'resource request for RAM',
                                           'resource request for local disk space', 'different-machine constraint'])
-    print("Finished at {}".format(datetime.now()))
+    print(f'Finished at {datetime.now()}')
 
-    print("\nOriginal df: {}\n{}".format(df.shape, df.head(6)))
+    print(f'\nOriginal df: {df.shape}\n{df.head(6)}')
 
     df = df[['timestamp', 'job ID', 'task index within the job', 'machine ID', 'event type', 'scheduling class',
              'priority', 'resource request for CPU cores', 'resource request for RAM',
              'resource request for local disk space']]
-    print("\nImportant info df: {}\n".format(df.shape))
+    print(f'\nImportant info df: {df.shape}\n')
 
     df = df[(df['resource request for CPU cores'].notnull()) &
             (df['resource request for RAM'].notnull()) &
@@ -32,16 +32,16 @@ def analysis():
             (df['resource request for CPU cores'] > 0) &
             (df['resource request for RAM'] > 0) &
             (df['resource request for local disk space'] > 0)]
-    print("\nValid requests df: {}\n".format(df.shape))
+    print(f'\nValid requests df: {df.shape}\n')
 
-    print("\nAdding task ID\n")
+    print('\nAdding task ID\n')
     df['task ID'] = df['job ID'].map(str) + df['task index within the job'].map(str)
     df['task ID'] = df['task ID'].map(int)
 
     task_ids = df['task ID'].unique()
-    print("Number of task ids: {}".format(task_ids.shape))
+    print(f'Number of task ids: {task_ids.shape}')
 
-    print("Finding all finished tasks")
+    print('Finding all finished tasks')
     df.grouped('task ID')['event type'].apply(list)
     finished_task_ids = []
     for task_id in task_ids:
@@ -50,17 +50,16 @@ def analysis():
         if 0 in task_id_events and 1 in task_id_events and 4 in task_id_events and \
                 2 not in task_id_events and 3 not in task_id_events and 5 not in task_id_events:
             finished_task_ids.append(task_id)
-    print("Number of finished task is {}".format(len(finished_task_ids)))
+    print(f'Number of finished task is {len(finished_task_ids)}')
 
     df = df[df['task ID'].isin(finished_task_ids)]
-    print("\nFinish tasks: {}\n{}".format(df.shape, df.head(6)))
+    print(f'\nFinish tasks: {df.shape}\n{df.head(6)}')
 
-    timestamped_jobs_df = pd.DataFrame(columns=['job ID', 'task index within the job', 'task ID',
-                                                'machine ID', 'event type', 'user name', 'scheduling class', 'priority',
-                                                'resource request for CPU cores', 'resource request for RAM',
-                                                'resource request for local disk space', 'different-machine constraint',
-                                                'submit time', 'scheduled time', 'finish time', 'task schedule time',
-                                                'task execution time'])
+    timestamped_jobs_df = pd.DataFrame(columns=[
+        'job ID', 'task index within the job', 'task ID', 'machine ID', 'event type', 'user name', 'scheduling class',
+        'priority', 'resource request for CPU cores', 'resource request for RAM', 'resource request for local disk space',
+        'different-machine constraint', 'submit time', 'scheduled time', 'finish time', 'task schedule time',
+        'task execution time'])
     for finished_task_id in finished_task_ids:
         task_id_info = df[df['task ID'] == finished_task_id]
         sorted_timestamps = task_id_info.sort_values('timestamp')
@@ -94,9 +93,9 @@ def analysis():
                                     'finish time': finish_time, 'task schedule time': task_schedule_time,
                                     'task execution time': task_execution_time}, ignore_index=True)
 
-    print("Start saving timestamped csv at {}".format(datetime.now()))
+    print(f'Start saving timestamped csv at {datetime.now()}')
     timestamped_jobs_df.to_csv('timestamped_task_events.csv', index=False)
-    print("Finished at {}".format(datetime.now()))
+    print(f'Finished at {datetime.now()}')
 
 
 if __name__ == "__main__":

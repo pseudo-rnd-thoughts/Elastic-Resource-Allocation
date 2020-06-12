@@ -50,21 +50,21 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
     assert time_limit > 0, "Time limit: {}".format(time_limit)
 
     if debug_results:
-        print("Evaluating task {}'s price on server {}".format(new_task.name, server.name))
-    model = CpoModel("Job {} Price".format(new_task.name))
+        print(f'Evaluating task {new_task.name}\'s price on server {server.name}')
+    model = CpoModel(f'Job {new_task.name} Price')
 
     # Add the new task to the list of server allocated tasks
     tasks = server.allocated_tasks + [new_task]
 
     # Create all of the resource speeds variables
     loading_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                             name="Job {} loading speed".format(task.name)) for task in tasks}
+                                             name=f'Job {task.name} loading speed') for task in tasks}
     compute_speed = {task: model.integer_var(min=1, max=server.computation_capacity,
-                                             name="Job {} compute speed".format(task.name)) for task in tasks}
+                                             name=f'Job {task.name} compute speed') for task in tasks}
     sending_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                             name="Job {} sending speed".format(task.name)) for task in tasks}
+                                             name=f'Job {task.name} sending speed') for task in tasks}
     # Create all of the allocation variables however only on the currently allocated tasks
-    allocation = {task: model.binary_var(name="Job {} allocated".format(task.name)) for task in server.allocated_tasks}
+    allocation = {task: model.binary_var(name=f'Job {task.name} allocated') for task in server.allocated_tasks}
 
     # Add the deadline constraint
     for task in tasks:
@@ -89,7 +89,7 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
     # If the model solution failed then return an infinite price
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print("Decentralised model failure")
+        print('Decentralised model failure')
         print_model_solution(model_solution)
         return inf, {}, {}, {}, {}, server, tasks
 
@@ -100,7 +100,7 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
     task_price = server.revenue - new_server_revenue + server.price_change
     if task_price < initial_cost:  # Add an initial cost the task if the price is less than a set price
         if debug_initial_cost:
-            print("Price set to {} due to initial cost".format(initial_cost))
+            print(f'Price set to {initial_cost} due to initial cost')
         task_price = initial_cost
 
     # Get the resource speeds and task allocations
@@ -113,8 +113,8 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
     assert_solution(loading, compute, sending, allocation)
 
     if debug_results:
-        print("Sever: {} - Prior revenue: {}, new revenue: {}, price change: {} therefore task price: {}"
-              .format(server.name, server.revenue, new_server_revenue, server.price_change, task_price))
+        print(f'Sever: {server.name} - Prior revenue: {server.revenue}, new revenue: {new_server_revenue}, '
+              f'price change: {server.price_change} therefore task price: {task_price}')
 
     return task_price, loading, compute, sending, allocation, server
 
@@ -156,11 +156,11 @@ def allocate_tasks(task_price: float, new_task: Task, server: Server,
             messages += 1
 
         if debug_allocations:
-            print("Job {} is {} to server {} with loading {}, compute {} and sending {}"
-                  .format(task.name, "allocated" if allocation[task] else "unallocated", server.name,
-                          loading[task], compute[task], sending[task]))
+            print(
+                f"Job {task.name} is {'allocated' if allocation[task] else 'unallocated'} to server {server.name} "
+                f"with loading {loading[task]}, compute {compute[task]} and sending {sending[task]}")
     if debug_result:
-        print("{}'s total price: {}".format(server.name, server.revenue))
+        print(f'{server.name}\'s total price: {server.revenue}')
 
     return messages
 
@@ -182,7 +182,7 @@ def decentralised_iterative_auction(tasks: List[Task], servers: List[Server], ti
 
     # Checks that all of the server price change are greater than zero
     assert all(server.price_change > 0 for server in servers), \
-        "Price change - " + ', '.join(["{}: {}".format(server.name, server.price_change) for server in servers])
+        f"Price change - {', '.join(['{}: {}'.format(server.name, server.price_change) for server in servers])}"
 
     unallocated_tasks = tasks.copy()
 
@@ -210,26 +210,25 @@ def decentralised_iterative_auction(tasks: List[Task], servers: List[Server], ti
         # If the task price is less than the task value then allocate the task else remove the
         if task_price <= task.value:
             if debug_allocation:
-                print("Adding task {} to server {} with price {}".format(task.name, server.name, task_price))
+                print(f'Adding task {task.name} to server {server.name} with price {task_price}')
             messages += allocate_tasks(task_price, task, server, loading, compute, sending, allocation,
                                        unallocated_tasks,
                                        debug_allocation, debug_results)
         elif debug_allocation:
-            print("Removing Job {} from the unallocated task as the min price is {} and task value is {}"
-                  .format(task.name, task_price, task.value))
+            print(f'Removing Job {task.name} from the unallocated task as the '
+                  f'min price is {task_price} and task value is {task.value}')
         unallocated_tasks.remove(task)
 
         if debug_allocation:
-            print("Number of unallocated tasks: {}\n".format(len(unallocated_tasks)))
+            print(f'Number of unallocated tasks: {len(unallocated_tasks)}\n')
         iterations += 1
 
     if debug_results:
-        print("It is finished, number of iterations: {} with social welfare: {}"
-              .format(iterations, sum(server.revenue for server in servers)))
+        print(f'It is finished, number of iterations: {iterations} with '
+              f'social welfare: {sum(server.revenue for server in servers)}')
         for server in servers:
-            print("Server {}: total revenue - {}".format(server.name, server.revenue))
-            print("\tJobs - {}".format(', '.join(["{}: £{}".format(task.name, task.price)
-                                                  for task in server.allocated_tasks])))
+            print(f'Server {server.name}: total revenue - {server.revenue}')
+            print(f"\tJobs - {', '.join([f'{task.name}: £{task.price}' for task in server.allocated_tasks])}")
 
     return Result("DIA", tasks, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
                   total_iterations=iterations, total_messages=messages, initial_cost=initial_cost)

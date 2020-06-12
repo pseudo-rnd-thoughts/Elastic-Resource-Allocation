@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
+from typing import Tuple
 
 from docplex.cp.model import CpoModel
 
@@ -14,20 +15,20 @@ class FixedTask(Task):
     """Job with a fixing resource usage speed"""
 
     def __init__(self, task: Task, fixed_value: FixedValue, fixed_name: bool = True):
-        name = "Fixed " + task.name if fixed_name else task.name
-        super().__init__(name, task.required_storage, task.required_computation, task.required_results_data,
-                         task.value, task.deadline)
+        name = f'Fixed {task.name}' if fixed_name else task.name
+        Task.__init__(self, name, task.required_storage, task.required_computation, task.required_results_data,
+                      task.value, task.deadline)
         self.original_task = task
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(fixed_value)
 
-    def find_fixed_speeds(self, fixed_value: FixedValue):
+    def find_fixed_speeds(self, fixed_value: FixedValue) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
         :param fixed_value: The fixed value function to value the speeds
-        :return:
+        :return: Fixed speeds
         """
-        model = CpoModel("Speeds")
+        model = CpoModel('Speeds')
         loading_speed = model.integer_var(min=1)
         compute_speed = model.integer_var(min=1)
         sending_speed = model.integer_var(min=1)
@@ -88,7 +89,7 @@ class FixedValue(ABC):
         :param loading_speed: Loading speed
         :param compute_speed: Compute speed
         :param sending_speed: Sending speed
-        :return: How good it is
+        :return: value representing how good the resource speeds is
         """
         pass
 
@@ -100,7 +101,7 @@ class FixedSumSpeeds(FixedValue):
         FixedValue.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
-        """Evaluation of how good it is"""
+        """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
 
 # TODO add more fixed value classes
