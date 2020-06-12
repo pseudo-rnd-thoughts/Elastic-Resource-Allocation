@@ -1,6 +1,6 @@
 \section{Introduction}\label{sec:introduction}
 In the last few years, cloud computing~\cite{cloud_cite} has become a popular solution for running data-intensive
-applications remotely. However, larger scale data-centres are not a feasible in application domains that require low
+applications remotely. However, large scale data-centres are not a feasible in application domains that require low
 latency or high security and privacy. To deal with such domains, \emph{fog/edge computing} has emerged as a
 complementary paradigm allowing tasks to be executed at the edge of networks, close to the user, in small data-centers,
 known as \emph{edge clouds}.
@@ -36,7 +36,8 @@ in this paper, we proposed a new optimisation problem that is incompatible with 
 mechanisms are proposed for the problem: a greedy mechanism, an incentive compatible centralised auction and a novel
 decentralised iterative auction that achieve ~95\% of the theoretical optimal.
 
-%% Make an addition to why this flexibility breaks everything previously
+%% TODO Make an addition to why this flexibility breaks everything previously
+
 
 \section{Related work}\label{sec:related-work}
 There is a considerable amount of research in the area of resource allocation and pricing in cloud computing, some of
@@ -46,13 +47,13 @@ with the cloud provider having no control over the speeds, only the servers that
 work, tasks' owners report deadlines and overall data and computation requirements, allowing the edge cloud server to
 distribute its resources more efficiently based on each task's requirements.
 
-Our problem is related to multidimensional knapsack problems. In particular~\cite{Nip2017}, consider flexibility in
-the allocation, with linear constraints that are used for elastic weights. The paper provides a pseudo-polynomial time
-complexity algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is
-similar to their, but differ due to constraints with our using non-linear not linear constraints.
-
 Other closely related work on resource allocation in edge clouds~\cite{vaji_infocom} considers both the placement of
 code/data needed to run a specific task, as well as the scheduling of tasks to different edge clouds. The goal there is
 to maximize the expected rate of successfully accomplished tasks over time. Our work is different both in the setup and
 the objective function. Our objective is to maximize the value over all tasks. In terms of the setup, they assume that
 data/code can be shared and they do not consider the elasticity of resources.
+
+Our problem is related to multidimensional knapsack problems. In particular~\cite{Nip2017}, consider flexibility in
+the allocation, with linear constraints that are used for elastic weights. The paper provides a pseudo-polynomial time
+complexity algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is
+similar to their, but differ due to constraints with our using non-linear not linear constraints.

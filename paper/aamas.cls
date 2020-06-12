@@ -41,17 +41,17 @@
 Computing Machinery, variant for AAMAS conference]
 \def\@classname{aamas}
 \InputIfFileExists{acmart-preload-hook.tex}{%
-    \ClassWarning{\@classname}{%
-        I am loading acmart-preload-hook.tex. You are fully responsible
-        for any problems from now on.}}{}
+\ClassWarning{\@classname}{%
+I am loading acmart-preload-hook.tex. You are fully responsible
+for any problems from now on.}}{}
 \RequirePackage{xkeyval}
 \RequirePackage{xstring}
 \define@choicekey*+{aamas.cls}{format}[\ACM@format\ACM@format@nr]{%
-    manuscript, acmsmall, acmlarge, acmtog, sigconf, siggraph,
-    sigplan, sigchi, sigchi-a}[manuscript]{}{%
-    \ClassError{\@classname}{The option format must be manuscript,
-    acmsmall, acmlarge, acmtog, sigconf, siggraph,
-    sigplan, sigchi or sigchi-a}}
+manuscript, acmsmall, acmlarge, acmtog, sigconf, siggraph,
+sigplan, sigchi, sigchi-a}[manuscript]{}{%
+\ClassError{\@classname}{The option format must be manuscript,
+acmsmall, acmlarge, acmtog, sigconf, siggraph,
+sigplan, sigchi or sigchi-a}}
 \def\@DeclareACMFormat#1{\DeclareOptionX{#1}{\setkeys{aamas.cls}{format=#1}}}
 \@DeclareACMFormat{manuscript}
 \@DeclareACMFormat{acmsmall}
@@ -64,61 +64,61 @@ Computing Machinery, variant for AAMAS conference]
 \@DeclareACMFormat{sigchi-a}
 \ExecuteOptionsX{format}
 \define@boolkey+{aamas.cls}[@ACM@]{screen}[true]{%
-    \if@ACM@screen
-    \PackageInfo{\@classname}{Using screen mode}%
-    \else
-    \PackageInfo{\@classname}{Not using screen mode}%
-    \fi}{\PackageError{\@classname}{Option screen can be either true or
+\if@ACM@screen
+\PackageInfo{\@classname}{Using screen mode}%
+\else
+\PackageInfo{\@classname}{Not using screen mode}%
+\fi}{\PackageError{\@classname}{Option screen can be either true or
 false}}
 \ExecuteOptionsX{screen=false}
 \define@boolkey+{aamas.cls}[@ACM@]{review}[true]{%
-    \if@ACM@review
-    \PackageInfo{\@classname}{Using review mode}%
-    \else
-    \PackageInfo{\@classname}{Not using review mode}%
-    \fi}{\PackageError{\@classname}{Option review can be either true or
+\if@ACM@review
+\PackageInfo{\@classname}{Using review mode}%
+\else
+\PackageInfo{\@classname}{Not using review mode}%
+\fi}{\PackageError{\@classname}{Option review can be either true or
 false}}
 \ExecuteOptionsX{review=false}
 \define@boolkey+{aamas.cls}[@ACM@]{authorversion}[true]{%
-    \if@ACM@authorversion
-    \PackageInfo{\@classname}{Using authorversion mode}%
-    \else
-    \PackageInfo{\@classname}{Not using authorversion mode}%
-    \fi}{\PackageError{\@classname}{Option authorversion can be either true or
+\if@ACM@authorversion
+\PackageInfo{\@classname}{Using authorversion mode}%
+\else
+\PackageInfo{\@classname}{Not using authorversion mode}%
+\fi}{\PackageError{\@classname}{Option authorversion can be either true or
 false}}
 \ExecuteOptionsX{authorversion=false}
 \define@boolkey+{aamas.cls}[@ACM@]{natbib}[true]{%
-    \if@ACM@natbib
-    \PackageInfo{\@classname}{Explicitly selecting natbib mode}%
-    \else
-    \PackageInfo{\@classname}{Explicitly deselecting natbib mode}%
-    \fi}{\PackageError{\@classname}{Option natbib can be either true or
+\if@ACM@natbib
+\PackageInfo{\@classname}{Explicitly selecting natbib mode}%
+\else
+\PackageInfo{\@classname}{Explicitly deselecting natbib mode}%
+\fi}{\PackageError{\@classname}{Option natbib can be either true or
 false}}
 \ExecuteOptionsX{natbib=true}
 \define@boolkey+{aamas.cls}[@ACM@]{anonymous}[true]{%
-    \if@ACM@anonymous
-    \PackageInfo{\@classname}{Using anonymous mode}%
-    \else
-    \PackageInfo{\@classname}{Not using anonymous mode}%
-    \fi}{\PackageError{\@classname}{Option anonymous can be either true or
+\if@ACM@anonymous
+\PackageInfo{\@classname}{Using anonymous mode}%
+\else
+\PackageInfo{\@classname}{Not using anonymous mode}%
+\fi}{\PackageError{\@classname}{Option anonymous can be either true or
 false}}
 \ExecuteOptionsX{anonymous=false}
 \define@boolkey+{aamas.cls}[@ACM@]{timestamp}[true]{%
-    \if@ACM@timestamp
-    \PackageInfo{\@classname}{Using timestamp mode}%
-    \else
-    \PackageInfo{\@classname}{Not using timestamp mode}%
-    \fi}{\PackageError{\@classname}{Option timestamp can be either true or
+\if@ACM@timestamp
+\PackageInfo{\@classname}{Using timestamp mode}%
+\else
+\PackageInfo{\@classname}{Not using timestamp mode}%
+\fi}{\PackageError{\@classname}{Option timestamp can be either true or
 false}}
 \ExecuteOptionsX{timestamp=false}
 \define@boolkey+{aamas.cls}[@ACM@]{authordraft}[true]{%
-    \if@ACM@authordraft
-    \PackageInfo{\@classname}{Using authordraft mode}%
-    \@ACM@timestamptrue
-    \@ACM@reviewtrue
-    \else
-    \PackageInfo{\@classname}{Not using authordraft mode}%
-    \fi}{\PackageError{\@classname}{Option authordraft can be either true or
+\if@ACM@authordraft
+\PackageInfo{\@classname}{Using authordraft mode}%
+\@ACM@timestamptrue
+\@ACM@reviewtrue
+\else
+\PackageInfo{\@classname}{Not using authordraft mode}%
+\fi}{\PackageError{\@classname}{Option authordraft can be either true or
 false}}
 \ExecuteOptionsX{authordraft=false}
 \def\ACM@fontsize{}
@@ -200,16 +200,16 @@ I am switching to sigconf.}
 \if@ACM@natbib
 \RequirePackage{natbib}
 \renewcommand{\bibsection}{%
-    \section*{\refname}%
-    \phantomsection\addcontentsline{toc}{section}{\refname}%
+\section*{\refname}%
+\phantomsection\addcontentsline{toc}{section}{\refname}%
 }
 \renewcommand{\bibfont}{\bibliofont}
 \renewcommand\setcitestyle[1]{
-    \@for\@tempa:=#1\do
-    {\def\@tempb{round}\ifx\@tempa\@tempb
-        \renewcommand\NAT@open{(}\renewcommand\NAT@close{)}\fi
-        \def\@tempb{square}\ifx\@tempa\@tempb
-        \renewcommand\NAT@open{[}\renewcommand\NAT@close{]}\fi
+\@for\@tempa:=#1\do
+{\def\@tempb{round}\ifx\@tempa\@tempb
+\renewcommand\NAT@open{(}\renewcommand\NAT@close{)}\fi
+\def\@tempb{square}\ifx\@tempa\@tempb
+\renewcommand\NAT@open{[}\renewcommand\NAT@close{]}\fi
 \def\@tempb{angle}\ifx\@tempa\@tempb
 \renewcommand\NAT@open{$<$}\renewcommand\NAT@close{$>$}\fi
 \def\@tempb{curly}\ifx\@tempa\@tempb
@@ -1242,8 +1242,8 @@ numerical. Ignoring the input #1}\gdef\@ACM@authorsperrow{0}}}
 \RequirePackage{textcomp}
 \def\ccsdesc@parse#1~#2~#3~{%
 \expandafter\ifx\csname CCS@General@#2\endcsname\relax
-\expandafter\gdef\csname CCS@General@#2\endcsname{\textbullet\
-      \textbf{#2}}%
+\expandafter\gdef\csname CCS@General@#2\endcsname{\textbullet
+\textbf{#2}}%
 \expandafter\gdef\csname CCS@Punctuation@#2\endcsname{; }%
 \expandafter\gdef\csname CCS@Specific@#2\endcsname{}%
 \g@addto@macro{\@concepts}{\csname CCS@General@#2\endcsname
@@ -1377,7 +1377,7 @@ the first page. Copyrights for components of this work owned by
 others than the author(s) must be honored. Abstracting with credit
 is permitted. To copy otherwise, or republish, to post on servers
 or to redistribute to lists, requires prior specific permission
-and\hspace*{.5pt}/or  a fee. Request permissions from
+and\hspace*{.5pt}/or a fee. Request permissions from
 permissions@acm.org.
 \or % rightsretained
 Permission to make digital or hard copies of part or all of this work
@@ -1408,7 +1408,7 @@ others to do so, provided that clear attribution is given both to
 the authors and the Canadian government agency employing them.
 Permission to make digital or hard copies for personal or classroom
 use is granted. Copies must bear this notice and the full citation
-on the first page.  Copyrights for components of this work owned by
+on the first page. Copyrights for components of this work owned by
 others than the Canadian Government must be honored. To copy
 otherwise, distribute, republish, or post, requires prior specific
 permission and\hspace*{.5pt}/or a fee. Request permissions from
@@ -1527,8 +1527,8 @@ working draft. Not for distribution}}%
 \if@printcopyright
 \copyright\ \@copyrightyear\ \@copyrightowner\\
 \else
-\@copyrightyear.\
-    \fi
+\@copyrightyear.
+\fi
 \if@ACM@manuscript
 Manuscript submitted to ACM\\
 \else
@@ -2080,15 +2080,17 @@ inside \string\title{} or \string\author{} command! Use
 \def\ACM@linecountL{%
 \if@ACM@review
 \ACM@mk@linecount
-\begin{picture}(0,0)%
-\put(-26,-22){\usebox{\ACM@linecount@bx}}%
+\begin{picture}
+    (0,0)%
+    \put(-26,-22){\usebox{\ACM@linecount@bx}}%
 \end{picture}%
 \fi}
 \def\ACM@linecountR{%
 \if@ACM@review
 \ACM@mk@linecount
-\begin{picture}(0,0)%
-\put(20,-22){\usebox{\ACM@linecount@bx}}%
+\begin{picture}
+    (0,0)%
+    \put(20,-22){\usebox{\ACM@linecount@bx}}%
 \end{picture}%
 \fi}
 \if@ACM@timestamp
@@ -2164,7 +2166,7 @@ page~\thepage\ (pp. \@startPage-\pageref*{TotPages})%
 \fancyhead[RO]{\@headfootfont
 \shorttitle\quad\textbullet\quad\@acmArticle\if@ACM@printfolios:\thepage\fi\ACM@linecountR}%
 \fancyfoot[RO,LE]{\footnotesize \@journalName, Vol. \@acmVolume, No.
-\@acmNumber, Article \@acmArticle.  Publication date: \@acmPubDate.}%
+\@acmNumber, Article \@acmArticle. Publication date: \@acmPubDate.}%
 \else % Proceedings
 \fancyfoot[C]{\if@ACM@printfolios\footnotesize\thepage\fi}%
 \fancyhead[LO]{\ACM@linecountL\@headfootfont\shorttitle}%
@@ -2211,14 +2213,15 @@ page~\thepage\ (pp. \@startPage-\pageref*{TotPages})%
 \@tempdima=\@folio@ht\relax
 \multiply\@tempdima by \the\@tempcnta\relax
 \advance\@tempdima by -\@folio@voffset\relax
-\begin{picture}(0,0)
-\makebox[\z@]{\raisebox{-\@tempdima}{%
-\rlap{%
-\raisebox{-0.45\@folio@ht}[\z@][\z@]{%
-\rule{\@folio@wd}{\@folio@ht}}}%
-\parbox{\@folio@wd}{%
-\centering
-\textcolor{white}{\LARGE\bfseries\sffamily\@acmArticle}}}}
+\begin{picture}
+    (0,0)
+    \makebox[\z@]{\raisebox{-\@tempdima}{%
+    \rlap{%
+    \raisebox{-0.45\@folio@ht}[\z@][\z@]{%
+    \rule{\@folio@wd}{\@folio@ht}}}%
+    \parbox{\@folio@wd}{%
+    \centering
+    \textcolor{white}{\LARGE\bfseries\sffamily\@acmArticle}}}}
 \end{picture}}
 
 \fancypagestyle{firstpagestyle}{%

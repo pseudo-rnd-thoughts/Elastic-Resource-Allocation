@@ -50,7 +50,7 @@ welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
 \begin{figure}[H]
     \includegraphics[width=\linewidth]{figs/allocation/greedy_algorithm.png}
     \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
-        and~\ref{tab:example-servers-properties}}
+    and~\ref{tab:example-servers-properties}}
     \label{fig:greedy-allocation}
 \end{figure}
 
@@ -211,18 +211,18 @@ price's are reset then appended to the set of unallocated jobs.
         \REQUIRE $R(i, k)$ is a function returning the list of tasks not able to run if task $k$ is allocated to server $i$
         \REQUIRE $\leftarrow_R$ will randomly select an element from a set
         \WHILE{$|J| > 0$}
-            \STATE{$j \leftarrow_R J$}
-            \STATE{$p, i \leftarrow argmin_{i \in I} P(i, j)$}
-            \IF{$p \leq v_j$}
-                \STATE{$p_j \leftarrow p$}
-                \STATE{$x_{i, j} \leftarrow 1$}
-                \FORALL{$j^{'} \in R(i, j)$}
-                    \STATE{$x_{i, j^{'}} \leftarrow 0$}
-                    \STATE{$p_j^{'} \leftarrow 0$}
-                    \STATE{$J \leftarrow J \cup j^{'}$}
-                \ENDFOR
-            \ENDIF
-            \STATE{$J \leftarrow J \setminus \{j\}$}
+        \STATE{$j \leftarrow_R J$}
+        \STATE{$p, i \leftarrow argmin_{i \in I} P(i, j)$}
+        \IF{$p \leq v_j$}
+        \STATE{$p_j \leftarrow p$}
+        \STATE{$x_{i, j} \leftarrow 1$}
+        \FORALL{$j^{'} \in R(i, j)$}
+        \STATE{$x_{i, j^{'}} \leftarrow 0$}
+        \STATE{$p_j^{'} \leftarrow 0$}
+        \STATE{$J \leftarrow J \cup j^{'}$}
+        \ENDFOR
+        \ENDIF
+        \STATE{$J \leftarrow J \setminus \{j\}$}
         \ENDWHILE
     \end{algorithmic}
 \end{algorithm}
@@ -237,13 +237,13 @@ Critical Value auction(CVA) and Decentralised Iterative auction (DIA).
     \centering
     \begin{tabular}{|p{2.2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        Attribute & GM & CVA & DIA \\ \hline
-        Truthfulness & & Yes & No \\ \hline
-        Optimality & No & No & No \\ \hline
-        Scalability & Yes & Yes & No \\ \hline
+        Attribute                           & GM  & CVA & DIA                   \\ \hline
+        Truthfulness                        &     & Yes & No                    \\ \hline
+        Optimality                          & No  & No  & No                    \\ \hline
+        Scalability                         & Yes & Yes & No                    \\ \hline
         Information requirements from users & All & All & Not the reserve value \\ \hline
-        Communication over heads & Low & Low & High \\ \hline
-        Decentralisation & No & No & Yes \\ \hline
+        Communication over heads            & Low & Low & High                  \\ \hline
+        Decentralisation                    & No  & No  & Yes                   \\ \hline
     \end{tabular}
     \caption{Attributes of the proposed algorithms: Greedy mechanism (GM), Critical Value auction(CVA) and Decentralised Iterative auction (DIA)}
     \label{tab:attributes_algorithms}

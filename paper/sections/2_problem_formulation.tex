@@ -1,21 +1,21 @@
 \section{Problem formulation}\label{sec:problem-formulation}
-In this section, a system model is described for the server and tasks (subsection~\ref{subsec:system-model}). Using
-the model an optimisation problem is created for the flexible resource allocation with proof for NP-Hard
-(subsection~\ref{subsec:optimisation-problem}). Finally, an example problem is shown to demonstrate the affect of this
-optimisation problem compared to a previous work.
+In this section, an outline of the system model describes servers and tasks (subsection~\ref{subsec:system-model})
+which is used in constructing an optimisation problem for the flexible resource allocation
+(subsection~\ref{subsec:optimisation-problem}). Finally, an example problem is used to demonstrate the effectiveness of
+this flexible resource allocation scheme compared to a fixed resource allocation scheme in previous work.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figs/system_model.pdf}
+    \caption{System Model}
+    \label{fig:system-model}
+\end{figure}
 
 \subsection{System model}\label{subsec:system-model}
-%\begin{figure}[ht]
-%    \centering
-%    \includegraphics[width=0.6\linewidth]{figs/system_model.pdf}
-%    \caption{System Model}
-%    \label{fig:system-model}
-%\end{figure}
-%A sketch of the system is shown in Fig.~\ref{fig:system-model}.
-
+A sketch of the system is shown in Fig.~\ref{fig:system-model}.
 We assume that there are a set of servers $I = \{1,2,\ldots,\left|I\right|\}$, which could be accessed either through
 cellular base stations or WiFi access points (APs). These servers have different types of limited resources:
-storage for the code/data needed to run a task (e.g., measured in GB), computation capacity in terms of CPU cycles per
+storage for the code/data needed to run a task (e.g., measured in Gb), computation capacity in terms of CPU cycles per
 time interval (e.g., measured in FLOP/s), and communication bandwidth to receive the data and to send back the results
 of the task after execution (e.g., measured in Mbit/s). The server are assume to only consider these attribute for
 resource allocation, however future work would wish to explore additional attributes like I/O memory access per second,
@@ -130,36 +130,3 @@ In contrast to figure~\ref{fig:fixed-resources-speeds}, Figure~\ref{fig:flexible
 allocation if elastic resources are considered. Here, all of the resources are used by the servers whereas the fixed
 example~\ref{fig:fixed-resources-speeds} cant do this. In total, the elastic approach manages to schedule all 12 tasks
 within the resource constraints, achieving a total social welfare of 1200 (an 18\% improvement over the fixed approach).
-
-\begin{table}[h]
-    \begin{tabular}{|c|c|c|c|}
-        \hline
-        Name & $S_i$ & $W_i$ & $R_i$ \\ [0.5ex] \hline
-        Server 1 & 400 & 100 & 220 \\ \hline
-        Server 2 & 450 & 100 & 210 \\ \hline
-        Server 3 & 375 & 90 & 250 \\ \hline
-    \end{tabular}
-    \caption{Table of server attributes}
-    \label{tab:example-servers-properties}
-\end{table}
-
-\begin{table}[h]
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|} \hline
-        Name & $v_j$ & $s_j$ & $w_j$ & $r_j$ & $d_j$ & $s^{'}_j$ & $w^{'}_j$ & $r^{'}_j$ \\ [0.5ex] \hline
-        Task 1 & 100 & 100 & 100 & 50 & 10 & 30 & 27 & 17 \\ \hline
-        Task 2 & 90 & 75 & 125 & 40 & 10 & 22 & 32 & 15 \\ \hline
-        Task 3 & 110 & 125 & 110 & 45 & 10 & 34 & 30 & 17 \\ \hline
-        Task 4 & 75 & 100 & 75 & 35 & 10 & 27 & 21 & 13 \\ \hline
-        Task 5 & 125 & 85 & 90 & 55 & 10 & 24 & 28 & 17 \\ \hline
-        Task 6 & 100 & 75 & 120 & 40 & 10 & 20 & 32 & 16 \\ \hline
-        Task 7 & 80 & 125 & 100 & 50 & 10 & 31 & 30 & 19 \\ \hline
-        Task 8 & 110 & 115 & 75 & 55 & 10 & 30 & 22 & 20 \\ \hline
-        Task 9 & 120 & 100 & 110 & 60 & 10 & 27 & 29 & 24 \\ \hline
-        Task 10 & 90 & 90 & 120 & 40 & 10 & 25 & 30 & 17 \\ \hline
-        Task 11 & 100 & 110 & 90 & 45 & 10 & 30 & 26 & 16 \\ \hline
-        Task 12 & 100 & 100 & 80 & 55 & 10 & 24 & 24 & 22 \\ \hline
-    \end{tabular}
-    \caption{Table of task attributes. The columns ($s^{'}_j$, $w^{'}_j$, $r^{'}_j$) are fixed speeds which are not
-    considered by the flexible resource allocation.}
-    \label{tab:example-tasks-properties}
-\end{table}
