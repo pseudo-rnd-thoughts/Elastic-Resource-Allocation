@@ -90,8 +90,7 @@ def debug(model_dist: ModelDist):
     tasks, servers = model_dist.create()
 
     result = critical_value_auction(tasks, servers, value_densities[0], server_selection_policies[0],
-                                    resource_allocation_policies[0],
-                                    debug_task_value=True, debug_greedy_allocation=True, debug_critical_value=True)
+                                    resource_allocation_policies[0])
     print(result.store())
     print('\t\tTask result prices')
     for task in tasks:
