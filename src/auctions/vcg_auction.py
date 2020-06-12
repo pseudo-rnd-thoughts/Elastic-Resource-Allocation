@@ -7,66 +7,66 @@ from typing import List, Dict, Tuple, Optional
 
 from branch_bound.branch_bound import branch_bound_algorithm
 from core.core import list_copy_remove
-from core.job import Job
+from core.task import Task
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
 
 
-def vcg_auction(jobs: List[Job], servers: List[Server],
+def vcg_auction(tasks: List[Task], servers: List[Server],
                 debug_running: bool = False, debug_results: bool = False) -> Optional[Result]:
     """
     Implementation of a VCG auctions
-    :param jobs: A list of jobs
+    :param tasks: A list of tasks
     :param servers: A list of servers
     :param debug_running: Debug what is being calculated
-    :param debug_results: Debug the results for each job and server
+    :param debug_results: Debug the results for each task and server
     """
     start_time = time()
 
     # Price information
-    job_prices: Dict[Job, float] = {}
+    task_prices: Dict[Task, float] = {}
 
     # Find the optimal solution
     if debug_running:
         print("Finding optimal")
-    optimal_solution = branch_bound_algorithm(jobs, servers)
+    optimal_solution = branch_bound_algorithm(tasks, servers)
     if optimal_solution is None:
         return None
     elif debug_results:
         print("Optimal total utility: {}".format(optimal_solution.sum_value))
 
-    # Save the job and server information from the optimal solution
-    allocated_jobs = [job for job in jobs if job.running_server]
-    job_info: Dict[Job, Tuple[int, int, int, Server]] = {
-        job: (job.loading_speed, job.compute_speed, job.sending_speed, job.running_server) for job in jobs
+    # Save the task and server information from the optimal solution
+    allocated_tasks = [task for task in tasks if task.running_server]
+    task_info: Dict[Task, Tuple[int, int, int, Server]] = {
+        task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server) for task in tasks
     }
 
     if debug_running:
-        print("Allocated jobs: {}".format(", ".join([job.name for job in allocated_jobs])))
+        print("Allocated tasks: {}".format(", ".join([task.name for task in allocated_tasks])))
 
-    # For each allocated job, find the sum of values if the job doesnt exist
-    for job in allocated_jobs:
-        # Reset the model and remove the job from the job list
-        reset_model(jobs, servers)
-        jobs_prime = list_copy_remove(jobs, job)
+    # For each allocated task, find the sum of values if the task doesnt exist
+    for task in allocated_tasks:
+        # Reset the model and remove the task from the task list
+        reset_model(tasks, servers)
+        tasks_prime = list_copy_remove(tasks, task)
 
-        # Find the optimal solution where the job doesnt exist
+        # Find the optimal solution where the task doesnt exist
         if debug_running:
-            print("Solving for without job {}".format(job.name))
-        optimal_prime = branch_bound_algorithm(jobs_prime, servers)
+            print("Solving for without task {}".format(task.name))
+        optimal_prime = branch_bound_algorithm(tasks_prime, servers)
         if optimal_prime is None:
             return None
         else:
-            job_prices[job] = optimal_solution.sum_value - optimal_prime.sum_value
+            task_prices[task] = optimal_solution.sum_value - optimal_prime.sum_value
             if debug_results:
-                print("Job {}: £{:.1f}, Value: {} ".format(job.name, job_prices[job], job.value))
+                print("Job {}: £{:.1f}, Value: {} ".format(task.name, task_prices[task], task.value))
 
     # Reset the model and allocates all of the their info from the original optimal solution
-    reset_model(jobs, servers)
-    for job in allocated_jobs:
-        s, w, r, server = job_info[job]
-        job.allocate(s, w, r, server, price=job_prices[job])
-        server.allocate_job(job)
+    reset_model(tasks, servers)
+    for task in allocated_tasks:
+        s, w, r, server = task_info[task]
+        task.allocate(s, w, r, server, price=task_prices[task])
+        server.allocate_task(task)
 
-    return Result('vcg', jobs, servers, time() - start_time, show_money=True)
+    return Result('vcg', tasks, servers, time() - start_time, show_money=True)

@@ -12,7 +12,7 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from core.job import Job
+from core.task import Task
 from core.model import ModelDist
 from core.server import Server
 
@@ -53,7 +53,7 @@ def load_args() -> Dict[str, Union[str, int]]:
 
     return {
         'model': 'models/' + sys.argv[1] + '.json',
-        'jobs': int(sys.argv[2]),
+        'tasks': int(sys.argv[2]),
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
     }
@@ -86,51 +86,51 @@ def analysis_filename(test_name: str, axis: str) -> str:
         return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
 
 
-def print_job_values(job_values: List[Tuple[Job, float]]):
+def print_task_values(task_values: List[Tuple[Task, float]]):
     """
-    Print the job utility values
-    :param job_values: A list of tuples with the job and its value
+    Print the task utility values
+    :param task_values: A list of tuples with the task and its value
     """
     print("\t\tJobs")
-    max_job_name_len = max(len(job.name) for job, value in job_values) + 1
+    max_task_name_len = max(len(task.name) for task, value in task_values) + 1
     print("{:<{name_len}}| Value | Storage | Compute | models | Value | Deadline "
-          .format("Id", name_len=max_job_name_len))
-    for job, value in job_values:
+          .format("Id", name_len=max_task_name_len))
+    for task, value in task_values:
         # noinspection PyStringFormat
         print("{:<{name_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^7.1f}|{:^8}"
-              .format(job.name, value, job.required_storage, job.required_computation,
-                      job.required_results_data, job.value, job.deadline, name_len=max_job_name_len))
+              .format(task.name, value, task.required_storage, task.required_computation,
+                      task.required_results_data, task.value, task.deadline, name_len=max_task_name_len))
     print()
 
 
-def print_job_allocation(jobs: List[Job]):
+def print_task_allocation(tasks: List[Task]):
     """
-    Prints the job allocation resource speeds
-    :param jobs: List of jobs
+    Prints the task allocation resource speeds
+    :param tasks: List of tasks
     """
     print("Job Allocation")
-    max_job_name_len = max(len(job.name) for job in jobs) + 1
-    for job in jobs:
-        if job.running_server:
+    max_task_name_len = max(len(task.name) for task in tasks) + 1
+    for task in tasks:
+        if task.running_server:
             print("Job {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
-                  .format(job.name, job.running_server.name, job.loading_speed, job.compute_speed, job.sending_speed,
-                          name_len=max_job_name_len))
+                  .format(task.name, task.running_server.name, task.loading_speed, task.compute_speed, task.sending_speed,
+                          name_len=max_task_name_len))
         else:
-            print("Job {} - None".format(job.name))
+            print("Job {} - None".format(task.name))
 
 
-def allocate(job: Job, loading: int, compute: int, sending: int, server: Server, price: float = None):
+def allocate(task: Task, loading: int, compute: int, sending: int, server: Server, price: float = None):
     """
-    Allocate a job to a server
-    :param job: The job
+    Allocate a task to a server
+    :param task: The task
     :param loading: The loading speed
     :param compute: The compute speed
     :param sending: The sending speed
     :param server: The server
     :param price: The price
     """
-    job.allocate(loading, compute, sending, server, price)
-    server.allocate_job(job)
+    task.allocate(loading, compute, sending, server, price)
+    server.allocate_task(task)
 
 
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
@@ -177,23 +177,23 @@ def print_model_solution(model_solution: CpoSolveResult):
                                                                           round(model_solution.get_solve_time(), 2)))
 
 
-def print_model(jobs: List[Job], servers: List[Server]):
+def print_model(tasks: List[Task], servers: List[Server]):
     """
     Print the model
-    :param jobs: The list of jobs
+    :param tasks: The list of tasks
     :param servers: The list of servers
     """
     print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
-    for job in jobs:
+    for task in tasks:
         print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
-              .format(job.name, job.required_storage, job.required_computation, job.required_results_data, job.value,
-                      job.loading_speed, job.compute_speed, job.sending_speed, job.deadline, job.price))
+              .format(task.name, task.required_storage, task.required_computation, task.required_results_data, task.value,
+                      task.loading_speed, task.compute_speed, task.sending_speed, task.deadline, task.price))
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
         print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}"
               .format(server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity,
-                      ', '.join([job.name for job in server.allocated_jobs])))
+                      ', '.join([task.name for task in server.allocated_tasks])))
 
 
 # noinspection LongLine

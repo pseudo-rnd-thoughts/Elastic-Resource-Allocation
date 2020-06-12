@@ -6,7 +6,7 @@ from random import gauss
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.job import Job
+    from core.task import Task
 
 
 class Server(object):
@@ -14,8 +14,8 @@ class Server(object):
     Server object with a name and resources allocated
     """
 
-    revenue: float = 0  # This is the total price of the job's allocated
-    value: float = 0  # This is the total value of the job's allocated
+    revenue: float = 0  # This is the total price of the task's allocated
+    value: float = 0  # This is the total value of the task's allocated
 
     def __init__(self, name: str, storage_capacity: int, computation_capacity: int, bandwidth_capacity: int,
                  price_change: int = 1):
@@ -26,29 +26,29 @@ class Server(object):
         self.price_change: int = price_change
 
         # Allocation information
-        self.allocated_jobs: List[Job] = []
+        self.allocated_tasks: List[Task] = []
         self.available_storage: int = storage_capacity
         self.available_computation: int = computation_capacity
         self.available_bandwidth: int = bandwidth_capacity
 
     # noinspection DuplicatedCode
-    def can_run(self, job: Job) -> bool:
+    def can_run(self, task: Task) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of it's available resources to the job
-        :param job: The job to test
+        Checks if a task can be run on a server if it dedicates all of it's available resources to the task
+        :param task: The task to test
         :return: If it can run
         """
 
         """
         Old code
         
-        return self.available_storage >= job.required_storage \
+        return self.available_storage >= task.required_storage \
             and self.available_computation >= 1 \
             and self.available_bandwidth >= 2 and \
-            any(job.required_storage * self.available_computation * r +
-                s * job.required_computation * r +
-                s * self.available_computation * job.required_results_data
-                <= job.deadline * s * self.available_computation * r
+            any(task.required_storage * self.available_computation * r +
+                s * task.required_computation * r +
+                s * self.available_computation * task.required_results_data
+                <= task.deadline * s * self.available_computation * r
                 for s in range(1, self.available_bandwidth + 1)
                 for r in range(1, self.available_bandwidth - s + 1))
                 
@@ -60,45 +60,45 @@ class Server(object):
         compute_speed = model.integer_var(min=1, max=self.available_computation)
         sending_speed = model.integer_var(min=1, max=self.available_bandwidth - 1)
 
-        model.add(job.required_storage / loading_speed +
-                  job.required_computation / compute_speed +
-                  job.required_results_data / sending_speed <= job.deadline)
-        model.add(job.required_storage <= self.available_storage)
+        model.add(task.required_storage / loading_speed +
+                  task.required_computation / compute_speed +
+                  task.required_results_data / sending_speed <= task.deadline)
+        model.add(task.required_storage <= self.available_storage)
         model.add(loading_speed + sending_speed <= self.available_bandwidth)
 
         model_solution = model.solve(log_output=None)
 
         return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
         """
-        if not (job.required_storage <= self.available_storage and
+        if not (task.required_storage <= self.available_storage and
                 self.available_bandwidth >= 2 and self.available_computation >= 1):
             return False
 
         for s in range(1, self.available_bandwidth):
-            if job.required_storage * self.available_computation * (self.available_bandwidth - s) + \
-                    s * job.required_computation * (self.available_bandwidth - s) +\
-                    s * self.available_computation * job.required_results_data <= \
-                    job.deadline * s * self.available_computation * (self.available_bandwidth - s):
+            if task.required_storage * self.available_computation * (self.available_bandwidth - s) + \
+                    s * task.required_computation * (self.available_bandwidth - s) +\
+                    s * self.available_computation * task.required_results_data <= \
+                    task.deadline * s * self.available_computation * (self.available_bandwidth - s):
                 return True
         return False
 
     # noinspection DuplicatedCode
-    def can_empty_run(self, job: Job) -> bool:
+    def can_empty_run(self, task: Task) -> bool:
         """
-        Checks if a job can be run on a server if it dedicates all of it's possible resources to the job
-        :param job: The job to test
+        Checks if a task can be run on a server if it dedicates all of it's possible resources to the task
+        :param task: The task to test
         :return: If it can run
         """
 
         """
         Old code
-        return self.storage_capacity >= job.required_storage \
+        return self.storage_capacity >= task.required_storage \
             and self.computation_capacity >= 1 \
             and self.bandwidth_capacity >= 2 and \
-            any(job.required_storage * self.computation_capacity * r +
-                s * job.required_computation * r +
-                s * self.computation_capacity * job.required_results_data
-                <= job.deadline * s * self.available_computation * r
+            any(task.required_storage * self.computation_capacity * r +
+                s * task.required_computation * r +
+                s * self.computation_capacity * task.required_results_data
+                <= task.deadline * s * self.available_computation * r
                 for s in range(1, self.bandwidth_capacity + 1)
                 for r in range(1, self.bandwidth_capacity - s + 1))
                 
@@ -110,10 +110,10 @@ class Server(object):
         compute_speed = model.integer_var(min=1, max=self.computation_capacity)
         sending_speed = model.integer_var(min=1, max=self.bandwidth_capacity - 1)
 
-        model.add(job.required_storage / loading_speed +
-                  job.required_computation / compute_speed +
-                  job.required_results_data / sending_speed <= job.deadline)
-        model.add(job.required_storage <= self.storage_capacity)
+        model.add(task.required_storage / loading_speed +
+                  task.required_computation / compute_speed +
+                  task.required_results_data / sending_speed <= task.deadline)
+        model.add(task.required_storage <= self.storage_capacity)
         model.add(loading_speed + sending_speed <= self.bandwidth_capacity)
 
         model_solution = model.solve(log_output=None)
@@ -121,52 +121,52 @@ class Server(object):
         return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
         """
 
-        if not (job.required_storage <= self.storage_capacity and
+        if not (task.required_storage <= self.storage_capacity and
                 self.bandwidth_capacity >= 2 and self.computation_capacity >= 1):
             return False
 
         for s in range(1, self.bandwidth_capacity):
-            if job.required_storage * self.computation_capacity * (self.bandwidth_capacity - s) + \
-                    s * job.required_computation * (self.bandwidth_capacity - s) +\
-                    s * self.computation_capacity * job.required_results_data <= \
-                    job.deadline * s * self.computation_capacity * (self.bandwidth_capacity - s):
+            if task.required_storage * self.computation_capacity * (self.bandwidth_capacity - s) + \
+                    s * task.required_computation * (self.bandwidth_capacity - s) +\
+                    s * self.computation_capacity * task.required_results_data <= \
+                    task.deadline * s * self.computation_capacity * (self.bandwidth_capacity - s):
                 return True
         return False
 
-    def allocate_job(self, job: Job):
+    def allocate_task(self, task: Task):
         """
-        Updates the server attributes for when it is allocated within jobs
-        :param job: The job being allocated
+        Updates the server attributes for when it is allocated within tasks
+        :param task: The task being allocated
         """
-        assert job.loading_speed > 0 and job.compute_speed > 0 and job.sending_speed > 0, \
+        assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
             "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}"\
-            .format(job.name, job.loading_speed, job.compute_speed, job.sending_speed)
-        assert self.available_storage >= job.required_storage, \
-            "Server storage failure for Server {} available storage {}, job required storage {}"\
-            .format(self.name, self.available_storage, job.required_storage)
-        assert self.available_computation >= job.compute_speed, \
-            "Server computation failure for Server {} available computation {}, job compute speed {}"\
-            .format(self.name, self.available_computation, job.compute_speed)
-        assert self.available_bandwidth >= job.loading_speed + job.sending_speed, \
+            .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
+        assert self.available_storage >= task.required_storage, \
+            "Server storage failure for Server {} available storage {}, task required storage {}"\
+            .format(self.name, self.available_storage, task.required_storage)
+        assert self.available_computation >= task.compute_speed, \
+            "Server computation failure for Server {} available computation {}, task compute speed {}"\
+            .format(self.name, self.available_computation, task.compute_speed)
+        assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
             "Server available bandwidth failure for Server {} available bandwidth {}, " \
-            "job loading speed {} and sending speed {}"\
-            .format(self.name, self.available_bandwidth, job.loading_speed, job.sending_speed)
-        assert job not in self.allocated_jobs, \
+            "task loading speed {} and sending speed {}"\
+            .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
+        assert task not in self.allocated_tasks, \
             "Job {} is already allocated to the server {}"\
-            .format(job.name, self.name)
+            .format(task.name, self.name)
 
-        self.allocated_jobs.append(job)
-        self.available_storage -= job.required_storage
-        self.available_computation -= job.compute_speed
-        self.available_bandwidth -= (job.loading_speed + job.sending_speed)
+        self.allocated_tasks.append(task)
+        self.available_storage -= task.required_storage
+        self.available_computation -= task.compute_speed
+        self.available_bandwidth -= (task.loading_speed + task.sending_speed)
         
-        self.revenue += job.price
+        self.revenue += task.price
 
     def reset_allocations(self):
         """
         Resets the allocation information
         """
-        self.allocated_jobs = []
+        self.allocated_tasks = []
 
         self.available_storage = self.storage_capacity
         self.available_computation = self.computation_capacity
