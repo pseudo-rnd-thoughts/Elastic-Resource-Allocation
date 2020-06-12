@@ -1,4 +1,6 @@
-"""Greedy algorithm using a matrix of task and server resource allocation values"""
+"""
+Greedy algorithm using a matrix of task and server resource allocation values
+"""
 
 from __future__ import annotations
 
@@ -53,8 +55,8 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
         (allocated_task, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
         allocate(allocated_task, s, w, r, allocated_server)
         if debug_allocation:
-            print(f'Task {allocated_task.name} on Server {allocated_server.name}'
-                  f' with value {v:.3f}, loading {s} compute {w} sending {r}')
+            print(f'Task {allocated_task.name} on Server {allocated_server.name} '
+                  f'with value {v:.3f}, loading {s} compute {w} sending {r}')
 
         # Remove the task from the allocation matrix
         for server in servers:
