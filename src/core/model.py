@@ -6,8 +6,8 @@ import json
 from random import gauss, random
 from typing import List, Tuple, Dict, Union
 
-from src.core.task import Task
 from src.core.server import Server
+from src.core.task import Task
 
 
 def positive_gaussian_dist(mean, std) -> int:
@@ -48,11 +48,10 @@ class TaskDist(object):
     def create_task(self, name) -> Task:
         """
         Creates a new task with name (unique identifier)
-
         :param name: The name of the task
         :return: A new task object
         """
-        task_name = f'{self.dist_name} {name}'
+        task_name = "{} {}".format(self.dist_name, name)
         return Task(name=task_name,
                     required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
                     required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
@@ -67,18 +66,18 @@ class TaskDist(object):
         :return: The Json code for the task dist
         """
         return {
-            'name': self.dist_name,
-            'probability': self.probability,
-            'required_storage_mean': self.storage_mean,
-            'required_storage_std': self.storage_std,
-            'required_computation_mean': self.computation_mean,
-            'required_computation_std': self.computation_std,
-            'required_results_data_mean': self.results_data_mean,
-            'required_results_data_std': self.results_data_std,
-            'value_mean': self.value_mean,
-            'value_std': self.value_std,
-            'deadline_mean': self.deadline_mean,
-            'deadline_std': self.deadline_std
+            "name": self.dist_name,
+            "probability": self.probability,
+            "required_storage_mean": self.storage_mean,
+            "required_storage_std": self.storage_std,
+            "required_computation_mean": self.computation_mean,
+            "required_computation_std": self.computation_std,
+            "required_results_data_mean": self.results_data_mean,
+            "required_results_data_std": self.results_data_std,
+            "value_mean": self.value_mean,
+            "value_std": self.value_std,
+            "deadline_mean": self.deadline_mean,
+            "deadline_std": self.deadline_std
         }
 
 
@@ -107,7 +106,7 @@ class ServerDist(object):
         :param name: The name of the server
         :return: A new task object
         """
-        server_name = f'{self.dist_name} {name}'
+        server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
                       storage_capacity=positive_gaussian_dist(self.storage_mean, self.storage_std),
                       computation_capacity=positive_gaussian_dist(self.computation_mean, self.computation_std),
@@ -120,13 +119,13 @@ class ServerDist(object):
         :return: The Json code for the server dist
         """
         return {
-            'name': self.dist_name,
-            'probability': self.probability,
-            'maximum_storage_mean': self.storage_mean,
-            'maximum_storage_std': self.storage_std,
-            'maximum_computation_mean': self.computation_mean,
-            'maximum_computation_std': self.computation_std,
-            'maximum_bandwidth_mean': self.results_data_mean,
+            "name": self.dist_name,
+            "probability": self.probability,
+            "maximum_storage_mean": self.storage_mean,
+            "maximum_storage_std": self.storage_std,
+            "maximum_computation_mean": self.computation_mean,
+            "maximum_computation_std": self.computation_std,
+            "maximum_bandwidth_mean": self.results_data_mean,
             "maximum_bandwidth_std": self.results_data_std
         }
 
@@ -136,9 +135,9 @@ class ModelDist(object):
     num_tasks = 0
     num_servers = 0
 
-    def __init__(self, dist_name: str, task_dists: List[TaskDist], num_tasks: int,
+    def __init__(self, dist_name: str, task_dists: List[JobDist], num_tasks: int,
                  server_dists: List[ServerDist], num_servers: int):
-        self.file_name = f'{dist_name}_j{num_tasks}_s{num_servers}'
+        self.file_name = "{}_j{}_s{}".format(dist_name, num_tasks, num_servers)
         self.dist_name = dist_name
 
         self.task_dists = task_dists
@@ -175,7 +174,7 @@ class ModelDist(object):
         return tasks, servers
 
 
-def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
+def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     """
     Loads tasks and server distributions from a file
 
@@ -186,13 +185,13 @@ def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
     with open(filename) as file:
         data = json.load(file)
 
-        task_dists: List[TaskDist] = [
-            TaskDist(dist['name'], dist['probability'],
-                     dist['required_storage_mean'], dist['required_storage_std'],
-                     dist['required_computation_mean'], dist['required_computation_std'],
-                     dist['required_results_data_mean'], dist['required_results_data_std'],
-                     dist['value_mean'], dist['value_std'],
-                     dist['deadline_mean'], dist['deadline_std'])
+        task_dists: List[JobDist] = [
+            JobDist(dist['name'], dist['probability'],
+                    dist['required_storage_mean'], dist['required_storage_std'],
+                    dist['required_computation_mean'], dist['required_computation_std'],
+                    dist['required_results_data_mean'], dist['required_results_data_std'],
+                    dist['value_mean'], dist['value_std'],
+                    dist['deadline_mean'], dist['deadline_std'])
             for dist in data['task_dist']
         ]
 
@@ -207,15 +206,16 @@ def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
         return data['name'], task_dists, server_dists
 
 
-def reset_model(tasks: List[Task], servers: List[Server]):
+def reset_model(tasks: List[Task], servers: List[Server], forgot_price: bool = True):
     """
     Resets all of the tasks and servers back after an allocation
 
     :param tasks: A list of tasks
     :param servers: A list of servers
+    :param forgot_price: If to forgot the task price
     """
     for task in tasks:
-        task.reset_allocation()
+        task.reset_allocation(forgot_price=forgot_price)
 
     for server in servers:
         server.reset_allocations()

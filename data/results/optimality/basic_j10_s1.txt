@@ -1,0 +1,43 @@
+ Running PBS prologue script on green0567
+
+ ===============================================================================
+ Job started on Tue Oct  8 22:45:45 BST 2019
+
+ JOB ID: 7521519.blue101
+ JOB NAME: run_script.sh
+ Num Hosts: 1
+ Num Tasks: 16
+ Nodes used: 
+ green0567
+ ===============================================================================
+ Job Output Follows:
+ ===============================================================================
+
+Running python -m testing.tests.optimality_testing basic 10 1 0
+Models
+Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price
+normal 0 |    8    |     10      |      4       | 104.0 |    0    |    0    |    0    |    9     | 0.00
+normal 1 |   14    |     13      |      1       | 36.0  |    0    |    0    |    0    |    17    | 0.00
+normal 2 |    8    |      8      |      5       | 75.0  |    0    |    0    |    0    |    21    | 0.00
+normal 3 |   12    |     28      |      2       | 61.0  |    0    |    0    |    0    |    16    | 0.00
+normal 4 |   20    |     20      |      3       | 91.0  |    0    |    0    |    0    |    16    | 0.00
+normal 5 |    6    |     10      |      8       | 56.0  |    0    |    0    |    0    |    17    | 0.00
+normal 6 |   13    |     18      |      6       | 55.0  |    0    |    0    |    0    |    13    | 0.00
+normal 7 |   17    |     15      |      2       | 20.0  |    0    |    0    |    0    |    16    | 0.00
+normal 8 |    5    |     19      |      3       | 56.0  |    0    |    0    |    0    |    21    | 0.00
+normal 9 |    6    |     22      |      5       | 38.0  |    0    |    0    |    0    |    13    | 0.00
+
+Server Name | Storage | Computation | Bandwidth | Allocated Jobs
+  normal 0  |   46    |     27      |    47     | 
+
+
+Time Limit: 10
+{'solve_time': 0.05, 'sum value': 390, 'percentage value': 0.659, 'percentage jobs': 0.6, 'server value': {'normal 0': 390}, 'server storage usage': {'normal 0': 0.978}, 'server computation usage': {'normal 0': 0.333}, 'server bandwidth usage': {'normal 0': 0.979}, 'solve_status': 'Optimal'}
+Solved completely at time limit: 10
+
+ ===============================================================================
+ Job finished at Tue Oct  8 22:46:02 BST 2019
+
+
+Requested resource limits are neednodes=1:ppn=16,nodes=1:ppn=16,pmem=4000mb,walltime=48:00:00
+Used resource limits are cput=00:00:00,mem=18552kb,vmem=385604kb,walltime=00:00:17

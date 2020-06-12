@@ -5,14 +5,16 @@ from __future__ import annotations
 import pickle
 import re
 import sys
+from enum import Enum, auto
 from random import choice, getstate as random_state
 from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
+import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from src.core.task import Task
 from src.core.model import ModelDist
 from src.core.server import Server
+from src.core.task import Task
 
 T = TypeVar('T')
 
@@ -20,7 +22,6 @@ T = TypeVar('T')
 def rand_list_max(args: Iterable[T], key=None) -> T:
     """
     Finds the maximum value in a list of values, if multiple values are all equal then choice a random value
-
     :param args: A list of values
     :param key: The key value function
     :return: A random maximum value
@@ -43,16 +44,15 @@ def rand_list_max(args: Iterable[T], key=None) -> T:
 def load_args() -> Dict[str, Union[str, int]]:
     """
     Gets all of the arguments and places in a dictionary
-
     :return: All of the arguments in a dictionary
     """
-    assert len(sys.argv) == 5, f'Args: {sys.argv}'
-    assert sys.argv[2].isdigit(), f'Tasks: {sys.argv[2]}'
-    assert sys.argv[3].isdigit(), f'Servers: {sys.argv[3]}'
-    assert sys.argv[4].isdigit(), f'Repeat: {sys.argv[4]}'
+    assert len(sys.argv) == 5, "Args: {}".format(sys.argv)
+    assert sys.argv[2].isdigit(), "Jobs: {}".format(sys.argv[2])
+    assert sys.argv[3].isdigit(), "Servers: {}".format(sys.argv[3])
+    assert sys.argv[4].isdigit(), "Repeat: {}".format(sys.argv[4])
 
     return {
-        'model': f'models/{sys.argv[1]}.json',
+        'model': 'models/' + sys.argv[1] + '.json',
         'tasks': int(sys.argv[2]),
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
@@ -62,65 +62,67 @@ def load_args() -> Dict[str, Union[str, int]]:
 def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) -> str:
     """
     Generates the save filename for testing results
-
     :param test_name: The test name
     :param model_dist: The model distribution
     :param repeat: The repeat number
     :return: The concatenation of the test name, model distribution name and the repeat
     """
     if repeat is None:
-        return f'{test_name}_{model_dist}.json'
+        return '{}_{}.json'.format(test_name, model_dist)
     else:
-        return f'{test_name}_{model_dist}_{repeat}.json'
+        return '{}_{}_{}.json'.format(test_name, model_dist, repeat)
 
 
 def analysis_filename(test_name: str, axis: str) -> str:
     """
     Generates the save filename for Analysis plot results
-
     :param test_name: The test name
     :param axis: The axis name
     :return: The concatenation of the test name and the axis
     """
-    return f'{test_name}_{axis.lower().replace(" ", "_")}'
+    if test_name == "":
+        return axis.lower().replace(" ", "_")
+    else:
+        return '{}_{}'.format(test_name, axis.lower().replace(" ", "_"))
 
 
 def print_task_values(task_values: List[Tuple[Task, float]]):
     """
     Print the task utility values
-
     :param task_values: A list of tuples with the task and its value
     """
-    print('\t\tTasks')
+    print("\t\tJobs")
     max_task_name_len = max(len(task.name) for task, value in task_values) + 1
-    print(f"{'Id':<{max_task_name_len}}| Value | Storage | Compute | models | Value | Deadline ")
+    print("{:<{name_len}}| Value | Storage | Compute | models | Value | Deadline "
+          .format("Id", name_len=max_task_name_len))
     for task, value in task_values:
         # noinspection PyStringFormat
-        print(f'{task.name:<{max_task_name_len}}|{value:^7.3f}|{task.required_storage:^9}|{task.required_computation:^9}|'
-              f'{task.required_results_data:^8}|{task.value:^7.1f}|{task.deadline:^8}')
+        print("{:<{name_len}}|{:^7.3f}|{:^9}|{:^9}|{:^8}|{:^7.1f}|{:^8}"
+              .format(task.name, value, task.required_storage, task.required_computation,
+                      task.required_results_data, task.value, task.deadline, name_len=max_task_name_len))
     print()
 
 
 def print_task_allocation(tasks: List[Task]):
     """
     Prints the task allocation resource speeds
-
     :param tasks: List of tasks
     """
-    print('Task Allocation')
+    print("Job Allocation")
     max_task_name_len = max(len(task.name) for task in tasks) + 1
     for task in tasks:
         if task.running_server:
-            print(f'Task {task.name:<{max_task_name_len}} - Server {task.running_server.name}, '
-                  f'loading: {task.loading_speed}, compute: {task.compute_speed}, sending: {task.sending_speed}')
+            print("Job {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
+                  .format(task.name, task.running_server.name, task.loading_speed, task.compute_speed,
+                          task.sending_speed,
+                          name_len=max_task_name_len))
         else:
-            print(f'Task {task.name} - None')
+            print("Job {} - None".format(task.name))
 
 
-def allocate(task: Task, loading: int, compute: int, sending: int, server: Server, price: float = 0):
+def allocate(task: Task, loading: int, compute: int, sending: int, server: Server, price: float = None):
     """
     Allocate a task to a server
-
     :param task: The task
     :param loading: The loading speed
     :param compute: The compute speed
@@ -135,7 +137,6 @@ def allocate(task: Task, loading: int, compute: int, sending: int, server: Serve
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
     """
     Replace the item in the list
-
     :param lists: The list
     :param old_item: The item to remove
     :param new_item: The item to append
@@ -147,7 +148,6 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
 def list_copy_remove(lists: List[T], item: T) -> List[T]:
     """
     Copy the list and remove an item
-
     :param lists: The list
     :param item: The item to remove
     :return: The copied list without the item
@@ -157,10 +157,9 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     return list_copy
 
 
-def save_random_state(filename: str):
+def save_random_state(filename):
     """
     Save the random state to the filename
-
     :param filename: The filename to save the state to
     """
     with open(filename, 'w') as file:
@@ -170,42 +169,91 @@ def save_random_state(filename: str):
 def print_model_solution(model_solution: CpoSolveResult):
     """
     Print the model solution information
-
     :param model_solution: The model solution
     """
-    print(f'Solve status: {model_solution.get_solve_status()}, Fail status: {model_solution.get_fail_status()}')
-    print(f'Search status: {model_solution.get_search_status()}, Stop Cause: {model_solution.get_stop_cause()}, '
-          f'Solve Time: {round(model_solution.get_solve_time(), 2)} secs')
+    print("Solve status: {}, Fail status: {}".format(model_solution.get_solve_status(),
+                                                     model_solution.get_fail_status()))
+    print("Search status: {}, Stop Cause: {}, Solve Time: {} secs".format(model_solution.get_search_status(),
+                                                                          model_solution.get_stop_cause(),
+                                                                          round(model_solution.get_solve_time(), 2)))
 
 
 def print_model(tasks: List[Task], servers: List[Server]):
     """
     Print the model
-
     :param tasks: The list of tasks
     :param servers: The list of servers
     """
-    print("Task Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
+    print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for task in tasks:
-        print(f'{task.name:^9s}|{task.required_storage:^9d}|{task.required_computation:^13d}|'
-              f'{task.required_results_data:^14d}|{task.value:^7.1f}|{task.loading_speed:^9d}|{task.compute_speed:^9d}|'
-              f'{task.sending_speed:^9d}|{task.deadline:^10d}| {task.price:.2f}')
+        print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
+              .format(task.name, task.required_storage, task.required_computation, task.required_results_data,
+                      task.value,
+                      task.loading_speed, task.compute_speed, task.sending_speed, task.deadline, task.price))
 
-    print('\nServer Name | Storage | Computation | Bandwidth | Allocated Tasks')
+    print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
     for server in servers:
-        print(f"{server.name:^12s}|{server.storage_capacity:^9d}|{server.computation_capacity:^13d}|"
-              f"{server.bandwidth_capacity:^11d}| {', '.join([task.name for task in server.allocated_tasks])}")
+        print("{:^12s}|{:^9d}|{:^13d}|{:^11d}| {}"
+              .format(server.name, server.storage_capacity, server.computation_capacity, server.bandwidth_capacity,
+                      ', '.join([task.name for task in server.allocated_tasks])))
 
 
 # noinspection LongLine
-def decode_filename(folder: str, encoded_file: str) -> Tuple[str, str, str]:
+def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
     """
     Decodes the filename to recover the file location, the model name and the greedy name
-
     :param folder: The data folder
-    :param encoded_file: The encoded filename
+    :param filename: The encoded filename
     :return: Tuple of the location of the file and the model type
     """
-    return f'../results/{folder}/{encoded_file}.json', \
-           re.findall(r'j\d+_s\d+', encoded_file)[0].replace('_', ' ').replace('s', 'Servers: ').replace('j', 'Tasks: '), \
-           encoded_file.replace(re.findall(r'_j\d+_s\d+_0', encoded_file)[0], '')
+    return "../results/{}/{}.json".format(folder, filename), \
+           re.findall(r"j\d+_s\d+", filename)[0].replace("_", " ").replace("s", "Servers: ").replace("j", "Tasks: "), \
+           filename.replace(re.findall(r"_j\d+_s\d+_\d+", filename)[0], "")
+
+
+class ImageFormat(Enum):
+    """
+    Image format
+    """
+    EPS = auto()
+    PNG = auto()
+    PDF = auto()
+
+
+def save_plot(name: str, test_name: str, additional: str = "",
+              image_formats: Iterable[ImageFormat] = (), lgd=None):
+    """
+    Saves the plot to a file of the particular image format
+    :param name: The plot name
+    :param test_name: The test name
+    :param additional: Additional information to add to the filename
+    :param image_formats: The image format list
+    :param lgd: The legend to be added to the plot when saved
+    """
+    if lgd:
+        lgd = (lgd,)
+
+    for image_format in image_formats:
+        if image_format == ImageFormat.EPS:
+            filename = '../figures/{}/eps/{}{}.eps'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+        elif image_format == ImageFormat.PNG:
+            filename = '../figures/{}/png/{}{}.png'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
+        elif image_format == ImageFormat.PDF:
+            filename = '../figures/{}/eps/{}{}.pdf'.format(test_name, name, additional)
+            print("Save file location: " + filename)
+            plt.savefig(filename, format='pdf', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+
+
+def set_price_change(servers: List[Server], price_change: int):
+    """
+
+    :param servers:
+    :param price_change:
+    :return:
+    """
+    for server in servers:
+        server.price_change = price_change

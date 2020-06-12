@@ -22,12 +22,12 @@ def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_
     :param time_limit: The time limit to solve with
     :return: The results
     """
-    assert time_limit > 0, f'Time limit: {time_limit}'
+    assert time_limit > 0, "Time limit: {}".format(time_limit)
 
-    model = CpoModel('vcg')
+    model = CpoModel("vcg")
 
     # As no resource speeds then only assign binary variables for the allocation
-    allocations = {(task, server): model.binary_var(name=f'{task.name} task {server.name} server')
+    allocations = {(task, server): model.binary_var(name='{} task {} server'.format(task.name, server.name))
                    for task in tasks for server in servers}
 
     # Allocation constraint
@@ -52,7 +52,7 @@ def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_
     # Check that the model is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Fixed VCG model failure')
+        print("Fixed VCG model failure")
         print_model_solution(model_solution)
         return None
 
@@ -61,12 +61,13 @@ def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_
         for task in tasks:
             for server in servers:
                 if model_solution.get_value(allocations[(task, server)]):
-                    allocate(task, 0, 0, 0, server)
+                    allocate(task, task.loading_speed, task.compute_speed, task.sending_speed, server)
+                    break
     except (KeyError, AssertionError) as e:
-        print(f'Assertion error in fixed optimal algorithms: {e}')
+        print("Assertion error in fixed optimal algo: ", e)
         print_model_solution(model_solution)
         return None
 
     # Return the sum of the task value for all of teh running tasks
-    return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+    return Result("Fixed Optimal", tasks, servers, round(model_solution.get_solve_time(), 2),
                   solve_status=model_solution.get_solve_status())

@@ -1,72 +1,79 @@
-"""Visualises resource allocation of tasks to servers"""
+"""Graph the allocation of resources from servers to tasks"""
 
 from __future__ import annotations
 
-from enum import Enum, auto
-from typing import List
+from typing import List, Iterable, Dict
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib import rc
+from docplex.cp.model import CpoModel, CpoVariable
 
+from src.core.core import ImageFormat, analysis_filename, save_plot
 from src.core.server import Server
 from src.core.task import Task
 
-rc('text', usetex=True)
+matplotlib.rcParams['font.family'] = "monospace"
 
 
-class ImageFormat(Enum):
-    """
-    Image format
-    """
-    EPS = auto()
-    PNG = auto()
-    PDF = auto()
-    BOTH = auto()
-    NONE = auto()
+def minimise_resource_allocation(servers: List[Server]):
+    for server in servers:
+        model = CpoModel("MinimumAllocation")
 
+        loading_speeds: Dict[Task, CpoVariable] = {}
+        compute_speeds: Dict[Task, CpoVariable] = {}
+        sending_speeds: Dict[Task, CpoVariable] = {}
 
-def save_plot(name: str, test_folder: str, additional: str = "",
-              image_format: ImageFormat = ImageFormat.NONE, lgd=None):
-    """
-    Saves the plot to a file of the particular image format
+        # The maximum bandwidth and the computation that the speed can be
+        max_bandwidth, max_computation = server.bandwidth_capacity, server.computation_capacity
 
-    :param name: The plot name
-    :param test_folder: The test name
-    :param additional: Additional information to add to the filename
-    :param image_format: The image format
-    :param lgd: The legend to be added to the plot when saved
-    """
-    if lgd:
-        lgd = (lgd,)
-    if image_format == ImageFormat.EPS:
-        filename = f'{test_folder}/eps/{name}{additional}.eps'
-        print(f'Save file location: {filename}')
-        plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.PNG:
-        filename = f'{test_folder}/png/{name}{additional}.png'
-        print(f'Save file location: {filename}')
-        plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
-    elif image_format == ImageFormat.BOTH:
-        save_plot(name, test_folder, additional, ImageFormat.EPS, lgd)
-        save_plot(name, test_folder, additional, ImageFormat.PNG, lgd)
-    elif image_format == ImageFormat.PDF:
-        filename = f'{test_folder}/eps/{name}{additional}.pdf'
-        print(f'Save file location: {filename}')
-        plt.savefig(filename, format='pdf')
+        # Loop over each task to allocate the variables and add the deadline constraints
+        for task in server.allocated_tasks:
+            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
+                                                     name="{} loading speed".format(task.name))
+            compute_speeds[task] = model.integer_var(min=1, max=max_computation,
+                                                     name="{} compute speed".format(task.name))
+            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
+                                                     name="{} sending speed".format(task.name))
+
+            model.add((task.required_storage / loading_speeds[task]) +
+                      (task.required_computation / compute_speeds[task]) +
+                      (task.required_results_data / sending_speeds[task]) <= task.deadline)
+
+        model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
+        model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= server.computation_capacity)
+        model.add(sum(
+            loading_speeds[task] + sending_speeds[task] for task in
+            server.allocated_tasks) <= server.bandwidth_capacity)
+
+        model.minimize(
+            sum(loading_speeds[task] + compute_speeds[task] + sending_speeds[task] for task in server.allocated_tasks))
+
+        model_solution = model.solve(log_output=None, TimeLimit=20)
+
+        allocated_tasks = server.allocated_tasks.copy()
+        server.reset_allocations()
+        for task in allocated_tasks:
+            task.reset_allocation()
+            task.allocate(model_solution.get_value(loading_speeds[task]),
+                          model_solution.get_value(compute_speeds[task]),
+                          model_solution.get_value(sending_speeds[task]), server)
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
-                            save_format: ImageFormat = ImageFormat.NONE):
+                            save_formats: Iterable[ImageFormat] = (), minimum_allocation: bool = False):
     """
     Plots the allocation results
-
     :param tasks: List of tasks
     :param servers: List of servers
-    :param title: Title for the graph
-    :param save_format: Save format
+    :param title: The title
+    :param save_formats: The save format list
+    :param minimum_allocation: If to use minimum allocation of tasks and servers
     """
+    if minimum_allocation:
+        minimise_resource_allocation(servers)
+
     allocated_tasks = [task for task in tasks if task.running_server]
     loading_df = pd.DataFrame(
         [[task.required_storage / server.storage_capacity if task.running_server == server else 0
@@ -83,7 +90,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     resources_df = [loading_df, compute_df, sending_df]
 
     n_col, n_ind = len(resources_df[0].columns), len(resources_df[0].index)
-    hatching = '/'
+    hatching = r'\'
 
     axe = plt.subplot(111)
     for resource_df in resources_df:  # for each data frame

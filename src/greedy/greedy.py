@@ -6,9 +6,9 @@ from time import time
 from typing import List
 
 from src.core.core import print_task_allocation, print_task_values
-from src.core.task import Task
 from src.core.result import Result
 from src.core.server import Server
+from src.core.task import Task
 from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
 from src.greedy.server_selection_policy import ServerSelectionPolicy
 from src.greedy.value_density import ValueDensity
@@ -43,7 +43,8 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: Va
                    debug_allocation=debug_task_allocation)
 
     # The algorithm name
-    algorithm_name = f'Greedy {value_density.name}, {server_selection_policy.name}, {resource_allocation_policy.name}'
+    algorithm_name = 'Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
+                                                resource_allocation_policy.name)
     return Result(algorithm_name, tasks, servers, time() - start_time,
                   value_density=value_density.name, server_selection_policy=server_selection_policy.name,
                   resource_allocation_policy=resource_allocation_policy.name)
