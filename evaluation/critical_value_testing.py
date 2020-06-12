@@ -11,9 +11,9 @@ from src.auctions.decentralised_iterative_auction import decentralised_iterative
 from src.auctions.fixed_vcg_auction import fixed_vcg_auction
 from src.auctions.vcg_auction import vcg_auction
 
-from src.core.core import results_filename, load_args
+from src.core.core import results_filename, load_args, reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.model.model_distribution import ModelDist, reset_model, load_dist
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -25,7 +25,7 @@ from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDead
 from src.greedy.value_density import policies as value_densities
 
 
-def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 3,
+def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 50, price_change: int = 3,
                            vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
                            decentralised_iterative_time_limit: int = 15):
     """
@@ -90,7 +90,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     print(f'Successful, data saved to {filename}')
 
 
-def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int = 50,
+def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
                                 vcg_time_limit: int = 60, fixed_vcg_time_limit: int = 60):
     """
     All policies test for critical value
@@ -140,7 +140,7 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
     print(f'Successful, data saved to {filename}')
 
 
-def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_time_limit: int = 15,
+def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100, vcg_time_limit: int = 15,
                     debug_results: bool = False):
     """
     Critical value auction testing
@@ -201,8 +201,8 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
     # all_policies_critical_value(loaded_model_dist, args['repeat'])

@@ -7,14 +7,14 @@ import json
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
-from src.core.core import load_args, print_model, results_filename
+from src.core.core import load_args, print_model, results_filename, reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.model.model_distribution import ModelDist, load_dist, reset_model
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 from src.core.super_server import SuperServer
 from src.optimal.optimal import optimal_algorithm
 
 
-def optimality_testing(model_dist: ModelDist):
+def optimality_testing(model_dist: ModelDistribution):
     """
     Optimality testing
 
@@ -34,7 +34,7 @@ def optimality_testing(model_dist: ModelDist):
         reset_model(tasks, servers)
 
 
-def optimal_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
+def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
     data = []
     for _ in range(repeats):
         tasks, servers = model_dist.create()
@@ -68,8 +68,8 @@ def optimal_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     # optimality_testing(loaded_model_dist)
     optimal_testing(loaded_model_dist, args['repeat'])

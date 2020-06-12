@@ -3,18 +3,18 @@ import json
 
 from tqdm import tqdm
 
-from src.core.core import load_args, results_filename
+from src.core.core import load_args, results_filename, reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from src.greedy.server_selection_policy import SumResources, TaskSumResources
 from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.model.model_distribution import load_dist, ModelDist, reset_model
+from src.model.model_distribution import load_model_distribution, ModelDistribution
 from src.optimal.fixed_optimal import fixed_optimal_algorithm
 from src.optimal.optimal import optimal_algorithm
 
 
-def resource_ratio_testing(model_dist: ModelDist, repeat: int, repeats: int = 10):
+def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 10):
     data = []
     for _ in tqdm(range(repeats)):
         results = {}
@@ -73,7 +73,7 @@ def resource_ratio_testing(model_dist: ModelDist, repeat: int, repeats: int = 10
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     resource_ratio_testing(loaded_model_dist, args['repeat'])

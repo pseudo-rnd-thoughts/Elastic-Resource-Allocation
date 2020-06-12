@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat, reset_model
 from src.core.visualise import plot_allocation_results
-from src.model.model_distribution import load_dist, ModelDist, reset_model
+from src.model.model_distribution import load_model_distribution, ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
@@ -24,8 +24,8 @@ def allocation_analysis():
     """
     Allocation Analysis
     """
-    dist_name, task_dist, server_dist = load_dist('../../models/basic_v2.json')
-    model_dist = ModelDist(dist_name, task_dist, 20, server_dist, 2)
+    dist_name, task_dist, server_dist = load_model_distribution('../../models/basic_v2.json')
+    model_dist = ModelDistribution(dist_name, task_dist, 20, server_dist, 2)
     tasks, servers = model_dist.create()
 
     # Optimal

@@ -12,15 +12,15 @@ from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
 from src.auctions.fixed_vcg_auction import fixed_vcg_auction
 from src.auctions.vcg_auction import vcg_auction
-from src.core.core import load_args, results_filename, set_price_change
+from src.core.core import load_args, results_filename, set_price_change, reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from src.greedy.server_selection_policy import SumResources, TaskSumResources
 from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.model.model_distribution import reset_model, ModelDist, load_dist
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 
 
-def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
+def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
                               price_changes: Iterable[int] = (1, 2, 3, 5, 7, 10), initial_cost: int = 15,
                               vcg_time_limit: int = 15, time_limit: int = 15, debug_results: bool = False):
     """
@@ -98,7 +98,7 @@ def uniform_price_change_test(model_dist: ModelDist, repeat: int, repeats: int =
             json.dump(data, file)
 
 
-def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_changes: int = 10, repeats: int = 20,
+def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, price_changes: int = 10, repeats: int = 20,
                                   vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
                                   decentralised_iterative_time_limit: int = 15,
                                   price_change_mean: int = 2, price_change_std: int = 4):
@@ -160,8 +160,8 @@ def non_uniform_price_change_test(model_dist: ModelDist, repeat: int, price_chan
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     uniform_price_change_test(loaded_model_dist, args['repeat'], time_limit=5)
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

@@ -1,11 +1,13 @@
 
+from __future__ import annotations
+
 from typing import Dict, Union
 
 from core.task import Task
 from model.model_distribution import positive_gaussian_dist
 
 
-class TaskDist(object):
+class TaskDistribution(object):
     """
     Random task distribution using gaussian (normal distribution)
     """

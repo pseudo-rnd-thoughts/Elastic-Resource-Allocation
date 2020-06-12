@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
+from model.model_distribution import ModelDistribution, load_model_distribution
 from src.auctions.vcg_auction import vcg_auction
 from src.branch_bound.branch_bound import branch_bound_algorithm
-from src.core.core import load_args
-from src.model.model_distribution import ModelDist, load_dist, reset_model
+from src.core.core import load_args, reset_model
 from src.optimal.optimal import optimal_algorithm
 
 
-def branch_bound_test(model_dist: ModelDist):
+def branch_bound_test(model_dist: ModelDistribution):
     tasks, servers = model_dist.create()
     
     result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)
@@ -21,7 +21,7 @@ def branch_bound_test(model_dist: ModelDist):
     print(result.store())
 
 
-def vcg_testing(model_dist: ModelDist):
+def vcg_testing(model_dist: ModelDistribution):
     tasks, servers = model_dist.create()
 
     result = vcg_auction(tasks, servers)
@@ -31,7 +31,7 @@ def vcg_testing(model_dist: ModelDist):
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
     
     branch_bound_test(loaded_model_dist)

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from src.core.core import load_args, print_model
-from src.core.model import ModelDist, load_dist, reset_model
+from src.core.core import load_args, print_model, reset_model
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 from src.optimal.optimal import optimal_algorithm
 
 
-def optimality_testing(model_dist: ModelDist):
+def optimality_testing(model_dist: ModelDistribution):
     """
     Optimality testing
 
@@ -30,7 +30,7 @@ def optimality_testing(model_dist: ModelDist):
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     optimality_testing(loaded_model_dist)

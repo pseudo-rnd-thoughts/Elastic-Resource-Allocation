@@ -8,12 +8,12 @@ from random import choice
 from tqdm import tqdm
 
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.core.core import results_filename, list_item_replacement, load_args, set_price_change
+from src.core.core import results_filename, list_item_replacement, load_args, set_price_change, reset_model
 from src.core.task import Task, task_diff
-from src.model.model_distribution import ModelDist, reset_model, load_dist
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 
 
-def mutated_task_test(model_dist: ModelDist, repeats: int = 50,
+def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
                       time_limit: int = 15, price_change: int = 2, initial_cost: int = 0,
                       mutate_percent: float = 0.1, mutate_repeats: int = 10,
                       debug_results: bool = False):
@@ -79,7 +79,7 @@ def mutated_task_test(model_dist: ModelDist, repeats: int = 50,
             json.dump(data, file)
 
 
-def all_task_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_tasks=5, percent: float = 0.15,
+def all_task_mutations_test(model_dist: ModelDistribution, repeat: int, num_mutated_tasks=5, percent: float = 0.15,
                             time_limit: int = 15, initial_cost: int = 0, debug_results: bool = False):
     """
     Tests all of the mutations for an iterative auction
@@ -152,8 +152,8 @@ def all_task_mutations_test(model_dist: ModelDist, repeat: int, num_mutated_task
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     mutated_task_test(loaded_model_dist, time_limit=5)
     # all_task_mutations_test(loaded_model_dist, args['repeat'])

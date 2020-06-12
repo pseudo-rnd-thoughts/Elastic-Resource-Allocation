@@ -11,9 +11,9 @@ from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
 
 from src.core.super_server import SuperServer
-from src.core.core import results_filename, load_args
+from src.core.core import results_filename, load_args, reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.model.model_distribution import ModelDist, reset_model, load_dist
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -37,7 +37,7 @@ from src.optimal.optimal import optimal_algorithm
 from src.optimal.relaxed import relaxed_algorithm
 
 
-def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
+def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
                          optimal_time_limit: int = 30, fixed_time_limit: int = 30, relaxed_time_limit: int = 30):
     """
     Greedy test with optimal found
@@ -102,7 +102,7 @@ def best_algorithms_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     print(f'Successful, data saved to {filename}')
 
 
-def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
+def all_policies_test(model_dist: ModelDistribution, repeat: int, repeats: int = 200):
     """
     All policies test
 
@@ -139,7 +139,7 @@ def all_policies_test(model_dist: ModelDist, repeat: int, repeats: int = 200):
     print(f'Successful, data saved to {filename}')
 
 
-def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
+def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
                     optimal_time_limit: int = 300, relaxed_time_limit: int = 150):
     """
     Allocation test
@@ -222,7 +222,7 @@ def allocation_test(model_dist: ModelDist, repeat: int, repeats: int = 50,
     print(f'Successful, data saved to {filename}')
 
 
-def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_results: bool = False):
+def paper_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100, debug_results: bool = False):
     """
     Testing to be used in the paper
 
@@ -303,8 +303,8 @@ def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, debug_
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])

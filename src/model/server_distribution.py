@@ -1,11 +1,13 @@
 
+from __future__ import annotations
+
 from typing import Union, Dict
 
 from core.server import Server
 from model.model_distribution import positive_gaussian_dist
 
 
-class ServerDist(object):
+class ServerDistribution(object):
     """
     Random server distribution using gaussian (normal distribution)
     """

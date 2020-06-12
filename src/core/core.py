@@ -12,7 +12,7 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from model.model_distribution import ModelDist
+from model.model_distribution import ModelDistribution
 from src.core.server import Server
 from src.core.task import Task
 
@@ -61,7 +61,7 @@ def load_args() -> Dict[str, Union[str, int]]:
     }
 
 
-def results_filename(test_name: str, model_dist: ModelDist, repeat: int = None) -> str:
+def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None) -> str:
     """
     Generates the save filename for testing results
 
@@ -168,6 +168,7 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
 def save_random_state(filename):
     """
     Save the random state to the filename
+
     :param filename: The filename to save the state to
     """
     with open(filename, 'w') as file:
@@ -265,3 +266,18 @@ def set_price_change(servers: List[Server], price_change: int):
     """
     for server in servers:
         server.price_change = price_change
+
+
+def reset_model(tasks: List[Task], servers: List[Server], forgot_price: bool = True):
+    """
+    Resets all of the tasks and servers back after an allocation
+
+    :param tasks: A list of tasks
+    :param servers: A list of servers
+    :param forgot_price: If to forgot the task price
+    """
+    for task in tasks:
+        task.reset_allocation(forgot_price=forgot_price)
+
+    for server in servers:
+        server.reset_allocations()

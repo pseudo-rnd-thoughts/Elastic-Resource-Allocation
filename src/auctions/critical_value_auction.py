@@ -13,8 +13,7 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Tuple
 
-from src.core.core import allocate
-from src.core.model import reset_model
+from src.core.core import allocate, reset_model
 from src.core.result import Result
 from src.core.server import Server
 from src.core.task import Task

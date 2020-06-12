@@ -8,11 +8,11 @@ from typing import List
 from tqdm import tqdm
 
 from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.core.core import results_filename, load_args, set_price_change
-from src.model.model_distribution import ModelDist, load_dist, reset_model
+from src.core.core import results_filename, load_args, set_price_change, reset_model
+from src.model.model_distribution import ModelDistribution, load_model_distribution
 
 
-def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], price_changes: List[int],
+def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[int], price_changes: List[int],
                repeats: int = 50, time_limit: int = 15):
     """
     Round test
@@ -49,7 +49,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
             json.dump(data, file)
 
 
-def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, time_limit: int = 15,
+def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 50, time_limit: int = 15,
                       debug_results: bool = False):
     """
     Testing the number of rounds required to convergence on the price
@@ -96,7 +96,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_model_distribution(args['model'])
+    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     round_num_testing(loaded_model_dist, args['repeat'], time_limit=5)

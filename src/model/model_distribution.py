@@ -5,8 +5,8 @@ from typing import Tuple, List
 
 from core.server import Server
 from core.task import Task
-from model.server_distribution import ServerDist
-from model.task_distribution import TaskDist
+from model.server_distribution import ServerDistribution
+from model.task_distribution import TaskDistribution
 
 
 def positive_gaussian_dist(mean, std) -> int:
@@ -20,7 +20,7 @@ def positive_gaussian_dist(mean, std) -> int:
     return max(1, int(gauss(mean, std)))
 
 
-def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
+def load_model_distribution(filename: str) -> Tuple[str, List[TaskDistribution], List[ServerDistribution]]:
     """
     Loads tasks and server distributions from a file
 
@@ -31,49 +31,35 @@ def load_dist(filename: str) -> Tuple[str, List[TaskDist], List[ServerDist]]:
     with open(filename) as file:
         data = json.load(file)
 
-        task_dists: List[TaskDist] = [
-            TaskDist(dist['name'], dist['probability'],
-                     dist['required_storage_mean'], dist['required_storage_std'],
-                     dist['required_computation_mean'], dist['required_computation_std'],
-                     dist['required_results_data_mean'], dist['required_results_data_std'],
-                     dist['value_mean'], dist['value_std'],
-                     dist['deadline_mean'], dist['deadline_std'])
+        task_dists: List[TaskDistribution] = [
+            TaskDistribution(dist['name'], dist['probability'],
+                             dist['required_storage_mean'], dist['required_storage_std'],
+                             dist['required_computation_mean'], dist['required_computation_std'],
+                             dist['required_results_data_mean'], dist['required_results_data_std'],
+                             dist['value_mean'], dist['value_std'],
+                             dist['deadline_mean'], dist['deadline_std'])
             for dist in data['task_dist']
         ]
 
-        server_dists: List[ServerDist] = [
-            ServerDist(dist['name'], dist['probability'],
-                       dist['maximum_storage_mean'], dist['maximum_storage_std'],
-                       dist['maximum_computation_mean'], dist['maximum_computation_std'],
-                       dist['maximum_bandwidth_mean'], dist['maximum_bandwidth_std'])
+        server_dists: List[ServerDistribution] = [
+            ServerDistribution(dist['name'], dist['probability'],
+                               dist['maximum_storage_mean'], dist['maximum_storage_std'],
+                               dist['maximum_computation_mean'], dist['maximum_computation_std'],
+                               dist['maximum_bandwidth_mean'], dist['maximum_bandwidth_std'])
             for dist in data['server_dist']
         ]
 
         return data['name'], task_dists, server_dists
 
 
-def reset_model(tasks: List[Task], servers: List[Server], forgot_price: bool = True):
-    """
-    Resets all of the tasks and servers back after an allocation
-
-    :param tasks: A list of tasks
-    :param servers: A list of servers
-    :param forgot_price: If to forgot the task price
-    """
-    for task in tasks:
-        task.reset_allocation(forgot_price=forgot_price)
-
-    for server in servers:
-        server.reset_allocations()
-
-
-class ModelDist(object):
+class ModelDistribution(object):
     """Model distributions"""
+
     num_tasks = 0
     num_servers = 0
 
-    def __init__(self, dist_name: str, task_dists: List[TaskDist], num_tasks: int,
-                 server_dists: List[ServerDist], num_servers: int):
+    def __init__(self, dist_name: str, task_dists: List[TaskDistribution], num_tasks: int,
+                 server_dists: List[ServerDistribution], num_servers: int):
         self.file_name = f'{dist_name}_j{num_tasks}_s{num_servers}'
         self.dist_name = dist_name
 

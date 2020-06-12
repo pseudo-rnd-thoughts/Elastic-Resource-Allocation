@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from src.model.model_distribution import load_dist, ModelDist
+from src.model.model_distribution import load_model_distribution, ModelDistribution
 from src.core.server import Server
 from src.core.task import Task
 
 
-def plot_task_distribution(model_dists: List[ModelDist], repeats: int = 10000):
+def plot_task_distribution(model_dists: List[ModelDistribution], repeats: int = 10000):
     """
     Plots the task distribution of a list of models
     :param model_dists: A list of model distributions
@@ -53,7 +53,7 @@ def plot_task_distribution(model_dists: List[ModelDist], repeats: int = 10000):
     plt.show()
 
 
-def plot_server_distribution(model_dists: List[ModelDist], repeats: int = 10):
+def plot_server_distribution(model_dists: List[ModelDistribution], repeats: int = 10):
     """
     Plots the server distribution of a list of models
 
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     models = []
 
     for file in files:
-        model_name, task_dist, server_dist = load_dist(file)
-        models.append(ModelDist(model_name, task_dist, 1, server_dist, 1))
+        model_name, task_dist, server_dist = load_model_distribution(file)
+        models.append(ModelDistribution(model_name, task_dist, 1, server_dist, 1))
 
     plot_task_distribution(models)
     plot_server_distribution(models)

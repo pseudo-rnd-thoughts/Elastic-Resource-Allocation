@@ -7,9 +7,8 @@ from typing import List, Dict, Optional
 
 from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
-from src.core.core import allocate, list_copy_remove
+from src.core.core import allocate, list_copy_remove, reset_model
 from src.core.fixed_task import FixedTask
-from src.core.model import reset_model
 from src.core.result import Result
 from src.core.server import Server
 from src.core.task import Task
