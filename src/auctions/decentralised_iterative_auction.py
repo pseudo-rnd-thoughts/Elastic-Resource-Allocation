@@ -5,11 +5,14 @@ from __future__ import annotations
 from math import inf
 from random import choice
 from time import time
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Tuple
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from greedy.resource_allocation_policy import ResourceAllocationPolicy
+from greedy.server_selection_policy import ServerSelectionPolicy
+from greedy.value_density import ValueDensity
 from src.core.core import allocate, print_model_solution
 from src.core.task import Task
 from src.core.result import Result
@@ -34,8 +37,9 @@ def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, 
                    (task.deadline * loading_speeds[task] * compute_speeds[task] * sending_speeds[task])
 
 
-def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial_cost: int,
-                        debug_results: bool = False, debug_initial_cost: bool = False):
+def evaluate_optimal_task_price(new_task: Task, server: Server, time_limit: int, initial_cost: int,
+                                debug_results: bool = False, debug_initial_cost: bool = False) \
+        -> Tuple[float, Dict[Task, int], Dict[Task, int], Dict[Task, int], Dict[Task, bool], Server]:
     """
     Evaluates the task price to run on server using a vcg mechanism
 
@@ -91,7 +95,7 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
         print('Decentralised model failure')
         print_model_solution(model_solution)
-        return inf, {}, {}, {}, {}, server, tasks
+        return inf, {}, {}, {}, {}, server
 
     # Get the max server profit that the model finds
     max_server_profit = model_solution.get_objective_values()[0]
@@ -103,8 +107,8 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
             print(f'Price set to {initial_cost} due to initial cost')
         task_price = initial_cost
 
-    print(f'Server: {server.name}, Revenue: {server.revenue}, Profit: {max_server_profit}, '
-          f'Price: {task_price}, {len(server.allocated_tasks)}')
+        print(f'Server: {server.name}, Revenue: {server.revenue}, Profit: {max_server_profit}, '
+              f'Price: {task_price}, {len(server.allocated_tasks)}')
 
     # Get the resource speeds and task allocations
     loading = {task: model_solution.get_value(loading_speed[task]) for task in tasks}
@@ -202,7 +206,7 @@ def decentralised_iterative_auction(tasks: List[Task], servers: List[Server], ti
 
         # Calculate the min task price from all of the servers
         task_price, loading, compute, sending, allocation, server = \
-            min((evaluate_task_price(task, server, time_limit, initial_cost(task))
+            min((evaluate_optimal_task_price(task, server, time_limit, initial_cost(task))
                  for server in servers if server.can_empty_run(task)), key=lambda bid: bid[0])
         messages += 2 * len(servers)
 
