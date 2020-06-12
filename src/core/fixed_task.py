@@ -6,23 +6,23 @@ from abc import abstractmethod, ABC
 
 from docplex.cp.model import CpoModel
 
-from core.job import Job
+from core.task import Task
 from core.server import Server
 
 
-class FixedJob(Job):
+class FixedTask(Task):
     """Job with a fixing resource usage speed"""
 
-    def __init__(self, job: Job, fixed_value: FixedValue, fixed_name: bool = True):
-        name = "Fixed " + job.name if fixed_name else job.name
-        super().__init__(name, job.required_storage, job.required_computation, job.required_results_data,
-                         job.value, job.deadline)
-        self.original_job = job
+    def __init__(self, task: Task, fixed_value: FixedValue, fixed_name: bool = True):
+        name = "Fixed " + task.name if fixed_name else task.name
+        super().__init__(name, task.required_storage, task.required_computation, task.required_results_data,
+                         task.value, task.deadline)
+        self.original_task = task
         self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(fixed_value)
 
     def find_fixed_speeds(self, fixed_value: FixedValue):
         """
-        Find the optimal fixed speeds of the job
+        Find the optimal fixed speeds of the task
         :param fixed_value: The fixed value function to value the speeds
         :return:
         """
@@ -46,12 +46,12 @@ class FixedJob(Job):
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
         """
-        Overrides the allocate function from job to just allocate the running server and the price
+        Overrides the allocate function from task to just allocate the running server and the price
         :param loading_speed: Ignored
         :param compute_speed: Ignored
         :param sending_speed: Ignored
-        :param running_server: The server the job is running on
-        :param price: The price of the job
+        :param running_server: The server the task is running on
+        :param price: The price of the task
         """
         assert self.running_server is None
 
@@ -62,7 +62,7 @@ class FixedJob(Job):
 
     def reset_allocation(self, forgot_price: bool = True):
         """
-        Overrides the reset_allocation function from job to just change the server not resource speeds
+        Overrides the reset_allocation function from task to just change the server not resource speeds
         """
         self.running_server = None
 
@@ -72,7 +72,7 @@ class FixedJob(Job):
 
 class FixedValue(ABC):
     """
-    Fixed Value policy for the fixed job to select the speed
+    Fixed Value policy for the fixed task to select the speed
     """
 
     def __init__(self, name):

@@ -11,7 +11,7 @@ import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
 from core.core import ImageFormat, analysis_filename, save_plot
-from core.job import Job
+from core.task import Task
 from core.server import Server
 
 matplotlib.rcParams['font.family'] = "monospace"
@@ -21,48 +21,48 @@ def minimise_resource_allocation(servers: List[Server]):
     for server in servers:
         model = CpoModel("MinimumAllocation")
 
-        loading_speeds: Dict[Job, CpoVariable] = {}
-        compute_speeds: Dict[Job, CpoVariable] = {}
-        sending_speeds: Dict[Job, CpoVariable] = {}
+        loading_speeds: Dict[Task, CpoVariable] = {}
+        compute_speeds: Dict[Task, CpoVariable] = {}
+        sending_speeds: Dict[Task, CpoVariable] = {}
 
         # The maximum bandwidth and the computation that the speed can be
         max_bandwidth, max_computation = server.bandwidth_capacity, server.computation_capacity
 
-        # Loop over each job to allocate the variables and add the deadline constraints
-        for job in server.allocated_jobs:
-            loading_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(job.name))
-            compute_speeds[job] = model.integer_var(min=1, max=max_computation,
-                                                    name="{} compute speed".format(job.name))
-            sending_speeds[job] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(job.name))
+        # Loop over each task to allocate the variables and add the deadline constraints
+        for task in server.allocated_tasks:
+            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(task.name))
+            compute_speeds[task] = model.integer_var(min=1, max=max_computation,
+                                                    name="{} compute speed".format(task.name))
+            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(task.name))
 
-            model.add((job.required_storage / loading_speeds[job]) +
-                      (job.required_computation / compute_speeds[job]) +
-                      (job.required_results_data / sending_speeds[job]) <= job.deadline)
+            model.add((task.required_storage / loading_speeds[task]) +
+                      (task.required_computation / compute_speeds[task]) +
+                      (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
-        model.add(sum(job.required_storage for job in server.allocated_jobs) <= server.storage_capacity)
-        model.add(sum(compute_speeds[job] for job in server.allocated_jobs) <= server.computation_capacity)
+        model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
+        model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= server.computation_capacity)
         model.add(sum(
-            loading_speeds[job] + sending_speeds[job] for job in server.allocated_jobs) <= server.bandwidth_capacity)
+            loading_speeds[task] + sending_speeds[task] for task in server.allocated_tasks) <= server.bandwidth_capacity)
 
         model.minimize(
-            sum(loading_speeds[job] + compute_speeds[job] + sending_speeds[job] for job in server.allocated_jobs))
+            sum(loading_speeds[task] + compute_speeds[task] + sending_speeds[task] for task in server.allocated_tasks))
 
         model_solution = model.solve(log_output=None, TimeLimit=20)
 
-        allocated_jobs = server.allocated_jobs.copy()
+        allocated_tasks = server.allocated_tasks.copy()
         server.reset_allocations()
-        for job in allocated_jobs:
-            job.reset_allocation()
-            job.allocate(model_solution.get_value(loading_speeds[job]),
-                         model_solution.get_value(compute_speeds[job]),
-                         model_solution.get_value(sending_speeds[job]), server)
+        for task in allocated_tasks:
+            task.reset_allocation()
+            task.allocate(model_solution.get_value(loading_speeds[task]),
+                         model_solution.get_value(compute_speeds[task]),
+                         model_solution.get_value(sending_speeds[task]), server)
 
 
-def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
+def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
                             save_formats: Iterable[ImageFormat] = (), minimum_allocation: bool = False):
     """
     Plots the allocation results
-    :param jobs: List of jobs
+    :param tasks: List of tasks
     :param servers: List of servers
     :param title: The title
     :param save_formats: The save format list
@@ -70,19 +70,19 @@ def plot_allocation_results(jobs: List[Job], servers: List[Server], title: str,
     if minimum_allocation:
         minimise_resource_allocation(servers)
 
-    allocated_jobs = [job for job in jobs if job.running_server]
+    allocated_tasks = [task for task in tasks if task.running_server]
     loading_df = pd.DataFrame(
-        [[job.required_storage / server.storage_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[task.required_storage / server.storage_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     compute_df = pd.DataFrame(
-        [[job.compute_speed / server.computation_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[task.compute_speed / server.computation_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     sending_df = pd.DataFrame(
-        [[(job.loading_speed + job.sending_speed) / server.bandwidth_capacity if job.running_server == server else 0
-          for job in allocated_jobs] for server in servers],
-        index=[server.name for server in servers], columns=[job.name for job in allocated_jobs])
+        [[(task.loading_speed + task.sending_speed) / server.bandwidth_capacity if task.running_server == server else 0
+          for task in allocated_tasks] for server in servers],
+        index=[server.name for server in servers], columns=[task.name for task in allocated_tasks])
     resource_df = [loading_df, compute_df, sending_df]
 
     hatching = '\\'

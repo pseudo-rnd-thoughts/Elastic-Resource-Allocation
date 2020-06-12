@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from math import exp
 
-from core.job import Job
+from core.task import Task
 from core.server import Server
 
 
@@ -18,10 +18,10 @@ class AllocationValuePolicy(object):
         self.name: str = name
 
     @abstractmethod
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         Evaluation with all information
-        :param job: A job
+        :param task: A task
         :param server: A server
         :param loading_speed: A loading speed
         :param compute_speed: A compute speed
@@ -39,10 +39,10 @@ class SumServerUsage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Sum Usage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
-        return job.value * \
-            ((server.available_storage - job.required_storage) +
+        return task.value * \
+            ((server.available_storage - task.required_storage) +
              (server.available_computation - compute_speed) +
              (server.available_bandwidth - (loading_speed + sending_speed)))
 
@@ -55,10 +55,10 @@ class SumServerPercentage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Sum Percentage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
-        return job.value * \
-            ((server.available_storage - job.required_storage) / server.available_storage +
+        return task.value * \
+            ((server.available_storage - task.required_storage) / server.available_storage +
              (server.available_computation - compute_speed) / server.available_computation +
              (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
 
@@ -71,10 +71,10 @@ class SumServerMaxPercentage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Sum Percentage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
-        return job.value * \
-            ((server.available_storage - job.required_storage) / server.storage_capacity +
+        return task.value * \
+            ((server.available_storage - task.required_storage) / server.storage_capacity +
              (server.available_computation - compute_speed) / server.computation_capacity +
              (server.available_bandwidth - (loading_speed + sending_speed)) / server.bandwidth_capacity)
 
@@ -87,10 +87,10 @@ class SumExpServerPercentage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Sum Exp Percentage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
-        return job.value * \
-            (exp((server.available_storage - job.required_storage) / server.available_storage) +
+        return task.value * \
+            (exp((server.available_storage - task.required_storage) / server.available_storage) +
              exp((server.available_computation - compute_speed) / server.available_computation) +
              exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
 
@@ -103,10 +103,10 @@ class SumExp3ServerPercentage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Sum Exp^3 Percentage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluate"""
-        return job.value * \
-            (exp(((server.available_storage - job.required_storage) / server.available_storage) ** 3) +
+        return task.value * \
+            (exp(((server.available_storage - task.required_storage) / server.available_storage) ** 3) +
              exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
              exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
 
@@ -119,9 +119,9 @@ class ValueOverUsage(AllocationValuePolicy):
     def __init__(self):
         super().__init__("Value over usage")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluate"""
-        return job.value / ((job.required_storage / server.available_storage) +
+        return task.value / ((task.required_storage / server.available_storage) +
                             (compute_speed / server.available_computation) +
                             ((loading_speed + sending_speed) / server.available_bandwidth))
 

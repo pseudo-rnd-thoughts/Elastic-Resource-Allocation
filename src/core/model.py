@@ -1,4 +1,4 @@
-"""This creates the models for the jobs and servers"""
+"""This creates the models for the tasks and servers"""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from random import gauss, random
 from typing import List, Tuple, Dict, Union
 
-from core.job import Job
+from core.task import Task
 from core.server import Server
 
 
@@ -22,7 +22,7 @@ def positive_gaussian_dist(mean, std) -> int:
 
 class JobDist(object):
     """
-    Random job distribution using gaussian (normal distribution)
+    Random task distribution using gaussian (normal distribution)
     """
 
     def __init__(self, dist_name, probability,
@@ -44,24 +44,24 @@ class JobDist(object):
         self.deadline_mean = deadline_mean
         self.deadline_std = deadline_std
 
-    def create_job(self, name) -> Job:
+    def create_task(self, name) -> Task:
         """
-        Creates a new job with name (unique identifier)
-        :param name: The name of the job
-        :return: A new job object
+        Creates a new task with name (unique identifier)
+        :param name: The name of the task
+        :return: A new task object
         """
-        job_name = "{} {}".format(self.dist_name, name)
-        return Job(name=job_name,
-                   required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
-                   required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
-                   required_results_data=positive_gaussian_dist(self.results_data_mean, self.results_data_std),
-                   value=positive_gaussian_dist(self.value_mean, self.value_std),
-                   deadline=int(positive_gaussian_dist(self.deadline_mean, self.deadline_std)))
+        task_name = "{} {}".format(self.dist_name, name)
+        return Task(name=task_name,
+                    required_storage=positive_gaussian_dist(self.storage_mean, self.storage_std),
+                    required_computation=positive_gaussian_dist(self.computation_mean, self.computation_std),
+                    required_results_data=positive_gaussian_dist(self.results_data_mean, self.results_data_std),
+                    value=positive_gaussian_dist(self.value_mean, self.value_std),
+                    deadline=int(positive_gaussian_dist(self.deadline_mean, self.deadline_std)))
 
     def save(self) -> Dict[str, Union[str, int]]:
         """
-        Save the job dist
-        :return: The Json code for the job dist
+        Save the task dist
+        :return: The Json code for the task dist
         """
         return {
             "name": self.dist_name,
@@ -101,7 +101,7 @@ class ServerDist(object):
         """
         Creates a new server with name (unique identifier)
         :param name: The name of the server
-        :return: A new job object
+        :return: A new task object
         """
         server_name = "{} {}".format(self.dist_name, name)
         return Server(name=server_name,
@@ -128,33 +128,33 @@ class ServerDist(object):
 
 class ModelDist(object):
     """Model distributions"""
-    num_jobs = 0
+    num_tasks = 0
     num_servers = 0
 
-    def __init__(self, dist_name: str, job_dists: List[JobDist], num_jobs: int,
+    def __init__(self, dist_name: str, task_dists: List[JobDist], num_tasks: int,
                  server_dists: List[ServerDist], num_servers: int):
-        self.file_name = "{}_j{}_s{}".format(dist_name, num_jobs, num_servers)
+        self.file_name = "{}_j{}_s{}".format(dist_name, num_tasks, num_servers)
         self.dist_name = dist_name
 
-        self.job_dists = job_dists
-        self.num_jobs = num_jobs
+        self.task_dists = task_dists
+        self.num_tasks = num_tasks
         self.server_dists = server_dists
         self.num_servers = num_servers
 
-    def create(self) -> Tuple[List[Job], List[Server]]:
+    def create(self) -> Tuple[List[Task], List[Server]]:
         """
-        Creates a list of jobs and servers from a job and server distribution
-        :return: A list of jobs and list of servers
+        Creates a list of tasks and servers from a task and server distribution
+        :return: A list of tasks and list of servers
         """
-        jobs: List[Job] = []
-        for job_pos in range(self.num_jobs):
+        tasks: List[Task] = []
+        for task_pos in range(self.num_tasks):
             prob = random()
-            for job_dist in self.job_dists:
-                if prob < job_dist.probability:
-                    jobs.append(job_dist.create_job(job_pos))
+            for task_dist in self.task_dists:
+                if prob < task_dist.probability:
+                    tasks.append(task_dist.create_task(task_pos))
                     break
                 else:
-                    prob -= job_dist.probability
+                    prob -= task_dist.probability
 
         servers: List[Server] = []
         for server_pos in range(self.num_servers):
@@ -166,27 +166,27 @@ class ModelDist(object):
                 else:
                     prob -= server_dist.probability
 
-        return jobs, servers
+        return tasks, servers
 
 
 def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
     """
-    Loads jobs and server distributions from a file
+    Loads tasks and server distributions from a file
     :param filename: The filename to load from
-    :return: A tuple of the list of random job distributions and random server distributions
+    :return: A tuple of the list of random task distributions and random server distributions
     """
 
     with open(filename) as file:
         data = json.load(file)
 
-        job_dists: List[JobDist] = [
+        task_dists: List[JobDist] = [
             JobDist(dist['name'], dist['probability'],
                     dist['required_storage_mean'], dist['required_storage_std'],
                     dist['required_computation_mean'], dist['required_computation_std'],
                     dist['required_results_data_mean'], dist['required_results_data_std'],
                     dist['value_mean'], dist['value_std'],
                     dist['deadline_mean'], dist['deadline_std'])
-            for dist in data['job_dist']
+            for dist in data['task_dist']
         ]
 
         server_dists: List[ServerDist] = [
@@ -197,18 +197,18 @@ def load_dist(filename: str) -> Tuple[str, List[JobDist], List[ServerDist]]:
             for dist in data['server_dist']
         ]
 
-        return data['name'], job_dists, server_dists
+        return data['name'], task_dists, server_dists
 
 
-def reset_model(jobs: List[Job], servers: List[Server], forgot_price: bool = True):
+def reset_model(tasks: List[Task], servers: List[Server], forgot_price: bool = True):
     """
-    Resets all of the jobs and servers back after an allocation
-    :param jobs: A list of jobs
+    Resets all of the tasks and servers back after an allocation
+    :param tasks: A list of tasks
     :param servers: A list of servers
-    :param forgot_price: If to forgot the job price
+    :param forgot_price: If to forgot the task price
     """
-    for job in jobs:
-        job.reset_allocation(forgot_price=forgot_price)
+    for task in tasks:
+        task.reset_allocation(forgot_price=forgot_price)
 
     for server in servers:
         server.reset_allocations()

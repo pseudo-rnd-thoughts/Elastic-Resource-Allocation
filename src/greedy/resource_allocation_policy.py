@@ -7,7 +7,7 @@ from typing import Tuple
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
-from core.job import Job
+from core.task import Task
 from core.server import Server
 
 
@@ -17,10 +17,10 @@ class ResourceAllocationPolicy(ABC):
     def __init__(self, name):
         self.name = name
 
-    def allocate(self, job: Job, server: Server) -> Tuple[int, int, int]:
+    def allocate(self, task: Task, server: Server) -> Tuple[int, int, int]:
         """
-        Determines the resource speed for the job on the server but finding the smallest
-        :param job: The job
+        Determines the resource speed for the task on the server but finding the smallest
+        :param task: The task
         :param server: The server
         :return: A tuple of resource speeds
         """
@@ -31,9 +31,9 @@ class ResourceAllocationPolicy(ABC):
                     for s in range(1, server.available_bandwidth + 1)
                     for w in range(1, server.available_computation + 1)
                     for r in range(1, server.available_bandwidth - s + 1)
-                    if job.required_storage * w * r + s * job.required_computation * r +
-                    s * w * job.required_results_data <= job.deadline * s * w * r),
-                    key=lambda bid: self.evaluator(job, server, bid[0], bid[1], bid[2]))
+                    if task.required_storage * w * r + s * task.required_computation * r +
+                    s * w * task.required_results_data <= task.deadline * s * w * r),
+                    key=lambda bid: self.evaluator(task, server, bid[0], bid[1], bid[2]))
                     
         min_value = inf
         min_speeds = None
@@ -41,9 +41,9 @@ class ResourceAllocationPolicy(ABC):
         for s in range(1, server.available_bandwidth + 1):
             for w in range(1, server.available_computation + 1):
                 for r in range(1, server.available_bandwidth - s + 1):
-                    if job.required_storage * w * r + s * job.required_computation * r + 
-                    s * w * job.required_results_data <= job.deadline * s * w * r:
-                        value = self.evaluate(job, server, s, w, r)
+                    if task.required_storage * w * r + s * task.required_computation * r + 
+                    s * w * task.required_results_data <= task.deadline * s * w * r:
+                        value = self.evaluate(task, server, s, w, r)
                         if value < min_value:
                             min_value = value
                             min_speeds = (s, w, r)
@@ -60,11 +60,11 @@ class ResourceAllocationPolicy(ABC):
         compute_speed = model.integer_var(min=1, max=server.available_computation, name="compute speed")
         sending_speed = model.integer_var(min=1, max=server.available_bandwidth, name="sending speed")
 
-        model.add(job.required_storage / loading_speed + job.required_computation / compute_speed +
-                  job.required_results_data / sending_speed <= job.deadline)
+        model.add(task.required_storage / loading_speed + task.required_computation / compute_speed +
+                  task.required_results_data / sending_speed <= task.deadline)
         model.add(loading_speed + sending_speed <= server.available_bandwidth)
 
-        model.minimize(self.evaluate(job, server, loading_speed, compute_speed, sending_speed))
+        model.minimize(self.evaluate(task, server, loading_speed, compute_speed, sending_speed))
 
         model_solution = model.solve(log_output=None)
 
@@ -73,18 +73,18 @@ class ResourceAllocationPolicy(ABC):
             print("Available storage: {}, computation: {}, bandwidth: {}"
                   .format(server.available_storage, server.available_computation, server.available_bandwidth))
             print("Required storage: {}, compute: {}, results data: {}"
-                  .format(job.required_storage, job.required_computation, job.required_results_data))
+                  .format(task.required_storage, task.required_computation, task.required_results_data))
         else:
             return model_solution.get_value(loading_speed), \
                 model_solution.get_value(compute_speed), \
                 model_solution.get_value(sending_speed)
 
     @abstractmethod
-    def evaluate(self, job: Job, server: Server,
+    def evaluate(self, task: Task, server: Server,
                  loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
-        :param job: A job
+        :param task: A task
         :param server: A server
         :param loading_speed: The loading speed of the storage
         :param compute_speed: The compute speed of the required computation
@@ -100,7 +100,7 @@ class SumPercentage(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Percentage Sum")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                  sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
@@ -113,7 +113,7 @@ class SumSpeed(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Sum of speeds")
 
-    def evaluate(self, job: Job, server: Server,
+    def evaluate(self, task: Task, server: Server,
                  loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
@@ -125,12 +125,12 @@ class DeadlinePercent(ResourceAllocationPolicy):
     def __init__(self):
         super().__init__("Deadline Percent")
 
-    def evaluate(self, job: Job, server: Server, loading_speed: int, compute_speed: int,
+    def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                  sending_speed: int) -> float:
         """Resource evaluator"""
-        return (job.required_storage / loading_speed +
-                job.required_computation / compute_speed +
-                job.required_results_data / sending_speed) / job.deadline
+        return (task.required_storage / loading_speed +
+                task.required_computation / compute_speed +
+                task.required_results_data / sending_speed) / task.deadline
 
 
 policies = (
