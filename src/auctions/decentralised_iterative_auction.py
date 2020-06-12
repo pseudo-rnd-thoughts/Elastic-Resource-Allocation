@@ -10,10 +10,10 @@ from typing import List, Dict
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import allocate, print_model_solution
-from core.result import Result
-from core.server import Server
-from core.task import Task
+from src.core.core import allocate, print_model_solution
+from src.core.result import Result
+from src.core.server import Server
+from src.core.task import Task
 
 
 def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, int], sending_speeds: Dict[Task, int],

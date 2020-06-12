@@ -7,10 +7,10 @@ from typing import List, Optional
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import print_model_solution, allocate
-from core.fixed_task import FixedTask
-from core.result import Result
-from core.server import Server
+from src.core.core import print_model_solution, allocate
+from src.core.fixed_task import FixedTask
+from src.core.result import Result
+from src.core.server import Server
 
 
 def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_limit: int) -> Optional[Result]:

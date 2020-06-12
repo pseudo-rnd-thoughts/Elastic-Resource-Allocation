@@ -9,11 +9,11 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import print_model, print_model_solution
-from core.result import Result
-from core.server import Server
-from core.super_server import SuperServer
-from core.task import Task
+from src.core.core import print_model, print_model_solution
+from src.core.result import Result
+from src.core.server import Server
+from src.core.super_server import SuperServer
+from src.core.task import Task
 
 
 def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,

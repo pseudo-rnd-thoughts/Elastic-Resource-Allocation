@@ -1,7 +1,10 @@
 """Super server class"""
+
+from __future__ import annotations
+
 from typing import List
 
-from core.server import Server
+from src.core.server import Server
 
 
 class SuperServer(Server):

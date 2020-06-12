@@ -5,15 +5,15 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Tuple
 
-from core.core import allocate
-from core.model import reset_model
-from core.result import Result
-from core.server import Server
-from core.task import Task
-from greedy import ResourceAllocationPolicy
-from greedy import ServerSelectionPolicy
-from greedy import ValueDensity
-from greedy.greedy import allocate_tasks
+from src.core.core import allocate
+from src.core.model import reset_model
+from src.core.result import Result
+from src.core.server import Server
+from src.core.task import Task
+from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
+from src.greedy.server_selection_policy import ServerSelectionPolicy
+from src.greedy.value_density import ValueDensity
+from src.greedy.greedy import allocate_tasks
 
 
 def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: ValueDensity,

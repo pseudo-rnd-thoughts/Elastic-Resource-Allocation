@@ -7,10 +7,10 @@ from typing import List, Dict, Tuple, Optional
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import print_model_solution, print_model
-from core.result import Result
-from core.server import Server
-from core.task import Task
+from src.core.core import print_model_solution, print_model
+from src.core.result import Result
+from src.core.server import Server
+from src.core.task import Task
 
 
 def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:

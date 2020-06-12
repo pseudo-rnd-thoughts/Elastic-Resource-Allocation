@@ -6,7 +6,7 @@ from random import gauss
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.server import Server
+    from src.core.server import Server
 
 
 class Task(object):

@@ -7,9 +7,10 @@ from math import exp
 from random import choice
 from typing import List, Optional
 
-from core.server import Server
-from core.task import Task
-from greedy.resource_allocation_policy import ResourceAllocationPolicy, policies as resource_allocation_policies
+from src.core.server import Server
+from src.core.task import Task
+from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
+from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 
 
 class ServerSelectionPolicy(ABC):

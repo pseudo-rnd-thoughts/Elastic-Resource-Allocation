@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
-from core.core import ImageFormat, analysis_filename, save_plot
-from core.server import Server
-from core.task import Task
+from src.core.core import ImageFormat, analysis_filename, save_plot
+from src.core.server import Server
+from src.core.task import Task
 
 matplotlib.rcParams['font.family'] = "monospace"
 

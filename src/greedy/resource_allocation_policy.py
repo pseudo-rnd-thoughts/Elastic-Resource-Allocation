@@ -7,8 +7,8 @@ from typing import Tuple
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
-from core.server import Server
-from core.task import Task
+from src.core.server import Server
+from src.core.task import Task
 
 
 class ResourceAllocationPolicy(ABC):

@@ -9,11 +9,11 @@ from __future__ import annotations
 from time import time
 from typing import List, Dict, Tuple, Optional
 
-from branch_bound.feasibility_allocations import flexible_feasible_allocation
-from branch_bound.priority_queue import Comparison, PriorityQueue
-from core.result import Result
-from core.server import Server
-from core.task import Task
+from src.branch_bound.feasibility_allocations import flexible_feasible_allocation
+from src.branch_bound.priority_queue import Comparison, PriorityQueue
+from src.core.result import Result
+from src.core.server import Server
+from src.core.task import Task
 
 
 def print_allocation(task_server_allocations: Dict[Server, List[Task]]):

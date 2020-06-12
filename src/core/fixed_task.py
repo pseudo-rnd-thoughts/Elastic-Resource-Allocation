@@ -6,8 +6,8 @@ from abc import abstractmethod, ABC
 
 from docplex.cp.model import CpoModel
 
-from core.server import Server
-from core.task import Task
+from src.core.server import Server
+from src.core.task import Task
 
 
 class FixedTask(Task):

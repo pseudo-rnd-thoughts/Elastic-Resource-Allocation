@@ -1,13 +1,15 @@
 """Feasible allocations"""
 
+from __future__ import annotations
+
 from typing import Dict, List, Tuple, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE
 
-from core.fixed_task import FixedTask
-from core.server import Server
-from core.task import Task
+from src.core.fixed_task import FixedTask
+from src.core.server import Server
+from src.core.task import Task
 
 
 def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task]],

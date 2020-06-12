@@ -7,11 +7,11 @@ from typing import List, Tuple
 
 from docplex.cp.model import CpoModel
 
-from core.core import allocate
-from core.result import Result
-from core.server import Server
-from core.task import Task
-from greedy_matrix.allocation_value_policy import AllocationValuePolicy
+from src.core.core import allocate
+from src.core.result import Result
+from src.core.server import Server
+from src.core.task import Task
+from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
 def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:

@@ -12,9 +12,9 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from core.model import ModelDist
-from core.server import Server
-from core.task import Task
+from src.core.model import ModelDist
+from src.core.server import Server
+from src.core.task import Task
 
 T = TypeVar('T')
 
