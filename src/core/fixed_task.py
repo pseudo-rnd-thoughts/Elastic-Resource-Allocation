@@ -6,8 +6,8 @@ from abc import abstractmethod, ABC
 
 from docplex.cp.model import CpoModel
 
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 
 class FixedTask(Task):
@@ -40,8 +40,8 @@ class FixedTask(Task):
         model_solution = model.solve(log_output=None)
 
         return model_solution.get_value(loading_speed), \
-            model_solution.get_value(compute_speed), \
-            model_solution.get_value(sending_speed)
+               model_solution.get_value(compute_speed), \
+               model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
@@ -56,7 +56,7 @@ class FixedTask(Task):
         assert self.running_server is None
 
         self.running_server = running_server
-        
+
         if price is not None:
             self.price = price
 

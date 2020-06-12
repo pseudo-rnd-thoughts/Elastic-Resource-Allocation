@@ -7,8 +7,8 @@ from math import exp
 from random import choice
 from typing import List, Optional
 
-from core.task import Task
 from core.server import Server
+from core.task import Task
 from greedy.resource_allocation_policy import ResourceAllocationPolicy, policies as resource_allocation_policies
 
 
@@ -108,8 +108,8 @@ class JobSumResources(ServerSelectionPolicy):
         """Value function"""
         loading, compute, sending = self.resource_allocation_policy.allocate(task, server)
         return task.required_storage / server.available_storage + \
-            compute / server.available_computation + \
-            (loading + sending) / server.available_bandwidth
+               compute / server.available_computation + \
+               (loading + sending) / server.available_bandwidth
 
 
 policies = [

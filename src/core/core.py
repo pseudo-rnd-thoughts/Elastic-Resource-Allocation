@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import re
 import pickle
+import re
 import sys
 from enum import Enum, auto
 from random import choice, getstate as random_state
@@ -12,9 +12,9 @@ from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from core.task import Task
 from core.model import ModelDist
 from core.server import Server
+from core.task import Task
 
 T = TypeVar('T')
 
@@ -113,7 +113,8 @@ def print_task_allocation(tasks: List[Task]):
     for task in tasks:
         if task.running_server:
             print("Job {:<{name_len}} - Server {}, loading: {}, compute: {}, sending: {}"
-                  .format(task.name, task.running_server.name, task.loading_speed, task.compute_speed, task.sending_speed,
+                  .format(task.name, task.running_server.name, task.loading_speed, task.compute_speed,
+                          task.sending_speed,
                           name_len=max_task_name_len))
         else:
             print("Job {} - None".format(task.name))
@@ -186,7 +187,8 @@ def print_model(tasks: List[Task], servers: List[Server]):
     print("Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price")
     for task in tasks:
         print("{:^9s}|{:^9d}|{:^13d}|{:^14d}|{:^7.1f}|{:^9d}|{:^9d}|{:^9d}|{:^10d}| {:.2f}"
-              .format(task.name, task.required_storage, task.required_computation, task.required_results_data, task.value,
+              .format(task.name, task.required_storage, task.required_computation, task.required_results_data,
+                      task.value,
                       task.loading_speed, task.compute_speed, task.sending_speed, task.deadline, task.price))
 
     print("\nServer Name | Storage | Computation | Bandwidth | Allocated Jobs")
@@ -229,7 +231,7 @@ def save_plot(name: str, test_name: str, additional: str = "",
     :param lgd: The legend to be added to the plot when saved
     """
     if lgd:
-        lgd = (lgd, )
+        lgd = (lgd,)
 
     for image_format in image_formats:
         if image_format == ImageFormat.EPS:

@@ -11,9 +11,9 @@ from typing import List, Dict, Tuple, Optional
 
 from branch_bound.feasibility_allocations import flexible_feasible_allocation
 from branch_bound.priority_queue import Comparison, PriorityQueue
-from core.task import Task
 from core.result import Result
 from core.server import Server
+from core.task import Task
 
 
 def print_allocation(task_server_allocations: Dict[Server, List[Task]]):
@@ -93,7 +93,8 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
 
     candidates = PriorityQueue(compare, evaluate)
     candidates.push_all(generate_candidates({server: [] for server in servers}, tasks, servers, 0, 0,
-                                            sum(task.value for task in tasks), debug_new_candidates=debug_new_candidate))
+                                            sum(task.value for task in tasks),
+                                            debug_new_candidates=debug_new_candidate))
 
     # While candidates exist
     while candidates.size > 0:
@@ -130,7 +131,7 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
     for server, allocated_tasks in best_allocation.items():
         for allocated_task in allocated_tasks:
             allocated_task.allocate(best_speeds[allocated_task][0], best_speeds[allocated_task][1],
-                                   best_speeds[allocated_task][2], server)
+                                    best_speeds[allocated_task][2], server)
             server.allocate_task(allocated_task)
 
     return Result("Branch & Bound", tasks, servers, time() - start_time)

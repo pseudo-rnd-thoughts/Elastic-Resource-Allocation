@@ -46,14 +46,14 @@ class Task(object):
         """
         # Check that the allocation information is correct
         assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
-            "Allocation information is incorrect for Task {} with loading {} compute {} sending {}"\
-            .format(self.name, loading_speed, compute_speed, sending_speed)
+            "Allocation information is incorrect for Task {} with loading {} compute {} sending {}" \
+                .format(self.name, loading_speed, compute_speed, sending_speed)
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
         assert self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data <= \
-            self.deadline * loading_speed * compute_speed * sending_speed, \
+               loading_speed * self.required_computation * sending_speed + \
+               loading_speed * compute_speed * self.required_results_data <= \
+               self.deadline * loading_speed * compute_speed * sending_speed, \
             "Deadline assertion failure Task {} requirement storage {} computation {} results data {} " \
             "with loading {} compute {} sending {} speed and deadline {} time taken {}" \
                 .format(self.name, self.required_storage, self.required_computation, self.required_results_data,

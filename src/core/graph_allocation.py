@@ -11,8 +11,8 @@ import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
 from core.core import ImageFormat, analysis_filename, save_plot
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 matplotlib.rcParams['font.family'] = "monospace"
 
@@ -30,10 +30,12 @@ def minimise_resource_allocation(servers: List[Server]):
 
         # Loop over each task to allocate the variables and add the deadline constraints
         for task in server.allocated_tasks:
-            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} loading speed".format(task.name))
+            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
+                                                     name="{} loading speed".format(task.name))
             compute_speeds[task] = model.integer_var(min=1, max=max_computation,
-                                                    name="{} compute speed".format(task.name))
-            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name="{} sending speed".format(task.name))
+                                                     name="{} compute speed".format(task.name))
+            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth,
+                                                     name="{} sending speed".format(task.name))
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -42,7 +44,8 @@ def minimise_resource_allocation(servers: List[Server]):
         model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
         model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= server.computation_capacity)
         model.add(sum(
-            loading_speeds[task] + sending_speeds[task] for task in server.allocated_tasks) <= server.bandwidth_capacity)
+            loading_speeds[task] + sending_speeds[task] for task in
+            server.allocated_tasks) <= server.bandwidth_capacity)
 
         model.minimize(
             sum(loading_speeds[task] + compute_speeds[task] + sending_speeds[task] for task in server.allocated_tasks))
@@ -54,8 +57,8 @@ def minimise_resource_allocation(servers: List[Server]):
         for task in allocated_tasks:
             task.reset_allocation()
             task.allocate(model_solution.get_value(loading_speeds[task]),
-                         model_solution.get_value(compute_speeds[task]),
-                         model_solution.get_value(sending_speeds[task]), server)
+                          model_solution.get_value(compute_speeds[task]),
+                          model_solution.get_value(sending_speeds[task]), server)
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,

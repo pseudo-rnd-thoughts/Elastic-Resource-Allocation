@@ -6,14 +6,14 @@ from time import time
 from typing import List, Dict, Tuple
 
 from core.core import allocate
-from core.task import Task
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
-from greedy.greedy import allocate_tasks
+from core.task import Task
 from greedy import ResourceAllocationPolicy
 from greedy import ServerSelectionPolicy
 from greedy import ValueDensity
+from greedy.greedy import allocate_tasks
 
 
 def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: ValueDensity,
@@ -32,31 +32,31 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
     :return:
     """
     start_time = time()
-    
+
     valued_tasks: Dict[Task, float] = {task: value_density.evaluate(task) for task in tasks}
     ranked_tasks: List[Task] = sorted(valued_tasks, key=lambda j: valued_tasks[j], reverse=True)
-    
+
     # Runs the greedy algorithm
     allocate_tasks(ranked_tasks, servers, server_selection_policy, resource_allocation_policy)
     allocation_data: Dict[Task, Tuple[int, int, int, Server]] = {
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server)
         for task in ranked_tasks if task.running_server
     }
-    
+
     if debug_initial_allocation:
         max_name_len = max(len(task.name) for task in tasks)
         print("{:<{}} | s | w | r | server".format("Job", max_name_len))
         for task, (s, w, r, server) in allocation_data.items():
             print("{:<{}}|{:3f}|{:3f}|{:3f}|{}".format(task, max_name_len, s, w, r, server.name))
-    
+
     reset_model(tasks, servers)
-    
+
     # Loop through each task allocated and find the critical value for the task
     for critical_task in allocation_data.keys():
         # Remove the task from the ranked tasks and save the original position
         critical_pos = ranked_tasks.index(critical_task)
         ranked_tasks.remove(critical_task)
-        
+
         # Loop though the tasks in order checking if the task can be allocated at any point
         for task_pos, task in enumerate(ranked_tasks):
             # If any of the servers can allocate the critical task then allocate the current task to a server
@@ -72,19 +72,19 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
                 critical_task_density = valued_tasks[ranked_tasks[task_pos - 1]]
                 critical_task.price = round(value_density.inverse(critical_task, critical_task_density), 3)
                 break
-        
+
         if debug_critical_value:
             print("Job {} critical value: {:.3f}".format(critical_task.name, critical_task.price))
-        
+
         # Read the task back into the ranked task in its original position and reset the model but not forgetting the
         #   new critical task's price
         ranked_tasks.insert(critical_pos, critical_task)
         reset_model(tasks, servers, forgot_price=False)
-    
+
     # Allocate the tasks and set the price to the critical value
     for task, (s, w, r, server) in allocation_data.items():
         allocate(task, s, w, r, server)
-    
+
     return Result('Critical Value: {}, {}, {}'
                   .format(value_density.name, server_selection_policy.name, resource_allocation_policy.name),
                   tasks, servers, time() - start_time, show_money=True, value_density=value_density.name,

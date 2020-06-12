@@ -7,10 +7,10 @@ from typing import List, Dict, Tuple, Optional
 
 from branch_bound.branch_bound import branch_bound_algorithm
 from core.core import list_copy_remove
-from core.task import Task
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
+from core.task import Task
 
 
 def vcg_auction(tasks: List[Task], servers: List[Server],

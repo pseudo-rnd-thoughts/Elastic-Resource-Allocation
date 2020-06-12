@@ -7,8 +7,8 @@ from typing import Tuple
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 
 class ResourceAllocationPolicy(ABC):
@@ -76,8 +76,8 @@ class ResourceAllocationPolicy(ABC):
                   .format(task.required_storage, task.required_computation, task.required_results_data))
         else:
             return model_solution.get_value(loading_speed), \
-                model_solution.get_value(compute_speed), \
-                model_solution.get_value(sending_speed)
+                   model_solution.get_value(compute_speed), \
+                   model_solution.get_value(sending_speed)
 
     @abstractmethod
     def evaluate(self, task: Task, server: Server,
@@ -104,7 +104,7 @@ class SumPercentage(ResourceAllocationPolicy):
                  sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
-            (loading_speed + sending_speed) / server.available_bandwidth
+               (loading_speed + sending_speed) / server.available_bandwidth
 
 
 class SumSpeed(ResourceAllocationPolicy):

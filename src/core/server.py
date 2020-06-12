@@ -76,7 +76,7 @@ class Server(object):
 
         for s in range(1, self.available_bandwidth):
             if task.required_storage * self.available_computation * (self.available_bandwidth - s) + \
-                    s * task.required_computation * (self.available_bandwidth - s) +\
+                    s * task.required_computation * (self.available_bandwidth - s) + \
                     s * self.available_computation * task.required_results_data <= \
                     task.deadline * s * self.available_computation * (self.available_bandwidth - s):
                 return True
@@ -127,7 +127,7 @@ class Server(object):
 
         for s in range(1, self.bandwidth_capacity):
             if task.required_storage * self.computation_capacity * (self.bandwidth_capacity - s) + \
-                    s * task.required_computation * (self.bandwidth_capacity - s) +\
+                    s * task.required_computation * (self.bandwidth_capacity - s) + \
                     s * self.computation_capacity * task.required_results_data <= \
                     task.deadline * s * self.computation_capacity * (self.bandwidth_capacity - s):
                 return True
@@ -139,27 +139,27 @@ class Server(object):
         :param task: The task being allocated
         """
         assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
-            "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}"\
-            .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
+            "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}" \
+                .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
         assert self.available_storage >= task.required_storage, \
-            "Server storage failure for Server {} available storage {}, task required storage {}"\
-            .format(self.name, self.available_storage, task.required_storage)
+            "Server storage failure for Server {} available storage {}, task required storage {}" \
+                .format(self.name, self.available_storage, task.required_storage)
         assert self.available_computation >= task.compute_speed, \
-            "Server computation failure for Server {} available computation {}, task compute speed {}"\
-            .format(self.name, self.available_computation, task.compute_speed)
+            "Server computation failure for Server {} available computation {}, task compute speed {}" \
+                .format(self.name, self.available_computation, task.compute_speed)
         assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
             "Server available bandwidth failure for Server {} available bandwidth {}, " \
-            "task loading speed {} and sending speed {}"\
-            .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
+            "task loading speed {} and sending speed {}" \
+                .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
         assert task not in self.allocated_tasks, \
-            "Job {} is already allocated to the server {}"\
-            .format(task.name, self.name)
+            "Job {} is already allocated to the server {}" \
+                .format(task.name, self.name)
 
         self.allocated_tasks.append(task)
         self.available_storage -= task.required_storage
         self.available_computation -= task.compute_speed
         self.available_bandwidth -= (task.loading_speed + task.sending_speed)
-        
+
         self.revenue += task.price
 
     def reset_allocations(self):
@@ -185,7 +185,7 @@ class Server(object):
                       int(max(1, self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
                       int(max(1, self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
                       self.price_change)
-    
+
     def update_capacities(self, computation_capacity: int, bandwidth_capacity: int):
         """
         Update the computational and bandwidth capacities of the server
@@ -194,7 +194,7 @@ class Server(object):
         """
         self.computation_capacity = computation_capacity
         self.available_computation = computation_capacity
-        
+
         self.bandwidth_capacity = bandwidth_capacity
         self.available_bandwidth = bandwidth_capacity
 

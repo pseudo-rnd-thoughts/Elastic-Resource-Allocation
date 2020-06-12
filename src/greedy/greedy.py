@@ -6,10 +6,9 @@ from time import time
 from typing import List
 
 from core.core import print_task_allocation, print_task_values
-from core.task import Task
 from core.result import Result
 from core.server import Server
-
+from core.task import Task
 from greedy.resource_allocation_policy import ResourceAllocationPolicy
 from greedy.server_selection_policy import ServerSelectionPolicy
 from greedy.value_density import ValueDensity
@@ -36,11 +35,11 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: Va
     task_values = sorted((task for task in tasks), key=lambda task: value_density.evaluate(task), reverse=True)
     if debug_task_values:
         print_task_values(sorted(((task, value_density.evaluate(task)) for task in tasks),
-                                key=lambda jv: jv[1], reverse=True))
+                                 key=lambda jv: jv[1], reverse=True))
 
     # Run the allocation of the task with the sorted task by value
     allocate_tasks(task_values, servers, server_selection_policy, resource_allocation_policy,
-                  debug_allocation=debug_task_allocation)
+                   debug_allocation=debug_task_allocation)
 
     # The algorithm name
     algorithm_name = 'Greedy {}, {}, {}'.format(value_density.name, server_selection_policy.name,
@@ -51,7 +50,7 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: Va
 
 
 def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
-                  resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
+                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
     """
     Allocate the tasks to the servers based on the server selection policy and resource allocation policies
     :param tasks: The list of tasks

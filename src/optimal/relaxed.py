@@ -10,10 +10,10 @@ from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import print_model, print_model_solution
-from core.task import Task
 from core.result import Result
 from core.server import Server
 from core.super_server import SuperServer
+from core.task import Task
 
 
 def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
@@ -39,11 +39,11 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
 
     for task in tasks:
         loading_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
-                                                name="{} loading speed".format(task.name))
+                                                 name="{} loading speed".format(task.name))
         compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity,
-                                                name="{} compute speed".format(task.name))
+                                                 name="{} compute speed".format(task.name))
         sending_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
-                                                name="{} sending speed".format(task.name))
+                                                 name="{} sending speed".format(task.name))
         task_allocation[task] = model.binary_var(name="{} allocation".format(task.name))
 
         model.add(task.required_storage / loading_speeds[task] +
@@ -78,8 +78,9 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
     # For each of the tasks allocate if allocated to the server
     for task in tasks:
         if model_solution.get_value(task_allocation[task]):
-            task.allocate(model_solution.get_value(loading_speeds[task]), model_solution.get_value(compute_speeds[task]),
-                         model_solution.get_value(sending_speeds[task]), super_server)
+            task.allocate(model_solution.get_value(loading_speeds[task]),
+                          model_solution.get_value(compute_speeds[task]),
+                          model_solution.get_value(sending_speeds[task]), super_server)
             super_server.allocate_task(task)
 
     return Result("Relaxed", tasks, [super_server], time() - start_time, solve_status=model_solution.get_solve_status())

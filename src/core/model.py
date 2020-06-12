@@ -6,8 +6,8 @@ import json
 from random import gauss, random
 from typing import List, Tuple, Dict, Union
 
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 
 def positive_gaussian_dist(mean, std) -> int:

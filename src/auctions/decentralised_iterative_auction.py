@@ -11,9 +11,9 @@ from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import allocate, print_model_solution
-from core.task import Task
 from core.result import Result
 from core.server import Server
+from core.task import Task
 
 
 def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, int], sending_speeds: Dict[Task, int],
@@ -34,7 +34,7 @@ def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, 
 
 
 def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial_cost: int,
-                       debug_results: bool = False, debug_initial_cost: bool = False):
+                        debug_results: bool = False, debug_initial_cost: bool = False):
     """
     Evaluates the task price to run on server using a vcg mechanism
     :param new_task: A new task
@@ -56,11 +56,11 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
 
     # Create all of the resource speeds variables
     loading_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                            name="Job {} loading speed".format(task.name)) for task in tasks}
+                                             name="Job {} loading speed".format(task.name)) for task in tasks}
     compute_speed = {task: model.integer_var(min=1, max=server.computation_capacity,
-                                            name="Job {} compute speed".format(task.name)) for task in tasks}
+                                             name="Job {} compute speed".format(task.name)) for task in tasks}
     sending_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                            name="Job {} sending speed".format(task.name)) for task in tasks}
+                                             name="Job {} sending speed".format(task.name)) for task in tasks}
     # Create all of the allocation variables however only on the currently allocated tasks
     allocation = {task: model.binary_var(name="Job {} allocated".format(task.name)) for task in server.allocated_tasks}
 
@@ -93,7 +93,7 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
 
     # Get the max server profit that the model finds
     new_server_revenue = model_solution.get_objective_values()[0]
-    
+
     # Calculate the task price through a vcg similar function
     task_price = server.revenue - new_server_revenue + server.price_change
     if task_price < initial_cost:  # Add an initial cost the task if the price is less than a set price
@@ -118,9 +118,9 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
 
 
 def allocate_tasks(task_price: float, new_task: Task, server: Server,
-                  loading: Dict[Task, int], compute: Dict[Task, int], sending: Dict[Task, int],
-                  allocation: Dict[Task, bool], unallocated_tasks: List[Task],
-                  debug_allocations: bool = False, debug_result: bool = False) -> int:
+                   loading: Dict[Task, int], compute: Dict[Task, int], sending: Dict[Task, int],
+                   allocation: Dict[Task, bool], unallocated_tasks: List[Task],
+                   debug_allocations: bool = False, debug_result: bool = False) -> int:
     """
     Allocates a task to a server based on the last allocation
     :param task_price: The new task price
@@ -207,8 +207,9 @@ def decentralised_iterative_auction(tasks: List[Task], servers: List[Server], ti
         if task_price <= task.value:
             if debug_allocation:
                 print("Adding task {} to server {} with price {}".format(task.name, server.name, task_price))
-            messages += allocate_tasks(task_price, task, server, loading, compute, sending, allocation, unallocated_tasks,
-                                      debug_allocation, debug_results)
+            messages += allocate_tasks(task_price, task, server, loading, compute, sending, allocation,
+                                       unallocated_tasks,
+                                       debug_allocation, debug_results)
         elif debug_allocation:
             print("Removing Job {} from the unallocated task as the min price is {} and task value is {}"
                   .format(task.name, task_price, task.value))

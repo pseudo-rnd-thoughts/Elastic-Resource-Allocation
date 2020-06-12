@@ -8,11 +8,11 @@ from typing import List, Dict, Optional
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import allocate, list_copy_remove
-from core.task import Task
+from core.fixed_task import FixedTask
 from core.model import reset_model
 from core.result import Result
 from core.server import Server
-from core.fixed_task import FixedTask
+from core.task import Task
 
 
 def fixed_vcg_auction(tasks: List[FixedTask], servers: List[Server],

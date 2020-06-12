@@ -8,10 +8,9 @@ from typing import List, Tuple
 from docplex.cp.model import CpoModel
 
 from core.core import allocate
-from core.task import Task
 from core.result import Result
 from core.server import Server
-
+from core.task import Task
 from greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
@@ -49,7 +48,7 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
     model_solution = model.solve(log_output=None)
 
     return model_solution.get_objective_values()[0], model_solution.get_value(loading_speed), \
-        model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
+           model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
 
 
 def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
@@ -91,11 +90,11 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
             # Update the allocation when the server is updated
             if allocated_server.can_run(task):
                 allocation_value_matrix[(task, allocated_server)] = allocate_resources(task, allocated_server,
-                                                                                      allocation_value_policy)
+                                                                                       allocation_value_policy)
             # If task cant be run then remove the task
             elif (task, allocated_server) in allocation_value_matrix:
                 if debug_pop:
                     print("Pop task {} and server {}".format(task.name, allocated_server.name))
                 allocation_value_matrix.pop((task, allocated_server))
 
-    return Result("Matrix Greedy " + allocation_value_policy.name, tasks, servers, solve_time=time()-start_time)
+    return Result("Matrix Greedy " + allocation_value_policy.name, tasks, servers, solve_time=time() - start_time)

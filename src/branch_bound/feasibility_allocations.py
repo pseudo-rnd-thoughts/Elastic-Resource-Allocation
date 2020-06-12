@@ -6,8 +6,8 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE
 
 from core.fixed_task import FixedTask
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 
 def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task]],
@@ -27,11 +27,11 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
     for server, tasks in task_server_allocations.items():
         for task in tasks:
             loading_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                    name='Job {} loading speed'.format(task.name))
+                                                     name='Job {} loading speed'.format(task.name))
             compute_speeds[task] = model.integer_var(min=1, max=server.computation_capacity,
-                                                    name='Job {} compute speed'.format(task.name))
+                                                     name='Job {} compute speed'.format(task.name))
             sending_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                    name='Job {} sending speed'.format(task.name))
+                                                     name='Job {} sending speed'.format(task.name))
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -44,8 +44,8 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
     model_solution = model.solve(log_output=None, TimeLimit=time_limit)
     if model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE:
         return {task: (model_solution.get_value(loading_speeds[task]),
-                      model_solution.get_value(compute_speeds[task]),
-                      model_solution.get_value(sending_speeds[task]))
+                       model_solution.get_value(compute_speeds[task]),
+                       model_solution.get_value(sending_speeds[task]))
                 for tasks in task_server_allocations.values() for task in tasks}
     else:
         return None
@@ -66,4 +66,3 @@ def fixed_feasible_allocation(task_server_allocations: Dict[Server, List[FixedTa
 
     return {task: (task.loading_speed, task.compute_speed, task.sending_speed)
             for tasks in task_server_allocations.values() for task in tasks}
-
