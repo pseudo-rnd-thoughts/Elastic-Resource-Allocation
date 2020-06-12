@@ -69,6 +69,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     :param servers: List of servers
     :param title: The title
     :param save_formats: The save format list
+    :param minimum_allocation: If to use minimum allocation of tasks and servers
     """
     if minimum_allocation:
         minimise_resource_allocation(servers)

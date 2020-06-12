@@ -104,7 +104,7 @@ class SumPercentage(ResourceAllocationPolicy):
                  sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
-               (loading_speed + sending_speed) / server.available_bandwidth
+            (loading_speed + sending_speed) / server.available_bandwidth
 
 
 class SumSpeed(ResourceAllocationPolicy):

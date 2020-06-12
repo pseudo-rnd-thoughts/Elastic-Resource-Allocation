@@ -97,7 +97,7 @@ class Random(ServerSelectionPolicy):
         raise NotImplementedError("Value function not implemented")
 
 
-class JobSumResources(ServerSelectionPolicy):
+class TaskSumResources(ServerSelectionPolicy):
     """Job Sum resources usage"""
 
     def __init__(self, resource_allocation_policy: ResourceAllocationPolicy, maximise: bool = False):
@@ -109,8 +109,8 @@ class JobSumResources(ServerSelectionPolicy):
         """Value function"""
         loading, compute, sending = self.resource_allocation_policy.allocate(task, server)
         return task.required_storage / server.available_storage + \
-               compute / server.available_computation + \
-               (loading + sending) / server.available_bandwidth
+            compute / server.available_computation + \
+            (loading + sending) / server.available_bandwidth
 
 
 policies = [
@@ -126,7 +126,7 @@ all_policies = [
     for policy in [SumResources, ProductResources, SumExpResource, Random]
 ]
 all_policies += [
-    JobSumResources(policy, maximise)
+    TaskSumResources(policy, maximise)
     for maximise in [True, False]
     for policy in resource_allocation_policies
 ]

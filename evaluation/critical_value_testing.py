@@ -6,18 +6,23 @@ import json
 
 from tqdm import tqdm
 
-from core import results_filename, load_args
-from core import ModelDist, reset_model, load_dist
-from core import FixedJob, FixedSumSpeeds
-from greedy import policies as value_densities, UtilityPerResources, UtilityResourcePerDeadline, \
-    UtilityDeadlinePerResource, Value
-from greedy import policies as server_selection_policies, SumResources, JobSumResources
-from greedy import policies as resource_allocation_policies, SumPercentage, SumSpeed
+from src.auctions.critical_value_auction import critical_value_auction
+from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from src.auctions.fixed_vcg_auction import fixed_vcg_auction
+from src.auctions.vcg_auction import vcg_auction
 
-from auctions import decentralised_iterative_auction
-from auctions import critical_value_auction
-from auctions.vcg_auction import vcg_auction
-from auctions.fixed_vcg_auction import fixed_vcg_auction
+from src.core.core import results_filename, load_args
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.core.model import ModelDist, reset_model, load_dist
+
+from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
+
+from src.greedy.server_selection_policy import SumResources, TaskSumResources
+from src.greedy.server_selection_policy import policies as server_selection_policies
+
+from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+from src.greedy.value_density import policies as value_densities
 
 
 def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, price_change: int = 3,
@@ -33,41 +38,41 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
     :param fixed_vcg_time_limit:
     :param decentralised_iterative_time_limit: The decentralised iterative time limit
     """
-    print("Critical Value testing for {} jobs and {} servers"
-          .format(model_dist.num_jobs, model_dist.num_servers))
+    print("Critical Value testing for {} tasks and {} servers"
+          .format(model_dist.num_tasks, model_dist.num_servers))
 
     data = []
 
     # Loop, for each run all of the auctions to find out the results from each type
     for _ in tqdm(range(repeats)):
-        # Generate the jobs and servers
-        jobs, servers = model_dist.create()
+        # Generate the tasks and servers
+        tasks, servers = model_dist.create()
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(jobs, servers)
+        vcg_result = vcg_auction(tasks, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers)
+        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
         # The decentralised iterative auction results
         for server in servers:
             server.price_change = price_change
-        iterative_result = decentralised_iterative_auction(jobs, servers, decentralised_iterative_time_limit)
+        iterative_result = decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
         auction_results['price change {}'.format(price_change)] = iterative_result.store()
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
         
         # Tests the critical value
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
                     try:
-                        critical_value_result = critical_value_auction(jobs, servers, value_density,
+                        critical_value_result = critical_value_auction(tasks, servers, value_density,
                                                                        server_selection_policy,
                                                                        resource_allocation_policy)
                         auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
@@ -75,7 +80,7 @@ def critical_value_testing(model_dist: ModelDist, repeat: int, repeats: int = 50
                         print("Critical Error")
                         print(e)
                     
-                    reset_model(jobs, servers)
+                    reset_model(tasks, servers)
 
         # Append the auction results to the data
         data.append(auction_results)
@@ -97,35 +102,35 @@ def all_policies_critical_value(model_dist: ModelDist, repeat: int, repeats: int
     :param vcg_time_limit: The VCG time limit
     :param fixed_vcg_time_limit: THe Fixed VCG time limit
     """
-    print("Critical value test of all policies for {} jobs and {} servers"
-          .format(model_dist.num_jobs, model_dist.num_servers))
+    print("Critical value test of all policies for {} tasks and {} servers"
+          .format(model_dist.num_tasks, model_dist.num_servers))
     data = []
     
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
-        # Generate the jobs and the servers
-        jobs, servers = model_dist.create()
+        # Generate the tasks and the servers
+        tasks, servers = model_dist.create()
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(jobs, servers)
+        vcg_result = vcg_auction(tasks, servers)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
         # Calculate the fixed vcg auction
-        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_vcg_result = fixed_vcg_auction(fixed_jobs, servers)
+        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
         
         # Loop over all of the greedy policies permutations
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
-                    critical_value_result = critical_value_auction(jobs, servers, value_density,
+                    critical_value_result = critical_value_auction(tasks, servers, value_density,
                                                                    server_selection_policy, resource_allocation_policy)
                     auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
-                    reset_model(jobs, servers)
+                    reset_model(tasks, servers)
         
         # Add the results to the data
         data.append(auction_results)
@@ -147,43 +152,43 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
     :param vcg_time_limit: The VCG time limit
     :param debug_results: If to debug the results
     """
-    print("Auction testing with optimal, fixed and relaxed for {} jobs and {} servers"
-          .format(model_dist.num_jobs, model_dist.num_servers))
+    print("Auction testing with optimal, fixed and relaxed for {} tasks and {} servers"
+          .format(model_dist.num_tasks, model_dist.num_servers))
     data = []
     for _ in tqdm(range(repeats)):
-        jobs, servers = model_dist.create()
+        tasks, servers = model_dist.create()
         results = {}
 
-        vcg_result = vcg_auction(jobs, servers)
+        vcg_result = vcg_auction(tasks, servers)
         results['VCG'] = vcg_result.store() if vcg_result else 'failure'
         if debug_results:
             print(results['VCG'])
 
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
-        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_result = fixed_vcg_auction(fixed_jobs, servers)
+        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_result = fixed_vcg_auction(fixed_tasks, servers)
         results['Fixed VCG'] = fixed_result.store() if fixed_result else 'failure'
         if debug_results:
             print(results['Fixed VCG'])
 
-        reset_model(fixed_jobs, servers)
+        reset_model(fixed_tasks, servers)
 
         critical_value_policies = [
             (vd, ss, ra)
             for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
             for ss in [SumResources(), SumResources(True),
-                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
-                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+                       TaskSumResources(SumPercentage()), TaskSumResources(SumPercentage(), True),
+                       TaskSumResources(SumSpeed()), TaskSumResources(SumSpeed(), True)]
             for ra in [SumPercentage(), SumSpeed()]
         ]
         for (vd, ss, ra) in critical_value_policies:
-            critical_value_result = critical_value_auction(jobs, servers, vd, ss, ra)
+            critical_value_result = critical_value_auction(tasks, servers, vd, ss, ra)
             results[critical_value_result.algorithm_name] = critical_value_result.store()
             if debug_results:
                 print(results[critical_value_result.algorithm_name])
 
-            reset_model(jobs, servers)
+            reset_model(tasks, servers)
 
         data.append(results)
         print(results)
@@ -197,8 +202,8 @@ def auction_testing(model_dist: ModelDist, repeat: int, repeats: int = 100, vcg_
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
     # all_policies_critical_value(loaded_model_dist, args['repeat'])

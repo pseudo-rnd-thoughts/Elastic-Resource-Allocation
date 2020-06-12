@@ -40,8 +40,8 @@ class FixedTask(Task):
         model_solution = model.solve(log_output=None)
 
         return model_solution.get_value(loading_speed), \
-               model_solution.get_value(compute_speed), \
-               model_solution.get_value(sending_speed)
+            model_solution.get_value(compute_speed), \
+            model_solution.get_value(sending_speed)
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 matplotlib.rcParams['font.family'] = "monospace"
 

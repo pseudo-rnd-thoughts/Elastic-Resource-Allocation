@@ -7,9 +7,9 @@ from typing import List
 
 from tqdm import tqdm
 
-from auctions import decentralised_iterative_auction
-from core import results_filename, load_args, set_price_change
-from core import ModelDist, load_dist, reset_model
+from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from src.core.core import results_filename, load_args, set_price_change
+from src.core.model import ModelDist, load_dist, reset_model
 
 
 def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], price_changes: List[int],
@@ -26,7 +26,7 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
     data = []
 
     for _ in tqdm(range(repeats)):
-        jobs, servers = model_dist.create()
+        tasks, servers = model_dist.create()
         auction_results = {}
 
         for initial_cost in initial_costs:
@@ -34,11 +34,11 @@ def round_test(model_dist: ModelDist, repeat: int, initial_costs: List[int], pri
                 for server in servers:
                     server.price_change = price_change
 
-                results = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
+                results = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
                 if results is not None:
                     auction_results['cost {}, change {}'.format(initial_cost, price_change)] = \
                         results.store(initial_cost=initial_cost, price_change=price_change)
-                reset_model(jobs, servers)
+                reset_model(tasks, servers)
 
         data.append(auction_results)
 
@@ -58,13 +58,13 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
     :param time_limit: The time limit for the auctions
     :param debug_results: If to debug the results
     """
-    print("Round Num testing for {} jobs and {} servers".format(model_dist.num_jobs, model_dist.num_servers))
+    print("Round Num testing for {} tasks and {} servers".format(model_dist.num_tasks, model_dist.num_servers))
     data = []
     initial_costs = [0, 5, 10, 15, 20]
     price_changes = [1, 2,  5,  8, 10]
     
     for _ in tqdm(range(repeats)):
-        jobs, servers = model_dist.create()
+        tasks, servers = model_dist.create()
 
         results = {}
 
@@ -73,13 +73,13 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
                 set_price_change(servers, price_change)
 
                 name = 'Initial Cost {} Price Change {}'.format(initial_cost, price_change)
-                result = decentralised_iterative_auction(jobs, servers, time_limit, initial_cost=initial_cost)
+                result = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
                 results[name] = result.store(price_change=price_change)
                 
                 if debug_results:
                     print(results[name])
 
-                reset_model(jobs, servers)
+                reset_model(tasks, servers)
 
         data.append(results)
         print(results)
@@ -94,7 +94,7 @@ def round_num_testing(model_dist: ModelDist, repeat: int, repeats: int = 50, tim
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     round_num_testing(loaded_model_dist, args['repeat'], time_limit=5)

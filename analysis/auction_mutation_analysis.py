@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-from core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 
-def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
-                         save_formats: Iterable[ImageFormat] = ()):
+def mutated_task_analysis(encoded_filenames: List[str], y_axis: str, title: str,
+                          save_formats: Iterable[ImageFormat] = ()):
     """
-    Analysis of the mutate job testing
+    Analysis of the mutate task testing
     :param encoded_filenames: A list of encoded filenames
     :param y_axis: The y axis on the plot
     :param title: The title of the plot
@@ -60,7 +60,7 @@ def mutated_job_analysis(encoded_filenames: List[str], y_axis: str, title: str,
 if __name__ == "__main__":
     # Old results for mutation is september 2, 4 and 5
 
-    # Mutate jobs auction testing
+    # Mutate tasks auction testing
     mutate_september_20 = [
         "mutate_iterative_auction_basic_j12_s2_0",
         "mutate_iterative_auction_basic_j15_s2_0",
@@ -72,9 +72,9 @@ if __name__ == "__main__":
         "mutate_iterative_auction_fog_j15_s3_0",
         "mutate_iterative_auction_fog_j25_s5_0"
     ]
-    mutated_job_analysis(paper, 'Mutate Difference', 'Effect of job misrepresentation on prices',
-                         save_formats=[ImageFormat.EPS, ImageFormat.PNG])
+    mutated_task_analysis(paper, 'Mutate Difference', 'Effect of task misrepresentation on prices',
+                          save_formats=[ImageFormat.EPS, ImageFormat.PNG])
 
-    # All jobs mutation auction testing
+    # All tasks mutation auction testing
 
     # Repeat testing

@@ -10,7 +10,7 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 
-from core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
 
 
 def critical_value_analysis(encoded_filenames: List[str], x_axis: str, title: str,

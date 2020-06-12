@@ -1,1 +1,3 @@
-"""The results analysis module"""
+"""
+Analysis module
+"""

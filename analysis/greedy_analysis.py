@@ -10,33 +10,33 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from core import decode_filename, save_plot, analysis_filename, ImageFormat
-from core import plot_allocation_results
-from core import load_dist, ModelDist, reset_model
-from greedy.greedy import greedy_algorithm
-from greedy import SumPercentage
-from greedy import SumResources
-from greedy import ResourceSum
-from optimal import optimal_algorithm
+from src.core.core import decode_filename, save_plot, analysis_filename, ImageFormat
+from src.core.visualise import plot_allocation_results
+from src.core.model import load_dist, ModelDist, reset_model
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.value_density import ResourceSum
+from src.optimal.optimal import optimal_algorithm
 
 
 def allocation_analysis():
     """
     Allocation Analysis
     """
-    dist_name, job_dist, server_dist = load_dist("../../models/basic_v2.json")
-    model_dist = ModelDist(dist_name, job_dist, 20, server_dist, 2)
-    jobs, servers = model_dist.create()
+    dist_name, task_dist, server_dist = load_dist("../../models/basic_v2.json")
+    model_dist = ModelDist(dist_name, task_dist, 20, server_dist, 2)
+    tasks, servers = model_dist.create()
 
     # Optimal
-    optimal_algorithm(jobs, servers, 15)
-    plot_allocation_results(jobs, servers, "Optimal Allocation", ImageFormat.BOTH)
-    reset_model(jobs, servers)
+    optimal_algorithm(tasks, servers, 15)
+    plot_allocation_results(tasks, servers, "Optimal Allocation", ImageFormat.BOTH)
+    reset_model(tasks, servers)
 
     # Greedy
-    greedy_algorithm(jobs, servers, ResourceSum(), SumResources(), SumPercentage())
+    greedy_algorithm(tasks, servers, ResourceSum(), SumResources(), SumPercentage())
 
-    plot_allocation_results(jobs, servers, "Greedy Allocation", ImageFormat.BOTH)
+    plot_allocation_results(tasks, servers, "Greedy Allocation", ImageFormat.BOTH)
 
 
 def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
@@ -60,20 +60,20 @@ def all_algorithms_analysis(encoded_filenames: List[str], x_axis: str,
             json_data = json.load(file)
 
             for pos, results in enumerate(json_data):
-                # Find the best results of sum value or percentage jobs from all of the algorithms
+                # Find the best results of sum value or percentage tasks from all of the algorithms
                 best_sum_value = max(r['sum value'] for a, r in results.items()
                                      if a != 'Relaxed' and type(r) is dict)
-                best_percentage_jobs = max(r['percentage jobs'] for a, r in results.items()
-                                           if a != 'Relaxed' and type(r) is dict)
+                best_percentage_tasks = max(r['percentage tasks'] for a, r in results.items()
+                                            if a != 'Relaxed' and type(r) is dict)
                 for algo_name, algo_results in results.items():
                     if type(algo_results) is dict:  # Otherwise optimal or relaxed == 'failure'
                         data.append((pos, model_name, algo_name, algo_results['sum value'],
-                                     algo_results['percentage jobs'], algo_results['solve_time'],
+                                     algo_results['percentage tasks'], algo_results['solve_time'],
                                      algo_results['sum value'] / best_sum_value,
-                                     algo_results['percentage jobs'] / best_percentage_jobs))
+                                     algo_results['percentage tasks'] / best_percentage_tasks))
 
-    df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Sum Value', 'Percentage Jobs',
-                                     'Solve Time', 'Best Sum Value', 'Best Percentage Jobs'])
+    df = pd.DataFrame(data, columns=['Pos', 'Model Name', 'Algorithm Name', 'Sum Value', 'Percentage Tasks',
+                                     'Solve Time', 'Best Sum Value', 'Best Percentage Tasks'])
     df = df.loc[~((df['Algorithm Name'].str.contains('Greedy Utility * deadline / Sum', regex=False)) |
                   (df['Algorithm Name'].str.contains('Greedy Utility / Sqrt Sum', regex=False)) |
                   df['Algorithm Name'].str.contains('Matrix Greedy Sum Exp^3 Percentage', regex=False))]
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     """
     image_format = ImageFormat.BOTH
     for model_files, model_name in [(basic, "Basic"), (big_small, "Big Small")]:
-        for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+        for attribute in ['Sum Value', 'Percentage Tasks', 'Solve Time', 'Best Sum Value', 'Best Percentage Tasks']:
             all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
                                     save_format=image_format)
     """
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     """
     image_format = ImageFormat.BOTH
     for model_files, model_name in [(big_small_b, "Big Small")]:
-        for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+        for attribute in ['Sum Value', 'Percentage Tasks', 'Solve Time', 'Best Sum Value', 'Best Percentage Tasks']:
             all_algorithms_analysis(model_files, attribute, "{} of {} model".format(attribute, model_name),
                                     save_format=image_format)
     """
@@ -153,6 +153,6 @@ if __name__ == "__main__":
         "flexible_greedy_fog_j30_s5_0"
     ]
 
-    for attribute in ['Sum Value', 'Percentage Jobs', 'Solve Time', 'Best Sum Value', 'Best Percentage Jobs']:
+    for attribute in ['Sum Value', 'Percentage Tasks', 'Solve Time', 'Best Sum Value', 'Best Percentage Tasks']:
         all_algorithms_analysis(paper, attribute, "{} of {} model".format(attribute, "fog"),
                                 save_formats=[ImageFormat.EPS, ImageFormat.PNG])

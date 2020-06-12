@@ -48,7 +48,7 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
     model_solution = model.solve(log_output=None)
 
     return model_solution.get_objective_values()[0], model_solution.get_value(loading_speed), \
-           model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
+        model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
 
 
 def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
@@ -96,5 +96,4 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
                 if debug_pop:
                     print("Pop task {} and server {}".format(task.name, allocated_server.name))
                 allocation_value_matrix.pop((task, allocated_server))
-
     return Result("Matrix Greedy " + allocation_value_policy.name, tasks, servers, solve_time=time() - start_time)

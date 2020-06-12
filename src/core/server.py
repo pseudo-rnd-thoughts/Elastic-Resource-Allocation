@@ -140,20 +140,20 @@ class Server(object):
         """
         assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
             "Job speed failure for Job {} - loading: {}, compute: {}, sending: {}" \
-                .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
+            .format(task.name, task.loading_speed, task.compute_speed, task.sending_speed)
         assert self.available_storage >= task.required_storage, \
             "Server storage failure for Server {} available storage {}, task required storage {}" \
-                .format(self.name, self.available_storage, task.required_storage)
+            .format(self.name, self.available_storage, task.required_storage)
         assert self.available_computation >= task.compute_speed, \
             "Server computation failure for Server {} available computation {}, task compute speed {}" \
-                .format(self.name, self.available_computation, task.compute_speed)
+            .format(self.name, self.available_computation, task.compute_speed)
         assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
             "Server available bandwidth failure for Server {} available bandwidth {}, " \
             "task loading speed {} and sending speed {}" \
-                .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
+            .format(self.name, self.available_bandwidth, task.loading_speed, task.sending_speed)
         assert task not in self.allocated_tasks, \
             "Job {} is already allocated to the server {}" \
-                .format(task.name, self.name)
+            .format(task.name, self.name)
 
         self.allocated_tasks.append(task)
         self.available_storage -= task.required_storage

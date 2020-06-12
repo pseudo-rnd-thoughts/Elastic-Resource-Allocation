@@ -42,9 +42,9 @@ class SumServerUsage(AllocationValuePolicy):
     def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
         return task.value * \
-               ((server.available_storage - task.required_storage) +
-                (server.available_computation - compute_speed) +
-                (server.available_bandwidth - (loading_speed + sending_speed)))
+            ((server.available_storage - task.required_storage) +
+             (server.available_computation - compute_speed) +
+             (server.available_bandwidth - (loading_speed + sending_speed)))
 
 
 class SumServerPercentage(AllocationValuePolicy):
@@ -58,9 +58,9 @@ class SumServerPercentage(AllocationValuePolicy):
     def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
         return task.value * \
-               ((server.available_storage - task.required_storage) / server.available_storage +
-                (server.available_computation - compute_speed) / server.available_computation +
-                (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
+            ((server.available_storage - task.required_storage) / server.available_storage +
+             (server.available_computation - compute_speed) / server.available_computation +
+             (server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth)
 
 
 class SumServerMaxPercentage(AllocationValuePolicy):
@@ -74,9 +74,9 @@ class SumServerMaxPercentage(AllocationValuePolicy):
     def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
         return task.value * \
-               ((server.available_storage - task.required_storage) / server.storage_capacity +
-                (server.available_computation - compute_speed) / server.computation_capacity +
-                (server.available_bandwidth - (loading_speed + sending_speed)) / server.bandwidth_capacity)
+            ((server.available_storage - task.required_storage) / server.storage_capacity +
+             (server.available_computation - compute_speed) / server.computation_capacity +
+             (server.available_bandwidth - (loading_speed + sending_speed)) / server.bandwidth_capacity)
 
 
 class SumExpServerPercentage(AllocationValuePolicy):
@@ -90,9 +90,9 @@ class SumExpServerPercentage(AllocationValuePolicy):
     def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluates"""
         return task.value * \
-               (exp((server.available_storage - task.required_storage) / server.available_storage) +
-                exp((server.available_computation - compute_speed) / server.available_computation) +
-                exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
+            (exp((server.available_storage - task.required_storage) / server.available_storage) +
+             exp((server.available_computation - compute_speed) / server.available_computation) +
+             exp((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth))
 
 
 class SumExp3ServerPercentage(AllocationValuePolicy):
@@ -106,9 +106,9 @@ class SumExp3ServerPercentage(AllocationValuePolicy):
     def evaluate(self, task: Task, server: Server, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Evaluate"""
         return task.value * \
-               (exp(((server.available_storage - task.required_storage) / server.available_storage) ** 3) +
-                exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
-                exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
+            (exp(((server.available_storage - task.required_storage) / server.available_storage) ** 3) +
+             exp(((server.available_computation - compute_speed) / server.available_computation) ** 3) +
+             exp(((server.available_bandwidth - (loading_speed + sending_speed)) / server.available_bandwidth) ** 3))
 
 
 class ValueOverUsage(AllocationValuePolicy):

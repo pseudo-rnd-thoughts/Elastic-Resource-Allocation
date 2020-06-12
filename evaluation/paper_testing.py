@@ -1,25 +1,25 @@
-"""Flexible Vs Fix job testing"""
+"""Flexible Vs Fix task testing"""
 
 from __future__ import annotations
 
 import json
 from typing import Dict, List
 
-from auctions import decentralised_iterative_auction
-from core import ImageFormat, load_args, results_filename
-from core import FixedJob, FixedSumSpeeds
-from core import Job
-from core import reset_model, load_dist, ModelDist
-from core import Result
-from core import Server
-from greedy.greedy import greedy_algorithm
-from greedy import SumPercentage, SumSpeed
-from greedy import SumResources, JobSumResources
-from greedy import UtilityDeadlinePerResource, UtilityPerResources, UtilityResourcePerDeadline, Value
-from optimal.fixed_optimal import fixed_optimal_algorithm
-from optimal import optimal_algorithm
-from optimal.relaxed import relaxed_algorithm
-from evaluation.analysis.greedy_analysis import plot_allocation_results
+from core.visualise import plot_allocation_results
+from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from src.core.core import ImageFormat, load_args, results_filename
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.core.task import Task
+from src.core.model import reset_model, load_dist, ModelDist
+from src.core.result import Result
+from src.core.server import Server
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from src.greedy.server_selection_policy import SumResources, TaskSumResources
+from src.greedy.value_density import UtilityDeadlinePerResource, UtilityPerResources, UtilityResourcePerDeadline, Value
+from src.optimal.fixed_optimal import fixed_optimal_algorithm
+from src.optimal.optimal import optimal_algorithm
+from src.optimal.relaxed import relaxed_algorithm
 
 
 def print_results(results: Dict[str, Result]):
@@ -35,7 +35,7 @@ def print_results(results: Dict[str, Result]):
     max_bandwidth_len = max(
         len('{}'.format(list(result.data['server bandwidth usage'].values()))) for result in results.values())
     
-    print("{:<{}} | Value | {:^{}} | {:^{}} | {:^{}} | Num Jobs"
+    print("{:<{}} | Value | {:^{}} | {:^{}} | {:^{}} | Num Tasks"
           .format("Name", max_name_len, "Storage", max_storage_len,
                   "Computation", max_computation_len, "Bandwidth", max_bandwidth_len))
     for name, result in results.items():
@@ -44,26 +44,26 @@ def print_results(results: Dict[str, Result]):
                       '{}'.format(list(result.data['server storage usage'].values())), max_storage_len,
                       '{}'.format(list(result.data['server computation usage'].values())), max_computation_len,
                       '{}'.format(list(result.data['server bandwidth usage'].values())), max_bandwidth_len,
-                      '{}'.format(list(result.data['num jobs'].values()))))
+                      '{}'.format(list(result.data['num tasks'].values()))))
 
 
-def print_job_full(jobs: List[Job]):
+def print_task_full(tasks: List[Task]):
     """
-    Prints the attributes of a list of jobs in whole
-    :param jobs: List of jobs
+    Prints the attributes of a list of tasks in whole
+    :param tasks: List of tasks
     """
-    print("\t\tJobs")
-    max_job_name_len = max(len(job.name) for job in jobs) + 1
+    print("\t\tTasks")
+    max_task_name_len = max(len(task.name) for task in tasks) + 1
     print("{:<{}}| Value |{:^9}|{:^13}|{:^9}|{:^10}|{:^9}|{:^9}|{:^9}| {}"
-          .format("Name", max_job_name_len, "Storage", "Computation", "Results", "Deadline", "Loading", "Compute",
+          .format("Name", max_task_name_len, "Storage", "Computation", "Results", "Deadline", "Loading", "Compute",
                   "Sending", "Server"))
-    for job in jobs:
+    for task in tasks:
         # noinspection PyStringFormat
         print("{:<{name_len}}|{:^7.1f}|{:^9}|{:^13}|{:^9}|{:^10}|{:^9}|{:^9}|{:^9}|{:^10}"
-              .format(job.name, job.value, job.required_storage, job.required_computation,
-                      job.required_results_data, job.deadline,
-                      job.loading_speed, job.compute_speed, job.sending_speed,
-                      job.running_server.name if job.running_server else "None", name_len=max_job_name_len))
+              .format(task.name, task.value, task.required_storage, task.required_computation,
+                      task.required_results_data, task.deadline,
+                      task.loading_speed, task.compute_speed, task.sending_speed,
+                      task.running_server.name if task.running_server else "None", name_len=max_task_name_len))
     print()
 
 
@@ -71,19 +71,19 @@ def example_flexible_fixed_test():
     """
     Example flexible vs fixed test
     """
-    jobs = [
-        Job("Task 1",  required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
-        Job("Task 2",  required_storage=75,  required_computation=125, required_results_data=40, deadline=10, value=90),
-        Job("Task 3",  required_storage=125, required_computation=110, required_results_data=45, deadline=10, value=110),
-        Job("Task 4",  required_storage=100, required_computation=75,  required_results_data=35, deadline=10, value=75),
-        Job("Task 5",  required_storage=85,  required_computation=90,  required_results_data=55, deadline=10, value=125),
-        Job("Task 6",  required_storage=75,  required_computation=120, required_results_data=40, deadline=10, value=100),
-        Job("Task 7",  required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
-        Job("Task 8",  required_storage=115, required_computation=75,  required_results_data=55, deadline=10, value=110),
-        Job("Task 9",  required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
-        Job("Task 10", required_storage=90,  required_computation=120, required_results_data=40, deadline=10, value=90),
-        Job("Task 11", required_storage=110, required_computation=90,  required_results_data=45, deadline=10, value=100),
-        Job("Task 12", required_storage=100, required_computation=80,  required_results_data=55, deadline=10, value=100)
+    tasks = [
+        Task("Task 1",  required_storage=100, required_computation=100, required_results_data=50, deadline=10, value=100),
+        Task("Task 2",  required_storage=75,  required_computation=125, required_results_data=40, deadline=10, value=90),
+        Task("Task 3",  required_storage=125, required_computation=110, required_results_data=45, deadline=10, value=110),
+        Task("Task 4",  required_storage=100, required_computation=75,  required_results_data=35, deadline=10, value=75),
+        Task("Task 5",  required_storage=85,  required_computation=90,  required_results_data=55, deadline=10, value=125),
+        Task("Task 6",  required_storage=75,  required_computation=120, required_results_data=40, deadline=10, value=100),
+        Task("Task 7",  required_storage=125, required_computation=100, required_results_data=50, deadline=10, value=80),
+        Task("Task 8",  required_storage=115, required_computation=75,  required_results_data=55, deadline=10, value=110),
+        Task("Task 9",  required_storage=100, required_computation=110, required_results_data=60, deadline=10, value=120),
+        Task("Task 10", required_storage=90,  required_computation=120, required_results_data=40, deadline=10, value=90),
+        Task("Task 11", required_storage=110, required_computation=90,  required_results_data=45, deadline=10, value=100),
+        Task("Task 12", required_storage=100, required_computation=80,  required_results_data=55, deadline=10, value=100)
     ]
     
     servers = [
@@ -92,29 +92,29 @@ def example_flexible_fixed_test():
         Server("Server 3", storage_capacity=500, computation_capacity=250, bandwidth_capacity=150)
     ]
     
-    optimal_result = optimal_algorithm(jobs, servers, 20)
+    optimal_result = optimal_algorithm(tasks, servers, 20)
     print("Flexible")
     print(optimal_result.store())
-    print_job_full(jobs)
-    plot_allocation_results(jobs, servers, "Flexible Optimal Allocation",
+    print_task_full(tasks)
+    plot_allocation_results(tasks, servers, "Flexible Optimal Allocation",
                             save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF], minimum_allocation=True)
-    reset_model(jobs, servers)
+    reset_model(tasks, servers)
     
-    fixed_jobs = [FixedJob(job, FixedSumSpeeds(), False) for job in jobs]
-    fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 20)
+    fixed_tasks = [FixedTask(task, FixedSumSpeeds(), False) for task in tasks]
+    fixed_result = fixed_optimal_algorithm(fixed_tasks, servers, 20)
     print("\n\nFixed")
     print(fixed_result.store())
-    print_job_full(fixed_jobs)
-    plot_allocation_results(fixed_jobs, servers, "Fixed Optimal Allocation",
+    print_task_full(fixed_tasks)
+    plot_allocation_results(fixed_tasks, servers, "Fixed Optimal Allocation",
                             save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
-    reset_model(jobs, servers)
+    reset_model(tasks, servers)
     
-    greedy_results = greedy_algorithm(jobs, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+    greedy_results = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
     print("\n\nGreedy")
     print(greedy_results.store())
-    print_job_full(jobs)
-    plot_allocation_results(jobs, servers, "Greedy Allocation",
+    print_task_full(tasks)
+    plot_allocation_results(tasks, servers, "Greedy Allocation",
                             save_formats=[ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF])
 
     print_results({'Optimal': optimal_result, 'Fixed': fixed_result, 'Greedy': greedy_results})
@@ -123,25 +123,25 @@ def example_flexible_fixed_test():
 def paper_testing(model_dist: ModelDist, repeat: int, repeats: int = 20):
     data = []
     for _ in range(repeats):
-        jobs, servers = model_dist.create()
+        tasks, servers = model_dist.create()
 
         results = {}
-        optimal_result = optimal_algorithm(jobs, servers, 180)
+        optimal_result = optimal_algorithm(tasks, servers, 180)
         results['optimal'] = optimal_result.store()
-        reset_model(jobs, servers)
-        relaxed_result = relaxed_algorithm(jobs, servers, 60)
+        reset_model(tasks, servers)
+        relaxed_result = relaxed_algorithm(tasks, servers, 60)
         results['relaxed'] = relaxed_result.store()
-        reset_model(jobs, servers)
-        fixed_jobs = [FixedJob(job, FixedSumSpeeds()) for job in jobs]
-        fixed_result = fixed_optimal_algorithm(fixed_jobs, servers, 60)
+        reset_model(tasks, servers)
+        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_result = fixed_optimal_algorithm(fixed_tasks, servers, 60)
         results['fixed'] = fixed_result.store()
-        reset_model(jobs, servers)
+        reset_model(tasks, servers)
 
         for price_change in [1, 2, 3, 5, 10]:
-            dia_result = decentralised_iterative_auction(jobs, servers, 5)
+            dia_result = decentralised_iterative_auction(tasks, servers, 5)
             results['dia {}'.format(price_change)] = dia_result.store()
 
-            reset_model(jobs, servers)
+            reset_model(tasks, servers)
 
         data.append(results)
 
@@ -156,25 +156,25 @@ def paper_testing_2(model_dist: ModelDist, repeat: int, repeats: int = 100):
     for _ in range(repeats):
         results = {}
 
-        jobs, servers = model_dist.create()
+        tasks, servers = model_dist.create()
 
         greedy_policies = [
             (vd, ss, ra)
             for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
             for ss in [SumResources(), SumResources(True),
-                       JobSumResources(SumPercentage()), JobSumResources(SumPercentage(), True),
-                       JobSumResources(SumSpeed()), JobSumResources(SumSpeed(), True)]
+                       TaskSumResources(SumPercentage()), TaskSumResources(SumPercentage(), True),
+                       TaskSumResources(SumSpeed()), TaskSumResources(SumSpeed(), True)]
             for ra in [SumPercentage(), SumSpeed()]
         ]
         for (vd, ss, ra) in greedy_policies:
             try:
-                greedy_result = greedy_algorithm(jobs, servers, vd, ss, ra)
+                greedy_result = greedy_algorithm(tasks, servers, vd, ss, ra)
                 results[greedy_result.algorithm_name] = greedy_result.store()
 
             except Exception as e:
                 print(e)
 
-            reset_model(jobs, servers)
+            reset_model(tasks, servers)
 
         data.append(results)
 
@@ -187,8 +187,8 @@ def paper_testing_2(model_dist: ModelDist, repeat: int, repeats: int = 100):
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, job_dist, server_dist = load_dist(args['model'])
-    loaded_model_dist = ModelDist(model_name, job_dist, args['jobs'], server_dist, args['servers'])
+    model_name, task_dist, server_dist = load_dist(args['model'])
+    loaded_model_dist = ModelDist(model_name, task_dist, args['tasks'], server_dist, args['servers'])
 
     # example_flexible_fixed_test()
     # paper_testing(loaded_model_dist, args['repeat'])
