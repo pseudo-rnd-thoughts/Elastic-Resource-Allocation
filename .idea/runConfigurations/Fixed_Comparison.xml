@@ -1,15 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Fixed Comparison" type="PythonConfigurationType" factoryName="Python" folderName="Tests">
-    <module name="excel_internship" />
+  <configuration default="false" name="Fixed Comparison" type="PythonConfigurationType" factoryName="Python" folderName="Evaluation">
+    <module name="Flexible-Cloud-Resource" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
-    <option name="SDK_HOME" value="" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
+    <option name="SDK_HOME" value="C:\Users\markm\anaconda3\envs\Flexible-Cloud-Resource\python.exe" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    <option name="IS_MODULE_SDK" value="true" />
+    <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="testing.tests.fixed_comparison" />
+    <option name="SCRIPT_NAME" value="evaluation.fixed_comparison" />
     <option name="PARAMETERS" value="basic_v3 20 2 0" />
     <option name="SHOW_COMMAND_LINE" value="true" />
     <option name="EMULATE_TERMINAL" value="false" />
