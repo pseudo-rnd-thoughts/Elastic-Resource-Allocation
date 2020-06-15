@@ -4,10 +4,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import exp
-from typing import Tuple
+from typing import TYPE_CHECKING
 
-from src.core.task import Task
-from src.core.server import Server
+if TYPE_CHECKING:
+    from typing import Tuple
+
+    from core.task import Task
+    from core.server import Server
 
 
 class ResourceAllocationPolicy(ABC):

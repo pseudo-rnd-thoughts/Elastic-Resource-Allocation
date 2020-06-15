@@ -1,10 +1,13 @@
 
 from __future__ import annotations
 
-from typing import Dict, Union
+from typing import TYPE_CHECKING
 
+from core.core import positive_gaussian_dist
 from core.task import Task
-from model.model_distribution import positive_gaussian_dist
+
+if TYPE_CHECKING:
+    from typing import Dict, Union
 
 
 class TaskDistribution(object):

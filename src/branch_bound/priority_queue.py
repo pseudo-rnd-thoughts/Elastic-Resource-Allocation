@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from enum import Enum, auto
 from math import log2, ceil
-from typing import List, Generic, TypeVar, Callable
+from typing import TYPE_CHECKING
 
-T = TypeVar('T')
+if TYPE_CHECKING:
+    from typing import List, Generic, TypeVar, Callable
+
+    T = TypeVar('T')
 
 
 class Comparison(Enum):
@@ -33,6 +36,7 @@ class Comparison(Enum):
             return Comparison.EQUAL
 
 
+# noinspection PyUnboundLocalVariable
 class PriorityQueue(Generic[T]):
     """
     A custom binary heap for the nodes of the branch and bound algorithm

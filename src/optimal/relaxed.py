@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from time import time
-from typing import List, Dict, Optional
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
@@ -11,9 +11,13 @@ from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import print_model, print_model_solution
 from src.core.result import Result
-from src.core.server import Server
-from src.core.super_server import SuperServer
-from src.core.task import Task
+
+if TYPE_CHECKING:
+    from typing import List, Dict, Optional
+
+    from core.server import Server
+    from core.super_server import SuperServer
+    from core.task import Task
 
 
 def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,

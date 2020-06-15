@@ -8,16 +8,19 @@ from typing import Iterable
 
 from tqdm import tqdm
 
-from src.auctions.critical_value_auction import critical_value_auction
-from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.auctions.fixed_vcg_auction import fixed_vcg_auction
-from src.auctions.vcg_auction import vcg_auction
-from src.core.core import load_args, results_filename, set_price_change, reset_model
-from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
-from src.greedy.server_selection_policy import SumResources, TaskSumResources
-from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.model.model_distribution import ModelDistribution, load_model_distribution
+from auctions.critical_value_auction import critical_value_auction
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from auctions.fixed_vcg_auction import fixed_vcg_auction
+from auctions.vcg_auction import vcg_auction
+
+from core.core import load_args, set_price_change, reset_model
+from core.fixed_task import FixedTask, FixedSumSpeeds
+
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, TaskSumResources
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+
+from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
 def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,

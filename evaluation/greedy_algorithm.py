@@ -7,34 +7,36 @@ from typing import Dict, Tuple
 
 from tqdm import tqdm
 
-from src.branch_bound.branch_bound import branch_bound_algorithm
-from src.branch_bound.feasibility_allocations import fixed_feasible_allocation
+from branch_bound.branch_bound import branch_bound_algorithm
+from branch_bound.feasibility_allocations import fixed_feasible_allocation
 
-from src.core.super_server import SuperServer
-from src.core.core import results_filename, load_args, reset_model
-from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.model.model_distribution import ModelDistribution, load_model_distribution
+from core.core import load_args, reset_model
+from core.fixed_task import FixedTask, FixedSumSpeeds
+from core.super_server import SuperServer
 
-from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
-from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.greedy import greedy_algorithm
 
-from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.server_selection_policy import all_policies as all_server_selection_policies
-from src.greedy.server_selection_policy import SumResources, TaskSumResources
-from src.greedy.server_selection_policy import Random as RandomServerSelection
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.resource_allocation_policy import policies as resource_allocation_policies
 
-from src.greedy.value_density import policies as value_densities
-from src.greedy.value_density import all_policies as all_value_densities
-from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.greedy.value_density import Random as RandomValueDensity
+from greedy.server_selection_policy import Random as RandomServerSelection
+from greedy.server_selection_policy import SumResources, TaskSumResources
+from greedy.server_selection_policy import all_policies as all_server_selection_policies
+from greedy.server_selection_policy import policies as server_selection_policies
 
-from src.greedy_matrix.allocation_value_policy import policies as matrix_policies
-from src.greedy_matrix.matrix_greedy import matrix_greedy
+from greedy.value_density import Random as RandomValueDensity
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+from greedy.value_density import all_policies as all_value_densities
+from greedy.value_density import policies as value_densities
 
-from src.optimal.fixed_optimal import fixed_optimal_algorithm
-from src.optimal.optimal import optimal_algorithm
-from src.optimal.relaxed import relaxed_algorithm
+from greedy_matrix.allocation_value_policy import policies as matrix_policies
+from greedy_matrix.matrix_greedy import matrix_greedy
+
+from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+
+from optimal.fixed_optimal import fixed_optimal_algorithm
+from optimal.optimal import optimal_algorithm
+from optimal.relaxed import relaxed_algorithm
 
 
 def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,

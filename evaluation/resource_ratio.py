@@ -3,15 +3,18 @@ import json
 
 from tqdm import tqdm
 
-from src.core.core import load_args, results_filename, reset_model
-from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
-from src.greedy.server_selection_policy import SumResources, TaskSumResources
-from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.model.model_distribution import load_model_distribution, ModelDistribution
-from src.optimal.fixed_optimal import fixed_optimal_algorithm
-from src.optimal.optimal import optimal_algorithm
+from core.core import load_args, reset_model
+from core.fixed_task import FixedTask, FixedSumSpeeds
+
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, TaskSumResources
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+
+from model.model_distribution import load_model_distribution, ModelDistribution, results_filename
+
+from optimal.fixed_optimal import fixed_optimal_algorithm
+from optimal.optimal import optimal_algorithm
 
 
 def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 10):

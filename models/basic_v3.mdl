@@ -1,6 +1,6 @@
 {
     "name": "basic_v3",
-    "job_dist": [
+    "task_dist": [
         {
             "name": "normal",
             "probability": 1,

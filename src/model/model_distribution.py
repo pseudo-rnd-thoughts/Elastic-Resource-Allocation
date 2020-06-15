@@ -1,23 +1,18 @@
 
-import json
-from random import gauss, random
-from typing import Tuple, List
+from __future__ import annotations
 
-from core.server import Server
-from core.task import Task
+import json
+from random import random
+from typing import TYPE_CHECKING
+
 from model.server_distribution import ServerDistribution
 from model.task_distribution import TaskDistribution
 
+if TYPE_CHECKING:
+    from typing import Tuple, List
 
-def positive_gaussian_dist(mean, std) -> int:
-    """
-    Uses gaussian distribution to generate a random number greater than 0 for a resource
-
-    :param mean: Gaussian mean
-    :param std: Gaussian standard deviation
-    :return: A float of random gaussian distribution
-    """
-    return max(1, int(gauss(mean, std)))
+    from core.server import Server
+    from core.task import Task
 
 
 def load_model_distribution(filename: str) -> Tuple[str, List[TaskDistribution], List[ServerDistribution]]:
@@ -52,7 +47,7 @@ def load_model_distribution(filename: str) -> Tuple[str, List[TaskDistribution],
         return data['name'], task_dists, server_dists
 
 
-class ModelDistribution(object):
+class ModelDistribution:
     """Model distributions"""
 
     num_tasks = 0
@@ -95,3 +90,18 @@ class ModelDistribution(object):
                     prob -= server_dist.probability
 
         return tasks, servers
+
+
+def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None) -> str:
+    """
+    Generates the save filename for testing results
+
+    :param test_name: The test name
+    :param model_dist: The model distribution
+    :param repeat: The repeat number
+    :return: The concatenation of the test name, model distribution name and the repeat
+    """
+    if repeat is None:
+        return f'{test_name}_{model_dist}.json'
+    else:
+        return f'{test_name}_{model_dist}_{repeat}.json'

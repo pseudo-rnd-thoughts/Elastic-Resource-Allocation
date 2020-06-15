@@ -7,9 +7,11 @@ from typing import List
 
 from tqdm import tqdm
 
-from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.core.core import results_filename, load_args, set_price_change, reset_model
-from src.model.model_distribution import ModelDistribution, load_model_distribution
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+
+from core.core import load_args, set_price_change, reset_model
+
+from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
 def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[int], price_changes: List[int],

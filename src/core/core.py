@@ -6,17 +6,19 @@ import pickle
 import re
 import sys
 from enum import Enum, auto
-from random import choice, getstate as random_state
-from typing import Iterable, Dict, Union, List, Tuple, TypeVar
+from random import choice, getstate as random_state, gauss
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 from docplex.cp.solution import CpoSolveResult
 
-from model.model_distribution import ModelDistribution
-from src.core.server import Server
-from src.core.task import Task
+if TYPE_CHECKING:
+    from typing import Iterable, Dict, Union, List, Tuple, TypeVar
 
-T = TypeVar('T')
+    from core.server import Server
+    from core.task import Task
+
+    T = TypeVar('T')
 
 
 def rand_list_max(args: Iterable[T], key=None) -> T:
@@ -59,21 +61,6 @@ def load_args() -> Dict[str, Union[str, int]]:
         'servers': int(sys.argv[3]),
         'repeat': int(sys.argv[4])
     }
-
-
-def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None) -> str:
-    """
-    Generates the save filename for testing results
-
-    :param test_name: The test name
-    :param model_dist: The model distribution
-    :param repeat: The repeat number
-    :return: The concatenation of the test name, model distribution name and the repeat
-    """
-    if repeat is None:
-        return f'{test_name}_{model_dist}.json'
-    else:
-        return f'{test_name}_{model_dist}_{repeat}.json'
 
 
 def analysis_filename(test_name: str, axis: str) -> str:
@@ -281,3 +268,14 @@ def reset_model(tasks: List[Task], servers: List[Server], forgot_price: bool = T
 
     for server in servers:
         server.reset_allocations()
+
+
+def positive_gaussian_dist(mean, std) -> int:
+    """
+    Uses gaussian distribution to generate a random number greater than 0 for a resource
+
+    :param mean: Gaussian mean
+    :param std: Gaussian standard deviation
+    :return: A float of random gaussian distribution
+    """
+    return max(1, int(gauss(mean, std)))

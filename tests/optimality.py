@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from src.core.core import load_args, print_model, reset_model
-from src.model.model_distribution import ModelDistribution, load_model_distribution
-from src.optimal.optimal import optimal_algorithm
+from core.core import load_args, print_model, reset_model
+from model.model_distribution import ModelDistribution, load_model_distribution
+from optimal.optimal import optimal_algorithm
 
 
 def optimality_testing(model_dist: ModelDistribution):

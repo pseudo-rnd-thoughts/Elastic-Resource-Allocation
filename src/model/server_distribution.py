@@ -1,13 +1,16 @@
 
 from __future__ import annotations
 
-from typing import Union, Dict
+from typing import TYPE_CHECKING
 
+from core.core import positive_gaussian_dist
 from core.server import Server
-from model.model_distribution import positive_gaussian_dist
+
+if TYPE_CHECKING:
+    from typing import Union, Dict
 
 
-class ServerDistribution(object):
+class ServerDistribution:
     """
     Random server distribution using gaussian (normal distribution)
     """

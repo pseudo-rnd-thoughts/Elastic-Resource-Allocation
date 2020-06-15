@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from auctions.vcg_auction import vcg_auction
+
+from branch_bound.branch_bound import branch_bound_algorithm
+
+from core.core import load_args, reset_model
+
 from model.model_distribution import ModelDistribution, load_model_distribution
-from src.auctions.vcg_auction import vcg_auction
-from src.branch_bound.branch_bound import branch_bound_algorithm
-from src.core.core import load_args, reset_model
-from src.optimal.optimal import optimal_algorithm
+
+from optimal.optimal import optimal_algorithm
 
 
 def branch_bound_test(model_dist: ModelDistribution):

@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import TYPE_CHECKING
 
-from src.core.server import Server
+from core.server import Server
+
+if TYPE_CHECKING:
+    from typing import List
 
 
 class SuperServer(Server):
-    """Super Server which is the megazord of servers"""
+    """Super Server which is the power rangers megazord of servers"""
 
     def __init__(self, servers: List[Server]):
         Server.__init__(self, 'Super Server',

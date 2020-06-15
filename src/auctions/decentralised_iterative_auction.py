@@ -5,15 +5,19 @@ from __future__ import annotations
 from math import inf
 from random import choice
 from time import time
-from typing import List, Dict
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.core import allocate, print_model_solution
-from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
+from core.core import allocate, print_model_solution
+from core.result import Result
+
+if TYPE_CHECKING:
+    from typing import List, Dict
+
+    from core.server import Server
+    from core.task import Task
 
 
 def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, int], sending_speeds: Dict[Task, int],

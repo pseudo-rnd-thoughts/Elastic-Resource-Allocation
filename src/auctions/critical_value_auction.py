@@ -11,16 +11,22 @@ Algorithm steps
 from __future__ import annotations
 
 from time import time
-from typing import List, Dict, Tuple
+from typing import TYPE_CHECKING
 
-from src.core.core import allocate, reset_model
-from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
-from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
-from src.greedy.server_selection_policy import ServerSelectionPolicy
-from src.greedy.value_density import ValueDensity
-from src.greedy.greedy import allocate_tasks
+from core.core import allocate, reset_model
+from core.result import Result
+
+from greedy.greedy import allocate_tasks
+
+if TYPE_CHECKING:
+    from typing import List, Dict, Tuple
+
+    from core.server import Server
+    from core.task import Task
+
+    from greedy.resource_allocation_policy import ResourceAllocationPolicy
+    from greedy.server_selection_policy import ServerSelectionPolicy
+    from greedy.value_density import ValueDensity
 
 
 def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: ValueDensity,

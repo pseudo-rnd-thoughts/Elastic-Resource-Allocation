@@ -6,23 +6,24 @@ import json
 
 from tqdm import tqdm
 
-from src.auctions.critical_value_auction import critical_value_auction
-from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.auctions.fixed_vcg_auction import fixed_vcg_auction
-from src.auctions.vcg_auction import vcg_auction
+from auctions.critical_value_auction import critical_value_auction
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+from auctions.fixed_vcg_auction import fixed_vcg_auction
+from auctions.vcg_auction import vcg_auction
 
-from src.core.core import results_filename, load_args, reset_model
-from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.model.model_distribution import ModelDistribution, load_model_distribution
+from core.core import load_args, reset_model
+from core.fixed_task import FixedTask, FixedSumSpeeds
 
-from src.greedy.resource_allocation_policy import SumPercentage, SumSpeed
-from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.resource_allocation_policy import policies as resource_allocation_policies
 
-from src.greedy.server_selection_policy import SumResources, TaskSumResources
-from src.greedy.server_selection_policy import policies as server_selection_policies
+from greedy.server_selection_policy import SumResources, TaskSumResources
+from greedy.server_selection_policy import policies as server_selection_policies
 
-from src.greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from src.greedy.value_density import policies as value_densities
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
+from greedy.value_density import policies as value_densities
+
+from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
 def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 50, price_change: int = 3,

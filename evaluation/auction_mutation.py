@@ -7,10 +7,12 @@ from random import choice
 
 from tqdm import tqdm
 
-from src.auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from src.core.core import results_filename, list_item_replacement, load_args, set_price_change, reset_model
-from src.core.task import Task, task_diff
-from src.model.model_distribution import ModelDistribution, load_model_distribution
+from auctions.decentralised_iterative_auction import decentralised_iterative_auction
+
+from core.core import list_item_replacement, load_args, set_price_change, reset_model
+from core.task import Task, task_diff
+
+from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
 def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,

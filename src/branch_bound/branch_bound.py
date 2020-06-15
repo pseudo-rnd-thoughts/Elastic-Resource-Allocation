@@ -7,13 +7,17 @@ Lower bound is the current social welfare, Upper bound is the possible sum of al
 from __future__ import annotations
 
 from time import time
-from typing import List, Dict, Tuple, Optional
+from typing import TYPE_CHECKING
 
-from src.branch_bound.feasibility_allocations import flexible_feasible_allocation
-from src.branch_bound.priority_queue import Comparison, PriorityQueue
-from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
+from branch_bound.feasibility_allocations import flexible_feasible_allocation
+from branch_bound.priority_queue import Comparison, PriorityQueue
+
+from core.result import Result
+
+if TYPE_CHECKING:
+    from typing import List, Dict, Tuple, Optional
+    from core.server import Server
+    from core.task import Task
 
 
 def print_allocation(task_server_allocations: Dict[Server, List[Task]]):

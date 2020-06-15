@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Optional
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import print_model_solution, print_model
 from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
+
+if TYPE_CHECKING:
+    from typing import List, Dict, Tuple, Optional
+
+    from core.server import Server
+    from core.task import Task
 
 
 def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:

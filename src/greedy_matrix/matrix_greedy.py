@@ -5,15 +5,20 @@ Greedy algorithm using a matrix of task and server resource allocation values
 from __future__ import annotations
 
 from time import time
-from typing import List, Tuple
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 
 from src.core.core import allocate
 from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
-from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
+
+if TYPE_CHECKING:
+    from typing import List, Tuple
+
+    from core.server import Server
+    from core.task import Task
+
+    from greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
 def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:

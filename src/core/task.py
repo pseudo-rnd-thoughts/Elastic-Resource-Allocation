@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from random import gauss
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.core.server import Server
+    from typing import Optional
+
+    from core.server import Server
 
 
 class Task(object):

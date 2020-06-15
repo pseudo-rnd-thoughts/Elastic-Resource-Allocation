@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.core import print_model_solution, allocate
-from src.core.fixed_task import FixedTask
-from src.core.result import Result
-from src.core.server import Server
+from core.core import print_model_solution, allocate
+from core.result import Result
+
+if TYPE_CHECKING:
+    from typing import List, Optional
+
+    from core.fixed_task import FixedTask
+    from core.server import Server
 
 
 def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_limit: int) -> Optional[Result]:

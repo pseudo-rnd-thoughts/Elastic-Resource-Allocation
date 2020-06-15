@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from math import exp
+from typing import TYPE_CHECKING
 
-from src.core.task import Task
-from src.core.server import Server
+if TYPE_CHECKING:
+    from core.task import Task
+    from core.server import Server
 
 
-class AllocationValuePolicy(object):
+class AllocationValuePolicy:
     """
     Allocation Value Policy
     """

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Iterable, Dict
+from typing import TYPE_CHECKING
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -10,9 +10,13 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
-from src.core.core import ImageFormat, save_plot
-from src.core.server import Server
-from src.core.task import Task
+from core.core import ImageFormat, save_plot
+
+if TYPE_CHECKING:
+    from typing import List, Iterable, Dict
+
+    from core.server import Server
+    from core.task import Task
 
 matplotlib.rcParams['font.family'] = 'monospace'
 

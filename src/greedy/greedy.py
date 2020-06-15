@@ -3,15 +3,20 @@
 from __future__ import annotations
 
 from time import time
-from typing import List
+from typing import TYPE_CHECKING
 
-from src.core.core import print_task_allocation, print_task_values
-from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
-from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
-from src.greedy.server_selection_policy import ServerSelectionPolicy
-from src.greedy.value_density import ValueDensity
+from core.core import print_task_allocation, print_task_values
+from core.result import Result
+
+if TYPE_CHECKING:
+    from typing import List
+
+    from core.server import Server
+    from core.task import Task
+
+    from greedy.resource_allocation_policy import ResourceAllocationPolicy
+    from greedy.server_selection_policy import ServerSelectionPolicy
+    from greedy.value_density import ValueDensity
 
 
 def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: ValueDensity,

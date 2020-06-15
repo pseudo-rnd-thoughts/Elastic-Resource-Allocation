@@ -1,6 +1,6 @@
 {
-    "name": "basic",
-    "job_dist": [
+    "name": "basic_v2",
+    "task_dist": [
         {
             "name": "normal",
             "probability": 1,
@@ -20,11 +20,11 @@
         {
             "name": "normal",
             "probability": 1,
-            "maximum_storage_mean": 45,
+            "maximum_storage_mean": 70,
             "maximum_storage_std": 10,
-            "maximum_computation_mean": 30,
+            "maximum_computation_mean": 20,
             "maximum_computation_std": 5,
-            "maximum_bandwidth_mean": 40,
+            "maximum_bandwidth_mean": 30,
             "maximum_bandwidth_std": 5
         }
     ]

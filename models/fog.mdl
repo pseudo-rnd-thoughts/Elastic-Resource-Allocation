@@ -1,8 +1,8 @@
 {
   "name": "fog",
-  "job_dist": [
+  "task_dist": [
     {
-      "name": "job",
+      "name": "task",
       "probability": 1,
       "required_storage_mean": 100,
       "required_storage_std": 15,

@@ -5,9 +5,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from math import exp, sqrt
 from random import random
-from typing import List
+from typing import TYPE_CHECKING
 
-from src.core.task import Task
+if TYPE_CHECKING:
+    from typing import List
+
+    from core.task import Task
 
 
 class ValueDensity(ABC):

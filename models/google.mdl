@@ -1,6 +1,6 @@
 {
    "name":"google",
-   "job_dist":[
+   "task_dist":[
       {
          "name":"0",
          "probability":0.00087,

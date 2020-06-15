@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 from time import time
-from typing import List, Dict, Tuple, Optional
+from typing import TYPE_CHECKING
 
-from src.branch_bound.branch_bound import branch_bound_algorithm
-from src.core.core import list_copy_remove, reset_model
-from src.core.result import Result
-from src.core.server import Server
-from src.core.task import Task
+from branch_bound.branch_bound import branch_bound_algorithm
+
+from core.core import list_copy_remove, reset_model
+from core.result import Result
+from core.server import Server
+from core.task import Task
+
+if TYPE_CHECKING:
+    from typing import List, Dict, Tuple, Optional
+
+    from core.server import Server
+    from core.task import Task
 
 
 def vcg_auction(tasks: List[Task], servers: List[Server],

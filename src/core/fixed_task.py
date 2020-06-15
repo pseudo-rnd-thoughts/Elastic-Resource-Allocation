@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
-from typing import Tuple
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 
-from src.core.server import Server
-from src.core.task import Task
+from core.task import Task
+
+if TYPE_CHECKING:
+    from typing import Tuple
+
+    from core.server import Server
 
 
 class FixedTask(Task):
