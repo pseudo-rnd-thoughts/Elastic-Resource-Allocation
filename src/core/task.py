@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from core.server import Server
 
 
-class Task(object):
+class Task:
     """
     Task object with name and required resources to use (storage, computation and models data)
     When the task is allocated to a server then the resources speed and server are set
