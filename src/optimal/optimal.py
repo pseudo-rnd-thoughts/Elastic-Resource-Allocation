@@ -1,4 +1,3 @@
-"""Optimal solution through mixed integer programming"""
 
 from __future__ import annotations
 
@@ -7,7 +6,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.core import print_model_solution, print_model
+from core.pprint import print_model_solution, print_model
 from src.core.result import Result
 
 if TYPE_CHECKING:
@@ -18,15 +17,7 @@ if TYPE_CHECKING:
 
 
 def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
-    """
-    Runs the optimal algorithm solution
-
-    :param tasks: A list of tasks
-    :param servers: A list of servers
-    :param time_limit: The time limit to solve
-    :return: The result from optimal solution
-    """
-    assert time_limit > 0, f'Time limit: {time_limit}'
+    assert 0 < time_limit, f'Time limit: {time_limit}'
 
     model = CpoModel('Optimal')
 
@@ -73,7 +64,7 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Optimal algorithm failed')
+        print(f'Optimal algorithm failed - status: {model_solution.get_solve_status()}')
         print_model_solution(model_solution)
         print_model(tasks, servers)
         return None
@@ -88,9 +79,9 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
                                   model_solution.get_value(sending_speeds[task]), server)
                     server.allocate_task(task)
     except (AssertionError, KeyError) as e:
-        print('Error:', e)
+        print('Error: ', e)
         print_model_solution(model_solution)
         return None
 
     return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
-                  solve_status=model_solution.get_solve_status())
+                  **{'solve status': model_solution.get_solve_status()})

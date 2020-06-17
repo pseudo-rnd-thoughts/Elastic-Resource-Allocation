@@ -9,7 +9,7 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.core import print_model, print_model_solution
+from core.pprint import print_model_solution, print_model
 from src.core.result import Result
 
 if TYPE_CHECKING:
@@ -43,30 +43,23 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
     super_server = SuperServer(servers)
 
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
-                                                 name=f'{task.name} loading speed')
-        compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity,
-                                                 name=f'{task.name} compute speed')
-        sending_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity,
-                                                 name=f'{task.name} sending speed')
+        loading_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
+        compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity),
+        sending_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
         task_allocation[task] = model.binary_var(name=f'{task.name} allocation')
 
         model.add(task.required_storage / loading_speeds[task] +
                   task.required_computation / compute_speeds[task] +
                   task.required_results_data / sending_speeds[task] <= task.deadline)
 
-    model.add(sum(task.required_storage * task_allocation[task]
-                  for task in tasks) <= super_server.storage_capacity)
-    model.add(sum(compute_speeds[task] * task_allocation[task]
-                  for task in tasks) <= super_server.computation_capacity)
-    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task]
-                  for task in tasks) <= super_server.bandwidth_capacity)
+    model.add(sum(task.required_storage * task_allocation[task] for task in tasks) <= super_server.storage_capacity)
+    model.add(sum(compute_speeds[task] * task_allocation[task] for task in tasks) <= super_server.computation_capacity)
+    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task] for task in tasks) <= super_server.bandwidth_capacity)
 
     model.maximize(sum(task.value * task_allocation[task] for task in tasks))
 
     # Run the model
-    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
-                                                 TimeLimit=time_limit)
+    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
     if debug_time:
         print(f'Solve time: {round(model_solution.get_solve_time(), 2)} secs, '
               f'Objective value: {model_solution.get_objective_values()}, '
