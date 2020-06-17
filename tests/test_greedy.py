@@ -43,13 +43,13 @@ def test_greedy_policies():
                     policy_results[result.algorithm] = [result]
 
     print('\n\nSorted policies by social welfare')
-    for algo, results in policy_results.items():
-        policy_results[algo] = (policy_results[algo],
-                                float(np.mean([r.social_welfare for r in results])),
-                                float(np.mean([r.solve_time for r in results])))
-    print(f'Algo | Avg SW | Avg Time | Social Welfare')
-    for algo, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1]):
-        print(f'{algo} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
+    for algorithm, results in policy_results.items():
+        policy_results[algorithm] = (policy_results[algorithm],
+                                     float(np.mean([r.social_welfare for r in results])),
+                                     float(np.mean([r.solve_time for r in results])))
+    print(f'Algorithm | Avg SW | Avg Time | Social Welfare')
+    for algorithm, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1]):
+        print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
 
 
 def test_optimisation(repeats: int = 10):
