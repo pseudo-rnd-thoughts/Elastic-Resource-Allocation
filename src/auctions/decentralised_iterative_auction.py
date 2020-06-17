@@ -65,16 +65,16 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     # For each of the task, if the task is allocated then allocate the task or reset the task
     new_task.price = task_price
     for task, (loading, compute, sending, allocated) in task_speeds.items():
-        task.reset_allocation(forgot_price=False)
         if allocated:
+            task.reset_allocation(forgot_price=False)
             allocate(task, loading, compute, sending, server)
         else:
-            task.price = 0
+            task.reset_allocation()
             unallocated_tasks.append(task)
 
 
 def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensity,
-                      resource_allocation_policy: ResourceAllocationPolicy):
+                      resource_allocation_policy: ResourceAllocationPolicy, debug_revenue: bool = False):
     """
     Calculates the task price using greedy algorithm
 
@@ -82,8 +82,10 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
     :param server: Server
     :param price_density: Price density function
     :param resource_allocation_policy: Resource allocation policy
+    :param debug_revenue: If to debug the revenue
     :return: Tuple of task price and possible speeds
     """
+    assert new_task.price == 0
     current_speeds = {task: (task.loading_speed, task.compute_speed, task.sending_speed)
                       for task in server.allocated_tasks}
     tasks = server.allocated_tasks[:]
@@ -93,17 +95,18 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
     s, w, r = resource_allocation_policy.allocate(new_task, server)
     allocate(new_task, s, w, r, server)
 
-    for task in sorted(tasks, key=lambda task: price_density.evaluate(task)):
+    for task in sorted(tasks, key=lambda task: price_density.evaluate(task), reverse=True):
         if server.can_run(task):
-            s, w, r = resource_allocation_policy.allocate(new_task, server)
+            s, w, r = resource_allocation_policy.allocate(task, server)
             allocate(task, s, w, r, server)
 
-    task_price = server_revenue - server.revenue + server.price_change
+    task_price = max(server_revenue - server.revenue + server.price_change, server.initial_price)
+    debug(f'Original revenue: {server_revenue}, new revenue: {server.revenue}, price change: {server.price_change}', debug_revenue)
     possible_speeds = {
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server is not None)
         for task in tasks + [new_task]}
 
-    reset_model(current_speeds.keys(), (server,))
+    reset_model(current_speeds.keys(), (server,), forgot_price=False)
     new_task.reset_allocation()
 
     for task, (loading, compute, sending) in current_speeds.items():
@@ -163,7 +166,7 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
 
     # Get the max server profit that the model finds and calculate the task price through a vcg similar function
     new_server_revenue = model_solution.get_objective_values()[0]
-    task_price = server.revenue - new_server_revenue + server.price_change
+    task_price = max(server.revenue - new_server_revenue + server.price_change, server.initial_price)
 
     # Get the resource speeds and task allocations
     speeds = {
@@ -192,6 +195,7 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
     :return: A tuple with the number of rounds and the solver time length
     """
     start_time = time()
+    assert all(0 < server.price_change for server in servers)
 
     rounds: int = 0
     unallocated_tasks: List[Task] = tasks[:]
@@ -205,14 +209,15 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
             if min_price == -1 or price < min_price:
                 min_price, min_speeds, min_server = price, speeds, server
 
-        if min_price == -1 or task.value < min_price:
-            debug(f'{task.name} Task set to {min_server.name} with price {min_price}', debug_allocation)
-            allocate_task(task, min_price, min_server, unallocated_tasks, *min_speeds)
+        if min_price == -1 or min_price < task.value:
+            debug(f'[+] {task.name} Task set to {min_server.name} with price {min_price} '
+                  f'and new {min_server.name} server revenue {min_server.revenue + min_server.price_change}', debug_allocation)
+            allocate_task(task, min_price, min_server, unallocated_tasks, min_speeds)
         else:
-            debug(f'Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
+            debug(f'[-] Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
                   debug_allocation)
 
-        debug(f'Number of unallocated tasks: {len(unallocated_tasks)}\n', debug_allocation)
+        # debug(f'Number of unallocated tasks: {len(unallocated_tasks)}', debug_allocation)
         rounds += 1
 
     return rounds, time() - start_time
@@ -254,4 +259,4 @@ def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Serv
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,
-                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
+                  **{'server price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
