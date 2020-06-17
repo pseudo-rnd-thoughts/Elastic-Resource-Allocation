@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+import pprint
 
 if TYPE_CHECKING:
     from typing import List
@@ -12,49 +13,49 @@ if TYPE_CHECKING:
 
 
 class Result:
-    """Generic results class"""
+    """
+    Results class that holds information about the results of an algorithm
+    """
 
     def __init__(self, algorithm_name: str, tasks: List[Task], servers: List[Server], solve_time: float,
-                 show_money: bool = False, **kwargs):
-        self.algorithm_name = algorithm_name
-
-        self.data = dict()
-        self.data['solve_time'] = round(solve_time, 3)
-
-        # General total information
-        self.sum_value = sum(sum(task.value for task in server.allocated_tasks) for server in servers)
-        self.data['sum value'] = self.sum_value
-        self.data['percentage value'] = round(sum(task.value for task in tasks if task.running_server) /
-                                              sum(task.value for task in tasks), 3)
-        self.data['percentage tasks'] = round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
-
-        # The server information
-        self.data['server value'] = {
-            server.name: sum(task.value for task in server.allocated_tasks) for server in servers
-        }
-        self.data['server storage usage'] = {
-            server.name: round(1 - server.available_storage / server.storage_capacity, 3) for server in servers
-        }
-        self.data['server computation usage'] = {
-            server.name: round(1 - server.available_computation / server.computation_capacity, 3) for server in servers
-        }
-        self.data['server bandwidth usage'] = {
-            server.name: round(1 - server.available_bandwidth / server.bandwidth_capacity, 3) for server in servers
-        }
-        self.data['num tasks'] = {
-            server.name: len(server.allocated_tasks) for server in servers
+                 limited: bool = False, is_auction: bool = False, **kwargs):
+        self.data = {
+            # General properties
+            'algorithm': algorithm_name,
+            'solve time': round(solve_time, 3),
+            'social welfare': sum(task.value for server in servers for task in server.allocated_tasks),
+            'percentage task value allocated': round(sum(task.value for task in tasks if task.running_server) /
+                                                     sum(task.value for task in tasks), 3),
+            'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
         }
 
-        # Additional information
-        for key, value in kwargs.items():
-            self.data[key] = value
+        if limited:
+            # Server properties
+            def resource_usage(server, resource):
+                return round(1 - getattr(server, f'available_{resource}') / getattr(server, f'{resource}_capacity'), 3)
 
-        # For auction to add the price information
-        if show_money:
-            self.data['total money'] = sum(task.price for task in tasks)
-            self.data['prices'] = {task.name: task.price for task in tasks}
-            self.data['revenues'] = {server.name: server.revenue for server in servers}
-            self.data['price change'] = {server.name: server.price_change for server in servers}
+            self.data.update({
+                'server social welfare': {server.name: sum(task.value for task in server.allocated_tasks)
+                                          for server in servers},
+                'server storage usage': {server.name: resource_usage(server, 'storage') for server in servers},
+                'server computation usage': {server.name: resource_usage(server, 'computation') for server in servers},
+                'server bandwidth usage': {server.name: resource_usage(server, 'bandwidth') for server in servers},
+                'server allocated tasks': {server.name: len(server.allocated_tasks) for server in servers}
+            })
+
+        if is_auction:
+            # Auction properties
+            self.data.update({
+                'revenue': sum(task.price for server in servers for task in server.allocated_tasks),
+                'task prices': {task.name: task.price for server in servers for task in server.allocated_tasks},
+                'server revenue': {server.name: server.revenue for server in servers},
+            })
+
+        self.data.update(kwargs)
+
+    def pretty_print(self):
+        pp = pprint.PrettyPrinter()
+        pp.pprint(self.data)
 
     def store(self, **kwargs):
         """
@@ -62,6 +63,18 @@ class Result:
 
         :return: The results values
         """
-        for key, value in kwargs.items():
-            self.data[key] = value
+        self.data.update(kwargs)
+
         return self.data
+
+    @property
+    def algorithm(self):
+        return self.data['algorithm']
+
+    @property
+    def social_welfare(self):
+        return self.data['social welfare']
+
+    @property
+    def solve_time(self):
+        return self.data['solve time']
