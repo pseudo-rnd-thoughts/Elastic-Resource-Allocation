@@ -9,7 +9,7 @@ from copy import copy
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
-from core.core import reset_model, allocate
+from core.core import reset_model, server_task_allocation
 from greedy.resource_allocation_policy import SumPercentage
 from model.model_distribution import load_model_distribution, ModelDistribution
 
@@ -50,7 +50,7 @@ def test_greedy_task_price():
         task = tasks.pop(rnd.randint(0, len(tasks) - 1))
         if server.can_run(task):
             s, w, r = resource_allocation_policy.allocate(task, server)
-            allocate(task, s, w, r, server, price=rnd.randint(1, 10))
+            server_task_allocation(server, task, s, w, r, price=rnd.randint(1, 10))
 
     copy_tasks = [copy(task) for task in server.allocated_tasks]
     copy_server = copy(server)
