@@ -20,12 +20,15 @@ class Server:
     value: float = 0  # This is the total value of the task's allocated
 
     def __init__(self, name: str, storage_capacity: int, computation_capacity: int, bandwidth_capacity: int,
-                 price_change: int = 1):
+                 price_change: int = 1, initial_price: int = 0):
         self.name: str = name
+
         self.storage_capacity: int = storage_capacity
         self.computation_capacity: int = computation_capacity
         self.bandwidth_capacity: int = bandwidth_capacity
+
         self.price_change: int = price_change
+        self.initial_price: int = initial_price
 
         # Allocation information
         self.allocated_tasks: List[Task] = []

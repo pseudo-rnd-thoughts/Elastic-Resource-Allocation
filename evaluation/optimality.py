@@ -9,8 +9,8 @@ from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-from core.io import load_args
-from core.pprint import print_model
+from extra.io import load_args
+from extra.pprint import print_model
 from core.super_server import SuperServer
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 from optimal.optimal import optimal_algorithm

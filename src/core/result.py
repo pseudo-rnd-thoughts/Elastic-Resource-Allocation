@@ -47,7 +47,7 @@ class Result:
         if is_auction:
             # Auction properties
             self.data.update({
-                'revenue': sum(task.price for server in servers for task in server.allocated_tasks),
+                'total revenue': sum(task.price for server in servers for task in server.allocated_tasks),
                 'task prices': {task.name: task.price for server in servers for task in server.allocated_tasks},
                 'server revenue': {server.name: server.revenue for server in servers},
             })

@@ -7,8 +7,8 @@ from __future__ import annotations
 from typing import Sequence
 
 from core.core import reset_model
-from core.io import load_args
-from core.pprint import print_model
+from extra.io import load_args
+from extra.pprint import print_model
 from model.model_distribution import ModelDistribution, load_model_distribution
 from optimal.optimal import optimal_algorithm
 

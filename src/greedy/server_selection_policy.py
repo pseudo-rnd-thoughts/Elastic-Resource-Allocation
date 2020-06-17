@@ -116,8 +116,8 @@ class TaskSumResources(ServerSelectionPolicy):
         """Value function"""
         loading, compute, sending = self.resource_allocation_policy.allocate(task, server)
         return task.required_storage / server.available_storage + \
-               compute / server.available_computation + \
-               (loading + sending) / server.available_bandwidth
+            compute / server.available_computation + \
+            (loading + sending) / server.available_bandwidth
 
 
 policies = [

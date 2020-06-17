@@ -9,7 +9,7 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.pprint import print_model_solution, print_model
+from extra.pprint import print_model_solution, print_model
 from src.core.result import Result
 
 if TYPE_CHECKING:

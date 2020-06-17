@@ -46,7 +46,7 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
     model_solution = model.solve(log_output=None)
 
     return model_solution.get_objective_values()[0], model_solution.get_value(loading_speed), \
-           model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
+        model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
 
 
 def greedy_matrix_algorithm(tasks: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,

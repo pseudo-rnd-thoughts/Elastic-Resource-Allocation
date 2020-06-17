@@ -14,7 +14,7 @@ from auctions.vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
 from core.core import set_price_change, reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-from core.io import load_args
+from extra.io import load_args
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value

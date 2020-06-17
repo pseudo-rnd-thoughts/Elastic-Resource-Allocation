@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 from branch_bound.feasibility_allocations import flexible_feasible_allocation
 from branch_bound.priority_queue import Comparison, PriorityQueue
-from core.pprint import print_allocation
+from extra.pprint import print_allocation
 from core.result import Result
 
 if TYPE_CHECKING:

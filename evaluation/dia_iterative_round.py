@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from core.core import set_price_change, reset_model
-from core.io import load_args
+from extra.io import load_args
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 

@@ -54,8 +54,8 @@ class Task:
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
         time_taken = self.required_storage * compute_speed * sending_speed + \
-                     loading_speed * self.required_computation * sending_speed + \
-                     loading_speed * compute_speed * self.required_results_data
+            loading_speed * self.required_computation * sending_speed + \
+            loading_speed * compute_speed * self.required_results_data
         assert time_taken <= self.deadline * loading_speed * compute_speed * sending_speed, \
             f'Deadline assertion failure Task {self.name} requirement storage {self.required_storage} ' \
             f'computation {self.required_computation} results data {self.required_results_data} with ' \

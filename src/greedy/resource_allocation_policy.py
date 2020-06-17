@@ -27,6 +27,7 @@ class ResourceAllocationPolicy(ABC):
         :param server: The server
         :return: A tuple of resource speeds
         """
+        # TODO update this to cplex or KKT
         return min(((s, w, r)
                     for s in range(1, server.available_bandwidth + 1)
                     for w in range(1, server.available_computation + 1)
@@ -61,7 +62,7 @@ class SumPercentage(ResourceAllocationPolicy):
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
-               (loading_speed + sending_speed) / server.available_bandwidth
+            (loading_speed + sending_speed) / server.available_bandwidth
 
 
 class SumExpPercentage(ResourceAllocationPolicy):
@@ -74,7 +75,7 @@ class SumExpPercentage(ResourceAllocationPolicy):
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return exp(compute_speed / server.available_computation) + \
-               exp((loading_speed + sending_speed) / server.available_bandwidth)
+            exp((loading_speed + sending_speed) / server.available_bandwidth)
 
 
 class SumSpeed(ResourceAllocationPolicy):

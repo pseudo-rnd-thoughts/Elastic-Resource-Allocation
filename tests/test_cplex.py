@@ -48,7 +48,7 @@ def test_mip_model():
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
-                                     max(server.computation_capacity for server in servers)
+        max(server.computation_capacity for server in servers)
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:

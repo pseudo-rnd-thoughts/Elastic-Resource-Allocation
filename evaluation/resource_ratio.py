@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-from core.io import load_args
+from extra.io import load_args
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources

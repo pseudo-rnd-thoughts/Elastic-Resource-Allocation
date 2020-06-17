@@ -11,7 +11,7 @@ from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-from core.io import load_args
+from extra.io import load_args
 from core.super_server import SuperServer
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed

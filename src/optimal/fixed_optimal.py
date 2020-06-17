@@ -8,7 +8,7 @@ from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import allocate
-from core.pprint import print_model_solution
+from extra.pprint import print_model_solution
 from core.result import Result
 
 if TYPE_CHECKING:

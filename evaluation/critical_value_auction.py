@@ -11,7 +11,7 @@ from auctions.decentralised_iterative_auction import optimal_decentralised_itera
 from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-from core.io import load_args
+from extra.io import load_args
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
 from greedy.server_selection_policy import SumResources, TaskSumResources

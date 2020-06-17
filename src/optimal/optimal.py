@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.pprint import print_model_solution, print_model
+from extra.pprint import print_model_solution, print_model
 from src.core.result import Result
 
 if TYPE_CHECKING:
@@ -40,7 +40,7 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
-                                     max(server.computation_capacity for server in servers)
+        max(server.computation_capacity for server in servers)
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
