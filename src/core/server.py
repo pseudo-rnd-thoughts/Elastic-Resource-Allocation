@@ -42,37 +42,6 @@ class Server:
         :return: If it can run
         """
 
-        """
-        Old code
-        
-        return self.available_storage >= task.required_storage \
-            and self.available_computation >= 1 \
-            and self.available_bandwidth >= 2 and \
-            any(task.required_storage * self.available_computation * r +
-                s * task.required_computation * r +
-                s * self.available_computation * task.required_results_data
-                <= task.deadline * s * self.available_computation * r
-                for s in range(1, self.available_bandwidth + 1)
-                for r in range(1, self.available_bandwidth - s + 1))
-                
-        if self.available_bandwidth < 2 or self.available_computation < 1:
-            return False
-
-        model = CpoModel("CanRun")
-        loading_speed = model.integer_var(min=1, max=self.available_bandwidth - 1)
-        compute_speed = model.integer_var(min=1, max=self.available_computation)
-        sending_speed = model.integer_var(min=1, max=self.available_bandwidth - 1)
-
-        model.add(task.required_storage / loading_speed +
-                  task.required_computation / compute_speed +
-                  task.required_results_data / sending_speed <= task.deadline)
-        model.add(task.required_storage <= self.available_storage)
-        model.add(loading_speed + sending_speed <= self.available_bandwidth)
-
-        model_solution = model.solve(log_output=None)
-
-        return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
-        """
         if not (task.required_storage <= self.available_storage and
                 self.available_bandwidth >= 2 and self.available_computation >= 1):
             return False
@@ -92,37 +61,6 @@ class Server:
 
         :param task: The task to test
         :return: If it can run
-        """
-
-        """
-        Old code
-        return self.storage_capacity >= task.required_storage \
-            and self.computation_capacity >= 1 \
-            and self.bandwidth_capacity >= 2 and \
-            any(task.required_storage * self.computation_capacity * r +
-                s * task.required_computation * r +
-                s * self.computation_capacity * task.required_results_data
-                <= task.deadline * s * self.available_computation * r
-                for s in range(1, self.bandwidth_capacity + 1)
-                for r in range(1, self.bandwidth_capacity - s + 1))
-                
-        if self.bandwidth_capacity < 2 or self.computation_capacity < 1:
-            return False
-
-        model = CpoModel("CanRunEmpty")
-        loading_speed = model.integer_var(min=1, max=self.bandwidth_capacity - 1)
-        compute_speed = model.integer_var(min=1, max=self.computation_capacity)
-        sending_speed = model.integer_var(min=1, max=self.bandwidth_capacity - 1)
-
-        model.add(task.required_storage / loading_speed +
-                  task.required_computation / compute_speed +
-                  task.required_results_data / sending_speed <= task.deadline)
-        model.add(task.required_storage <= self.storage_capacity)
-        model.add(loading_speed + sending_speed <= self.bandwidth_capacity)
-
-        model_solution = model.solve(log_output=None)
-
-        return model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE
         """
 
         if not (task.required_storage <= self.storage_capacity and
