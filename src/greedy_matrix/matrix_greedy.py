@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 
-from src.core.core import allocate
+from src.core.core import allocate, debug
 from src.core.result import Result
 
 if TYPE_CHECKING:
@@ -30,16 +30,6 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
     :param value: The value policy
     :return: The tuple of values and resource allocations
     """
-
-    """
-    Old code
-    return max(((value.evaluate(task, server, s, w, r), s, w, r)
-                for s in range(1, server.available_bandwidth + 1)
-                for w in range(1, server.available_computation + 1)
-                for r in range(1, server.available_bandwidth - s + 1)
-                if task.required_storage * w * r + s * task.required_computation * r +
-                s * w * task.required_results_data <= task.deadline * s * w * r), key=lambda x: x[0])
-    """
     model = CpoModel("Matrix value")
 
     loading_speed = model.integer_var(min=1, max=server.available_bandwidth - 1, name='loading speed')
@@ -59,8 +49,8 @@ def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy)
         model_solution.get_value(compute_speed), model_solution.get_value(sending_speed)
 
 
-def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
-                  debug_allocation: bool = False, debug_pop: bool = False) -> Result:
+def greedy_matrix_algorithm(tasks: List[Task], servers: List[Server], allocation_value_policy: AllocationValuePolicy,
+                            debug_allocation: bool = False, debug_pop: bool = False) -> Result:
     """
     A greedy algorithm that uses the idea of a matrix
 
@@ -82,15 +72,13 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
     while len(allocation_value_matrix):
         (allocated_task, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
         allocate(allocated_task, s, w, r, allocated_server)
-        if debug_allocation:
-            print(f'Job {allocated_task.name} on Server {allocated_server.name} with value {v:.3f}, '
-                  f'loading {s} compute {w} sending {r}')
+        debug(f'Job {allocated_task.name} on Server {allocated_server.name} with value {v:.3f}, '
+              f'loading {s} compute {w} sending {r}', debug_allocation)
 
         # Remove the task from the allocation matrix
         for server in servers:
             if (allocated_task, server) in allocation_value_matrix:
-                if debug_pop:
-                    print(f'Pop task {allocated_task.name} and server {server.name}')
+                debug(f'Pop task {allocated_task.name} and server {server.name}', debug_pop)
                 allocation_value_matrix.pop((allocated_task, server))
 
         # Remove the task from the unallocated tasks and check if the allocated server can now not run any of the tasks
@@ -102,7 +90,7 @@ def matrix_greedy(tasks: List[Task], servers: List[Server], allocation_value_pol
                                                                                        allocation_value_policy)
             # If task cant be run then remove the task
             elif (task, allocated_server) in allocation_value_matrix:
-                if debug_pop:
-                    print(f'Pop task {task.name} and server {allocated_server.name}')
+                debug(f'Pop task {task.name} and server {allocated_server.name}', debug_pop)
                 allocation_value_matrix.pop((task, allocated_server))
+
     return Result(f'Matrix Greedy {allocation_value_policy.name}', tasks, servers, solve_time=time() - start_time)
