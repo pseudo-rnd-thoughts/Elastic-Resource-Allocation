@@ -34,7 +34,7 @@ class ResourceSum(ValueDensity):
     """The sum of a task's required resources"""
 
     def __init__(self):
-        super().__init__('Sum')
+        ValueDensity.__init__(self, 'Sum')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
@@ -49,7 +49,7 @@ class ResourceProduct(ValueDensity):
     """The product of a task's required resources"""
 
     def __init__(self):
-        super().__init__('Product')
+        ValueDensity.__init__(self, 'Product')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
@@ -64,7 +64,7 @@ class ResourceExpSum(ValueDensity):
     """The sum of exponential of a task's required resources"""
 
     def __init__(self):
-        super().__init__('Exponential Sum')
+        ValueDensity.__init__(self, 'Exponential Sum')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
@@ -79,7 +79,7 @@ class ResourceSqrt(ValueDensity):
     """The sum of square root of a task's required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__(f'Sqrt {resource_func.name}')
+        ValueDensity.__init__(self, f'Sqrt {resource_func.name}')
         self.resource_func = resource_func
 
     def evaluate(self, task: Task) -> float:
@@ -95,7 +95,7 @@ class UtilityPerResources(ValueDensity):
     """The utility divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__(f'Utility / {resource_func.name}')
+        ValueDensity.__init__(self, f'Utility / {resource_func.name}')
         self.resource_func = resource_func
 
     def evaluate(self, task: Task) -> float:
@@ -111,7 +111,7 @@ class DeadlinePerResources(ValueDensity):
     """The deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__(f'Deadline / {resource_func.name}')
+        ValueDensity.__init__(self, f'Deadline / {resource_func.name}')
         self.resource_func = resource_func
 
     def evaluate(self, task: Task) -> float:
@@ -127,7 +127,7 @@ class UtilityDeadlinePerResource(ValueDensity):
     """The product of utility and deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__(f'Utility * deadline / {resource_func.name}')
+        ValueDensity.__init__(self, f'Utility * deadline / {resource_func.name}')
         self.resource_func = resource_func
 
     def evaluate(self, task: Task) -> float:
@@ -143,7 +143,7 @@ class UtilityResourcePerDeadline(ValueDensity):
     """The product of utility and deadline divided by required resources"""
 
     def __init__(self, resource_func: ValueDensity = ResourceSum()):
-        super().__init__(f'Utility * {resource_func.name} / deadline')
+        ValueDensity.__init__(self, f'Utility * {resource_func.name} / deadline')
         self.resource_func = resource_func
 
     def evaluate(self, task: Task) -> float:
@@ -159,7 +159,7 @@ class Random(ValueDensity):
     """Random number generator"""
 
     def __init__(self):
-        super().__init__('Random')
+        ValueDensity.__init__(self, 'Random')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
@@ -174,7 +174,7 @@ class Storage(ValueDensity):
     """Sorted by Storage resource requirement"""
 
     def __init__(self):
-        super().__init__('Storage Requirement')
+        ValueDensity.__init__(self, 'Storage Requirement')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
@@ -189,7 +189,7 @@ class Value(ValueDensity):
     """Ordered by the value of the tasks alone"""
 
     def __init__(self):
-        super().__init__('Value')
+        ValueDensity.__init__(self, 'Value')
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""

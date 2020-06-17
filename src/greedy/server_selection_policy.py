@@ -56,7 +56,7 @@ class SumResources(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__('Sum', maximise)
+        ServerSelectionPolicy.__init__(self, 'Sum', maximise)
 
     def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
@@ -67,7 +67,7 @@ class ProductResources(ServerSelectionPolicy):
     """The product of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__('Product', maximise)
+        ServerSelectionPolicy.__init__(self, 'Product', maximise)
 
     def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
@@ -78,7 +78,7 @@ class SumExpResource(ServerSelectionPolicy):
     """The sum of a server's available resources"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__('Exponential Sum', maximise)
+        ServerSelectionPolicy.__init__(self, 'Exponential Sum', maximise)
 
     def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
@@ -89,7 +89,7 @@ class Random(ServerSelectionPolicy):
     """A random number"""
 
     def __init__(self, maximise: bool = False):
-        super().__init__('Random', maximise)
+        ServerSelectionPolicy.__init__(self, 'Random', maximise)
 
     def select(self, task: Task, servers: List[Server]) -> Optional[Server]:
         """Selects the server"""
@@ -108,7 +108,7 @@ class TaskSumResources(ServerSelectionPolicy):
     """Job Sum resources usage"""
 
     def __init__(self, resource_allocation_policy: ResourceAllocationPolicy, maximise: bool = False):
-        super().__init__(f'Job Sum of {resource_allocation_policy.name}', maximise)
+        ServerSelectionPolicy.__init__(self, f'Job Sum of {resource_allocation_policy.name}', maximise)
 
         self.resource_allocation_policy = resource_allocation_policy
 

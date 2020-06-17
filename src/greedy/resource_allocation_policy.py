@@ -55,7 +55,7 @@ class SumPercentage(ResourceAllocationPolicy):
     """The sum of percentage"""
 
     def __init__(self):
-        super().__init__('Percentage Sum')
+        ResourceAllocationPolicy.__init__(self, 'Percentage Sum')
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
@@ -68,7 +68,7 @@ class SumExpPercentage(ResourceAllocationPolicy):
     """The sum of exponential percentages"""
 
     def __init__(self):
-        super().__init__("Expo percentage sum")
+        ResourceAllocationPolicy.__init__(self, "Expo percentage sum")
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
@@ -81,7 +81,7 @@ class SumSpeed(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
     def __init__(self):
-        super().__init__('Sum of speeds')
+        ResourceAllocationPolicy.__init__(self, 'Sum of speeds')
 
     def resource_evaluator(self, task: Task, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
@@ -93,7 +93,7 @@ class DeadlinePercent(ResourceAllocationPolicy):
     """Ratio of speeds divided by deadline"""
 
     def __init__(self):
-        super().__init__('Deadline Percent')
+        ResourceAllocationPolicy.__init__(self, 'Deadline Percent')
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
