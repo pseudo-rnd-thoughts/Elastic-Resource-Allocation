@@ -1,1 +1,1 @@
-"""Greedy algorith mmodule"""
+"""Greedy algorithm module"""
