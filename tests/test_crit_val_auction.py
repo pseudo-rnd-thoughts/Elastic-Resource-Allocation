@@ -1,3 +1,7 @@
+"""
+Tests the critical value auction through checking that the critical value is correctly calculated and to test
+    for task mutation
+"""
 
 from __future__ import annotations
 
@@ -10,7 +14,7 @@ from greedy.value_density import UtilityPerResources
 from model.model_distribution import load_model_distribution, ModelDistribution
 
 
-def test_critical_value(error: float = 0.1):
+def test_critical_value(error: float = 0.05):
     """
     To test the critical value action actually returns the critical values
 
@@ -28,16 +32,30 @@ def test_critical_value(error: float = 0.1):
 
     tasks, servers = model.create()
 
+    print(f'Critical value auction')
     auction_result = critical_value_auction(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+    run_tasks = [task for task in tasks if task.running_server]
 
-    for task in tasks:
+    for task in run_tasks:
+        print(f'\t{task.name} Task - value: {task.value}, critical value: {task.price}')
+        original_value = task.value
+
+        reset_model(tasks, servers, forgot_price=False)
+        task.value = task.price + error
+        greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+        assert task.running_server is not None
+
         if 0 < task.price:
             reset_model(tasks, servers, forgot_price=False)
-
-            original_value = task.value
-            task.value = task.price + error
+            task.value = task.price - error
             greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+            assert task.running_server is None
 
-            assert task.running_server is not None
+        task.value = original_value
 
-            task.value = original_value
+
+def test_task_mutation():
+    """
+    Todo
+    """
+    pass
