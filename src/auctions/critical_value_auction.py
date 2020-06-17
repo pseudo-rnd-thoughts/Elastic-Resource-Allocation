@@ -13,7 +13,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
-from core.core import allocate, reset_model
+from core.core import allocate, reset_model, debug
 from core.result import Result
 
 from greedy.greedy import allocate_tasks
@@ -33,17 +33,6 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
                            server_selection_policy: ServerSelectionPolicy,
                            resource_allocation_policy: ResourceAllocationPolicy,
                            debug_initial_allocation: bool = False, debug_critical_value: bool = False) -> Result:
-    """
-    Implementation of the critical value auction
-    :param tasks: A list of tasks
-    :param servers: A list of servers
-    :param value_density: The value density heuristic
-    :param server_selection_policy: The server selection heuristic
-    :param resource_allocation_policy: The resource allocation heuristic
-    :param debug_initial_allocation: Debug the initial allocation
-    :param debug_critical_value: Debug the critical values
-    :return:
-    """
     start_time = time()
 
     valued_tasks: Dict[Task, float] = {task: value_density.evaluate(task) for task in tasks}
@@ -58,9 +47,9 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
 
     if debug_initial_allocation:
         max_name_len = max(len(task.name) for task in tasks)
-        print("{:<{}} | s | w | r | server".format("Job", max_name_len))
+        print(f"{'Task':<{max_name_len}} | s | w | r | server")
         for task, (s, w, r, server) in allocation_data.items():
-            print("{:<{}}|{:3f}|{:3f}|{:3f}|{}".format(task, max_name_len, s, w, r, server.name))
+            print(f'{task:<{max_name_len}}|{s:3f}|{w:3f}|{r:3f}|{server.name}')
 
     reset_model(tasks, servers)
 
@@ -86,8 +75,7 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
                 critical_task.price = round(value_density.inverse(critical_task, critical_task_density), 3)
                 break
 
-        if debug_critical_value:
-            print("Job {} critical value: {:.3f}".format(critical_task.name, critical_task.price))
+        debug(f'{critical_task.name} Task critical value: {critical_task.price:.3f}', debug_critical_value)
 
         # Read the task back into the ranked task in its original position and reset the model but not forgetting the
         #   new critical task's price
@@ -98,8 +86,6 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
     for task, (s, w, r, server) in allocation_data.items():
         allocate(task, s, w, r, server)
 
-    return Result('Critical Value: {}, {}, {}'
-                  .format(value_density.name, server_selection_policy.name, resource_allocation_policy.name),
-                  tasks, servers, time() - start_time, show_money=True, value_density=value_density.name,
-                  server_selection_policy=server_selection_policy.name,
+    return Result(f'Critical Value Auction', tasks, servers, time() - start_time, is_auction=True,
+                  value_density=value_density.name, server_selection_policy=server_selection_policy.name,
                   resource_allocation_policy=resource_allocation_policy.name)
