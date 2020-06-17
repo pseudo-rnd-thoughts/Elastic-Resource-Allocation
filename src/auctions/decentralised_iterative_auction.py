@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Tuple
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import reset_model, allocate, debug
+from core.core import reset_model, server_task_allocation, debug
 from core.result import Result
 from greedy.value_density import ResourceSum
 
@@ -67,7 +67,7 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     for task, (loading, compute, sending, allocated) in task_speeds.items():
         if allocated:
             task.reset_allocation(forgot_price=False)
-            allocate(task, loading, compute, sending, server)
+            server_task_allocation(task, loading, compute, sending, server)
         else:
             task.reset_allocation()
             unallocated_tasks.append(task)
@@ -93,12 +93,12 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
     reset_model(server.allocated_tasks, (server,), forgot_price=False)
 
     s, w, r = resource_allocation_policy.allocate(new_task, server)
-    allocate(new_task, s, w, r, server)
+    server_task_allocation(server, new_task, s, w, r)
 
     for task in sorted(tasks, key=lambda task: price_density.evaluate(task), reverse=True):
         if server.can_run(task):
             s, w, r = resource_allocation_policy.allocate(task, server)
-            allocate(task, s, w, r, server)
+            server_task_allocation(server, task, s, w, r)
 
     task_price = max(server_revenue - server.revenue + server.price_change, server.initial_price)
     debug(f'Original revenue: {server_revenue}, new revenue: {server.revenue}, price change: {server.price_change}', debug_revenue)
@@ -110,7 +110,7 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
     new_task.reset_allocation()
 
     for task, (loading, compute, sending) in current_speeds.items():
-        allocate(task, loading, compute, sending, server)
+        server_task_allocation(server, task, loading, compute, sending)
 
     return task_price, possible_speeds
 

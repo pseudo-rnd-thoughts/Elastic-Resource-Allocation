@@ -11,7 +11,7 @@ import functools
 from time import time
 from typing import TYPE_CHECKING
 
-from core.core import list_copy_remove, reset_model, allocate, debug
+from core.core import list_copy_remove, reset_model, server_task_allocation, debug
 from core.result import Result
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
@@ -74,7 +74,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     # Reset the model and allocates all of the their info from the original optimal solution
     reset_model(tasks, servers)
     for task, (s, w, r, server) in task_allocation.items():
-        allocate(task, s, w, r, server, price=task_prices[task])
+        server_task_allocation(server, task, s, w, r, price=task_prices[task])
 
     return time() - start_time
 

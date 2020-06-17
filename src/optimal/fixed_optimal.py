@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import allocate
+from core.core import server_task_allocation
 from extra.pprint import print_model_solution
 from core.result import Result
 
@@ -66,7 +66,7 @@ def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_
         for task in tasks:
             for server in servers:
                 if model_solution.get_value(allocations[(task, server)]):
-                    allocate(task, task.loading_speed, task.compute_speed, task.sending_speed, server)
+                    server_task_allocation(server, task, task.loading_speed, task.compute_speed, task.sending_speed)
                     break
     except (KeyError, AssertionError) as e:
         print('Assertion error in fixed optimal algorithm: ', e)

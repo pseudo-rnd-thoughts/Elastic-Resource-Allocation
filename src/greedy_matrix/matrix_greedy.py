@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 
-from src.core.core import allocate, debug
+from src.core.core import server_task_allocation, debug
 from src.core.result import Result
 
 if TYPE_CHECKING:
@@ -71,7 +71,7 @@ def greedy_matrix_algorithm(tasks: List[Task], servers: List[Server], allocation
     # Loop over the allocation matrix till there are no values left
     while len(allocation_value_matrix):
         (allocated_task, allocated_server), (v, s, w, r) = max(allocation_value_matrix.items(), key=lambda x: x[1][0])
-        allocate(allocated_task, s, w, r, allocated_server)
+        server_task_allocation(allocated_task, s, w, r, allocated_server)
         debug(f'Job {allocated_task.name} on Server {allocated_server.name} with value {v:.3f}, '
               f'loading {s} compute {w} sending {r}', debug_allocation)
 

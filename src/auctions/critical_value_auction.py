@@ -13,7 +13,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
-from core.core import allocate, reset_model, debug
+from core.core import server_task_allocation, reset_model, debug
 from core.result import Result
 from greedy.greedy import allocate_tasks
 
@@ -77,7 +77,7 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
                 server = server_selection_policy.select(task, servers)
                 if server:  # There may not be a server that can allocate the task
                     s, w, r = resource_allocation_policy.allocate(task, server)
-                    allocate(task, s, w, r, server)
+                    server_task_allocation(server, task, s, w, r)
             else:
                 # If critical task isn't able to be allocated therefore the last task's density is found
                 #   and the inverse of the value density is calculated with the last task's density.
@@ -95,7 +95,7 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
 
     # Allocate the tasks and set the price to the critical value
     for task, (s, w, r, server) in allocation_data.items():
-        allocate(task, s, w, r, server)
+        server_task_allocation(server, task, s, w, r)
 
     return Result(f'Critical Value Auction', tasks, servers, time() - start_time, is_auction=True,
                   value_density=value_density.name, server_selection_policy=server_selection_policy.name,

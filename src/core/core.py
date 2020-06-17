@@ -37,7 +37,7 @@ def rand_list_max(args: Iterable[T], key=None) -> T:
     return choice(solution)
 
 
-def allocate(task: Task, loading: int, compute: int, sending: int, server: Server, price: float = None):
+def server_task_allocation(server: Server, task: Task, loading: int, compute: int, sending: int, price: float = None):
     """
     Allocate a task to a server
 
