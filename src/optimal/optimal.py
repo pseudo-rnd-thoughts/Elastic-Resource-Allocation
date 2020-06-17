@@ -1,3 +1,6 @@
+"""
+Optimal algorithms
+"""
 
 from __future__ import annotations
 
@@ -17,6 +20,14 @@ if TYPE_CHECKING:
 
 
 def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+    """
+    Optimal algorithm
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param time_limit: Time limit for cplex
+    :return: the results of the algorithm
+    """
     assert 0 < time_limit, f'Time limit: {time_limit}'
 
     model = CpoModel('Optimal')

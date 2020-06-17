@@ -25,6 +25,15 @@ if TYPE_CHECKING:
 
 
 def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: bool = False) -> float:
+    """
+    VCG auction solver
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param solver: Solver to find solution
+    :param debug_running: If to debug the running algorithm
+    :return: Total solve time
+    """
     start_time = time()
 
     # Price information
@@ -70,7 +79,17 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     return time() - start_time
 
 
-def vcg_auction(tasks, servers, time_limit, debug_results) -> Optional[Result]:
+def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
+                debug_results: bool = False) -> Optional[Result]:
+    """
+    VCG auction algorithm
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param time_limit: The time limit of the optimal solver
+    :param debug_results: If to debug results
+    :return: The results of the VCG auction
+    """
     optimal_solver = functools.partial(optimal_algorithm, time_limit=time_limit)
 
     solve_time = vcg_solver(tasks, servers, optimal_solver, debug_results)
@@ -80,6 +99,15 @@ def vcg_auction(tasks, servers, time_limit, debug_results) -> Optional[Result]:
 
 def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: int = 5,
                       debug_results: bool = False) -> Optional[Result]:
+    """
+    Fixed VCG auction algorithm
+
+    :param fixed_tasks: List of the fixed tasks
+    :param servers: List of servers
+    :param time_limit: The limit of the fixed optimal solver
+    :param debug_results: If to debug results
+    :return: The results of the fixed VCG auction
+    """
     fixed_solver = functools.partial(fixed_optimal_algorithm, time_limit=time_limit)
 
     solve_time = vcg_solver(fixed_tasks, servers, fixed_solver, debug_results)

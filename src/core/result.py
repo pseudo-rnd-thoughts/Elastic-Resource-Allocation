@@ -32,6 +32,7 @@ class Result:
         if limited:
             # Server properties
             def resource_usage(server, resource):
+                """Resource usage of a server with a particular resource"""
                 return round(1 - getattr(server, f'available_{resource}') / getattr(server, f'{resource}_capacity'), 3)
 
             self.data.update({
@@ -54,6 +55,9 @@ class Result:
         self.data.update(kwargs)
 
     def pretty_print(self):
+        """
+        Pretty prints the results
+        """
         pp = pprint.PrettyPrinter()
         pp.pprint(self.data)
 
@@ -69,12 +73,15 @@ class Result:
 
     @property
     def algorithm(self):
+        """Algorithm property"""
         return self.data['algorithm']
 
     @property
     def social_welfare(self):
+        """Social welfare property"""
         return self.data['social welfare']
 
     @property
     def solve_time(self):
+        """Solve time property"""
         return self.data['solve time']

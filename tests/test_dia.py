@@ -1,3 +1,6 @@
+"""
+Tests the decentralised iterative auction
+"""
 
 from __future__ import annotations
 

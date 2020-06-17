@@ -4,17 +4,15 @@ from __future__ import annotations
 
 import json
 
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-
+from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
-
-from core.core import load_args, print_model, reset_model
+from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
+from core.io import load_args
+from core.pprint import print_model
 from core.super_server import SuperServer
-
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
-
 from optimal.optimal import optimal_algorithm
 
 
@@ -39,6 +37,13 @@ def optimality_testing(model_dist: ModelDistribution):
 
 
 def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
+    """
+    Evaluates the results using the optimality
+
+    :param model_dist: The model distribution
+    :param repeat: The repeat of the testing
+    :param repeats: The number of repeats
+    """
     data = []
     for _ in range(repeats):
         tasks, servers = model_dist.create()
@@ -56,7 +61,7 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
         reset_model(tasks, servers)
 
         for price_change in [1, 2, 3, 5, 10]:
-            dia_result = decentralised_iterative_auction(tasks, servers, 5)
+            dia_result = optimal_decentralised_iterative_auction(tasks, servers)
             results[f'dia {price_change}'] = dia_result.store()
 
             reset_model(tasks, servers)

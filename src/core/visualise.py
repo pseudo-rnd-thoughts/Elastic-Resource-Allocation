@@ -22,6 +22,11 @@ matplotlib.rcParams['font.family'] = 'monospace'
 
 
 def minimise_resource_allocation(servers: List[Server]):
+    """
+    Minimise resource allocation of a list of servers
+
+    :param servers: List of servers
+    """
     for server in servers:
         model = CpoModel('MinimumAllocation')
 

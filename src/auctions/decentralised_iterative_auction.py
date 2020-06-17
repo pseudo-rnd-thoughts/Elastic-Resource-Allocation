@@ -9,7 +9,7 @@ import math
 import random as rnd
 from abc import ABC, abstractmethod
 from time import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
@@ -51,6 +51,15 @@ class PriceResourcePerDeadline(PriceDensity):
 
 
 def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
+    """
+    Allocates a task to a server
+
+    :param new_task: The new task to allocate to the server
+    :param task_price: The price for the task
+    :param server: The server to be allocated to the server
+    :param unallocated_tasks: List of unallocated tasks
+    :param task_speeds: Dictionary of task speeds
+    """
     server.reset_allocations()
 
     # For each of the task, if the task is allocated then allocate the task or reset the task
@@ -66,6 +75,15 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
 
 def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensity,
                       resource_allocation_policy: ResourceAllocationPolicy):
+    """
+    Calculates the task price using greedy algorithm
+
+    :param new_task: The new task
+    :param server: Server
+    :param price_density: Price density function
+    :param resource_allocation_policy: Resource allocation policy
+    :return: Tuple of task price and possible speeds
+    """
     current_speeds = {task: (task.loading_speed, task.compute_speed, task.sending_speed)
                       for task in server.allocated_tasks}
     tasks = server.allocated_tasks[:]
@@ -95,6 +113,15 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
 
 
 def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_results: bool = False):
+    """
+    Calculates the task price
+
+    :param new_task: The new task
+    :param server: The server
+    :param time_limit: Time limit for the cplex
+    :param debug_results: debug the results
+    :return: task price and task speeds
+    """
     assert 0 < time_limit, f'Time limit: {time_limit}'
     model = CpoModel(f'{new_task.name} Task Price')
 
@@ -153,7 +180,17 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     return task_price, speeds
 
 
-def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver, debug_allocation: bool = False):
+def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
+               debug_allocation: bool = False) -> Tuple[int, float]:
+    """
+    Decentralised iterative auction solver
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param task_price_solver: Task price solver
+    :param debug_allocation: If to debug allocation
+    :return: A tuple with the number of rounds and the solver time length
+    """
     start_time = time()
 
     rounds: int = 0
@@ -180,7 +217,17 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver, debu
     return rounds, time() - start_time
 
 
-def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5, debug_allocation: bool = False):
+def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
+                                            debug_allocation: bool = False) -> Result:
+    """
+    Runs the optimal decentralised iterative auction
+
+    :param tasks: List of tasks
+    :param servers: list of servers
+    :param time_limit: The time limit for the dia solver
+    :param debug_allocation: If to debug allocation
+    :return: The results of the auction
+    """
     solver = functools.partial(optimal_task_price, time_limit=time_limit)
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 
@@ -190,7 +237,17 @@ def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Ser
 
 def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], price_density: PriceDensity,
                                            resource_allocation_policy: ResourceAllocationPolicy,
-                                           debug_allocation: bool = False):
+                                           debug_allocation: bool = False) -> Result:
+    """
+    Runs the greedy decentralised iterative auction
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param price_density: Price density policy
+    :param resource_allocation_policy: Resource allocation policy
+    :param debug_allocation: If to debug allocation
+    :return: The results of the auction
+    """
     solver = functools.partial(greedy_task_price, price_density, resource_allocation_policy)
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 

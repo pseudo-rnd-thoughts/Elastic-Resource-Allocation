@@ -9,12 +9,13 @@ from typing import Iterable
 from tqdm import tqdm
 
 from auctions.critical_value_auction import critical_value_auction
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from auctions.fixed_vcg_auction import fixed_vcg_auction
+from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from auctions.vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
 
-from core.core import load_args, set_price_change, reset_model
+from core.core import set_price_change, reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
+from core.io import load_args
 
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
@@ -50,7 +51,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
         auction_results = {}
 
         # Calculate the vcg auction
-        vcg_result = vcg_auction(tasks, servers)
+        vcg_result = vcg_auction(tasks, servers, vcg_time_limit)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         if debug_results:
             print(auction_results['vcg'])
@@ -69,7 +70,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
             reset_model(tasks, servers)
             
             set_price_change(servers, price_change)
-            iterative_result = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost)
+            iterative_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
             auction_results[f'price change {price_change}'] = iterative_result.store()
             if debug_results:
                 print(auction_results[f'price change {price_change}'])
@@ -86,9 +87,9 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
         ]
         for (vd, ss, ra) in critical_value_policies:
             critical_value_result = critical_value_auction(tasks, servers, vd, ss, ra)
-            auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+            auction_results[critical_value_result.algorithm] = critical_value_result.store()
             if debug_results:
-                print(auction_results[critical_value_result.algorithm_name])
+                print(auction_results[critical_value_result.algorithm])
     
             reset_model(tasks, servers)
         # Append the auction results to the data
@@ -102,8 +103,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
 
 
 def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, price_changes: int = 10, repeats: int = 20,
-                                  vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15,
-                                  decentralised_iterative_time_limit: int = 15,
+                                  vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15, dia_time_limit: int = 15,
                                   price_change_mean: int = 2, price_change_std: int = 4):
     """
     Test non uniform price change servers on the decentralised iterative auction
@@ -114,7 +114,7 @@ def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, pr
     :param repeats: The number of repeats
     :param vcg_time_limit: The vcg compute time limit
     :param fixed_vcg_time_limit: The fixed vcg compute time limit
-    :param decentralised_iterative_time_limit: The decentralised iterative compute time limit
+    :param dia_time_limit: The decentralised iterative compute time limit
     :param price_change_mean: The price change mean value
     :param price_change_std: The price change standard deviation
     """
@@ -132,13 +132,13 @@ def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, pr
         auction_results = {}
 
         # Calculate the fixed vcg auction
-        vcg_result = vcg_auction(tasks, servers)
+        vcg_result = vcg_auction(tasks, servers, vcg_time_limit)
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Calculate the fixed vcg auction
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
-        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers)
+        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, fixed_vcg_time_limit)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
 
         for price_changes in prices_changes:
@@ -146,7 +146,7 @@ def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, pr
             for server, price_change in zip(servers, price_changes):
                 server.price_change = price_change
 
-            iterative_results = decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
+            iterative_results = optimal_decentralised_iterative_auction(tasks, servers, dia_time_limit)
             name = f'price change: {", ".join([str(x) for x in price_changes])}'
             auction_results[name] = iterative_results.store()
 

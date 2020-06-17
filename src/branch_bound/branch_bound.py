@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from branch_bound.feasibility_allocations import flexible_feasible_allocation
 from branch_bound.priority_queue import Comparison, PriorityQueue
+from core.pprint import print_allocation
 
 from core.result import Result
 
@@ -20,12 +21,13 @@ if TYPE_CHECKING:
     from core.task import Task
 
 
-def print_allocation(task_server_allocations: Dict[Server, List[Task]]):
-    print(', '.join([f'{server.name} -> [{", ".join([task.name for task in tasks])}]'
-                     for server, tasks in task_server_allocations.items()]))
-
-
 def copy(allocation):
+    """
+    Copy the allocation
+
+    :param allocation: The allocation
+    :return: Copy of the allocation parameter
+    """
     return {server: [task for task in tasks] for server, tasks in allocation.items()}
 
 
@@ -92,9 +94,22 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
 
     # Generates the initial candidates
     def compare(candidate_1, candidate_2):
+        """
+        Compare two candidates
+
+        :param candidate_1: Candidate 1
+        :param candidate_2: Candidate 2
+        :return: The comparison between the two
+        """
         return Comparison.compare(candidate_1[0], candidate_2[0])
 
     def evaluate(candidate):
+        """
+        Evaluate the candidate
+
+        :param candidate: The candidate
+        :return: String for the candidate
+        """
         return str(candidate[0])
 
     candidates = PriorityQueue(compare, evaluate)

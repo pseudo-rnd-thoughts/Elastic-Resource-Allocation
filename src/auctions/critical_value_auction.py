@@ -33,6 +33,18 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
                            server_selection_policy: ServerSelectionPolicy,
                            resource_allocation_policy: ResourceAllocationPolicy,
                            debug_initial_allocation: bool = False, debug_critical_value: bool = False) -> Result:
+    """
+    Run the Critical value auction
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param value_density: Value density function
+    :param server_selection_policy: Server selection function
+    :param resource_allocation_policy: Resource allocation function
+    :param debug_initial_allocation: If to debug the initial allocation
+    :param debug_critical_value: If to debug the critical value
+    :return: The results from the auction
+    """
     start_time = time()
 
     valued_tasks: Dict[Task, float] = {task: value_density.evaluate(task) for task in tasks}

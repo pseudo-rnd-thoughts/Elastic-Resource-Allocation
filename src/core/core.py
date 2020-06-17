@@ -118,5 +118,11 @@ def positive_gaussian_dist(mean, std) -> int:
 
 
 def debug(message, case):
+    """
+    Debug a message
+
+    :param message: The message
+    :param case: If to print the message
+    """
     if case:
         print(message)

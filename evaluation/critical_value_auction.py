@@ -7,12 +7,12 @@ import json
 from tqdm import tqdm
 
 from auctions.critical_value_auction import critical_value_auction
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-from auctions.fixed_vcg_auction import fixed_vcg_auction
-from auctions.vcg_auction import vcg_auction
+from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 
-from core.core import load_args, reset_model
+from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
+from core.io import load_args
 
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -63,7 +63,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
         # The decentralised iterative auction results
         for server in servers:
             server.price_change = price_change
-        iterative_result = decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
+        iterative_result = optimal_decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
         auction_results[f'price change {price_change}'] = iterative_result.store()
         reset_model(tasks, servers)
         
@@ -75,7 +75,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
                         critical_value_result = critical_value_auction(tasks, servers, value_density,
                                                                        server_selection_policy,
                                                                        resource_allocation_policy)
-                        auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+                        auction_results[critical_value_result.algorithm] = critical_value_result.store()
                     except Exception as e:
                         print('Critical Error', e)
                     
@@ -128,7 +128,7 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
                 for resource_allocation_policy in resource_allocation_policies:
                     critical_value_result = critical_value_auction(tasks, servers, value_density,
                                                                    server_selection_policy, resource_allocation_policy)
-                    auction_results[critical_value_result.algorithm_name] = critical_value_result.store()
+                    auction_results[critical_value_result.algorithm] = critical_value_result.store()
                     reset_model(tasks, servers)
         
         # Add the results to the data
@@ -184,9 +184,9 @@ def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 1
         ]
         for (vd, ss, ra) in critical_value_policies:
             critical_value_result = critical_value_auction(tasks, servers, vd, ss, ra)
-            results[critical_value_result.algorithm_name] = critical_value_result.store()
+            results[critical_value_result.algorithm] = critical_value_result.store()
             if debug_results:
-                print(results[critical_value_result.algorithm_name])
+                print(results[critical_value_result.algorithm])
 
             reset_model(tasks, servers)
 

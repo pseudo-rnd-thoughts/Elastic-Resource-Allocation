@@ -111,10 +111,13 @@ class FixedSumSpeeds(FixedValue):
 
 
 class FixedExpSumSpeeds(FixedValue):
+    """Fixed Exp Sum of speeds"""
+
     def __init__(self):
         FixedValue.__init__(self, 'Exp Sum Speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+        """Calculate the value by summing the expo of speeds"""
         return exp(loading_speed) + exp(compute_speed) + exp(sending_speed)
 
 # TODO add more fixed value classes

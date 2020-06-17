@@ -1,3 +1,7 @@
+"""
+Input/Output functions
+"""
+
 import re
 import sys
 from enum import auto, Enum

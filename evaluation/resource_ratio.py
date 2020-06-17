@@ -1,23 +1,31 @@
+"""
+Resource ratio evaluation
+"""
 
 import json
 
 from tqdm import tqdm
 
-from core.core import load_args, reset_model
+from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
-
+from core.io import load_args
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-
 from model.model_distribution import load_model_distribution, ModelDistribution, results_filename
-
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
 
 
 def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 10):
+    """
+    Resource ratio evaluation testing
+
+    :param model_dist: The model distribution
+    :param repeat: The repeat
+    :param repeats: The number of repeats
+    """
     data = []
     for _ in tqdm(range(repeats)):
         results = {}
@@ -58,7 +66,7 @@ def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: 
             for (vd, ss, ra) in greedy_policies:
                 try:
                     greedy_result = greedy_algorithm(tasks, servers, vd, ss, ra)
-                    ratio_results[greedy_result.algorithm_name] = greedy_result.store()
+                    ratio_results[greedy_result.algorithm] = greedy_result.store()
                 except Exception as e:
                     print(e)
 

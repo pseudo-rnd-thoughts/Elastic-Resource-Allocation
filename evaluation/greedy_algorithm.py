@@ -10,8 +10,9 @@ from tqdm import tqdm
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 
-from core.core import load_args, reset_model
+from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
+from core.io import load_args
 from core.super_server import SuperServer
 
 from greedy.greedy import greedy_algorithm
@@ -30,7 +31,7 @@ from greedy.value_density import all_policies as all_value_densities
 from greedy.value_density import policies as value_densities
 
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
-from greedy_matrix.matrix_greedy import matrix_greedy
+from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
 
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
@@ -62,21 +63,18 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
 
         # Find the optimal solution
         optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
-        algorithm_results[optimal_result.algorithm_name] = optimal_result.store() \
-            if optimal_result is not None else 'failure'
+        algorithm_results[optimal_result.algorithm] = optimal_result.store() if optimal_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Find the fixed solution
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
         fixed_result = fixed_optimal_algorithm(fixed_tasks, servers, fixed_time_limit)
-        algorithm_results[fixed_result.algorithm_name] = fixed_result.store() \
-            if fixed_result is not None else 'failure'
+        algorithm_results[fixed_result.algorithm] = fixed_result.store() if fixed_result is not None else 'failure'
         reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
-        algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store() \
-            if relaxed_result is not None else 'failure'
+        algorithm_results[relaxed_result.algorithm] = relaxed_result.store() if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Loop over all of the greedy policies permutations
@@ -85,13 +83,13 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
-                    algorithm_results[greedy_result.algorithm_name] = greedy_result.store()
+                    algorithm_results[greedy_result.algorithm] = greedy_result.store()
                     reset_model(tasks, servers)
 
         # Loop over all of the matrix policies
         for policy in matrix_policies:
-            greedy_matrix_result = matrix_greedy(tasks, servers, policy)
-            algorithm_results[greedy_matrix_result.algorithm_name] = greedy_matrix_result.store()
+            greedy_matrix_result = greedy_matrix_algorithm(tasks, servers, policy)
+            algorithm_results[greedy_matrix_result.algorithm] = greedy_matrix_result.store()
             reset_model(tasks, servers)
 
         # Add the results to the data
@@ -127,8 +125,8 @@ def all_policies_test(model_dist: ModelDistribution, repeat: int, repeats: int =
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
-                    algorithm_results[greedy_result.algorithm_name] = greedy_result.store()
-                    print(f'{greedy_result.algorithm_name} -> {greedy_result.store()}')
+                    algorithm_results[greedy_result.algorithm] = greedy_result.store()
+                    print(f'{greedy_result.algorithm} -> {greedy_result.store()}')
                     reset_model(tasks, servers)
 
         # Add the results to the data
@@ -189,13 +187,13 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
 
         # Find the optimal solution
         optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
-        algorithm_results[optimal_result.algorithm_name] = optimal_result.store(tasks_data=task_data()) \
+        algorithm_results[optimal_result.algorithm] = optimal_result.store(tasks_data=task_data()) \
             if optimal_result is not None else 'failure'
         reset_model(tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
-        algorithm_results[relaxed_result.algorithm_name] = relaxed_result.store(tasks_data=task_data()) \
+        algorithm_results[relaxed_result.algorithm] = relaxed_result.store(tasks_data=task_data()) \
             if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
 
@@ -205,13 +203,13 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
-                    algorithm_results[greedy_result.algorithm_name] = greedy_result.store(tasks_data=task_data())
+                    algorithm_results[greedy_result.algorithm] = greedy_result.store(tasks_data=task_data())
                     reset_model(tasks, servers)
 
         # Loop over all of the matrix policies
         for policy in matrix_policies:
-            greedy_matrix_result = matrix_greedy(tasks, servers, policy)
-            algorithm_results[greedy_matrix_result.algorithm_name] = greedy_matrix_result.store(tasks_data=task_data())
+            greedy_matrix_result = greedy_matrix_algorithm(tasks, servers, policy)
+            algorithm_results[greedy_matrix_result.algorithm] = greedy_matrix_result.store(tasks_data=task_data())
             reset_model(tasks, servers)
 
         # Add the results to the data
@@ -276,10 +274,10 @@ def paper_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100
         for (vd, ss, ra) in greedy_policies:
             try:
                 greedy_result = greedy_algorithm(tasks, servers, vd, ss, ra)
-                results[greedy_result.algorithm_name] = greedy_result.store()
+                results[greedy_result.algorithm] = greedy_result.store()
 
                 if debug_results:
-                    print(results[greedy_result.algorithm_name])
+                    print(results[greedy_result.algorithm])
             except Exception as e:
                 print(e)
 
@@ -287,11 +285,11 @@ def paper_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100
 
         reset_model(tasks, servers)
         greedy_result = greedy_algorithm(tasks, servers, RandomValueDensity(), RandomServerSelection(), SumPercentage())
-        results[greedy_result.algorithm_name] = greedy_result.store()
+        results[greedy_result.algorithm] = greedy_result.store()
 
         reset_model(tasks, servers)
         greedy_result = greedy_algorithm(tasks, servers, RandomValueDensity(), RandomServerSelection(), SumSpeed())
-        results[greedy_result.algorithm_name] = greedy_result.store()
+        results[greedy_result.algorithm] = greedy_result.store()
 
         data.append(results)
         print(results)

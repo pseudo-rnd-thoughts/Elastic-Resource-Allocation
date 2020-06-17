@@ -44,7 +44,7 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
 
     for task in tasks:
         loading_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
-        compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity),
+        compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity)
         sending_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
         task_allocation[task] = model.binary_var(name=f'{task.name} allocation')
 

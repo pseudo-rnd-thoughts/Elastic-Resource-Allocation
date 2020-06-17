@@ -7,10 +7,9 @@ from typing import List
 
 from tqdm import tqdm
 
-from auctions.decentralised_iterative_auction import decentralised_iterative_auction
-
-from core.core import load_args, set_price_change, reset_model
-
+from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from core.core import set_price_change, reset_model
+from core.io import load_args
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
@@ -37,7 +36,7 @@ def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[i
                 for server in servers:
                     server.price_change = price_change
 
-                results = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
+                results = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                 if results is not None:
                     auction_results[f'cost {initial_cost}, change {price_change}'] = \
                         results.store(initial_cost=initial_cost, price_change=price_change)
@@ -77,7 +76,7 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
                 set_price_change(servers, price_change)
 
                 name = f'Initial Cost {initial_cost} Price Change {price_change}'
-                result = decentralised_iterative_auction(tasks, servers, time_limit, initial_cost=initial_cost)
+                result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                 results[name] = result.store(price_change=price_change)
                 
                 if debug_results:
