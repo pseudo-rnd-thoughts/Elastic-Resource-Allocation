@@ -1,74 +1,112 @@
-"""Custom auctions by Mark and Seb"""
+"""
+Todo add general explanation for decentralised iterative auction
+"""
 
 from __future__ import annotations
 
-from math import inf
-from random import choice
+import functools
+import math
+import random as rnd
+from abc import ABC, abstractmethod
 from time import time
 from typing import TYPE_CHECKING
 
-from docplex.cp.model import CpoModel
-from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
+from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import allocate, print_model_solution
+from core.core import reset_model, allocate, debug
 from core.result import Result
+from greedy.value_density import ResourceSum
 
 if TYPE_CHECKING:
-    from typing import List, Dict
+    from typing import List
 
+    from greedy.resource_allocation_policy import ResourceAllocationPolicy
     from core.server import Server
     from core.task import Task
+    from greedy.value_density import ValueDensity
 
 
-def assert_solution(loading_speeds: Dict[Task, int], compute_speeds: Dict[Task, int], sending_speeds: Dict[Task, int],
-                    allocations: Dict[Task, bool]):
-    """
-    Assert that the solution is valid
+class PriceDensity(ABC):
+    """Price density function class that is inherited with each option"""
 
-    :param loading_speeds: The loading speeds
-    :param compute_speeds: The compute speeds
-    :param sending_speeds: The sending speeds
-    :param allocations: The allocation of tasks
-    """
-    for task, allocation in allocations.items():
-        if allocation:
-            assert (task.required_storage * compute_speeds[task] * sending_speeds[task]) + \
-                   (loading_speeds[task] * task.required_computation * sending_speeds[task]) + \
-                   (loading_speeds[task] * compute_speeds[task] * task.required_results_data) <= \
-                   (task.deadline * loading_speeds[task] * compute_speeds[task] * sending_speeds[task])
+    def __init__(self, name):
+        self.name = name
+
+    @abstractmethod
+    def evaluate(self, task: Task) -> float:
+        """Price density function"""
+        pass
 
 
-def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial_cost: int,
-                        debug_results: bool = False, debug_initial_cost: bool = False):
-    """
-    Evaluates the task price to run on server using a vcg mechanism
+class PriceResourcePerDeadline(PriceDensity):
+    """The product of utility and deadline divided by required resources"""
 
-    :param new_task: A new task
-    :param server: A server
-    :param time_limit: The solve time limit
-    :param initial_cost: The initial cost of the task
-    :param debug_results: Prints the result from the model solution
-    :param debug_initial_cost: Prints the initial cost from the model solution
-    :return: The results from the task prices
-    """
-    assert time_limit > 0, "Time limit: {}".format(time_limit)
+    def __init__(self, resource_func: ValueDensity = ResourceSum()):
+        PriceDensity.__init__(self, f'Price * {resource_func.name} / deadline')
+        self.resource_func = resource_func
 
-    if debug_results:
-        print(f'Evaluating task {new_task.name}\'s price on server {server.name}')
-    model = CpoModel(f'Job {new_task.name} Price')
+    def evaluate(self, task: Task) -> float:
+        """Value density function"""
+        return task.price * self.resource_func.evaluate(task) / task.deadline
+
+
+def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
+    server.reset_allocations()
+
+    # For each of the task, if the task is allocated then allocate the task or reset the task
+    new_task.price = task_price
+    for task, (loading, compute, sending, allocated) in task_speeds.items():
+        task.reset_allocation(forgot_price=False)
+        if allocated:
+            allocate(task, loading, compute, sending, server)
+        else:
+            task.price = 0
+            unallocated_tasks.append(task)
+
+
+def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensity,
+                      resource_allocation_policy: ResourceAllocationPolicy):
+    current_speeds = {task: (task.loading_speed, task.compute_speed, task.sending_speed)
+                      for task in server.allocated_tasks}
+    tasks = server.allocated_tasks[:]
+    server_revenue = server.revenue
+    reset_model(server.allocated_tasks, (server,), forgot_price=False)
+
+    s, w, r = resource_allocation_policy.allocate(new_task, server)
+    allocate(new_task, s, w, r, server)
+
+    for task in sorted(tasks, key=lambda task: price_density.evaluate(task)):
+        if server.can_run(task):
+            s, w, r = resource_allocation_policy.allocate(new_task, server)
+            allocate(task, s, w, r, server)
+
+    task_price = server_revenue - server.revenue + server.price_change
+    possible_speeds = {
+        task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server is not None)
+        for task in tasks + [new_task]}
+
+    reset_model(current_speeds.keys(), (server,))
+    new_task.reset_allocation()
+
+    for task, (loading, compute, sending) in current_speeds.items():
+        allocate(task, loading, compute, sending, server)
+
+    return task_price, possible_speeds
+
+
+def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_results: bool = False):
+    assert 0 < time_limit, f'Time limit: {time_limit}'
+    model = CpoModel(f'{new_task.name} Task Price')
 
     # Add the new task to the list of server allocated tasks
     tasks = server.allocated_tasks + [new_task]
 
     # Create all of the resource speeds variables
-    loading_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                             name=f'Job {task.name} loading speed') for task in tasks}
-    compute_speed = {task: model.integer_var(min=1, max=server.computation_capacity,
-                                             name=f'Job {task.name} compute speed') for task in tasks}
-    sending_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1,
-                                             name=f'Job {task.name} sending speed') for task in tasks}
+    loading_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
+    compute_speed = {task: model.integer_var(min=1, max=server.computation_capacity) for task in tasks}
+    sending_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
     # Create all of the allocation variables however only on the currently allocated tasks
-    allocation = {task: model.binary_var(name=f'Job {task.name} allocated') for task in server.allocated_tasks}
+    allocation = {task: model.binary_var(name=f'{task.name} Task allocated') for task in server.allocated_tasks}
 
     # Add the deadline constraint
     for task in tasks:
@@ -93,146 +131,68 @@ def evaluate_task_price(new_task: Task, server: Server, time_limit: int, initial
     # If the model solution failed then return an infinite price
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Decentralised model failure')
-        print_model_solution(model_solution)
-        return inf, {}, {}, {}, {}, server, tasks
+        print(f'Cplex model failed - status: {model_solution.get_solve_status()}')
+        return math.inf, {}
 
-    # Get the max server profit that the model finds
+    # Get the max server profit that the model finds and calculate the task price through a vcg similar function
     new_server_revenue = model_solution.get_objective_values()[0]
-
-    # Calculate the task price through a vcg similar function
     task_price = server.revenue - new_server_revenue + server.price_change
-    if task_price < initial_cost:  # Add an initial cost the task if the price is less than a set price
-        if debug_initial_cost:
-            print(f'Price set to {initial_cost} due to initial cost')
-        task_price = initial_cost
 
     # Get the resource speeds and task allocations
-    loading = {task: model_solution.get_value(loading_speed[task]) for task in tasks}
-    compute = {task: model_solution.get_value(compute_speed[task]) for task in tasks}
-    sending = {task: model_solution.get_value(sending_speed[task]) for task in tasks}
-    allocation = {task: model_solution.get_value(allocated) for task, allocated in allocation.items()}
+    speeds = {
+        task: (model_solution.get_value(loading_speed[task]),
+               model_solution.get_value(compute_speed[task]),
+               model_solution.get_value(sending_speed[task]),
+               model_solution.get_value(allocation[task]) if task in allocation else True)
+        for task in tasks
+    }
 
-    # Check that the solution is valid
-    assert_solution(loading, compute, sending, allocation)
+    debug(f'Sever: {server.name} - Prior revenue: {server.revenue}, new revenue: {new_server_revenue}, '
+          f'price change: {server.price_change} therefore task price: {task_price}', debug_results)
 
-    if debug_results:
-        print(f'Sever: {server.name} - Prior revenue: {server.revenue}, new revenue: {new_server_revenue}, '
-              f'price change: {server.price_change} therefore task price: {task_price}')
-
-    return task_price, loading, compute, sending, allocation, server
-
-
-def allocate_tasks(task_price: float, new_task: Task, server: Server,
-                   loading: Dict[Task, int], compute: Dict[Task, int], sending: Dict[Task, int],
-                   allocation: Dict[Task, bool], unallocated_tasks: List[Task],
-                   debug_allocations: bool = False, debug_result: bool = False) -> int:
-    """
-    Allocates a task to a server based on the last allocation
-
-    :param task_price: The new task price
-    :param new_task: The new task
-    :param server: The server the task is allocated to
-    :param loading: A dictionary of loading speeds of tasks
-    :param compute: A dictionary of compute speeds of tasks
-    :param sending: A dictionary of sending speeds of tasks
-    :param allocation: A dictionary of if a task is allocated to server
-    :param unallocated_tasks: A list of all unallocated tasks
-    :param debug_allocations: Debug the allocations
-    :param debug_result: Debug results
-    :return: The number of messages to allocate the task
-    """
-    server.reset_allocations()
-
-    # Allocate the new task to the server
-    new_task.reset_allocation()  # Possible bug where the task is not reset then allocated
-    allocate(new_task, loading[new_task], compute[new_task], sending[new_task], server, task_price)
-    messages = 1
-
-    # For each of the task, if the task is allocated then allocate the task or reset the task
-    for task, allocated in allocation.items():
-        task.reset_allocation(forgot_price=False)
-        if allocated:
-            allocate(task, loading[task], compute[task], sending[task], server, task.price)
-        else:
-            unallocated_tasks.append(task)
-            task.reset_allocation()
-            messages += 1
-
-        if debug_allocations:
-            print(
-                f"Job {task.name} is {'allocated' if allocation[task] else 'unallocated'} to server {server.name} "
-                f"with loading {loading[task]}, compute {compute[task]} and sending {sending[task]}")
-    if debug_result:
-        print(f'{server.name}\'s total price: {server.revenue}')
-
-    return messages
+    return task_price, speeds
 
 
-def decentralised_iterative_auction(tasks: List[Task], servers: List[Server], time_limit: int, initial_cost: int = 0,
-                                    debug_allocation: bool = False, debug_results: bool = False) -> Result:
-    """
-    A decentralised iterative auctions created by Seb Stein and Mark Towers
+def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver, debug_allocation: bool = False):
+    start_time = time()
 
-    :param tasks: A list of tasks
-    :param servers: A list of servers
-    :param time_limit: The solve time limit
-    :param initial_cost: An initial cost function
-    :param debug_allocation: Debug the allocation process
-    :param debug_results: Debugs the results
-    :return: A list of prices at each iteration
-    """
-    start_time: float = time()
+    rounds: int = 0
+    unallocated_tasks: List[Task] = tasks[:]
+    while unallocated_tasks:
+        task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks)-1))
 
-    # Checks that all of the server price change are greater than zero
-    assert all(server.price_change > 0 for server in servers), \
-        f"Price change - {', '.join(['{}: {}'.format(server.name, server.price_change) for server in servers])}"
-
-    unallocated_tasks = tasks.copy()
-
-    iterations: int = 0
-    messages: int = 0
-
-    # While there are unallocated task then loop
-    while len(unallocated_tasks):
-        # Choice a random task from the list
-        task: Task = choice(unallocated_tasks)
-
-        # Check that at least a single task can run the task else remove the task and continue the loop
-        if any(server.can_empty_run(task) for server in servers) is False:
-            unallocated_tasks.remove(task)
-            continue
-
-        # Calculate the min task price from all of the servers
-        task_price, loading, compute, sending, allocation, server = \
-            min((evaluate_task_price(task, server, time_limit, initial_cost)
-                 for server in servers if server.can_empty_run(task)), key=lambda bid: bid[0])
-        messages += 2 * len(servers)
-
-        assert_solution(loading, compute, sending, allocation)
-
-        # If the task price is less than the task value then allocate the task else remove the
-        if task_price <= task.value:
-            if debug_allocation:
-                print(f'Adding task {task.name} to server {server.name} with price {task_price}')
-            messages += allocate_tasks(task_price, task, server, loading, compute, sending, allocation,
-                                       unallocated_tasks,
-                                       debug_allocation, debug_results)
-        elif debug_allocation:
-            print(f'Removing Job {task.name} from the unallocated task as the '
-                  f'min price is {task_price} and task value is {task.value}')
-        unallocated_tasks.remove(task)
-
-        if debug_allocation:
-            print(f'Number of unallocated tasks: {len(unallocated_tasks)}\n')
-        iterations += 1
-
-    if debug_results:
-        print(f'It is finished, number of iterations: {iterations} with '
-              f'social welfare: {sum(server.revenue for server in servers)}')
+        min_price, min_speeds, min_server = -1, None, None
         for server in servers:
-            print(f'Server {server.name}: total revenue - {server.revenue}')
-            print(f"\tJobs - {', '.join([f'{task.name}: £{task.price}' for task in server.allocated_tasks])}")
+            price, speeds = task_price_solver(task, server)
 
-    return Result("DIA", tasks, servers, time() - start_time, individual_compute_time=time_limit, show_money=True,
-                  total_iterations=iterations, total_messages=messages, initial_cost=initial_cost)
+            if min_price == -1 or price < min_price:
+                min_price, min_speeds, min_server = price, speeds, server
+
+        if min_price == -1 or task.value < min_price:
+            debug(f'{task.name} Task set to {min_server.name} with price {min_price}', debug_allocation)
+            allocate_task(task, min_price, min_server, unallocated_tasks, *min_speeds)
+        else:
+            debug(f'Removing {task.name} Task, min price is {min_price} and task value is {task.value}', debug_allocation)
+
+        debug(f'Number of unallocated tasks: {len(unallocated_tasks)}\n', debug_allocation)
+        rounds += 1
+
+    return rounds, time() - start_time
+
+
+def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5, debug_allocation: bool = False):
+    solver = functools.partial(optimal_task_price, time_limit=time_limit)
+    rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
+
+    return Result('Optimal DIA', tasks, servers, solve_time, is_auction=True,
+                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
+
+
+def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], price_density: PriceDensity,
+                                           resource_allocation_policy: ResourceAllocationPolicy,
+                                           debug_allocation: bool = False):
+    solver = functools.partial(greedy_task_price, price_density, resource_allocation_policy)
+    rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
+
+    return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,
+                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
