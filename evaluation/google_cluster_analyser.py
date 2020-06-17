@@ -57,7 +57,8 @@ def analysis():
 
     timestamped_jobs_df = pd.DataFrame(columns=[
         'job ID', 'task index within the job', 'task ID', 'machine ID', 'event type', 'user name', 'scheduling class',
-        'priority', 'resource request for CPU cores', 'resource request for RAM', 'resource request for local disk space',
+        'priority', 'resource request for CPU cores', 'resource request for RAM',
+        'resource request for local disk space',
         'different-machine constraint', 'submit time', 'scheduled time', 'finish time', 'task schedule time',
         'task execution time'])
     for finished_task_id in finished_task_ids:

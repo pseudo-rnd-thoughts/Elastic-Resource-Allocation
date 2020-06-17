@@ -54,12 +54,14 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
 
     model.add(sum(task.required_storage * task_allocation[task] for task in tasks) <= super_server.storage_capacity)
     model.add(sum(compute_speeds[task] * task_allocation[task] for task in tasks) <= super_server.computation_capacity)
-    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task] for task in tasks) <= super_server.bandwidth_capacity)
+    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task] for task in
+                  tasks) <= super_server.bandwidth_capacity)
 
     model.maximize(sum(task.value * task_allocation[task] for task in tasks))
 
     # Run the model
-    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01, TimeLimit=time_limit)
+    model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
+                                                 TimeLimit=time_limit)
     if debug_time:
         print(f'Solve time: {round(model_solution.get_solve_time(), 2)} secs, '
               f'Objective value: {model_solution.get_objective_values()}, '

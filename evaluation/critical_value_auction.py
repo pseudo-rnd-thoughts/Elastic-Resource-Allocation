@@ -9,20 +9,15 @@ from tqdm import tqdm
 from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
-
 from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
 from core.io import load_args
-
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.resource_allocation_policy import policies as resource_allocation_policies
-
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.server_selection_policy import policies as server_selection_policies
-
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 from greedy.value_density import policies as value_densities
-
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
@@ -66,7 +61,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
         iterative_result = optimal_decentralised_iterative_auction(tasks, servers, decentralised_iterative_time_limit)
         auction_results[f'price change {price_change}'] = iterative_result.store()
         reset_model(tasks, servers)
-        
+
         # Tests the critical value
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
@@ -78,7 +73,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
                         auction_results[critical_value_result.algorithm] = critical_value_result.store()
                     except Exception as e:
                         print('Critical Error', e)
-                    
+
                     reset_model(tasks, servers)
 
         # Append the auction results to the data
@@ -104,7 +99,7 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
     """
     print(f'Critical value test of all policies for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
-    
+
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the tasks and the servers
@@ -121,7 +116,7 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
         fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers)
         auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
         reset_model(tasks, servers)
-        
+
         # Loop over all of the greedy policies permutations
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
@@ -130,10 +125,10 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
                                                                    server_selection_policy, resource_allocation_policy)
                     auction_results[critical_value_result.algorithm] = critical_value_result.store()
                     reset_model(tasks, servers)
-        
+
         # Add the results to the data
         data.append(auction_results)
-    
+
     # Save the results to the file
     filename = results_filename('all_critical_value_test', model_dist.file_name, repeat)
     with open(filename, 'w') as file:
@@ -198,7 +193,7 @@ def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 1
         with open(filename, 'w') as file:
             json.dump(data, file)
 
-    
+
 if __name__ == "__main__":
     args = load_args()
 

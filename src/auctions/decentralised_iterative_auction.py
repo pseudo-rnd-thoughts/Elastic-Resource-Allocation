@@ -196,7 +196,7 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
     rounds: int = 0
     unallocated_tasks: List[Task] = tasks[:]
     while unallocated_tasks:
-        task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks)-1))
+        task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
 
         min_price, min_speeds, min_server = -1, None, None
         for server in servers:
@@ -209,7 +209,8 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
             debug(f'{task.name} Task set to {min_server.name} with price {min_price}', debug_allocation)
             allocate_task(task, min_price, min_server, unallocated_tasks, *min_speeds)
         else:
-            debug(f'Removing {task.name} Task, min price is {min_price} and task value is {task.value}', debug_allocation)
+            debug(f'Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
+                  debug_allocation)
 
         debug(f'Number of unallocated tasks: {len(unallocated_tasks)}\n', debug_allocation)
         rounds += 1
@@ -248,7 +249,8 @@ def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Serv
     :param debug_allocation: If to debug allocation
     :return: The results of the auction
     """
-    solver = functools.partial(greedy_task_price, price_density, resource_allocation_policy)
+    solver = functools.partial(greedy_task_price, price_density=price_density,
+                               resource_allocation_policy=resource_allocation_policy)
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,

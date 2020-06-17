@@ -18,7 +18,7 @@ from optimal.optimal import optimal_algorithm
 def test_cplex():
     model = CpoModel('test')
     x = model.integer_var(name='x')
-    model.minimize(5*x**2 - 10*x + 1)
+    model.minimize(5 * x ** 2 - 10 * x + 1)
 
     solution = model.solve()
 
@@ -48,7 +48,7 @@ def test_mip_model():
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
-        max(server.computation_capacity for server in servers)
+                                     max(server.computation_capacity for server in servers)
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:

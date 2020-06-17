@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from typing import List, Dict, Tuple, Union
 
-from tqdm import tqdm
 import numpy as np
 
 from core.core import reset_model
@@ -21,33 +20,35 @@ from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
 from model.model_distribution import load_model_distribution, ModelDistribution
 
 
-def test_greedy_policies(repeats: int = 5):
+def test_greedy_policies():
+    print()
     distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
     model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
 
     policy_results: Dict[str, Union[List[Result], Tuple[List[Result], float, float]]] = {}
-    for repeat in tqdm(range(repeats)):
-        tasks, servers = model.create()
+    tasks, servers = model.create()
 
-        for value_density in value_density_policies:
-            for server_selection_policy in server_selection_policies:
-                for resource_allocation_policy in resource_allocation_policies:
-                    reset_model(tasks, servers)
+    print('Policies')
+    for value_density in value_density_policies:
+        for server_selection_policy in server_selection_policies:
+            for resource_allocation_policy in resource_allocation_policies:
+                reset_model(tasks, servers)
 
-                    result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
-                                              resource_allocation_policy)
-                    print(f'\t{result.algorithm} - {result.data["solve time"]} secs')
-                    if result.algorithm in policy_results:
-                        policy_results[result.algorithm].append(result)
-                    else:
-                        policy_results[result.algorithm] = [result]
+                result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
+                                          resource_allocation_policy)
+                print(f'\t{result.algorithm} - {result.data["solve time"]} secs')
+                if result.algorithm in policy_results:
+                    policy_results[result.algorithm].append(result)
+                else:
+                    policy_results[result.algorithm] = [result]
 
+    print('\n\nSorted policies by social welfare')
     for algo, results in policy_results.items():
         policy_results[algo] = (policy_results[algo],
                                 float(np.mean([r.social_welfare for r in results])),
-                                float(np.mean([r.data['solve time'] for r in results])))
+                                float(np.mean([r.solve_time for r in results])))
     print(f'Algo | Avg SW | Avg Time | Social Welfare')
-    for algo, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[2]):
+    for algo, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1]):
         print(f'{algo} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
 
 

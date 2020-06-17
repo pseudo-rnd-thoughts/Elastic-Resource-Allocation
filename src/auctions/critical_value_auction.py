@@ -15,7 +15,6 @@ from typing import TYPE_CHECKING
 
 from core.core import allocate, reset_model, debug
 from core.result import Result
-
 from greedy.greedy import allocate_tasks
 
 if TYPE_CHECKING:

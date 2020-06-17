@@ -11,7 +11,6 @@ from auctions.decentralised_iterative_auction import optimal_decentralised_itera
 from core.core import list_item_replacement, set_price_change, reset_model
 from core.io import load_args
 from core.task import Task, task_diff
-
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
@@ -105,10 +104,10 @@ def all_task_mutations_test(model_dist: ModelDistribution, repeat: int, num_muta
 
     task = tasks[0]
     permutations = ((int(task.required_storage * positive_percent) + 1) - task.required_storage) * \
-        ((int(task.required_computation * positive_percent) + 1) - task.required_computation) * \
-        ((int(task.required_results_data * positive_percent) + 1) - task.required_results_data) * \
-        ((task.deadline + 1) - int(task.deadline * negative_percent)) * \
-        ((task.value + 1) - int(task.value * negative_percent))
+                   ((int(task.required_computation * positive_percent) + 1) - task.required_computation) * \
+                   ((int(task.required_results_data * positive_percent) + 1) - task.required_results_data) * \
+                   ((task.deadline + 1) - int(task.deadline * negative_percent)) * \
+                   ((task.value + 1) - int(task.value * negative_percent))
     print(f'Number of permutations: {permutations}')
 
     unmutated_tasks = tasks.copy()

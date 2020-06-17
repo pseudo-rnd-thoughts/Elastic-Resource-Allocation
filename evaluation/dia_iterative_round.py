@@ -64,8 +64,8 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
     print(f'Round Num testing for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     data = []
     initial_costs = [0, 5, 10, 15, 20]
-    price_changes = [1, 2,  5,  8, 10]
-    
+    price_changes = [1, 2, 5, 8, 10]
+
     for _ in tqdm(range(repeats)):
         tasks, servers = model_dist.create()
 
@@ -78,7 +78,7 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
                 name = f'Initial Cost {initial_cost} Price Change {price_change}'
                 result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                 results[name] = result.store(price_change=price_change)
-                
+
                 if debug_results:
                     print(results[name])
 

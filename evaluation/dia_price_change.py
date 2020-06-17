@@ -12,15 +12,12 @@ from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from auctions.vcg_auction import fixed_vcg_auction
 from auctions.vcg_auction import vcg_auction
-
 from core.core import set_price_change, reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
 from core.io import load_args
-
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-
 from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
 
 
@@ -55,7 +52,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
         auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
         if debug_results:
             print(auction_results['vcg'])
-        
+
         reset_model(tasks, servers)
 
         # Calculate the fixed vcg auction
@@ -68,7 +65,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
         # For each uniform price change, set all of the server prices to that and solve auction
         for price_change in price_changes:
             reset_model(tasks, servers)
-            
+
             set_price_change(servers, price_change)
             iterative_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
             auction_results[f'price change {price_change}'] = iterative_result.store()
@@ -76,7 +73,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
                 print(auction_results[f'price change {price_change}'])
 
         reset_model(tasks, servers)
-        
+
         critical_value_policies = [
             (vd, ss, ra)
             for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
@@ -90,7 +87,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
             auction_results[critical_value_result.algorithm] = critical_value_result.store()
             if debug_results:
                 print(auction_results[critical_value_result.algorithm])
-    
+
             reset_model(tasks, servers)
         # Append the auction results to the data
         data.append(auction_results)
@@ -102,7 +99,8 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
             json.dump(data, file)
 
 
-def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, price_changes: int = 10, repeats: int = 20,
+def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, price_changes: int = 10,
+                                  repeats: int = 20,
                                   vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15, dia_time_limit: int = 15,
                                   price_change_mean: int = 2, price_change_std: int = 4):
     """

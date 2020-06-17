@@ -54,13 +54,13 @@ class Task:
 
         # Python floats are overflowing causing errors, e.g. 2/3 + 1/3 != 1
         time_taken = self.required_storage * compute_speed * sending_speed + \
-            loading_speed * self.required_computation * sending_speed + \
-            loading_speed * compute_speed * self.required_results_data
+                     loading_speed * self.required_computation * sending_speed + \
+                     loading_speed * compute_speed * self.required_results_data
         assert time_taken <= self.deadline * loading_speed * compute_speed * sending_speed, \
             f'Deadline assertion failure Task {self.name} requirement storage {self.required_storage} ' \
             f'computation {self.required_computation} results data {self.required_results_data} with ' \
             f'loading {loading_speed} compute {compute_speed} sending {sending_speed} speed and deadline {self.deadline} ' \
-            f'time taken {time_taken}' 
+            f'time taken {time_taken}'
 
         # Check that a server is not already allocated
         assert self.running_server is None, f"Task {self.name} is already allocated to {self.running_server.name}"

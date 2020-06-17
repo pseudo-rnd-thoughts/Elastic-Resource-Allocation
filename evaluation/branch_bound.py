@@ -17,7 +17,7 @@ def branch_bound_test(model_dist: ModelDistribution):
     :param model_dist: Model distribution
     """
     tasks, servers = model_dist.create()
-    
+
     result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)
     print(result.pretty_print())
 
@@ -44,5 +44,5 @@ if __name__ == "__main__":
 
     model_name, task_dist, server_dist = load_model_distribution(args['model'])
     loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
-    
+
     branch_bound_test(loaded_model_dist)
