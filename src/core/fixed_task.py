@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
+from math import exp
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
@@ -86,7 +87,7 @@ class FixedValue(ABC):
         self.name = name
 
     @abstractmethod
-    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
+    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         Evaluate how good certain speeds
 
@@ -104,8 +105,16 @@ class FixedSumSpeeds(FixedValue):
     def __init__(self):
         FixedValue.__init__(self, 'Sum speeds')
 
-    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> int:
+    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
+
+
+class FixedExpSumSpeeds(FixedValue):
+    def __init__(self):
+        FixedValue.__init__(self, 'Exp Sum Speeds')
+
+    def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
+        return exp(loading_speed) + exp(compute_speed) + exp(sending_speed)
 
 # TODO add more fixed value classes
