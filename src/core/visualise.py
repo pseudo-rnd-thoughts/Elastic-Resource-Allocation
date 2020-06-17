@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
-from core.core import ImageFormat, save_plot
+from core.io import ImageFormat, save_plot
 
 if TYPE_CHECKING:
     from typing import List, Iterable, Dict
