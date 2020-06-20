@@ -11,7 +11,7 @@ from docplex.mp.model import Model
 
 from core.server import Server
 from core.task import Task
-from model.model_distribution import load_model_distribution, ModelDistribution
+from extra.model import ModelDistribution
 from optimal.optimal import optimal_algorithm
 
 
@@ -24,20 +24,16 @@ def test_cplex():
 
 
 def test_cp_optimality():
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
-
-    tasks, servers = model.create()
+    model = ModelDistribution('models/basic.mdl', 20, 3)
+    tasks, servers = model.generate()
 
     results = optimal_algorithm(tasks, servers, time_limit=10)
     print(results.store())
 
 
 def test_mip_model():
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 4, server_distributions, 2)
-
-    tasks, servers = model.create()
+    model = ModelDistribution('models/basic.mdl', 4, 2)
+    tasks, servers = model.generate()
 
     model = Model('test')
 

@@ -9,10 +9,10 @@ from __future__ import annotations
 
 import functools
 from time import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
-from core.core import list_copy_remove, reset_model, server_task_allocation, debug
-from core.result import Result
+from core.core import reset_model, server_task_allocation, debug
+from extra.result import Result
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
 
@@ -22,6 +22,23 @@ if TYPE_CHECKING:
     from core.server import Server
     from core.task import Task
     from core.fixed_task import FixedTask
+
+    T = TypeVar('T')
+
+
+def list_copy_remove(lists: List[T], item: T) -> List[T]:
+    """
+    Copy the list and remove an item
+
+    :param lists: The list
+    :param item: The item to remove
+    :return: The copied list without the item
+    """
+
+    list_copy = lists.copy()
+    list_copy.remove(item)
+
+    return list_copy
 
 
 def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: bool = False) -> float:

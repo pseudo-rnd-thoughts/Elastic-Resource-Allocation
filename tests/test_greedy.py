@@ -5,28 +5,24 @@ Todo add greedy testing for greedy and matrix greedy optimisations
 
 from __future__ import annotations
 
-from typing import List, Dict, Tuple, Union
-
 import numpy as np
 
 from core.core import reset_model
-from core.result import Result
+from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
 from greedy.server_selection_policy import SumResources, all_policies as server_selection_policies
 from greedy.value_density import UtilityDeadlinePerResource, all_policies as value_density_policies
 from greedy_matrix.allocation_value_policy import SumServerMaxPercentage
 from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
-from model.model_distribution import load_model_distribution, ModelDistribution
 
 
 def test_greedy_policies():
     print()
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
+    model = ModelDistribution('models/basic.mdl', 20, 3)
+    tasks, servers = model.generate()
 
-    policy_results: Dict[str, Union[List[Result], Tuple[List[Result], float, float]]] = {}
-    tasks, servers = model.create()
+    policy_results = {}
 
     print('Policies')
     for value_density in value_density_policies:
@@ -58,14 +54,13 @@ def test_optimisation(repeats: int = 10):
 
     :param repeats: Number of repeats
     """
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
+    model = ModelDistribution('models/basic.mdl', 20, 3)
 
     greedy_results, greedy_matrix_time = [], []
     print(f' Greedy     | Greedy Matrix')
     print(f' Time | Sum | Time   | Sum')
     for repeat in range(repeats):
-        tasks, servers = model.create()
+        tasks, servers = model.generate()
 
         greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
         greedy_results.append(greedy_result)

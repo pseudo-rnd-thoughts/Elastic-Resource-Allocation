@@ -9,7 +9,7 @@ from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import server_task_allocation
 from extra.pprint import print_model_solution
-from core.result import Result
+from extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Optional

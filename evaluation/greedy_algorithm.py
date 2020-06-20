@@ -26,7 +26,7 @@ from greedy.value_density import all_policies as all_value_densities
 from greedy.value_density import policies as value_densities
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.model import ModelDistribution, results_filename
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
 from optimal.relaxed import relaxed_algorithm
@@ -50,7 +50,7 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the tasks and the servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         algorithm_results = {}
 
         # Find the optimal solution
@@ -90,7 +90,7 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
         data.append(algorithm_results)
 
     # Save the results to the file
-    filename = results_filename('optimal_greedy_test', model_dist.file_name, repeat)
+    filename = results_filename('optimal_greedy_test', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -110,7 +110,7 @@ def all_policies_test(model_dist: ModelDistribution, repeat: int, repeats: int =
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the tasks and the servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         algorithm_results = {}
 
         # Loop over all of the greedy policies permutations
@@ -127,7 +127,7 @@ def all_policies_test(model_dist: ModelDistribution, repeat: int, repeats: int =
         data.append(algorithm_results)
 
     # Save the results to the file
-    filename = results_filename('all_greedy_test', model_dist.file_name, repeat)
+    filename = results_filename('all_greedy_test', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -176,7 +176,7 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the tasks and the servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         algorithm_results = {'model': model_data()}
 
         # Find the optimal solution
@@ -210,7 +210,7 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
         data.append(algorithm_results)
 
     # Save the results to the file
-    filename = results_filename('optimal_greedy_test', model_dist.file_name, repeat)
+    filename = results_filename('optimal_greedy_test', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -229,7 +229,7 @@ def paper_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100
           f'{model_dist.num_servers} servers')
     data = []
     for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         results = {}
 
         # Optimal
@@ -289,16 +289,14 @@ def paper_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 100
         print(results)
 
         # Save the results to the file
-        filename = results_filename('flexible_greedy', model_dist.file_name, repeat)
+        filename = results_filename('flexible_greedy', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     # best_algorithms_test(loaded_model_dist, args['repeat'])
     # allocation_test(loaded_model_dist, args['repeat'])

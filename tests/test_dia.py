@@ -9,17 +9,16 @@ from copy import copy
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
-from core.core import reset_model, server_task_allocation
+from core.core import reset_model, server_task_allocation, set_price_change
 from greedy.resource_allocation_policy import SumPercentage
-from model.model_distribution import load_model_distribution, ModelDistribution
+from extra.model import ModelDistribution
 
 
 def test_optimal_dia():
     print()
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
-
-    tasks, servers = model.create()
+    model = ModelDistribution('models/basic.mdl', 20, 3)
+    tasks, servers = model.generate()
+    set_price_change(servers, 5)
 
     result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1, debug_allocation=True)
     result.pretty_print()
@@ -27,10 +26,10 @@ def test_optimal_dia():
 
 def test_greedy_dia():
     print()
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
+    model = ModelDistribution('models/basic.mdl', 20, 3)
 
-    tasks, servers = model.create()
+    tasks, servers = model.generate()
+    set_price_change(servers, 5)
 
     result = greedy_decentralised_iterative_auction(tasks, servers, PriceResourcePerDeadline(), SumPercentage(),
                                                     debug_allocation=True)
@@ -39,10 +38,9 @@ def test_greedy_dia():
 
 def test_greedy_task_price():
     print()
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
+    model = ModelDistribution('models/basic.mdl', 20, 3)
+    tasks, servers = model.generate()
 
-    tasks, servers = model.create()
     server = servers[0]
 
     resource_allocation_policy = SumPercentage()
@@ -94,13 +92,13 @@ def test_greedy_task_price():
 
 def test_optimal_greedy_dia(repeats: int = 5):
     print()
-    distribution_name, task_distributions, server_distributions = load_model_distribution('models/basic.mdl')
-    model = ModelDistribution(distribution_name, task_distributions, 20, server_distributions, 3)
+    model = ModelDistribution('models/basic.mdl', 20, 3)
 
     print(f' Optimal    | Greedy')
-    print(f'Time  | SW  | Time  | SW')
+    print(f'Time  | SW  | Time   | SW')
     for repeat in range(repeats):
-        tasks, servers = model.create()
+        tasks, servers = model.generate()
+        set_price_change(servers, 5)
 
         optimal_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1)
 

@@ -18,7 +18,7 @@ from extra.io import load_args
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.model import ModelDistribution, results_filename
 
 
 def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
@@ -44,7 +44,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
     # Loop, for each run all of the auctions to find out the results from each type
     for _ in tqdm(range(repeats)):
         # Generate the tasks and servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         auction_results = {}
 
         # Calculate the vcg auction
@@ -94,7 +94,7 @@ def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeat
         print(auction_results)
 
         # Save all of the results to a file
-        filename = results_filename('price_change_auction', model_dist.file_name, repeat)
+        filename = results_filename('price_change_auction', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
@@ -126,7 +126,7 @@ def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, pr
 
     # Loop, for each calculate the result for the results
     for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         auction_results = {}
 
         # Calculate the fixed vcg auction
@@ -153,16 +153,14 @@ def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, pr
         print(auction_results)
 
         # Save the results to a file
-        filename = results_filename('non_uniform_price_change_auction_results', model_dist.file_name, repeat)
+        filename = results_filename('non_uniform_price_change_auction_results', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     uniform_price_change_test(loaded_model_dist, args['repeat'], time_limit=5)
     # non_uniform_price_change_test(loaded_model_dist, args['repeat'])

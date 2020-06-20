@@ -12,7 +12,7 @@ from core.fixed_task import FixedTask, FixedSumSpeeds
 from extra.io import load_args
 from extra.pprint import print_model
 from core.super_server import SuperServer
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.model import ModelDistribution, results_filename
 from optimal.optimal import optimal_algorithm
 
 
@@ -22,7 +22,7 @@ def optimality_testing(model_dist: ModelDistribution):
 
     :param model_dist: The model distribution
     """
-    tasks, servers = model_dist.create()
+    tasks, servers = model_dist.generate()
 
     print('Models')
     print_model(tasks, servers)
@@ -46,7 +46,7 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
     """
     data = []
     for _ in range(repeats):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
 
         results = {}
         optimal_result = branch_bound_algorithm(tasks, servers)
@@ -69,16 +69,14 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
         data.append(results)
 
         # Save the results to the file
-        filename = results_filename('paper', model_dist.file_name, repeat)
+        filename = results_filename('paper', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     # optimality_testing(loaded_model_dist)
     optimal_testing(loaded_model_dist, args['repeat'])

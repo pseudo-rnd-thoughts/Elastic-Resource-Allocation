@@ -4,12 +4,12 @@
         {
             "name": "big",
             "probability": 0.4,
-            "required_storage_mean": 20,
-            "required_storage_std": 7,
-            "required_computation_mean": 25,
-            "required_computation_std": 5,
-            "required_results_data_mean": 10,
-            "required_results_data_std": 4,
+            "storage_mean": 20,
+            "storage_std": 7,
+            "computation_mean": 25,
+            "computation_std": 5,
+            "results_data_mean": 10,
+            "results_data_std": 4,
             "value_mean": 120,
             "value_std": 40,
             "deadline_mean": 20,
@@ -18,12 +18,12 @@
         {
             "name": "small",
             "probability": 0.6,
-            "required_storage_mean": 10,
-            "required_storage_std": 4,
-            "required_computation_mean": 15,
-            "required_computation_std": 5,
-            "required_results_data_mean": 4,
-            "required_results_data_std": 2,
+            "storage_mean": 10,
+            "storage_std": 4,
+            "computation_mean": 15,
+            "computation_std": 5,
+            "results_data_mean": 4,
+            "results_data_std": 2,
             "value_mean": 50,
             "value_std": 20,
             "deadline_mean": 20,
@@ -34,22 +34,22 @@
         {
             "name": "big",
             "probability": 0.4,
-            "maximum_storage_mean": 70,
-            "maximum_storage_std": 15,
-            "maximum_computation_mean": 35,
-            "maximum_computation_std": 10,
-            "maximum_bandwidth_mean": 25,
-            "maximum_bandwidth_std": 5
+            "storage_mean": 70,
+            "storage_std": 15,
+            "computation_mean": 35,
+            "computation_std": 10,
+            "bandwidth_mean": 25,
+            "bandwidth_std": 5
         },
         {
             "name": "small",
             "probability": 1,
-            "maximum_storage_mean": 30,
-            "maximum_storage_std": 5,
-            "maximum_computation_mean": 20,
-            "maximum_computation_std": 4,
-            "maximum_bandwidth_mean": 15,
-            "maximum_bandwidth_std": 5
+            "storage_mean": 30,
+            "storage_std": 5,
+            "computation_mean": 20,
+            "computation_std": 4,
+            "bandwidth_mean": 15,
+            "bandwidth_std": 5
         }
     ]
 }

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from random import gauss
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 if TYPE_CHECKING:
     from typing import List
@@ -58,7 +58,7 @@ class Server:
         return False
 
     # noinspection DuplicatedCode
-    def can_empty_run(self, task: Task) -> bool:
+    def can_run_empty(self, task: Task) -> bool:
         """
         Checks if a task can be run on a server if it dedicates all of it's possible resources to the task
 
@@ -143,6 +143,37 @@ class Server:
 
         self.bandwidth_capacity = bandwidth_capacity
         self.available_bandwidth = bandwidth_capacity
+
+    def save(self):
+        return {
+            'name': self.name,
+            'storage capacity': self.storage_capacity,
+            'computation capacity': self.computation_capacity,
+            'bandwidth capacity': self.bandwidth_capacity,
+            'price change': self.price_change,
+            'initial price': self.initial_price
+        }
+
+    @staticmethod
+    def load(server_spec: Dict[str, Any]) -> Server:
+        return Server(
+            name=server_spec['name'], storage_capacity=server_spec['storage capacity'],
+            computation_capacity=server_spec['computation capacity'],
+            bandwidth_capacity=server_spec['bandwidth capacity'],
+            price_change=server_spec['price change'], initial_price=server_spec['initial price']
+        )
+
+    @staticmethod
+    def load_dist(server_dist: Dict[str, Any], server_num: int) -> Server:
+        def gaussian(mean, std) -> int:
+            return int(gauss(mean, std))
+
+        return Server(
+            name=f'{server_dist["name"]} {server_num}',
+            storage_capacity=gaussian(server_dist['storage mean'], server_dist['storage std']),
+            computation_capacity=gaussian(server_dist['computation mean'], server_dist['computation std']),
+            bandwidth_capacity=gaussian(server_dist['bandwidth mean'], server_dist['bandwidth std'])
+        )
 
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:

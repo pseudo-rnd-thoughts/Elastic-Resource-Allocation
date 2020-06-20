@@ -6,7 +6,7 @@ from time import time
 from typing import TYPE_CHECKING
 
 from extra.pprint import print_task_values, print_task_allocation
-from core.result import Result
+from extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List

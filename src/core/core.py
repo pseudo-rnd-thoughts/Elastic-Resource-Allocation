@@ -2,39 +2,13 @@
 
 from __future__ import annotations
 
-from random import choice, gauss
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Iterable, List, TypeVar
+    from typing import Iterable, List
 
     from core.server import Server
     from core.task import Task
-
-    T = TypeVar('T')
-
-
-def rand_list_max(args: Iterable[T], key=None) -> T:
-    """
-    Finds the maximum value in a list of values, if multiple values are all equal then choice a random value
-
-    :param args: A list of values
-    :param key: The key value function
-    :return: A random maximum value
-    """
-    solution = []
-    value = None
-
-    for arg in args:
-        arg_value = arg if key is None else key(arg)
-
-        if arg_value is None or arg_value > value:
-            solution = [arg]
-            value = arg_value
-        elif arg_value == value:
-            solution = [arg]
-
-    return choice(solution)
 
 
 def server_task_allocation(server: Server, task: Task, loading: int, compute: int, sending: int, price: float = None):
@@ -50,34 +24,6 @@ def server_task_allocation(server: Server, task: Task, loading: int, compute: in
     """
     task.allocate(loading, compute, sending, server, price)
     server.allocate_task(task)
-
-
-def list_item_replacement(lists: List[T], old_item: T, new_item: T):
-    """
-    Replace the item in the list
-
-    :param lists: The list
-    :param old_item: The item to remove
-    :param new_item: The item to append
-    """
-
-    lists.remove(old_item)
-    lists.append(new_item)
-
-
-def list_copy_remove(lists: List[T], item: T) -> List[T]:
-    """
-    Copy the list and remove an item
-
-    :param lists: The list
-    :param item: The item to remove
-    :return: The copied list without the item
-    """
-
-    list_copy = lists.copy()
-    list_copy.remove(item)
-
-    return list_copy
 
 
 def set_price_change(servers: List[Server], price_change: int):
@@ -104,17 +50,6 @@ def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forgot_price: 
 
     for server in servers:
         server.reset_allocations()
-
-
-def positive_gaussian_dist(mean, std) -> int:
-    """
-    Uses gaussian distribution to generate a random number greater than 0 for a resource
-
-    :param mean: Gaussian mean
-    :param std: Gaussian standard deviation
-    :return: A float of random gaussian distribution
-    """
-    return max(1, int(gauss(mean, std)))
 
 
 def debug(message, case):

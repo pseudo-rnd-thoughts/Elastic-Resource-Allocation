@@ -14,7 +14,7 @@ from time import time
 from typing import TYPE_CHECKING
 
 from core.core import server_task_allocation, reset_model, debug
-from core.result import Result
+from extra.result import Result
 from greedy.greedy import allocate_tasks
 
 if TYPE_CHECKING:

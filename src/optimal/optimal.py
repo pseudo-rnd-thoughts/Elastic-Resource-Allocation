@@ -10,7 +10,7 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from extra.pprint import print_model_solution, print_model
-from src.core.result import Result
+from extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional

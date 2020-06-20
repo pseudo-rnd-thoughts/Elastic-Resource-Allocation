@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 
 from src.core.core import server_task_allocation, debug
-from src.core.result import Result
+from extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Tuple

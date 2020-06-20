@@ -9,12 +9,12 @@ import math
 import random as rnd
 from abc import ABC, abstractmethod
 from time import time
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, Iterable, TypeVar
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from core.core import reset_model, server_task_allocation, debug
-from core.result import Result
+from extra.result import Result
 from greedy.value_density import ResourceSum
 
 if TYPE_CHECKING:
@@ -24,6 +24,31 @@ if TYPE_CHECKING:
     from core.server import Server
     from core.task import Task
     from greedy.value_density import ValueDensity
+
+    T = TypeVar('T')
+
+
+def rand_list_max(args: Iterable[T], key=None) -> T:
+    """
+    Finds the maximum value in a list of values, if multiple values are all equal then choice a random value
+
+    :param args: A list of values
+    :param key: The key value function
+    :return: A random maximum value
+    """
+    solution = []
+    value = None
+
+    for arg in args:
+        arg_value = arg if key is None else key(arg)
+
+        if arg_value is None or arg_value > value:
+            solution = [arg]
+            value = arg_value
+        elif arg_value == value:
+            solution = [arg]
+
+    return rnd.choice(solution)
 
 
 class PriceDensity(ABC):
@@ -67,7 +92,7 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     for task, (loading, compute, sending, allocated) in task_speeds.items():
         if allocated:
             task.reset_allocation(forgot_price=False)
-            server_task_allocation(task, loading, compute, sending, server)
+            server_task_allocation(server, task, loading, compute, sending)
         else:
             task.reset_allocation()
             unallocated_tasks.append(task)

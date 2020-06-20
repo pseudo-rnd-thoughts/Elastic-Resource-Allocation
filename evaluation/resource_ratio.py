@@ -13,7 +13,7 @@ from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, SumSpeed
 from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
-from model.model_distribution import load_model_distribution, ModelDistribution, results_filename
+from extra.model import ModelDistribution, results_filename
 from optimal.fixed_optimal import fixed_optimal_algorithm
 from optimal.optimal import optimal_algorithm
 
@@ -29,7 +29,7 @@ def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: 
     data = []
     for _ in tqdm(range(repeats)):
         results = {}
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
 
         total_resources = {server: server.computation_capacity + server.bandwidth_capacity for server in servers}
@@ -76,15 +76,13 @@ def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: 
         data.append(results)
 
         # Save the results to the file
-        filename = results_filename('resource_ratio', model_dist.file_name, repeat)
+        filename = results_filename('resource_ratio', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     resource_ratio_testing(loaded_model_dist, args['repeat'])

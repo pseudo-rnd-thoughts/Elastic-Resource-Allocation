@@ -4,12 +4,12 @@
         {
             "name": "normal",
             "probability": 1,
-            "required_storage_mean": 100,
-            "required_storage_std": 20,
-            "required_computation_mean": 75,
-            "required_computation_std": 25,
-            "required_results_data_mean": 40,
-            "required_results_data_std": 10,
+            "storage_mean": 100,
+            "storage_std": 20,
+            "computation_mean": 75,
+            "computation_std": 25,
+            "results_data_mean": 40,
+            "results_data_std": 10,
             "value_mean": 500,
             "value_std": 100,
             "deadline_mean": 30,
@@ -20,12 +20,12 @@
         {
             "name": "normal",
             "probability": 1,
-            "maximum_storage_mean": 1000,
-            "maximum_storage_std": 70,
-            "maximum_computation_mean": 350,
-            "maximum_computation_std": 70,
-            "maximum_bandwidth_mean": 200,
-            "maximum_bandwidth_std": 50
+            "storage_mean": 1000,
+            "storage_std": 70,
+            "computation_mean": 350,
+            "computation_std": 70,
+            "bandwidth_mean": 200,
+            "bandwidth_std": 50
         }
     ]
 }

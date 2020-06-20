@@ -6,7 +6,7 @@ from random import gauss
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Optional, Dict, Any
 
     from core.server import Server
 
@@ -85,6 +85,7 @@ class Task:
         if forgot_price:
             self.price = 0
 
+    @property
     def utility(self):
         """
         The social welfare of the task
@@ -106,6 +107,16 @@ class Task:
                     int(max(1, self.deadline - abs(gauss(0, self.required_results_data * percent)))),
                     int(max(1, self.value - abs(gauss(0, self.required_results_data * percent)))))
 
+    def save(self):
+        return {
+            'name': self.name,
+            'storage': self.required_storage,
+            'computation': self.required_computation,
+            'results data': self.required_results_data,
+            'deadline': self.deadline,
+            'value': self.value
+        }
+
     def __str__(self) -> str:
         if self.loading_speed > 0:
             return f'Task {self.name} - Required storage: {self.required_storage}, ' \
@@ -116,6 +127,35 @@ class Task:
             return f'Task {self.name} - Required storage: {self.required_storage}, ' \
                    f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
                    f'deadline: {self.deadline}, value: {self.value}'
+
+    @staticmethod
+    def load(task_spec: Dict[str, Any]) -> Task:
+        return Task(
+            name=task_spec['name'], required_storage=task_spec['storage'],
+            required_computation=task_spec['computation'], required_results_data=task_spec['results data'],
+            deadline=task_spec['deadline'], value=task_spec['value']
+        )
+
+    @staticmethod
+    def load_dist(task_dist: Dict[str, Any], task_num: int) -> Task:
+        def positive_gaussian(mean, std) -> int:
+            """
+            Uses gaussian distribution to generate a random number greater than 0 for a resource
+
+            :param mean: Gaussian mean
+            :param std: Gaussian standard deviation
+            :return: A float of random gaussian distribution
+            """
+            return max(1, int(gauss(mean, std)))
+
+        return Task(
+            name=f'{task_dist["name"]} {task_num}',
+            required_storage=positive_gaussian(task_dist['storage mean'], task_dist['storage std']),
+            required_computation=positive_gaussian(task_dist['computation mean'], task_dist['computation std']),
+            required_results_data=positive_gaussian(task_dist['results data mean'], task_dist['results data std']),
+            deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
+            value=positive_gaussian(task_dist['value mean'], task_dist['value std'])
+        )
 
 
 def task_diff(normal_task: Task, mutate_task: Task) -> str:

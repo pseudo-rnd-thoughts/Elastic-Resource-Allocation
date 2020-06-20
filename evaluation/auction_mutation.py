@@ -4,14 +4,30 @@ from __future__ import annotations
 
 import json
 from random import choice
+from typing import TypeVar, List
 
 from tqdm import tqdm
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from core.core import list_item_replacement, set_price_change, reset_model
-from extra.io import load_args
+from core.core import set_price_change, reset_model
 from core.task import Task, task_diff
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.io import load_args
+from extra.model import ModelDistribution, results_filename
+
+T = TypeVar('T')
+
+
+def list_item_replacement(lists: List[T], old_item: T, new_item: T):
+    """
+    Replace the item in the list
+
+    :param lists: The list
+    :param old_item: The item to remove
+    :param new_item: The item to append
+    """
+
+    lists.remove(old_item)
+    lists.append(new_item)
 
 
 def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
@@ -36,7 +52,7 @@ def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
 
     for _ in tqdm(range(repeats)):
         # Generate the model and set the price change to 2 as default
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         set_price_change(servers, price_change)
 
         # Calculate the results without any mutation
@@ -75,7 +91,7 @@ def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
         print(auction_results)
 
         # Save all of the results to a file
-        filename = results_filename('mutate_iterative_auction', model_dist.file_name, 1)
+        filename = results_filename('mutate_iterative_auction', model_dist, 1)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
@@ -98,7 +114,7 @@ def all_task_mutations_test(model_dist: ModelDistribution, repeat: int, num_muta
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the tasks and servers
-    tasks, servers = model_dist.create()
+    tasks, servers = model_dist.generate()
     # The mutation results
     mutation_results = []
 
@@ -145,16 +161,14 @@ def all_task_mutations_test(model_dist: ModelDistribution, repeat: int, num_muta
                             reset_model(tasks, servers)
 
         # Save all of the results to a file
-        filename = results_filename('all_mutations_iterative_auction', model_dist.file_name, repeat)
+        filename = results_filename('all_mutations_iterative_auction', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(mutation_results, file)
 
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     mutated_task_test(loaded_model_dist, time_limit=5)
     # all_task_mutations_test(loaded_model_dist, args['repeat'])

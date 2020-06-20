@@ -4,12 +4,12 @@
     {
       "name": "task",
       "probability": 1,
-      "required_storage_mean": 100,
-      "required_storage_std": 15,
-      "required_computation_mean": 100,
-      "required_computation_std": 15,
-      "required_results_data_mean": 50,
-      "required_results_data_std": 10,
+      "storage_mean": 100,
+      "storage_std": 15,
+      "computation_mean": 100,
+      "computation_std": 15,
+      "results_data_mean": 50,
+      "results_data_std": 10,
       "value_mean": 50,
       "value_std": 20,
       "deadline_mean": 10,
@@ -20,12 +20,12 @@
     {
       "name": "server",
       "probability": 1,
-      "maximum_storage_mean": 450,
-      "maximum_storage_std": 50,
-      "maximum_computation_mean": 70,
-      "maximum_computation_std": 25,
-      "maximum_bandwidth_mean": 290,
-      "maximum_bandwidth_std": 45
+      "storage_mean": 450,
+      "storage_std": 50,
+      "computation_mean": 70,
+      "computation_std": 25,
+      "bandwidth_mean": 290,
+      "bandwidth_std": 45
     }
   ]
 }

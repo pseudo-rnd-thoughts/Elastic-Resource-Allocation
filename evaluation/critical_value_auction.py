@@ -18,7 +18,7 @@ from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 from greedy.value_density import policies as value_densities
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.model import ModelDistribution, results_filename
 
 
 def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 50, price_change: int = 3,
@@ -41,7 +41,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
     # Loop, for each run all of the auctions to find out the results from each type
     for _ in tqdm(range(repeats)):
         # Generate the tasks and servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         auction_results = {}
 
         # Calculate the vcg auction
@@ -80,7 +80,7 @@ def critical_value_testing(model_dist: ModelDistribution, repeat: int, repeats: 
         data.append(auction_results)
 
     # Save all of the results to a file
-    filename = results_filename('critical_values_results', model_dist.file_name, repeat)
+    filename = results_filename('critical_values_results', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -103,7 +103,7 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
     # Loop, for each run all of the algorithms
     for _ in tqdm(range(repeats)):
         # Generate the tasks and the servers
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         auction_results = {}
 
         # Calculate the vcg auction
@@ -130,7 +130,7 @@ def all_policies_critical_value(model_dist: ModelDistribution, repeat: int, repe
         data.append(auction_results)
 
     # Save the results to the file
-    filename = results_filename('all_critical_value_test', model_dist.file_name, repeat)
+    filename = results_filename('all_critical_value_test', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -151,7 +151,7 @@ def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 1
           f'{model_dist.num_servers} servers')
     data = []
     for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         results = {}
 
         vcg_result = vcg_auction(tasks, servers)
@@ -189,7 +189,7 @@ def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 1
         print(results)
 
         # Save the results to the file
-        filename = results_filename('flexible_auction', model_dist.file_name, repeat)
+        filename = results_filename('flexible_auction', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
@@ -197,8 +197,7 @@ def auction_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 1
 if __name__ == "__main__":
     args = load_args()
 
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     # critical_value_testing(loaded_model_dist, args['repeat'])
     # all_policies_critical_value(loaded_model_dist, args['repeat'])

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
 
-from core.result import Result
+from extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional

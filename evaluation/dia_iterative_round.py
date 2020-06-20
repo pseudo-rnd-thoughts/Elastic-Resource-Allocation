@@ -10,7 +10,7 @@ from tqdm import tqdm
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from core.core import set_price_change, reset_model
 from extra.io import load_args
-from model.model_distribution import ModelDistribution, load_model_distribution, results_filename
+from extra.model import ModelDistribution, results_filename
 
 
 def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[int], price_changes: List[int],
@@ -28,7 +28,7 @@ def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[i
     data = []
 
     for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
         auction_results = {}
 
         for initial_cost in initial_costs:
@@ -45,7 +45,7 @@ def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[i
         data.append(auction_results)
 
         # Save all of the results to a file
-        filename = results_filename('iterative_round_results', model_dist.file_name, repeat)
+        filename = results_filename('iterative_round_results', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
@@ -67,7 +67,7 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
     price_changes = [1, 2, 5, 8, 10]
 
     for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.create()
+        tasks, servers = model_dist.generate()
 
         results = {}
 
@@ -88,7 +88,7 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
         print(results)
 
     # Save the results to the file
-    filename = results_filename('round_num', model_dist.file_name, repeat)
+    filename = results_filename('round_num', model_dist, repeat)
     with open(filename, 'w') as file:
         json.dump(data, file)
     print(f'Successful, data saved to {filename}')
@@ -96,8 +96,5 @@ def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int =
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
-
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
     round_num_testing(loaded_model_dist, args['repeat'], time_limit=5)

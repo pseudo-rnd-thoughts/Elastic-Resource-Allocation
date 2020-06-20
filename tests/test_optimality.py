@@ -9,7 +9,7 @@ from typing import Sequence
 from core.core import reset_model
 from extra.io import load_args
 from extra.pprint import print_model
-from model.model_distribution import ModelDistribution, load_model_distribution
+from extra.model import ModelDistribution
 from optimal.optimal import optimal_algorithm
 
 
@@ -21,7 +21,7 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
     :param model_dist: The model distribution
     :param time_limits: List of time limits to test with
     """
-    tasks, servers = model_dist.create()
+    tasks, servers = model_dist.generate()
 
     print("Models")
     print_model(tasks, servers)
@@ -38,8 +38,6 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
 
 if __name__ == "__main__":
     args = load_args()
-
-    model_name, task_dist, server_dist = load_model_distribution(args['model'])
-    loaded_model_dist = ModelDistribution(model_name, task_dist, args['tasks'], server_dist, args['servers'])
+    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
     test_optimal_time_limit(loaded_model_dist)
