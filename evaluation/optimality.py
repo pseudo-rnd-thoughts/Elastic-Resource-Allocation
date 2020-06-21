@@ -13,7 +13,7 @@ from extra.io import load_args
 from extra.pprint import print_model
 from core.super_server import SuperServer
 from extra.model import ModelDistribution, results_filename
-from optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_solver
 
 
 def optimality_testing(model_dist: ModelDistribution):
@@ -28,7 +28,7 @@ def optimality_testing(model_dist: ModelDistribution):
     print_model(tasks, servers)
     for time_limit in [10, 30, 60, 5 * 60, 15 * 60, 60 * 60, 24 * 60 * 60]:
         print(f'\n\nTime Limit: {time_limit}')
-        result = optimal_algorithm(tasks, servers, time_limit)
+        result = optimal_solver(tasks, servers, time_limit)
         print(result.store())
         if result.data['solve_status'] == 'Optimal':
             print(f'Solved completely at time limit: {time_limit}')

@@ -9,10 +9,12 @@ from typing import Dict, Tuple, Any
 from docplex.cp.model import CpoModel
 from docplex.mp.model import Model
 
+from branch_bound.branch_bound import branch_bound_algorithm
+from core.core import reset_model
 from core.server import Server
 from core.task import Task
 from extra.model import ModelDistribution
-from optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_solver, optimal_algorithm
 
 
 def test_cplex():
@@ -27,7 +29,7 @@ def test_cp_optimality():
     model = ModelDistribution('models/basic.mdl', 20, 3)
     tasks, servers = model.generate()
 
-    results = optimal_algorithm(tasks, servers, time_limit=10)
+    results = optimal_solver(tasks, servers, time_limit=10)
     print(results.store())
 
 
@@ -78,3 +80,16 @@ def test_mip_model():
     model_solution = model.solve(log_output=None, TimeLimit=20)
     print(f'Model solution type: {type(model_solution)}')
     print(f'Variance type: {type(loading_speeds[tasks[0]])}')
+
+
+def test_branch_bound():
+    model = ModelDistribution('models/basic.mdl', 4, 2)
+    tasks, servers = model.generate()
+
+    branch_bound_result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)
+    branch_bound_result.pretty_print()
+
+    reset_model(tasks, servers)
+
+    optimal_result = optimal_algorithm(tasks, servers, time_limit=200)
+    optimal_result.pretty_print()

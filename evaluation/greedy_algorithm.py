@@ -1,4 +1,6 @@
-"""Tests to run on Southampton's Iridis 4 supercomputer"""
+"""
+Tests to run on Southampton's Iridis 4 supercomputer
+"""
 
 from __future__ import annotations
 
@@ -28,7 +30,7 @@ from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
 from extra.model import ModelDistribution, results_filename
 from optimal.fixed_optimal import fixed_optimal_algorithm
-from optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_solver
 from optimal.relaxed import relaxed_algorithm
 
 
@@ -54,7 +56,7 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
         algorithm_results = {}
 
         # Find the optimal solution
-        optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
+        optimal_result = optimal_solver(tasks, servers, optimal_time_limit)
         algorithm_results[
             optimal_result.algorithm] = optimal_result.store() if optimal_result is not None else 'failure'
         reset_model(tasks, servers)
@@ -180,7 +182,7 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
         algorithm_results = {'model': model_data()}
 
         # Find the optimal solution
-        optimal_result = optimal_algorithm(tasks, servers, optimal_time_limit)
+        optimal_result = optimal_solver(tasks, servers, optimal_time_limit)
         algorithm_results[optimal_result.algorithm] = optimal_result.store(tasks_data=task_data()) \
             if optimal_result is not None else 'failure'
         reset_model(tasks, servers)

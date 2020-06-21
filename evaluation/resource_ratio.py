@@ -15,7 +15,7 @@ from greedy.server_selection_policy import SumResources, TaskSumResources
 from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 from extra.model import ModelDistribution, results_filename
 from optimal.fixed_optimal import fixed_optimal_algorithm
-from optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_solver
 
 
 def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 10):
@@ -39,7 +39,7 @@ def resource_ratio_testing(model_dist: ModelDistribution, repeat: int, repeats: 
                 server.update_capacities(int(total_resources[server] * ratio),
                                          int(total_resources[server] * (1 - ratio)))
 
-            optimal_results = optimal_algorithm(tasks, servers, 180)
+            optimal_results = optimal_solver(tasks, servers, 180)
             ratio_results['optimal'] = optimal_results.store(
                 ratio=ratio, server_ratio={server: server.computation_capacity / server.bandwidth_capacity
                                            for server in servers}

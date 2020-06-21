@@ -10,7 +10,7 @@ from core.core import reset_model
 from extra.io import load_args
 from extra.pprint import print_model
 from extra.model import ModelDistribution
-from optimal.optimal import optimal_algorithm
+from optimal.optimal import optimal_solver
 
 
 def test_optimal_time_limit(model_dist: ModelDistribution,
@@ -27,7 +27,7 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
     print_model(tasks, servers)
 
     for time_limit in time_limits:
-        result = optimal_algorithm(tasks, servers, time_limit)
+        result = optimal_solver(tasks, servers, time_limit)
         reset_model(tasks, servers)
 
         print(f'\tSolved completely at time limit: {time_limit}, social welfare: {result.social_welfare} '
