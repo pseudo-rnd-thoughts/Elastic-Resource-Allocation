@@ -24,9 +24,9 @@ class FixedTask(Task):
         Task.__init__(self, name, task.required_storage, task.required_computation, task.required_results_data,
                       task.value, task.deadline)
         self.original_task = task
-        self.loading_speed, self.compute_speed, self.sending_speed = self.find_fixed_speeds(fixed_value)
+        self.loading_speed, self.compute_speed, self.sending_speed = self.calculate_fixed_speeds(fixed_value)
 
-    def find_fixed_speeds(self, fixed_value: FixedValue) -> Tuple[int, int, int]:
+    def calculate_fixed_speeds(self, fixed_value: FixedValue) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
@@ -110,7 +110,7 @@ class FixedSumSpeeds(FixedValue):
         return loading_speed + compute_speed + sending_speed
 
 
-class FixedExpSumSpeeds(FixedValue):
+class FixedSumPowerSpeeds(FixedValue):
     """Fixed Exp Sum of speeds"""
 
     def __init__(self):
@@ -118,6 +118,6 @@ class FixedExpSumSpeeds(FixedValue):
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculate the value by summing the expo of speeds"""
-        return exp(loading_speed) + exp(compute_speed) + exp(sending_speed)
+        return loading_speed ** 3 + compute_speed ** 3 + sending_speed ** 3
 
 # TODO add more fixed value classes

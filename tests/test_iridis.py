@@ -6,7 +6,7 @@ from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from core.core import reset_model
-from core.fixed_task import FixedTask, FixedExpSumSpeeds
+from core.fixed_task import FixedTask, FixedSumPowerSpeeds
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
@@ -19,7 +19,7 @@ from optimal.optimal import optimal
 def main():
     model = ModelDistribution('models/basic.mdl', 20, 3)
     tasks, servers = model.generate()
-    fixed_tasks = [FixedTask(task, FixedExpSumSpeeds()) for task in tasks]
+    fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
 
     optimal_result = optimal(tasks, servers)
     optimal_result.pretty_print()
