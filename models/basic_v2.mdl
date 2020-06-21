@@ -1,31 +1,31 @@
 {
-    "name": "basic_v2",
-    "task_dist": [
+    "name": "basic v2",
+    "task distributions": [
         {
             "name": "normal",
             "probability": 1,
-            "storage_mean": 10,
-            "storage_std": 4,
-            "computation_mean": 15,
-            "computation_std": 5,
-            "results_data_mean": 4,
-            "results_data_std": 2,
-            "value_mean": 50,
-            "value_std": 20,
-            "deadline_mean": 15,
-            "deadline_std": 4
+            "storage mean": 10,
+            "storage std": 4,
+            "computation mean": 15,
+            "computation std": 5,
+            "results data mean": 4,
+            "results data std": 2,
+            "value mean": 50,
+            "value std": 20,
+            "deadline mean": 15,
+            "deadline std": 4
         }
     ],
-    "server_dist": [
+    "server distributions": [
         {
             "name": "normal",
             "probability": 1,
-            "storage_mean": 70,
-            "storage_std": 10,
-            "computation_mean": 20,
-            "computation_std": 5,
-            "bandwidth_mean": 30,
-            "bandwidth_std": 5
+            "storage mean": 70,
+            "storage std": 10,
+            "computation mean": 20,
+            "computation std": 5,
+            "bandwidth mean": 30,
+            "bandwidth std": 5
         }
     ]
 }

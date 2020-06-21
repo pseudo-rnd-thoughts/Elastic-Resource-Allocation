@@ -6,19 +6,19 @@ from __future__ import annotations
 
 import json
 import random as rnd
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
+
+from core.task import Task
+from core.server import Server
 
 if TYPE_CHECKING:
-    from typing import Tuple, List
-
-    from core.server import Server
-    from core.task import Task
+    from typing import Tuple, List, Optional
 
 
 class ModelDistribution:
     """Model distributions"""
 
-    def __init__(self, dist_file: str, num_tasks: Optional[int], num_servers: Optional[int]):
+    def __init__(self, dist_file: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
         self.file = dist_file
         self.num_tasks = num_tasks
         self.num_servers = num_servers
@@ -32,7 +32,7 @@ class ModelDistribution:
             else:
                 assert 'tasks' in model_data
 
-            if num_tasks is not None:
+            if num_servers is not None:
                 assert 'server distributions' in model_data
             else:
                 assert 'servers' in model_data
@@ -46,24 +46,24 @@ class ModelDistribution:
         with open(self.file) as file:
             model_data = json.load(file)
 
-            if 'task distribution' in model_data:
+            if 'task distributions' in model_data:
                 tasks = []
-                for pos in range(self.num_servers):
+                for pos in range(self.num_tasks):
                     probability = rnd.random()
-                    task_dist = next(task_dist for i, task_dist in enumerate(model_data['task distribution'])
-                                     if probability <= sum(model_data['task distribution'][j]['probability']
-                                                           for j in range(i)))
+                    task_dist = next(task_dist for i, task_dist in enumerate(model_data['task distributions'])
+                                     if probability <= sum(model_data['task distributions'][j]['probability']
+                                                           for j in range(i+1)))
                     tasks.append(Task.load_dist(task_dist, pos))
             else:
                 tasks = [Task.load(task_model) for task_model in model_data['tasks']]
 
-            if 'server distribution' in model_data:
+            if 'server distributions' in model_data:
                 servers = []
                 for pos in range(self.num_servers):
                     probability = rnd.random()
-                    server_dist = next(server_dist for i, server_dist in enumerate(model_data['server distribution'])
-                                       if probability <= sum(model_data['server distribution'][j]['probability']
-                                                             for j in range(i)))
+                    server_dist = next(server_dist for i, server_dist in enumerate(model_data['server distributions'])
+                                       if probability <= sum(model_data['server distributions'][j]['probability']
+                                                             for j in range(i+1)))
                     servers.append(Server.load_dist(server_dist, pos))
             else:
                 servers = [Server.load(server_model) for server_model in model_data['servers']]

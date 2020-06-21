@@ -1,31 +1,31 @@
 {
-  "name": "fog_v2",
-  "task_dist": [
+  "name": "fog v2",
+  "task distributions": [
     {
       "name": "task",
       "probability": 1,
-      "storage_mean": 100,
-      "storage_std": 15,
-      "computation_mean": 100,
-      "computation_std": 15,
-      "results_data_mean": 50,
-      "results_data_std": 10,
-      "value_mean": 50,
-      "value_std": 20,
-      "deadline_mean": 10,
-      "deadline_std": 2
+      "storage mean": 100,
+      "storage std": 15,
+      "computation mean": 100,
+      "computation std": 15,
+      "results data mean": 50,
+      "results data std": 10,
+      "value mean": 50,
+      "value std": 20,
+      "deadline mean": 10,
+      "deadline std": 2
     }
   ],
-  "server_dist": [
+  "server distributions": [
     {
       "name": "server",
       "probability": 1,
-      "storage_mean": 450,
-      "storage_std": 50,
-      "computation_mean": 70,
-      "computation_std": 25,
-      "bandwidth_mean": 290,
-      "bandwidth_std": 45
+      "storage mean": 450,
+      "storage std": 50,
+      "computation mean": 70,
+      "computation std": 25,
+      "bandwidth mean": 290,
+      "bandwidth std": 45
     }
   ]
 }

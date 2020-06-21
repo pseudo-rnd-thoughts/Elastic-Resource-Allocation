@@ -1,69 +1,85 @@
 {
     "name": "basic",
-    "task_dist": [
+    "task distributions": [
         {
             "name": "normal",
             "probability": 1,
-            "storage_mean": 110,
-            "storage_std": 20,
-            "computation_mean": 90,
-            "computation_std": 25,
-            "results_data_mean": 70,
-            "results_data_std": 10,
-            "value_mean": 40,
-            "value_std": 15,
-            "deadline_mean": 10,
-            "deadline_std": 4
+            "storage mean": 110,
+            "storage std": 20,
+            "computation mean": 90,
+            "computation std": 25,
+            "results data mean": 70,
+            "results data std": 10,
+            "value mean": 40,
+            "value std": 15,
+            "deadline mean": 10,
+            "deadline std": 4
         }
     ],
     "servers": [
         {
             "name": "normal 1",
-            "storage": 519,
-            "computation": 133,
-            "bandwidth": 214
+            "storage capacity": 519,
+            "computation capacity": 133,
+            "bandwidth capacity": 214,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 2",
-            "storage": 470,
-            "computation": 48,
-            "bandwidth": 218
+            "storage capacity": 470,
+            "computation capacity": 48,
+            "bandwidth capacity": 218,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 3",
-            "storage": 401,
-            "computation": 94,
-            "bandwidth": 334
+            "storage capacity": 401,
+            "computation capacity": 94,
+            "bandwidth capacity": 334,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 4",
-            "storage": 426,
-            "computation": 78,
-            "bandwidth": 344
+            "storage capacity": 426,
+            "computation capacity": 78,
+            "bandwidth capacity": 344,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 5",
-            "storage": 491,
-            "computation": 48,
-            "bandwidth": 397
+            "storage capacity": 491,
+            "computation capacity": 48,
+            "bandwidth capacity": 397,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 6",
-            "storage": 440,
-            "computation": 39,
-            "bandwidth": 317
+            "storage capacity": 440,
+            "computation capacity": 39,
+            "bandwidth capacity": 317,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 7",
-            "storage": 470,
-            "computation": 48,
-            "bandwidth": 218
+            "storage capacity": 470,
+            "computation capacity": 48,
+            "bandwidth capacity": 218,
+            "price change": 1,
+            "initial price": 0
         },
         {
             "name": "normal 8",
-            "storage": 401,
-            "computation": 84,
-            "bandwidth": 334
+            "storage capacity": 401,
+            "computation capacity": 84,
+            "bandwidth capacity": 334,
+            "price change": 1,
+            "initial price": 0
         }
     ]
 }
