@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from core.server import Server
 
 
-def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_limit: int) -> Optional[Result]:
+def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_limit: int):
     """
     Finds the optimal solution
 
@@ -74,5 +74,11 @@ def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_
         return None
 
     # Return the sum of the task value for all of teh running tasks
-    return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
-                  solve_status=model_solution.get_solve_status())
+    return model_solution
+
+
+def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+    model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
+    if model_solution:
+        return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status()})

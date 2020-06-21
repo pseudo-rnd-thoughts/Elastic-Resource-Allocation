@@ -3,25 +3,25 @@
 from __future__ import annotations
 
 from time import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from core.core import server_task_allocation
 from extra.pprint import print_model_solution, print_model
 from extra.result import Result
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Optional
+    from typing import List, Dict
 
     from core.server import Server
     from core.super_server import SuperServer
     from core.task import Task
 
 
-def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
-                      debug_time: bool = False) -> Optional[Result]:
+def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, debug_time: bool = False):
     """
     Runs the optimal algorithm solution
 
@@ -78,9 +78,15 @@ def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int,
     # For each of the tasks allocate if allocated to the server
     for task in tasks:
         if model_solution.get_value(task_allocation[task]):
-            task.allocate(model_solution.get_value(loading_speeds[task]),
-                          model_solution.get_value(compute_speeds[task]),
-                          model_solution.get_value(sending_speeds[task]), super_server)
-            super_server.allocate_task(task)
+            server_task_allocation(super_server, task,
+                                   model_solution.get_value(loading_speeds[task]),
+                                   model_solution.get_value(compute_speeds[task]),
+                                   model_solution.get_value(sending_speeds[task]))
+    return model_solution, super_server
 
-    return Result('Relaxed', tasks, [super_server], time() - start_time, solve_status=model_solution.get_solve_status())
+
+def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+    model_solution, super_server = relaxed_solver(tasks, servers, time_limit=time_limit)
+    if model_solution:
+        return Result('Relaxed', tasks, [super_server], round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status()})

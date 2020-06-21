@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from core.core import server_task_allocation
 from extra.pprint import print_model_solution, print_model
 from extra.result import Result
 
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
     from core.task import Task
 
 
-def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+def optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     """
     Optimal algorithm
 
@@ -36,7 +37,7 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
     loading_speeds: Dict[Task, CpoVariable] = {}
     compute_speeds: Dict[Task, CpoVariable] = {}
     sending_speeds: Dict[Task, CpoVariable] = {}
-    server_task_allocation: Dict[Tuple[Task, Server], CpoVariable] = {}
+    task_allocation: Dict[Tuple[Task, Server], CpoVariable] = {}
 
     # The maximum bandwidth and the computation that the speed can be
     max_bandwidth, max_computation = max(server.bandwidth_capacity for server in servers) - 1, \
@@ -54,20 +55,20 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
 
         # The task allocation variables and add the allocation constraint
         for server in servers:
-            server_task_allocation[(task, server)] = model.binary_var(name=f'Job {task.name} Server {server.name}')
-        model.add(sum(server_task_allocation[(task, server)] for server in servers) <= 1)
+            task_allocation[(task, server)] = model.binary_var(name=f'Job {task.name} Server {server.name}')
+        model.add(sum(task_allocation[(task, server)] for server in servers) <= 1)
 
     # For each server, add the resource constraint
     for server in servers:
-        model.add(sum(task.required_storage * server_task_allocation[(task, server)]
+        model.add(sum(task.required_storage * task_allocation[(task, server)]
                       for task in tasks) <= server.storage_capacity)
-        model.add(sum(compute_speeds[task] * server_task_allocation[(task, server)]
+        model.add(sum(compute_speeds[task] * task_allocation[(task, server)]
                       for task in tasks) <= server.computation_capacity)
-        model.add(sum((loading_speeds[task] + sending_speeds[task]) * server_task_allocation[(task, server)]
+        model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[(task, server)]
                       for task in tasks) <= server.bandwidth_capacity)
 
     # The optimisation statement
-    model.maximize(sum(task.value * server_task_allocation[(task, server)] for task in tasks for server in servers))
+    model.maximize(sum(task.value * task_allocation[(task, server)] for task in tasks for server in servers))
 
     # Solve the cplex model with time limit
     model_solution = model.solve(log_output=None, TimeLimit=time_limit)
@@ -84,15 +85,21 @@ def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int)
     try:
         for task in tasks:
             for server in servers:
-                if model_solution.get_value(server_task_allocation[(task, server)]):
-                    task.allocate(model_solution.get_value(loading_speeds[task]),
-                                  model_solution.get_value(compute_speeds[task]),
-                                  model_solution.get_value(sending_speeds[task]), server)
-                    server.allocate_task(task)
+                if model_solution.get_value(task_allocation[(task, server)]):
+                    server_task_allocation(server, task,
+                                           model_solution.get_value(loading_speeds[task]),
+                                           model_solution.get_value(compute_speeds[task]),
+                                           model_solution.get_value(sending_speeds[task]))
     except (AssertionError, KeyError) as e:
         print('Error: ', e)
         print_model_solution(model_solution)
         return None
 
-    return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
-                  **{'solve status': model_solution.get_solve_status()})
+    return model_solution
+
+
+def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+    model_solution = optimal_solver(tasks, servers, time_limit=time_limit)
+    if model_solution:
+        return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status()})
