@@ -3,14 +3,21 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from random import gauss
+from typing import List, Iterable
 
 from tqdm import tqdm
 
+from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from core.core import set_price_change, reset_model
+from core.fixed_task import FixedTask, FixedSumSpeeds
 from extra.io import load_args
 from extra.model import ModelDistribution, results_filename
+from greedy.resource_allocation_policy import SumPercentage, SumSpeed
+from greedy.server_selection_policy import SumResources, TaskSumResources
+from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 
 
 def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[int], price_changes: List[int],

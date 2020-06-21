@@ -14,7 +14,7 @@ from core.core import reset_model
 from core.server import Server
 from core.task import Task
 from extra.model import ModelDistribution
-from optimal.optimal import optimal_solver, optimal_algorithm
+from optimal.optimal import optimal_solver, optimal
 
 
 def test_cplex():
@@ -91,5 +91,5 @@ def test_branch_bound():
 
     reset_model(tasks, servers)
 
-    optimal_result = optimal_algorithm(tasks, servers, time_limit=200)
+    optimal_result = optimal(tasks, servers, time_limit=200)
     optimal_result.pretty_print()

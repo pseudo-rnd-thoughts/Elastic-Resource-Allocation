@@ -4,7 +4,6 @@ Relaxed model with a single super server allow a upper bound to be found, solved
 
 from __future__ import annotations
 
-from time import time
 from typing import TYPE_CHECKING, Optional
 
 from docplex.cp.model import CpoModel, CpoVariable

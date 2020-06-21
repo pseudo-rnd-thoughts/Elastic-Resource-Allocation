@@ -29,9 +29,9 @@ from greedy.value_density import policies as value_densities
 from greedy_matrix.allocation_value_policy import policies as matrix_policies
 from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
 from extra.model import ModelDistribution, results_filename
-from optimal.fixed_optimal import fixed_optimal_algorithm
+from optimal.fixed_optimal import fixed_optimal
 from optimal.optimal import optimal_solver
-from optimal.relaxed import relaxed_algorithm
+from optimal.relaxed import relaxed
 
 
 def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
@@ -63,12 +63,12 @@ def best_algorithms_test(model_dist: ModelDistribution, repeat: int, repeats: in
 
         # Find the fixed solution
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
-        fixed_result = fixed_optimal_algorithm(fixed_tasks, servers, fixed_time_limit)
+        fixed_result = fixed_optimal(fixed_tasks, servers, fixed_time_limit)
         algorithm_results[fixed_result.algorithm] = fixed_result.store() if fixed_result is not None else 'failure'
         reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
-        relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
+        relaxed_result = relaxed(tasks, servers, relaxed_time_limit)
         algorithm_results[
             relaxed_result.algorithm] = relaxed_result.store() if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
@@ -188,7 +188,7 @@ def allocation_test(model_dist: ModelDistribution, repeat: int, repeats: int = 5
         reset_model(tasks, servers)
 
         # Find the relaxed solution
-        relaxed_result = relaxed_algorithm(tasks, servers, relaxed_time_limit)
+        relaxed_result = relaxed(tasks, servers, relaxed_time_limit)
         algorithm_results[relaxed_result.algorithm] = relaxed_result.store(tasks_data=task_data()) \
             if relaxed_result is not None else 'failure'
         reset_model(tasks, servers)
