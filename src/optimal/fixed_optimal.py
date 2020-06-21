@@ -1,4 +1,6 @@
-"""Fixed optimal algorithm"""
+"""
+Fixed optimal algorithm
+"""
 
 from __future__ import annotations
 
@@ -27,7 +29,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     :param time_limit: The time limit to solve with
     :return: The results
     """
-    assert time_limit > 0, f'Time limit: {time_limit}'
+    assert 0 < time_limit, f'Time limit: {time_limit}'
 
     model = CpoModel('vcg')
 
@@ -77,7 +79,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     return model_solution
 
 
-def fixed_optimal_algorithm(tasks: List[FixedTask], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
     model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),

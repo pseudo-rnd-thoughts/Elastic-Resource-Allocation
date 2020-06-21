@@ -1,6 +1,7 @@
 """
 Tests if Iridis works with the code
 """
+
 from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
@@ -11,8 +12,8 @@ from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityPerResources
-from optimal.fixed_optimal import fixed_optimal_algorithm
-from optimal.optimal import optimal_algorithm
+from optimal.fixed_optimal import fixed_optimal
+from optimal.optimal import optimal
 
 
 def main():
@@ -20,11 +21,11 @@ def main():
     tasks, servers = model.generate()
     fixed_tasks = [FixedTask(task, FixedExpSumSpeeds()) for task in tasks]
 
-    optimal_result = optimal_algorithm(tasks, servers)
+    optimal_result = optimal(tasks, servers)
     optimal_result.pretty_print()
 
     reset_model(tasks, servers)
-    fixed_optimal_result = fixed_optimal_algorithm(fixed_tasks, servers)
+    fixed_optimal_result = fixed_optimal(fixed_tasks, servers)
     fixed_optimal_result.pretty_print()
 
     reset_model(fixed_tasks, servers)

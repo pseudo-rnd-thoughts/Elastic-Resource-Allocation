@@ -98,7 +98,7 @@ def optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     return model_solution
 
 
-def optimal_algorithm(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+def optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
     model_solution = optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),

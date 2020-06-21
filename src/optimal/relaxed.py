@@ -1,4 +1,6 @@
-"""Relaxed model with a single super server allow a upper bound to be found, solved through mixed integer programming"""
+"""
+Relaxed model with a single super server allow a upper bound to be found, solved through mixed integer programming
+"""
 
 from __future__ import annotations
 
@@ -31,8 +33,7 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
     :param debug_time: If to print the time taken
     :return: The result from optimal solution
     """
-    start_time = time()
-
+    assert 0 < time_limit
     model = CpoModel('Server Job Allocation')
 
     loading_speeds: Dict[Task, CpoVariable] = {}
@@ -85,7 +86,7 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
     return model_solution, super_server
 
 
-def relaxed_algorithm(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+def relaxed(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
     model_solution, super_server = relaxed_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Relaxed', tasks, [super_server], round(model_solution.get_solve_time(), 2),
