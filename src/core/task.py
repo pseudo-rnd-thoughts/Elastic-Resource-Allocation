@@ -73,7 +73,7 @@ class Task:
         if price is not None:
             self.price = round(price, 3)
 
-    def reset_allocation(self, forgot_price: bool = True):
+    def reset_allocation(self, forget_price: bool = True):
         """
         Resets the allocation data to the default
         """
@@ -82,7 +82,7 @@ class Task:
         self.sending_speed = 0
         self.running_server = None
 
-        if forgot_price:
+        if forget_price:
             self.price = 0
 
     @property

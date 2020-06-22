@@ -91,7 +91,7 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     new_task.price = task_price
     for task, (loading, compute, sending, allocated) in task_speeds.items():
         if allocated:
-            task.reset_allocation(forgot_price=False)
+            task.reset_allocation(forget_price=False)
             server_task_allocation(server, task, loading, compute, sending)
         else:
             task.reset_allocation()
@@ -115,7 +115,7 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
                       for task in server.allocated_tasks}
     tasks = server.allocated_tasks[:]
     server_revenue = server.revenue
-    reset_model(server.allocated_tasks, (server,), forgot_price=False)
+    reset_model(server.allocated_tasks, (server,), forget_prices=False)
 
     s, w, r = resource_allocation_policy.allocate(new_task, server)
     server_task_allocation(server, new_task, s, w, r)
@@ -131,7 +131,7 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server is not None)
         for task in tasks + [new_task]}
 
-    reset_model(current_speeds.keys(), (server,), forgot_price=False)
+    reset_model(current_speeds.keys(), (server,), forget_prices=False)
     new_task.reset_allocation()
 
     for task, (loading, compute, sending) in current_speeds.items():

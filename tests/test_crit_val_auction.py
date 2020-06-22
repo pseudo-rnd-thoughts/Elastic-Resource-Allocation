@@ -38,22 +38,15 @@ def test_critical_value(error: float = 0.05):
         print(f'\t{task.name} Task - value: {task.value}, critical value: {task.price}')
         original_value = task.value
 
-        reset_model(tasks, servers, forgot_price=False)
+        reset_model(tasks, servers, forget_prices=False)
         task.value = task.price + error
         greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
         assert task.running_server is not None
 
         if 0 < task.price:
-            reset_model(tasks, servers, forgot_price=False)
+            reset_model(tasks, servers, forget_prices=False)
             task.value = task.price - error
             greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
             assert task.running_server is None
 
         task.value = original_value
-
-
-def test_task_mutation():
-    """
-    Todo
-    """
-    pass

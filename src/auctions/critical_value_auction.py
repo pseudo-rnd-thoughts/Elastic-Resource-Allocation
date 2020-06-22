@@ -91,7 +91,7 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
         # Read the task back into the ranked task in its original position and reset the model but not forgetting the
         #   new critical task's price
         ranked_tasks.insert(critical_pos, critical_task)
-        reset_model(tasks, servers, forgot_price=False)
+        reset_model(tasks, servers, forget_prices=False)
 
     # Allocate the tasks and set the price to the critical value
     for task, (s, w, r, server) in allocation_data.items():

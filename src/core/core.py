@@ -26,16 +26,16 @@ def server_task_allocation(server: Server, task: Task, loading: int, compute: in
     server.allocate_task(task)
 
 
-def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forgot_price: bool = True):
+def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forget_prices: bool = True):
     """
     Resets all of the tasks and servers back after an allocation
 
     :param tasks: A list of tasks
     :param servers: A list of servers
-    :param forgot_price: If to forgot the task price
+    :param forget_prices: If to forgot the task price
     """
     for task in tasks:
-        task.reset_allocation(forgot_price=forgot_price)
+        task.reset_allocation(forget_price=forget_prices)
 
     for server in servers:
         server.reset_allocations()

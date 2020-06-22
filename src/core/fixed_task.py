@@ -68,13 +68,13 @@ class FixedTask(Task):
         if price is not None:
             self.price = price
 
-    def reset_allocation(self, forgot_price: bool = True):
+    def reset_allocation(self, forget_price: bool = True):
         """
         Overrides the reset_allocation function from task to just change the server not resource speeds
         """
         self.running_server = None
 
-        if forgot_price:
+        if forget_price:
             self.price = 0
 
 
