@@ -2,10 +2,10 @@
 Input/Output functions
 """
 
+import argparse
 import re
-import sys
 from enum import auto, Enum
-from typing import Iterable, Tuple, Union, Dict
+from typing import Iterable, Tuple, Dict, Any
 
 import matplotlib.pyplot as plt
 
@@ -76,20 +76,22 @@ def analysis_filename(test_name: str, axis: str) -> str:
         return f'{test_name}_{axis.lower().replace(" ", "_")}'
 
 
-def load_args() -> Dict[str, Union[str, int]]:
+def parse_args() -> Dict[str, Any]:
     """
     Gets all of the arguments and places in a dictionary
 
     :return: All of the arguments in a dictionary
     """
-    assert len(sys.argv) == 5, f"Args: {sys.argv}"
-    assert sys.argv[2].isdigit(), f"Jobs: {sys.argv[2]}"
-    assert sys.argv[3].isdigit(), f"Servers: {sys.argv[3]}"
-    assert sys.argv[4].isdigit(), f"Repeat: {sys.argv[4]}"
+    parser = argparse.ArgumentParser(description='Process model arguments')
+    parser.add_argument('--file', '-f', type=str, help='Location of the model file')
+    parser.add_argument('--tasks', '-t', type=int, help='Number of tasks', default=None)
+    parser.add_argument('--servers', '-s', type=int, help='Number of servers', default=None)
+    parser.add_argument('--repeat', '-r', type=int, help='Number of repeats', default=0)
 
+    args = parser.parse_args()
     return {
-        'model': f'models/{sys.argv[1]}.json',
-        'tasks': int(sys.argv[2]),
-        'servers': int(sys.argv[3]),
-        'repeat': int(sys.argv[4])
+        'model': f'models/{args.file}.mdl',
+        'tasks': args.tasks,
+        'servers': args.servers,
+        'repeat': args.repeats
     }

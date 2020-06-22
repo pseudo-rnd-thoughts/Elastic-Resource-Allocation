@@ -26,17 +26,6 @@ def server_task_allocation(server: Server, task: Task, loading: int, compute: in
     server.allocate_task(task)
 
 
-def set_price_change(servers: List[Server], price_change: int):
-    """
-    Sets the price change attribute on a list of servers
-
-    :param servers: List of servers to affect
-    :param price_change: Updated price change
-    """
-    for server in servers:
-        server.price_change = price_change
-
-
 def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forgot_price: bool = True):
     """
     Resets all of the tasks and servers back after an allocation
@@ -50,6 +39,28 @@ def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forgot_price: 
 
     for server in servers:
         server.reset_allocations()
+
+
+def set_price_change(servers: List[Server], price_change: int):
+    """
+    Sets the price change attribute on a list of servers
+
+    :param servers: List of servers to affect
+    :param price_change: Updated price change
+    """
+    for server in servers:
+        server.price_change = price_change
+
+
+def set_initial_price(servers: List[Server], initial_price: int):
+    """
+    Sets the initial price attribute on a list of servers
+
+    :param servers: List of servers to affect
+    :param initial_price: Updated initial price
+    """
+    for server in servers:
+        server.initial_price = initial_price
 
 
 def debug(message, case):
