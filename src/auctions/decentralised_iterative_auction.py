@@ -263,7 +263,8 @@ def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Ser
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Optimal DIA', tasks, servers, solve_time, is_auction=True,
-                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
+                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
+                     'server initial price': {server.name: server.initial_price for server in servers}})
 
 
 def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], price_density: PriceDensity,
@@ -284,4 +285,5 @@ def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Serv
     rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,
-                  **{'server price change': {server.name: server.price_change for server in servers}, 'rounds': rounds})
+                  **{'server price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
+                     'server initial price': {server.name: server.initial_price for server in servers}})
