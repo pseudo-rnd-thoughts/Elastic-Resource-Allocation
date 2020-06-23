@@ -45,28 +45,27 @@ def test_model_probability():
 def test_args():
     print()
 
+    def eval_args(updated_args, model, tasks, servers, repeat):
+        sys.argv = ['location'] + updated_args
+        args = parse_args()
+        assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
+
     # Files
-    sys.argv = ['location', '--file', 'basic']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': None, 'servers': None, 'repeat': 0}
-    sys.argv = ['location', '-f', 'test']
-    assert parse_args() == {'model': 'models/test.mdl', 'tasks': None, 'servers': None, 'repeat': 0}
+    eval_args(['--file', 'test'], 'models/test.mdl', None, None, 0)
+    eval_args(['-f', 'test'], 'models/test.mdl', None, None, 0)
 
-    sys.argv = ['location', '--file', 'basic', '--tasks', '3']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': 3, 'servers': None, 'repeat': 0}
-    sys.argv = ['location', '--file', 'basic', '-t', '4']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': 4, 'servers': None, 'repeat': 0}
+    # Tasks
+    eval_args(['--file', 'test', '--tasks', '1'], 'models/test.mdl', 1, None, 0)
+    eval_args(['-f', 'test', '-t', '2'], 'models/test.mdl', 2, None, 0)
 
-    sys.argv = ['location', '--file', 'basic', '--servers', '5']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': None, 'servers': 5, 'repeat': 0}
-    sys.argv = ['location', '--file', 'basic', '-s', '6']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': None, 'servers': 6, 'repeat': 0}
+    # Servers
+    eval_args(['--file', 'test', '--servers', '3'], 'models/test.mdl', None, 3, 0)
+    eval_args(['-f', 'test', '-s', '4'], 'models/test.mdl', None, 4, 0)
 
-    sys.argv = ['location', '--file', 'basic', '--repeat', '7']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': None, 'servers': None, 'repeat': 7}
-    sys.argv = ['location', '--file', 'basic', '-r', '8']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': None, 'servers': None, 'repeat': 8}
+    # Repeat
+    eval_args(['--file', 'test', '--repeat', '5'], 'models/test.mdl', None, None, 5)
+    eval_args(['-f', 'test', '-r', '6'], 'models/test.mdl', None, None, 6)
 
-    sys.argv = ['location', '--file', 'basic', '--tasks', '1', '--servers', '2', '--repeat', '3']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': 1, 'servers': 2, 'repeat': 3}
-    sys.argv = ['location', '--file', 'basic', '-t', '1', '-s', '2', '-r', '3']
-    assert parse_args() == {'model': 'models/basic.mdl', 'tasks': 1, 'servers': 2, 'repeat': 3}
+    # Full
+    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], 'models/test.mdl', 7, 8, 9)
+    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], 'models/test.mdl', 10, 11, 12)
