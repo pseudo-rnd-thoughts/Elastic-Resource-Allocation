@@ -4,12 +4,13 @@ Model distribution
 
 from __future__ import annotations
 
+import datetime as dt
 import json
 import random as rnd
 from typing import TYPE_CHECKING
 
-from core.task import Task
 from core.server import Server
+from core.task import Task
 
 if TYPE_CHECKING:
     from typing import Tuple, List, Optional
@@ -80,7 +81,8 @@ def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int 
     :param repeat: The repeat number
     :return: The concatenation of the test name, model distribution name and the repeat
     """
+    date = dt.datetime.now().strftime("%m-%d_%H-%M-%S")
     if repeat is None:
-        return f'{test_name}_{model_dist.name}.json'
+        return f'{test_name}_{model_dist.name}_{date}.json'
     else:
-        return f'{test_name}_{model_dist.name}_{repeat}.json'
+        return f'{test_name}_{model_dist.name}_{repeat}_{date}.json'
