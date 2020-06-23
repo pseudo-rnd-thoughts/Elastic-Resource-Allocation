@@ -5,7 +5,6 @@ __pycache__/
 .idea/
 */.ipynb_checkpoints
 
-paper/aaai20_example
-paper/aamas20_example
+paper/examples/
 
 data/
