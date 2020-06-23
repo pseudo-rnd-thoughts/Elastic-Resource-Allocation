@@ -23,6 +23,12 @@ def test_optimal_dia():
     result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1, debug_allocation=True)
     result.pretty_print()
 
+    for task in tasks:
+        if task.running_server:
+            assert 0 < task.price
+        else:
+            assert task.price == 0
+
 
 def test_greedy_dia():
     print()
@@ -52,8 +58,8 @@ def test_greedy_task_price():
 
     copy_tasks = [copy(task) for task in server.allocated_tasks]
     copy_server = copy(server)
-    print(
-        f'Server revenue: {server.revenue} - Task prices : {" ".join([str(task.price) for task in server.allocated_tasks])}')
+    print(f'Server revenue: {server.revenue} - '
+          f'Task prices : {" ".join([str(task.price) for task in server.allocated_tasks])}')
 
     new_task = tasks.pop(0)
     task_price, speeds = greedy_task_price(new_task, server, PriceResourcePerDeadline(), resource_allocation_policy,
