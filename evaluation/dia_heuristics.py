@@ -1,244 +1,120 @@
-"""Iterative Round testing"""
+"""
+Evaluates the price change and initial price for the decentralised iterative auction. This is done in the two stages;
+    a grid search for the price change and initial cost of the algorithm and the second part is to investigate the
+    results when servers have non-uniform price change and initial price variables that are generated through
+    gaussian random functions.
+"""
 
 from __future__ import annotations
 
 import json
+import pprint
 from random import gauss
-from typing import List, Iterable
+from typing import Iterable
 
-from tqdm import tqdm
-
-from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
-from core.core import set_price_change, reset_model
-from core.fixed_task import FixedTask, FixedSumSpeeds
-from extra.io import load_args
+from core.core import set_price_change, reset_model, set_initial_price
+from extra.io import parse_args
 from extra.model import ModelDistribution, results_filename
-from greedy.resource_allocation_policy import SumPercentage, SumSpeed
-from greedy.server_selection_policy import SumResources, TaskSumResources
-from greedy.value_density import UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource, Value
 
 
-def round_test(model_dist: ModelDistribution, repeat: int, initial_costs: List[int], price_changes: List[int],
-               repeats: int = 50, time_limit: int = 15):
+def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, time_limit: int = 2,
+                              initial_prices: Iterable[int] = (0, 5, 10, 15, 20),
+                              price_changes: Iterable[int] = (1, 2, 5, 8, 10)):
     """
-    Round test
+    Evaluates the difference in results with the decentralised iterative auction uses different price changes and
+        initial price variables
 
     :param model_dist: The model distribution
-    :param repeat: The repeat
-    :param initial_costs: The initial cost functions
-    :param price_changes: The price changes
+    :param repeat_num: The repeat number
     :param repeats: The number of repeats
-    :param time_limit: The time limit to solve with
+    :param time_limit: The time limit for the DIA Auction
+    :param initial_prices: The initial price for auctions
+    :param price_changes: The price change of the servers
     """
-    data = []
+    print(f'DIA Heuristic grid search with initial prices: {initial_prices}, price changes: {price_changes}'
+          f'for {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
+    model_results = []
+    pp = pprint.PrettyPrinter()
 
-    for _ in tqdm(range(repeats)):
+    for repeat in range(repeats):
+        print(f'\nRepeat: {repeat}')
         tasks, servers = model_dist.generate()
-        auction_results = {}
+        algorithm_results = {'model': {
+            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+        }}
+        pp.pprint(algorithm_results)
 
-        for initial_cost in initial_costs:
-            for price_change in price_changes:
-                for server in servers:
-                    server.price_change = price_change
-
-                results = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-                if results is not None:
-                    auction_results[f'cost {initial_cost}, change {price_change}'] = \
-                        results.store(initial_cost=initial_cost, price_change=price_change)
-                reset_model(tasks, servers)
-
-        data.append(auction_results)
-
-        # Save all of the results to a file
-        filename = results_filename('iterative_round_results', model_dist, repeat)
-        with open(filename, 'w') as file:
-            json.dump(data, file)
-
-
-def round_num_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 50, time_limit: int = 15,
-                      debug_results: bool = False):
-    """
-    Testing the number of rounds required to convergence on the price
-
-    :param model_dist: The model distribution
-    :param repeat: The repeat number
-    :param repeats: The number of repeats
-    :param time_limit: The time limit for the auctions
-    :param debug_results: If to debug the results
-    """
-    print(f'Round Num testing for {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
-    data = []
-    initial_costs = [0, 5, 10, 15, 20]
-    price_changes = [1, 2, 5, 8, 10]
-
-    for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.generate()
-
-        results = {}
-
-        for initial_cost in initial_costs:
+        for initial_price in initial_prices:
             for price_change in price_changes:
                 set_price_change(servers, price_change)
+                set_initial_price(servers, initial_price)
 
-                name = f'Initial Cost {initial_cost} Price Change {price_change}'
-                result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-                results[name] = result.store(price_change=price_change)
-
-                if debug_results:
-                    print(results[name])
-
+                results = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
+                algorithm_results[f'IP: {initial_price}, PC: {price_change}'] = results.store(
+                    **{'initial price': initial_price, 'price change': price_change}
+                )
+                results.pretty_print()
                 reset_model(tasks, servers)
 
-        data.append(results)
-        print(results)
+        model_results.append(algorithm_results)
 
     # Save the results to the file
-    filename = results_filename('round_num', model_dist, repeat)
+    filename = results_filename('dia_heuristic_grid_search', model_dist, repeat_num)
     with open(filename, 'w') as file:
-        json.dump(data, file)
+        json.dump(model_results, file)
     print(f'Successful, data saved to {filename}')
 
 
-def uniform_price_change_test(model_dist: ModelDistribution, repeat: int, repeats: int = 50,
-                              price_changes: Iterable[int] = (1, 2, 3, 5, 7, 10), initial_cost: int = 15,
-                              vcg_time_limit: int = 15, time_limit: int = 15, debug_results: bool = False):
-    """
-    Test the decentralised iterative auction where a uniform price change
+def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
+                                  time_limit: int = 2, random_repeats: int = 10,
+                                  price_change_mean: int = 2, price_change_std: int = 4,
+                                  initial_price_mean: int = 2, initial_price_std: int = 4):
+    print(f'DIA non-uniform heuristic investigation with initial price mean: {initial_price_mean} and '
+          f'std: {initial_price_std}, price change mean: {price_change_mean} and price change std: {price_change_std}, '
+          f'using {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
+    model_results = []
+    pp = pprint.PrettyPrinter()
 
-    :param model_dist: The model distribution
-    :param repeat: The repeat number
-    :param repeats: The number of repeats
-    :param price_changes: The uniform price changes
-    :param initial_cost: The initial cost of the task
-    :param vcg_time_limit: The compute time limit for vcg
-    :param time_limit: The compute time limit for decentralised iterative time limit
-    :param debug_results:
-    """
-    print(f"Single price change of {', '.join([str(x) for x in price_changes])} with iterative auctions for "
-          f"{model_dist.num_tasks} tasks and {model_dist.num_servers} servers")
+    def algorithm_name(_servers):
+        return f'IP: [{" ".join([str(server.initial_price) for server in _servers])}], ' \
+               f'PC: [{" ".join([str(server.price_change) for server in _servers])}]'
 
-    data = []
-
-    # Loop, for each run all of the auctions to find out the results from each type
-    for _ in tqdm(range(repeats)):
-        # Generate the tasks and servers
+    for repeat in range(repeats):
+        print(f'\nRepeat: {repeat}')
         tasks, servers = model_dist.generate()
-        auction_results = {}
+        algorithm_results = {'model': {
+            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+        }}
+        pp.pprint(algorithm_results)
 
-        # Calculate the vcg auction
-        vcg_result = vcg_auction(tasks, servers, vcg_time_limit)
-        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
-        if debug_results:
-            print(auction_results['vcg'])
-
+        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+        algorithm_results[algorithm_name(servers)] = dia_result.store()
+        dia_result.pretty_print()
         reset_model(tasks, servers)
 
-        # Calculate the fixed vcg auction
-        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
-        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers)
-        auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
-        if debug_results:
-            print(auction_results['fixed vcg'])
+        for _ in range(random_repeats):
+            for server in servers:
+                server.price_change = max(1, int(gauss(price_change_mean, price_change_std)))
+                server.initial_price = max(1, int(gauss(initial_price_mean, initial_price_std)))
 
-        # For each uniform price change, set all of the server prices to that and solve auction
-        for price_change in price_changes:
-            reset_model(tasks, servers)
+                dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+                algorithm_results[algorithm_name(servers)] = dia_result.store()
+                dia_result.pretty_print()
+                reset_model(tasks, servers)
 
-            set_price_change(servers, price_change)
-            iterative_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-            auction_results[f'price change {price_change}'] = iterative_result.store()
-            if debug_results:
-                print(auction_results[f'price change {price_change}'])
+        model_results.append(algorithm_results)
 
-        reset_model(tasks, servers)
-
-        critical_value_policies = [
-            (vd, ss, ra)
-            for vd in [UtilityPerResources(), UtilityResourcePerDeadline(), UtilityDeadlinePerResource(), Value()]
-            for ss in [SumResources(), SumResources(True),
-                       TaskSumResources(SumPercentage()), TaskSumResources(SumPercentage(), True),
-                       TaskSumResources(SumSpeed()), TaskSumResources(SumSpeed(), True)]
-            for ra in [SumPercentage(), SumSpeed()]
-        ]
-        for (vd, ss, ra) in critical_value_policies:
-            critical_value_result = critical_value_auction(tasks, servers, vd, ss, ra)
-            auction_results[critical_value_result.algorithm] = critical_value_result.store()
-            if debug_results:
-                print(auction_results[critical_value_result.algorithm])
-
-            reset_model(tasks, servers)
-        # Append the auction results to the data
-        data.append(auction_results)
-        print(auction_results)
-
-        # Save all of the results to a file
-        filename = results_filename('price_change_auction', model_dist, repeat)
-        with open(filename, 'w') as file:
-            json.dump(data, file)
-
-
-def non_uniform_price_change_test(model_dist: ModelDistribution, repeat: int, price_changes: int = 10,
-                                  repeats: int = 20,
-                                  vcg_time_limit: int = 15, fixed_vcg_time_limit: int = 15, dia_time_limit: int = 15,
-                                  price_change_mean: int = 2, price_change_std: int = 4):
-    """
-    Test non uniform price change servers on the decentralised iterative auction
-
-    :param model_dist: The model distribution
-    :param repeat: The repeat number
-    :param price_changes: The number of price changes
-    :param repeats: The number of repeats
-    :param vcg_time_limit: The vcg compute time limit
-    :param fixed_vcg_time_limit: The fixed vcg compute time limit
-    :param dia_time_limit: The decentralised iterative compute time limit
-    :param price_change_mean: The price change mean value
-    :param price_change_std: The price change standard deviation
-    """
-    print(f'Multiple price change with iterative auctions for '
-          f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
-    data = []
-
-    # Generate all of the price changes
-    prices_changes = [[max(1, int(abs(gauss(price_change_mean, price_change_std))))
-                       for _ in range(model_dist.num_servers)] for _ in range(price_changes)]
-
-    # Loop, for each calculate the result for the results
-    for _ in tqdm(range(repeats)):
-        tasks, servers = model_dist.generate()
-        auction_results = {}
-
-        # Calculate the fixed vcg auction
-        vcg_result = vcg_auction(tasks, servers, vcg_time_limit)
-        auction_results['vcg'] = vcg_result.store() if vcg_result is not None else 'failure'
-        reset_model(tasks, servers)
-
-        # Calculate the fixed vcg auction
-        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
-        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, fixed_vcg_time_limit)
-        auction_results['fixed vcg'] = fixed_vcg_result.store() if fixed_vcg_result is not None else 'failure'
-
-        for price_changes in prices_changes:
-            reset_model(tasks, servers)
-            for server, price_change in zip(servers, price_changes):
-                server.price_change = price_change
-
-            iterative_results = optimal_decentralised_iterative_auction(tasks, servers, dia_time_limit)
-            name = f'price change: {", ".join([str(x) for x in price_changes])}'
-            auction_results[name] = iterative_results.store()
-
-        # Append the auction results to the data
-        data.append(auction_results)
-        print(auction_results)
-
-        # Save the results to a file
-        filename = results_filename('non_uniform_price_change_auction_results', model_dist, repeat)
-        with open(filename, 'w') as file:
-            json.dump(data, file)
+    # Save the results to the file
+    filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
+    with open(filename, 'w') as file:
+        json.dump(model_results, file)
+    print(f'Successful, data saved to {filename}')
 
 
 if __name__ == "__main__":
-    args = load_args()
+    args = parse_args()
     loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
-    round_num_testing(loaded_model_dist, args['repeat'], time_limit=5)
+
+    # dia_heuristic_grid_search(loaded_model_dist, args['repeat'])
+    non_uniform_server_heuristics(loaded_model_dist, args['repeat'])
