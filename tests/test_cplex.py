@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Dict, Tuple, Any
 
-from docplex.cp.model import CpoModel
+from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 from docplex.mp.model import Model
 
 from branch_bound.branch_bound import branch_bound_algorithm
@@ -23,6 +23,7 @@ def test_cplex():
     model.minimize(5 * x ** 2 - 10 * x + 1)
 
     solution = model.solve()
+    assert solution.get_solve_status() == SOLVE_STATUS_OPTIMAL
 
 
 def test_cp_optimality():
