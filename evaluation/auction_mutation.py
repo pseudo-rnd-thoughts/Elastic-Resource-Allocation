@@ -1,72 +1,85 @@
-"""Auction Mutation testing"""
+"""
+Evaluating the effect of task mutation on the results of the DIA and greedy algorithms
+
+This is done in two parts; one investigating worsening of any task attributes and the second to investigate increasing
+the value of a task for the case of military tactical networks.
+"""
 
 from __future__ import annotations
 
 import json
+import pprint
 from random import choice
-from typing import TypeVar, List
-
-from tqdm import tqdm
+from typing import TYPE_CHECKING
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from core.core import set_price_change, reset_model
-from core.task import Task, task_diff
-from extra.io import load_args
+from core.core import set_price_change, reset_model, set_initial_price
+from core.task import task_diff
+from extra.io import parse_args
 from extra.model import ModelDistribution, results_filename
 
-T = TypeVar('T')
+if TYPE_CHECKING:
+    from typing import TypeVar, List
+    from core.task import Task
+
+    T = TypeVar('T')
 
 
 def list_item_replacement(lists: List[T], old_item: T, new_item: T):
     """
-    Replace the item in the list
+    Replace the old item in the list with the new item
 
     :param lists: The list
     :param old_item: The item to remove
     :param new_item: The item to append
     """
-
     lists.remove(old_item)
     lists.append(new_item)
 
 
-def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
-                      time_limit: int = 15, price_change: int = 2, initial_cost: int = 0,
-                      mutate_percent: float = 0.1, mutate_repeats: int = 10,
-                      debug_results: bool = False):
+def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10, time_limit=2,
+                             price_change: int = 2, initial_price: int = 10,
+                             model_mutations: int = 10, mutate_percent: float = 0.1):
     """
-    Servers are mutated by a percent and the iterative auction run again checking the utility difference
+    Evaluates the effectiveness of a task mutations on if the mutated task is allocated and if so the difference in
+        price between the mutated and normal task
 
-    :param model_dist: The model
-    :param repeats: The number of repeats
-    :param price_change: The default price change
-    :param time_limit: The time limit on the decentralised iterative auction
-    :param initial_cost: The initial cost function
-    :param mutate_percent: The mutate percentage
-    :param mutate_repeats: The number of mutate repeats
-    :param debug_results: If to debug the results
+    :param model_dist: Model distribution to generate tasks and servers
+    :param repeat_num: The repeat number for saving the data
+    :param repeats: The number of model repeats
+    :param time_limit: The time limit for the decentralised iterative auction results
+    :param price_change: The price change of the servers
+    :param initial_price: The initial price of tasks for the servers
+    :param model_mutations: The number of model mutations to attempt
+    :param mutate_percent: The percentage of the model that it can be mutated by
     """
-    print(f'Mutate tasks and servers with iterative auctions for {model_dist.num_tasks} tasks and '
-          f'{model_dist.num_servers} servers')
-    data = []
+    print(f'Evaluates the possibility of tasks mutating resulting in a lower price')
+    model_results = []
+    pp = pprint.PrettyPrinter()
 
-    for _ in tqdm(range(repeats)):
-        # Generate the model and set the price change to 2 as default
+    for repeat in range(repeats):
+        print(f'\nRepeat: {repeat}')
         tasks, servers = model_dist.generate()
         set_price_change(servers, price_change)
+        set_initial_price(servers, initial_price)
+
+        mutation_results = {'model': {
+            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+        }}
+        pp.pprint(mutation_results)
 
         # Calculate the results without any mutation
-        no_mutation_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-        auction_results = {'no mutation': no_mutation_result.store()}
+        no_mutation_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+        no_mutation_result.pretty_print()
+        mutation_results['no mutation'] = no_mutation_result.store()
 
         # Save the task prices and server revenues
         task_prices = {task: task.price for task in tasks}
         allocated_tasks = {task: task.running_server is not None for task in tasks}
+        reset_model(tasks, servers)
 
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
-        for _ in range(mutate_repeats):
-            reset_model(tasks, servers)
-
+        for model_mutation in range(model_mutations):
             # Choice a random task and mutate it
             task: Task = choice(tasks)
             mutant_task = task.mutate(mutate_percent)
@@ -76,99 +89,103 @@ def mutated_task_test(model_dist: ModelDistribution, repeats: int = 50,
 
             # Find the result with the mutated task
             mutant_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-            if mutant_result is not None:
-                auction_results[f'{task.name} task'] = \
-                    mutant_result.store(difference=task_diff(task, mutant_task), mutant_value=mutant_task.price,
-                                        mutated_value=task_prices[task], allocated=allocated_tasks[task])
-                if debug_results:
-                    print(auction_results[f'{task.name} task'])
+            mutation_results[f'mutation {model_mutation}'] = mutant_result.store(**{
+                'mutant task': str(mutant_task), 'mutation difference': task_diff(task, mutant_task),
+                'mutant price': mutant_task.price, 'original price': task_prices[task],
+                'was allocated': allocated_tasks[task], 'is allocated': task.running_server is not None
+            })
+            pp.pprint(mutation_results[f'mutation {model_mutation}'])
 
             # Replace the mutant task with the task in the task list
             list_item_replacement(tasks, mutant_task, task)
 
         # Append the results to the data list
-        data.append(auction_results)
-        print(auction_results)
+        model_results.append(mutation_results)
 
         # Save all of the results to a file
-        filename = results_filename('mutate_iterative_auction', model_dist, 1)
+        filename = results_filename('task_mutation', model_dist, repeat_num)
         with open(filename, 'w') as file:
-            json.dump(data, file)
+            json.dump(model_results, file)
 
 
-def all_task_mutations_test(model_dist: ModelDistribution, repeat: int, num_mutated_tasks=5, percent: float = 0.15,
-                            time_limit: int = 15, initial_cost: int = 0, debug_results: bool = False):
+def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.15,
+                         time_limit: int = 2, price_change: int = 2, initial_price: int = 0):
     """
-    Tests all of the mutations for an iterative auction
+    Attempts a grid search version of the mutation testing above where a single task is mutated in every possible way
+        within a particular way to keep that the random testing is not missing anything
 
-    :param model_dist: The model distribution
-    :param repeat: The repeat number
-    :param percent: The mutate percentage
-    :param num_mutated_tasks: The number of mutated tasks
-    :param time_limit: The time limit on the decentralised iterative auction
-    :param initial_cost: The initial cost of the task
-    :param debug_results: If to debug the results
+    :param model_dist: The model distribution to generate servers and tasks
+    :param repeat_num: Program Repeat number
+    :param percent: The percentage by which mutations can occur within
+    :param time_limit: The time limit for the optimal decentralised iterative auction
+    :param price_change: The price change of the servers
+    :param initial_price: The initial price for the servers
     """
-    print(f'All mutation auction tests with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers, '
-          f'time limit {time_limit} sec and initial cost {initial_cost} ')
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the tasks and servers
     tasks, servers = model_dist.generate()
-    # The mutation results
-    mutation_results = []
+    set_price_change(servers, price_change)
+    set_initial_price(servers, initial_price)
 
-    task = tasks[0]
+    # The mutation results
+    mutation_results = {'model': {
+        'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+    }}
+
+    no_mutation_dia = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+    no_mutation_dia.pretty_print()
+    mutation_results['no mutation'] = no_mutation_dia.store(**{'allocated': tasks[0].running_server is not None,
+                                                               'task price': tasks[0].price})
+    reset_model(tasks, servers)
+
+    task = tasks.pop()  # The original task not mutated that is randomly selected (given the tasks are already randomly generated)
     permutations = ((int(task.required_storage * positive_percent) + 1) - task.required_storage) * \
                    ((int(task.required_computation * positive_percent) + 1) - task.required_computation) * \
                    ((int(task.required_results_data * positive_percent) + 1) - task.required_results_data) * \
                    ((task.deadline + 1) - int(task.deadline * negative_percent)) * \
                    ((task.value + 1) - int(task.value * negative_percent))
-    print(f'Number of permutations: {permutations}')
+    print(f'Number of permutations: {permutations}, original solve time: {no_mutation_dia.solve_time}, '
+          f'estimated time: {round(permutations * no_mutation_dia.solve_time / 60, 1)} minutes')
 
-    unmutated_tasks = tasks.copy()
-    # Loop, for each task then find all of the mutation of within mutate percent of the original value
-    for _ in tqdm(range(num_mutated_tasks)):
-        # Choice a random task
-        task = choice(unmutated_tasks)
-        unmutated_tasks.remove(task)
+    mutation_pos = 0
+    # Loop over all of the permutations that the task requirement resources have up to the mutate percentage
+    for required_storage in range(task.required_storage, int(task.required_storage * positive_percent) + 1):
+        for required_computation in range(task.required_computation,
+                                          int(task.required_computation * positive_percent) + 1):
+            for required_results_data in range(task.required_results_data,
+                                               int(task.required_results_data * positive_percent) + 1):
+                for value in range(int(task.value * negative_percent), int(task.value + 1)):
+                    for deadline in range(int(task.deadline * negative_percent), task.deadline + 1):
+                        # Create the new mutated task and create new tasks list with the mutant task replacing the task
+                        mutant_task = Task(f'mutated {task.name}', required_storage=required_storage,
+                                           required_computation=required_computation,
+                                           required_results_data=required_results_data, value=value, deadline=deadline)
+                        tasks.append(mutant_task)
 
-        # Loop over all of the permutations that the task requirement resources have up to the mutate percentage
-        for required_storage in range(task.required_storage,
-                                      int(task.required_storage * positive_percent) + 1):
-            for required_computation in range(task.required_computation,
-                                              int(task.required_computation * positive_percent) + 1):
-                for required_results_data in range(task.required_results_data,
-                                                   int(task.required_results_data * positive_percent) + 1):
-                    for value in range(int(task.value * negative_percent), task.value + 1):
-                        for deadline in range(int(task.deadline * negative_percent), task.deadline + 1):
-                            # Create the new mutated task and create new tasks list with the mutant task replacing the task
-                            mutant_task = Task(f'mutated {task.name} task', required_storage, required_computation,
-                                               required_results_data, value, deadline)
-                            list_item_replacement(tasks, task, mutant_task)
+                        # Calculate the task price with the mutated task
+                        mutated_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
+                        mutated_result.pretty_print()
+                        mutation_results[f'Mutation {mutation_pos}'] = mutated_result.store(**{
+                            'required storage': required_storage, 'required computation': required_computation,
+                            'required results data': required_results_data, 'value': value, 'deadline': deadline,
+                            'allocated': mutant_task.running_server is not None, 'task price': mutant_task.price
+                        })
+                        mutation_pos += 1
 
-                            # Calculate the task price with the mutated task
-                            result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-                            if result is not None:
-                                mutation_results.append(result.store(difference=task_diff(mutant_task, task),
-                                                                     mutant_value=mutant_task))
-                                if debug_results:
-                                    print(
-                                        result.store(difference=task_diff(mutant_task, task), mutant_value=mutant_task))
-
-                            # Remove the mutant task and read the task to the list of tasks and reset the model
-                            list_item_replacement(tasks, mutant_task, task)
-                            reset_model(tasks, servers)
+                        # Remove the mutant task and read the task to the list of tasks and reset the model
+                        tasks.remove(mutant_task)
+                        reset_model(tasks, servers)
 
         # Save all of the results to a file
-        filename = results_filename('all_mutations_iterative_auction', model_dist, repeat)
+        filename = results_filename('mutation_grid_search', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(mutation_results, file)
 
 
 if __name__ == "__main__":
-    args = load_args()
+    args = parse_args()
     loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
-    mutated_task_test(loaded_model_dist, time_limit=5)
-    # all_task_mutations_test(loaded_model_dist, args['repeat'])
+    # task_mutation_evaluation(loaded_model_dist, args.repeat)
+    # mutation_grid_search(loaded_model_dist, args.repeat)
