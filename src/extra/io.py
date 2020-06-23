@@ -5,7 +5,7 @@ Input/Output functions
 import argparse
 import re
 from enum import auto, Enum
-from typing import Iterable, Tuple, Dict, Any
+from typing import Iterable, Tuple
 
 import matplotlib.pyplot as plt
 
@@ -76,22 +76,19 @@ def analysis_filename(test_name: str, axis: str) -> str:
         return f'{test_name}_{axis.lower().replace(" ", "_")}'
 
 
-def parse_args() -> Dict[str, Any]:
+def parse_args() -> argparse.Namespace:
     """
     Gets all of the arguments and places in a dictionary
 
-    :return: All of the arguments in a dictionary
+    :return: Return the parsed arguments
     """
     parser = argparse.ArgumentParser(description='Process model arguments')
-    parser.add_argument('--file', '-f', type=str, help='Location of the model file')
+    parser.add_argument('--model-file', '-f', type=str, help='Location of the model file')
     parser.add_argument('--tasks', '-t', type=int, help='Number of tasks', default=None)
     parser.add_argument('--servers', '-s', type=int, help='Number of servers', default=None)
     parser.add_argument('--repeat', '-r', type=int, help='Number of repeats', default=0)
+    parser.add_argument('--extra', '-e', type=str, help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()
-    return {
-        'model': f'models/{args.file}.mdl',
-        'tasks': args.tasks,
-        'servers': args.servers,
-        'repeat': args.repeats
-    }
+    args.model = f'models/{args.model}.mdl'
+    return args

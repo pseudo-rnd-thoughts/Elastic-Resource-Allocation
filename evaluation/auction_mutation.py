@@ -185,7 +185,10 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
 
 if __name__ == "__main__":
     args = parse_args()
-    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
-    # task_mutation_evaluation(loaded_model_dist, args.repeat)
-    # mutation_grid_search(loaded_model_dist, args.repeat)
+    if args.extra == '' or args.extra == 'task mutation':
+        task_mutation_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'mutation grid search':
+        mutation_grid_search(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    else:
+        raise Exception(f'Unknown extra argument: {args.extra}')

@@ -84,6 +84,4 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
 
 if __name__ == "__main__":
     args = parse_args()
-    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
-
-    server_resource_ratio(loaded_model_dist, args['repeat'])
+    server_resource_ratio(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)

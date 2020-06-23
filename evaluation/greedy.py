@@ -87,6 +87,4 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
 if __name__ == "__main__":
     args = parse_args()
-    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
-
-    greedy_evaluation(loaded_model_dist, args['repeat'])
+    greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)

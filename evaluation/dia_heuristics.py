@@ -114,7 +114,10 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
 
 if __name__ == "__main__":
     args = parse_args()
-    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
-    # dia_heuristic_grid_search(loaded_model_dist, args['repeat'])
-    non_uniform_server_heuristics(loaded_model_dist, args['repeat'])
+    if args.extra == '' or args.extra == 'heuristic grid search':
+        dia_heuristic_grid_search(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'non uniform heuristics':
+        non_uniform_server_heuristics(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    else:
+        raise Exception(f'Unknown extra argument: {args.extra}')
