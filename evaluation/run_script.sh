@@ -14,6 +14,6 @@ source activate env37
 module load cplex/12.7.1
 
 # Run the python script
-cmd="python -m evaluation.$file -f=$model_file -t=$num_task -s=$num_servers -r=$repeat -e=$extra"
+cmd="python -m evaluation.$file -f=$model_file -t=$num_task -s=$num_servers -r=$repeat -e='$extra'"
 echo "Running $cmd"
 eval "$cmd"
