@@ -2,6 +2,8 @@
 Evaluating the effectiveness of the different auction algorithms using different models, number of tasks and servers
 """
 
+from __future__ import annotations
+
 import json
 import pprint
 
