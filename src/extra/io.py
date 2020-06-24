@@ -83,12 +83,17 @@ def parse_args() -> argparse.Namespace:
     :return: Return the parsed arguments
     """
     parser = argparse.ArgumentParser(description='Process model arguments')
-    parser.add_argument('--model-file', '-f', type=str, help='Location of the model file')
-    parser.add_argument('--tasks', '-t', type=int, help='Number of tasks', default=None)
-    parser.add_argument('--servers', '-s', type=int, help='Number of servers', default=None)
-    parser.add_argument('--repeat', '-r', type=int, help='Number of repeats', default=0)
-    parser.add_argument('--extra', '-e', type=str, help='Extra information to pass to the script', default='')
+    parser.add_argument('--file', '-f', help='Location of the model file')
+    parser.add_argument('--tasks', '-t', help='Number of tasks', default=None)
+    parser.add_argument('--servers', '-s', help='Number of servers', default=None)
+    parser.add_argument('--repeat', '-r', help='Number of repeats', default=0)
+    parser.add_argument('--extra', '-e', help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()
-    args.model = f'models/{args.model}.mdl'
+    args.file = f'models/{args.file}.mdl'
+    if args.tasks == '':
+        args.tasks = None
+    if args.servers == '':
+        args.servers = None
+
     return args

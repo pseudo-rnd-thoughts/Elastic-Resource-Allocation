@@ -20,7 +20,7 @@ def test_model_distribution():
     files = os.listdir('models/')
     for file in files:
         if file == "caroline.mdl":
-            model_dist = ModelDistribution(f'models/caroline.mdl', num_tasks=2)
+            model_dist = ModelDistribution('models/caroline.mdl', num_tasks=2)
 
             tasks, servers = model_dist.generate()
             assert len(tasks) == 2
@@ -84,3 +84,17 @@ def test_caroline_model():
         greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
         print(f'{num_tasks:12} | {greedy_result.percentage_allocation:13} | '
               f'{greedy_result.percentage_social_welfare:7}')
+
+
+if __name__ == "__main__":
+    # PYTHONPATH=./src/ python3 tests/test_models.py -f='caroline' -t='28' -s='', -r='0' -e='test message'
+    args = parse_args()
+    print(f'Model file: {args.file}, tasks: {args.tasks}, servers: {args.servers}, '
+          f'repeat: {args.repeat}, extra: "{args.extra}"')
+
+    model_dist = ModelDistribution(args.file, args.tasks, args.servers)
+
+    if args.extra == 'test message':
+        print('success')
+    else:
+        print('failure')
