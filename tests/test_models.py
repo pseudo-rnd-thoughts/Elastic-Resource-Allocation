@@ -9,6 +9,10 @@ import sys
 
 from extra.io import parse_args
 from extra.model import ModelDistribution
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.value_density import UtilityDeadlinePerResource
 
 
 def test_model_distribution():
@@ -69,3 +73,14 @@ def test_args():
     # Full
     eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], 'models/test.mdl', 7, 8, 9)
     eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], 'models/test.mdl', 10, 11, 12)
+
+
+def test_caroline_model():
+    print(f'\nNum of Tasks | Percent Tasks | Percent Social Welfare')
+    for num_tasks in range(8, 60, 4):
+        model = ModelDistribution('models/caroline.mdl', num_tasks=num_tasks)
+        tasks, servers = model.generate()
+
+        greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+        print(f'{num_tasks:12} | {greedy_result.percentage_allocation:13} | '
+              f'{greedy_result.percentage_social_welfare:7}')
