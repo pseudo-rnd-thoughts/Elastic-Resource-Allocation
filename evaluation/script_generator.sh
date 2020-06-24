@@ -8,12 +8,14 @@ tasks=()
 servers=()
 while true; do
   read -p 'Num of tasks: ' $num_task
+
   if [ "$num_task" == "" ]; then
     break
   else
     read -p 'Num of servers: ' num_servers
   fi
-  jobs+=("$num_jobs")
+
+  tasks+=("$num_tasks")
   servers+=("$num_servers")
 done
 
