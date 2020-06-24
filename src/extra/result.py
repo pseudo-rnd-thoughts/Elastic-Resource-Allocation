@@ -24,9 +24,9 @@ class Result:
             'algorithm': algorithm_name,
             'solve time': round(solve_time, 3),
             'social welfare': sum(task.value for server in servers for task in server.allocated_tasks),
-            'percentage task value allocated': round(sum(task.value for task in tasks if task.running_server) /
-                                                     sum(task.value for task in tasks), 3),
-            'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
+            'percentage social welfare': round(sum(task.value for task in tasks if task.running_server) /
+                                               sum(task.value for task in tasks), 3),
+            'percentage allocation': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
         }
 
         if limited:
@@ -85,3 +85,13 @@ class Result:
     def solve_time(self):
         """Solve time property"""
         return self.data['solve time']
+
+    @property
+    def percentage_social_welfare(self):
+        """Percentage social welfare"""
+        return self.data['percentage social welfare']
+
+    @property
+    def percentage_allocation(self):
+        """Percentage of task's allocated"""
+        return self.data['percentage allocation']
