@@ -40,14 +40,15 @@ class ResourceAllocationPolicy(ABC):
         # TODO update this to cplex or KKT
         model = CpoModel('resource allocation')
 
-        loading = model.integer_var(min=1, max=server.available_bandwidth)
+        loading = model.integer_var(min=1, max=server.available_bandwidth-1)
         compute = model.integer_var(min=1, max=server.available_computation)
-        sending = model.integer_var(min=1, max=server.available_bandwidth)
+        sending = model.integer_var(min=1, max=server.available_bandwidth-1)
 
         model.add(task.required_storage * compute * sending +
                   loading * task.required_computation * sending +
                   loading * compute * task.required_results_data <=
                   task.deadline * loading * compute * sending)
+        model.add(loading + sending <= server.available_bandwidth)
 
         model.minimize(self.resource_evaluator(task, server, loading, compute, sending))
         model_solution = model.solve(log_output=None)
