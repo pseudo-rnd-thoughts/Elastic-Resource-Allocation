@@ -10,7 +10,7 @@ import pprint
 from auctions.critical_value_auction import critical_value_auction
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
-from core.core import reset_model
+from core.core import reset_model, set_initial_price, set_price_change
 from core.fixed_task import FixedTask, FixedSumSpeeds
 from extra.io import parse_args
 from extra.model import ModelDistribution, results_filename
@@ -40,6 +40,8 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
+        set_price_change(servers, 3)
+        set_initial_price(servers, 15)
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
