@@ -80,6 +80,14 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
 
 
 def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+    """
+    Runs the fixed optimal cplex algorithm solver with a time limit
+
+    :param tasks: List of fixed tasks
+    :param servers: List of servers
+    :param time_limit: Cplex time limit
+    :return: Optional results
+    """
     model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),

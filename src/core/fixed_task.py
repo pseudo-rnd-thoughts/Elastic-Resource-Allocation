@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
-from math import exp
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel

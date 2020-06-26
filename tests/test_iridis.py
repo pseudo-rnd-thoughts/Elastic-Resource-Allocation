@@ -17,6 +17,9 @@ from optimal.optimal import optimal
 
 
 def main():
+    """
+    Runs the main script for testing iridis
+    """
     model = ModelDistribution('models/basic.mdl', 20, 3)
     tasks, servers = model.generate()
     fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]

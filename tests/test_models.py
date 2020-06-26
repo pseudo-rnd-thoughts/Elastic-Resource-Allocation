@@ -50,6 +50,16 @@ def test_args():
     print()
 
     def eval_args(updated_args, model, tasks, servers, repeat):
+        """
+        Evaluates the arguments by updating the arguments and then testing the model, tasks, servers and repeat are
+            equalled to the parsed arguments
+
+        :param updated_args: List of updated args
+        :param model: Value for the model location
+        :param tasks: Value for the number of tasks
+        :param servers: Value for the number of servers
+        :param repeat: Value for the number of repeats
+        """
         sys.argv = ['location'] + updated_args
         args = parse_args()
         assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
@@ -88,13 +98,12 @@ def test_caroline_model():
 
 if __name__ == "__main__":
     # PYTHONPATH=./src/ python3 tests/test_models.py -f='caroline' -t='28' -s='', -r='0' -e='test message'
-    args = parse_args()
-    print(f'Model file: {args.file}, tasks: {args.tasks}, servers: {args.servers}, '
-          f'repeat: {args.repeat}, extra: "{args.extra}"')
+    loaded_args = parse_args()
+    print(f'Model file: {loaded_args.file}, tasks: {loaded_args.tasks}, servers: {loaded_args.servers}, '
+          f'repeat: {loaded_args.repeat}, extra: "{loaded_args.extra}"')
 
-    model_dist = ModelDistribution(args.file, args.tasks, args.servers)
-
-    if args.extra == 'test message':
+    loaded_model_dist = ModelDistribution(loaded_args.file, loaded_args.tasks, loaded_args.servers)
+    if loaded_args.extra == 'test message':
         print('success')
     else:
         print('failure')

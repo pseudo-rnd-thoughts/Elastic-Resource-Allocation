@@ -86,6 +86,14 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
 
 
 def relaxed(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+    """
+    Runs the relaxed task allocation solver
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param time_limit: The time limit for the solver
+    :return: Optional relaxed results
+    """
     model_solution, super_server = relaxed_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Relaxed', tasks, [super_server], round(model_solution.get_solve_time(), 2),

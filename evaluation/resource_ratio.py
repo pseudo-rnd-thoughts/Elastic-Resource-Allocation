@@ -24,6 +24,18 @@ from optimal.relaxed import relaxed
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
                           optimal_time_limit: int = 15, fixed_optimal_time_limit: int = 15, relaxed_time_limit: int = 15,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
+    """
+    Evaluates the difference in social welfare when the ratio of computational to bandwidth capacity is changed between
+        different algorithms: greedy, fixed, optimal and relax
+
+    :param model_dist: The model distribution
+    :param repeat_num: The repeat number
+    :param repeats: The number of repeats
+    :param optimal_time_limit: The optimal solver time limit
+    :param fixed_optimal_time_limit: The fixed optimal solver time limit
+    :param relaxed_time_limit: The relaxed solver time limit
+    :param ratios: List of ratios to test
+    """
     model_results = []
     pp = pprint.PrettyPrinter()
 
@@ -48,19 +60,19 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
             # Optimal
             optimal_result = optimal(tasks, servers, optimal_time_limit)
             algorithm_results[optimal_result.algorithm] = optimal_result.store(ratio=ratio)
-            optimal_result.pretty_print()
+            pp.pprint(algorithm_results[optimal_result.algorithm])
             reset_model(tasks, servers)
 
             # Fixed optimal
             fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store(ratio=ratio)
-            fixed_optimal_result.pretty_print()
+            pp.pprint(algorithm_results[fixed_optimal_result.algorithm])
             reset_model(fixed_tasks, servers)
 
             # Find the relaxed solution
             relaxed_result = relaxed(tasks, servers, relaxed_time_limit)
-            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
-            relaxed_result.pretty_print()
+            algorithm_results[relaxed_result.algorithm] = relaxed_result.store(ratio=ratio)
+            pp.pprint(algorithm_results[relaxed_result.algorithm])
             reset_model(tasks, servers)
 
             # Loop over all of the greedy policies permutations
@@ -69,15 +81,15 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
                     for resource_allocation_policy in resource_allocation_policies:
                         greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                          resource_allocation_policy)
-                        algorithm_results[greedy_result.algorithm] = greedy_result.store()
-                        greedy_result.pretty_print()
+                        algorithm_results[greedy_result.algorithm] = greedy_result.store(ratio=ratio)
+                        pp.pprint(algorithm_results[greedy_result.algorithm])
                         reset_model(tasks, servers)
 
             ratio_results[f'ratio {ratio}'] = algorithm_results
         model_results.append(ratio_results)
 
         # Save the results to the file
-        filename = results_filename('server_resource_ratio', model_dist, repeat_num)
+        filename = results_filename('resource_ratio', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
 

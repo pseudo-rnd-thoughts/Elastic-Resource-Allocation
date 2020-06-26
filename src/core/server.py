@@ -145,6 +145,11 @@ class Server:
         self.available_bandwidth = bandwidth_capacity
 
     def save(self):
+        """
+        Saves the server attributes
+
+        :return: Dictionary for the server attributes
+        """
         return {
             'name': self.name,
             'storage capacity': self.storage_capacity,
@@ -154,8 +159,24 @@ class Server:
             'initial price': self.initial_price
         }
 
+    def __str__(self) -> str:
+        if self.available_storage == self.storage_capacity and \
+                self.available_computation == self.computation_capacity and \
+                self.available_bandwidth == self.bandwidth_capacity:
+            return f'{self.name} Server - Storage capacity: {self.storage_capacity}, ' \
+                   f'Computational capacity: {self.computation_capacity}, Bandwidth capacity: {self.bandwidth_capacity}'
+        else:
+            return f'{self.name} Server - Available storage: {self.available_storage}, ' \
+                   f'computational: {self.available_computation}, bandwidth: {self.available_bandwidth}'
+
     @staticmethod
     def load(server_spec: Dict[str, Any]) -> Server:
+        """
+        Loads the server specifications for the server attributes
+
+        :param server_spec: Dictionary of server attributes
+        :return: New server instantiated with the dictionary of the server attributes
+        """
         return Server(
             name=server_spec['name'], storage_capacity=server_spec['storage capacity'],
             computation_capacity=server_spec['computation capacity'],
@@ -164,12 +185,20 @@ class Server:
         )
 
     @staticmethod
-    def load_dist(server_dist: Dict[str, Any], server_num: int) -> Server:
+    def load_dist(server_dist: Dict[str, Any], server_id: int) -> Server:
+        """
+        Loads a server distribution to instantiate a new server
+
+        :param server_dist: Json dictionary for a server distribution
+        :param server_id: The server number as a unique identifier
+        :return: A new server using the server distribution and identifier
+        """
         def gaussian(mean, std) -> int:
-            return int(gauss(mean, std))
+            """Generates a new positive gaussian distribution from a mean and standard distribution"""
+            return max(1, int(gauss(mean, std)))
 
         return Server(
-            name=f'{server_dist["name"]} {server_num}',
+            name=f'{server_dist["name"]} {server_id}',
             storage_capacity=gaussian(server_dist['storage mean'], server_dist['storage std']),
             computation_capacity=gaussian(server_dist['computation mean'], server_dist['computation std']),
             bandwidth_capacity=gaussian(server_dist['bandwidth mean'], server_dist['bandwidth std'])
@@ -177,7 +206,13 @@ class Server:
 
 
 def server_diff(normal_server: Server, mutate_server: Server) -> str:
-    """The difference between two severs"""
+    """
+    Returns a string difference between two servers
+
+    :param normal_server: The normal server
+    :param mutate_server: The mutated server
+    :return: A string containing the differences between the normal and mutated server
+    """
     return f'{normal_server.name}: {normal_server.storage_capacity - mutate_server.storage_capacity}, ' \
            f'{normal_server.computation_capacity - mutate_server.computation_capacity}, ' \
            f'{normal_server.bandwidth_capacity - mutate_server.bandwidth_capacity}'

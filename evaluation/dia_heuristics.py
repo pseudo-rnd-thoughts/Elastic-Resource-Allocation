@@ -70,6 +70,19 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
                                   time_limit: int = 2, random_repeats: int = 10,
                                   price_change_mean: int = 2, price_change_std: int = 4,
                                   initial_price_mean: int = 2, initial_price_std: int = 4):
+    """
+    Evaluates the effect of the server heuristics when they are non-uniform (all server's dont use the same value)
+
+    :param model_dist: The model distribution
+    :param repeat_num: The repeat number
+    :param repeats: The number of repeats
+    :param time_limit: The time limit for the decentralised iterative auction
+    :param random_repeats: The number of random repeats for each model generated
+    :param price_change_mean: The mean price change value
+    :param price_change_std: The standard deviation of the price change value
+    :param initial_price_mean: The mean initial change value
+    :param initial_price_std: The standard deviation of the initial change value
+    """
     print(f'DIA non-uniform heuristic investigation with initial price mean: {initial_price_mean} and '
           f'std: {initial_price_std}, price change mean: {price_change_mean} and price change std: {price_change_std}, '
           f'using {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -77,6 +90,12 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
     pp = pprint.PrettyPrinter()
 
     def algorithm_name(_servers):
+        """
+        Generates the algorithm name from the initial price and price change of a list of servers
+
+        :param _servers: List of servers
+        :return: String representing the algorithm name
+        """
         return f'IP: [{" ".join([str(server.initial_price) for server in _servers])}], ' \
                f'PC: [{" ".join([str(server.price_change) for server in _servers])}]'
 
