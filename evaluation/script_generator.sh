@@ -13,6 +13,9 @@ while true; do
     break
   else
     read -p 'Num of servers: ' num_servers
+    if [ "$num_servers" == "" ]; then
+      $num_servers = " "
+    fi
   fi
 
   tasks+=("$num_tasks")
@@ -20,10 +23,13 @@ while true; do
 done
 
 read -p 'Extra info: ' extra
+if [ "$extra" == "" ]; then
+  $extra = " "
+fi
 
 for (( pos = 0; pos < ${#tasks[@]}; pos++ )); do
   for (( repeat = 0; repeat < repeats; repeat++ )); do
-    cmd='qsub -v file='$script',model_file='$model_file',num_tasks='${tasks[pos]}',num_servers='${servers[pos]}',repeat='$repeat',extra='$extra' run_script.sh'
+    cmd="qsub -v file='$script',model_file='$model_file',num_tasks='${tasks[pos]}',num_servers='${servers[pos]}',repeat='$repeat',extra='$extra' run_script.sh"
     printf "Command: $cmd \n"
     eval "$cmd"
   done

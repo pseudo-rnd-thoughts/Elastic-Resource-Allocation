@@ -92,9 +92,11 @@ def parse_args() -> argparse.Namespace:
 
     args = parser.parse_args()
     args.file = f'models/{args.file}.mdl'
-    if args.tasks == '':
+    if args.tasks == ' ':
         args.tasks = None
-    if args.servers == '':
+    if args.servers == ' ':
         args.servers = None
+    if args.extra == ' ':
+        args.extra = ''
 
     return args
