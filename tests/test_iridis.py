@@ -13,7 +13,7 @@ from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityPerResources
 from optimal.fixed_optimal import fixed_optimal
-from optimal.optimal import optimal
+from optimal.flexible_optimal import flexible_optimal
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     tasks, servers = model.generate()
     fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
 
-    optimal_result = optimal(tasks, servers)
+    optimal_result = flexible_optimal(tasks, servers)
     optimal_result.pretty_print()
 
     reset_model(tasks, servers)

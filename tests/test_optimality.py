@@ -16,7 +16,7 @@ from core.super_server import SuperServer
 from extra.io import parse_args
 from extra.pprint import print_model
 from extra.model import ModelDistribution, results_filename
-from optimal.optimal import optimal_solver
+from optimal.flexible_optimal import optimal_solver
 
 
 def test_optimal_time_limit(model_dist: ModelDistribution,
