@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from core.task import Task
 
 matplotlib.rcParams['font.family'] = 'monospace'
+matplotlib.rc('text', usetex=True)
 
 
 def minimise_resource_allocation(servers: List[Server]):
@@ -28,6 +29,7 @@ def minimise_resource_allocation(servers: List[Server]):
     :param servers: List of servers
     """
     for server in servers:
+
         model = CpoModel('MinimumAllocation')
 
         loading_speeds: Dict[Task, CpoVariable] = {}
@@ -52,14 +54,13 @@ def minimise_resource_allocation(servers: List[Server]):
 
         model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
         model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= server.computation_capacity)
-        model.add(sum(
-            loading_speeds[task] + sending_speeds[task] for task in
-            server.allocated_tasks) <= server.bandwidth_capacity)
+        model.add(sum(loading_speeds[task] + sending_speeds[task]
+                      for task in server.allocated_tasks) <= server.bandwidth_capacity)
 
-        model.minimize(
-            sum(loading_speeds[task] + compute_speeds[task] + sending_speeds[task] for task in server.allocated_tasks))
+        model.minimize(sum(loading_speeds[task] + compute_speeds[task] + sending_speeds[task]
+                           for task in server.allocated_tasks))
 
-        model_solution = model.solve(log_output=None, TimeLimit=20)
+        model_solution = model.solve(log_output=None, TimeLimit=2)
 
         allocated_tasks = server.allocated_tasks.copy()
         server.reset_allocations()
@@ -71,7 +72,8 @@ def minimise_resource_allocation(servers: List[Server]):
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
-                            save_formats: Iterable[ImageFormat] = (), minimum_allocation: bool = False):
+                            save_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF),
+                            minimum_allocation: bool = False):
     """
     Plots the allocation results
 
@@ -122,7 +124,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'])
 
-    axe.set_title(title, fontsize=18)
+    axe.set_title(title, fontsize=16)
 
     pos = -0.1 if sum(task.running_server is not None for task in tasks) else 0.0
     server_resources_legend = [axe.bar(0, 0, color="gray", hatch=hatching * i) for i in range(3)]
@@ -131,5 +133,5 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                loc=[1.025, pos], title=r'\textbf{Server resources}')
     axe.add_artist(tasks_legend)
 
-    save_plot(title.lower().replace(' ', '_'), './figures/allocation', image_formats=save_formats)
+    save_plot(title.lower().replace(' ', '_'), 'allocation', image_formats=save_formats)
     plt.show()
