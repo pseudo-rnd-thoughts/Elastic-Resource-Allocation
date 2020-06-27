@@ -20,7 +20,7 @@ class ImageFormat(Enum):
 
 
 def save_plot(name: str, test_name: str, additional: str = '',
-              image_formats: Iterable[ImageFormat] = (), lgd=None):
+              image_formats: Iterable[ImageFormat] = (), lgd=None, dpi=1000):
     """
     Saves the plot to a file of the particular image format
 
@@ -29,23 +29,24 @@ def save_plot(name: str, test_name: str, additional: str = '',
     :param additional: Additional information to add to the filename
     :param image_formats: The image format list
     :param lgd: The legend to be added to the plot when saved
+    :param dpi: The dpi of the images
     """
     if lgd:
         lgd = (lgd,)
 
     for image_format in image_formats:
         if image_format == ImageFormat.EPS:
-            filename = f'../figures/{test_name}/eps/{name}{additional}.eps'
+            filename = f'figures/{test_name}/eps/{name}{additional}.eps'
             print(f"Save file location: {filename}")
-            plt.savefig(filename, format='eps', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+            plt.savefig(filename, format='eps', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PNG:
-            filename = f'../figures/{test_name}/png/{name}{additional}.png'
+            filename = f'figures/{test_name}/png/{name}{additional}.png'
             print(f'Save file location: {filename}')
-            plt.savefig(filename, format='png', bbox_extra_artists=lgd, bbox_inches='tight')
+            plt.savefig(filename, format='png', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PDF:
-            filename = f'../figures/{test_name}/eps/{name}{additional}.pdf'
+            filename = f'figures/{test_name}/pdf/{name}{additional}.pdf'
             print(f'Save file location: {filename}')
-            plt.savefig(filename, format='pdf', dpi=1000, bbox_extra_artists=lgd, bbox_inches='tight')
+            plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
 
 # noinspection LongLine
