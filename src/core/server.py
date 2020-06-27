@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Dict, Any
 if TYPE_CHECKING:
     from typing import List
 
-    from core.task import Task
+    from src.core.task import Task
 
 
 class Server:
@@ -193,6 +193,7 @@ class Server:
         :param server_id: The server number as a unique identifier
         :return: A new server using the server distribution and identifier
         """
+
         def gaussian(mean, std) -> int:
             """Generates a new positive gaussian distribution from a mean and standard distribution"""
             return max(1, int(gauss(mean, std)))

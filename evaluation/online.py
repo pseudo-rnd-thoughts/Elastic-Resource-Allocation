@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from extra.model import ModelDistribution
+from src.extra.model import ModelDistribution
 
 
 def batch_online(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,

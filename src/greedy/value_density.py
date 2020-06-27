@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import List
 
-    from core.task import Task
+    from src.core.task import Task
 
 
 class ValueDensity(ABC):

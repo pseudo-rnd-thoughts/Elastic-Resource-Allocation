@@ -13,17 +13,17 @@ from typing import TYPE_CHECKING, Tuple, Iterable, TypeVar
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import reset_model, server_task_allocation, debug
-from extra.result import Result
-from greedy.value_density import ResourceSum
+from src.core.core import reset_model, server_task_allocation, debug
+from src.extra.result import Result
+from src.greedy.value_density import ResourceSum
 
 if TYPE_CHECKING:
     from typing import List
 
-    from greedy.resource_allocation_policy import ResourceAllocationPolicy
-    from core.server import Server
-    from core.task import Task
-    from greedy.value_density import ValueDensity
+    from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
+    from src.core.server import Server
+    from src.core.task import Task
+    from src.greedy.value_density import ValueDensity
 
     T = TypeVar('T')
 
@@ -126,7 +126,8 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
             server_task_allocation(server, task, s, w, r)
 
     task_price = max(server_revenue - server.revenue + server.price_change, server.initial_price)
-    debug(f'Original revenue: {server_revenue}, new revenue: {server.revenue}, price change: {server.price_change}', debug_revenue)
+    debug(f'Original revenue: {server_revenue}, new revenue: {server.revenue}, price change: {server.price_change}',
+          debug_revenue)
     possible_speeds = {
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server is not None)
         for task in tasks + [new_task]}
@@ -236,7 +237,8 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
 
         if min_price == -1 or min_price < task.value:
             debug(f'[+] {task.name} Task set to {min_server.name} with price {min_price} '
-                  f'and new {min_server.name} server revenue {min_server.revenue + min_server.price_change}', debug_allocation)
+                  f'and new {min_server.name} server revenue {min_server.revenue + min_server.price_change}',
+                  debug_allocation)
             allocate_task(task, min_price, min_server, unallocated_tasks, min_speeds)
         else:
             debug(f'[-] Removing {task.name} Task, min price is {min_price} and task value is {task.value}',

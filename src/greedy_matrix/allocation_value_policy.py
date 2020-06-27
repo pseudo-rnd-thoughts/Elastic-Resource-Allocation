@@ -7,8 +7,8 @@ from math import exp
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.task import Task
-    from core.server import Server
+    from src.core.task import Task
+    from src.core.server import Server
 
 
 class AllocationValuePolicy:

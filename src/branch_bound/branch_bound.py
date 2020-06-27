@@ -9,15 +9,16 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
-from branch_bound.feasibility_allocations import flexible_feasible_allocation
-from branch_bound.priority_queue import Comparison, PriorityQueue
-from extra.pprint import print_allocation
-from extra.result import Result
+from src.branch_bound.feasibility_allocations import flexible_feasible_allocation
+from src.branch_bound.priority_queue import Comparison, PriorityQueue
+from src.extra.pprint import print_allocation
+from src.extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
-    from core.server import Server
-    from core.task import Task
+
+    from src.core.server import Server
+    from src.core.task import Task
 
 
 def copy(allocation):

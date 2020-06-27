@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Optional, Dict, Any
 
-    from core.server import Server
+    from src.core.server import Server
 
 
 class Task:
@@ -156,6 +156,7 @@ class Task:
         :param task_id: A task identifier value
         :return: A new task based on a task distribution
         """
+
         def positive_gaussian(mean, std) -> int:
             """
             Uses gaussian distribution to generate a random number greater than 0 for a resource

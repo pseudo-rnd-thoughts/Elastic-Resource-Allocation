@@ -8,17 +8,17 @@ import json
 import pprint
 from typing import Iterable
 
-from core.core import reset_model
-from core.fixed_task import FixedTask, FixedSumSpeeds
-from extra.io import parse_args
-from extra.model import ModelDistribution, results_filename
-from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.value_density import policies as value_densities
-from optimal.fixed_optimal import fixed_optimal
-from optimal.flexible_optimal import flexible_optimal
-from optimal.relaxed_flexible import relaxed_flexible
+from src.core.core import reset_model
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.extra.io import parse_args
+from src.extra.model import ModelDistribution, results_filename
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
+from src.greedy.server_selection_policy import policies as server_selection_policies
+from src.greedy.value_density import policies as value_densities
+from src.optimal.fixed_optimal import fixed_optimal
+from src.optimal.flexible_optimal import flexible_optimal
+from src.optimal.relaxed_flexible import relaxed_flexible
 
 
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,

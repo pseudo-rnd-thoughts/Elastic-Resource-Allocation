@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE
 
-from extra.result import Result
+from src.extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
 
-    from core.task import Task
-    from core.server import Server
+    from src.core.task import Task
+    from src.core.server import Server
 
 
 def feasible_allocation(task_server_allocations: Dict[Server, List[Task]]) \

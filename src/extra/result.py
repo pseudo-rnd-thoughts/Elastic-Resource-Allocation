@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import List
 
-    from core.server import Server
-    from core.task import Task
+    from src.core.server import Server
+    from src.core.task import Task
 
 
 class Result:

@@ -6,8 +6,8 @@ from typing import List, Tuple, Dict
 
 from docplex.cp.solution import CpoSolveResult
 
-from core.server import Server
-from core.task import Task
+from src.core.server import Server
+from src.core.task import Task
 
 
 def print_task_values(task_values: List[Tuple[Task, float]]):

@@ -10,13 +10,13 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable
 
-from extra.io import ImageFormat, save_plot
+from src.extra.io import ImageFormat, save_plot
 
 if TYPE_CHECKING:
     from typing import List, Iterable, Dict
 
-    from core.server import Server
-    from core.task import Task
+    from src.core.server import Server
+    from src.core.task import Task
 
 matplotlib.rcParams['font.family'] = 'monospace'
 matplotlib.rc('text', usetex=True)

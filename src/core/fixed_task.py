@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 
-from core.task import Task
+from src.core.task import Task
 
 if TYPE_CHECKING:
     from typing import Tuple
 
-    from core.server import Server
+    from src.core.server import Server
 
 
 class FixedTask(Task):

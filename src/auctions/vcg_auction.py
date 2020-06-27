@@ -11,17 +11,17 @@ import functools
 from time import time
 from typing import TYPE_CHECKING, TypeVar
 
-from core.core import reset_model, server_task_allocation, debug
-from extra.result import Result
-from optimal.flexible_optimal import optimal_solver
-from optimal.fixed_optimal import fixed_optimal_solver
+from src.core.core import reset_model, server_task_allocation, debug
+from src.extra.result import Result
+from src.optimal.fixed_optimal import fixed_optimal_solver
+from src.optimal.flexible_optimal import optimal_solver
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
 
-    from core.server import Server
-    from core.task import Task
-    from core.fixed_task import FixedTask
+    from src.core.server import Server
+    from src.core.task import Task
+    from src.core.fixed_task import FixedTask
 
     T = TypeVar('T')
 

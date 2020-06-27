@@ -10,15 +10,14 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 
 from src.core.core import server_task_allocation, debug
-from extra.result import Result
+from src.extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Tuple
 
-    from core.server import Server
-    from core.task import Task
-
-    from greedy_matrix.allocation_value_policy import AllocationValuePolicy
+    from src.core.server import Server
+    from src.core.task import Task
+    from src.greedy_matrix.allocation_value_policy import AllocationValuePolicy
 
 
 def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:

@@ -92,7 +92,7 @@ def test_caroline_model():
         tasks, servers = model.generate()
 
         greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-        print(f'{num_tasks:12} | {greedy_result.percentage_allocation:13} | '
+        print(f'{num_tasks:12} | {greedy_result.percentage_tasks_allocated:13} | '
               f'{greedy_result.percentage_social_welfare:7}')
 
 

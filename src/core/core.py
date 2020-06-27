@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Iterable, List
 
-    from core.server import Server
-    from core.task import Task
+    from src.core.server import Server
+    from src.core.task import Task
 
 
 def server_task_allocation(server: Server, task: Task, loading: int, compute: int, sending: int, price: float = None):

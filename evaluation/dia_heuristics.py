@@ -12,10 +12,10 @@ import pprint
 from random import gauss
 from typing import Iterable
 
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from core.core import set_price_change, reset_model, set_initial_price
-from extra.io import parse_args
-from extra.model import ModelDistribution, results_filename
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from src.core.core import set_price_change, reset_model, set_initial_price
+from src.extra.io import parse_args
+from src.extra.model import ModelDistribution, results_filename
 
 
 def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, time_limit: int = 2,

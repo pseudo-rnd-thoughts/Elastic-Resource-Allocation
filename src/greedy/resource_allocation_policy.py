@@ -11,8 +11,8 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIM
 if TYPE_CHECKING:
     from typing import Tuple
 
-    from core.task import Task
-    from core.server import Server
+    from src.core.task import Task
+    from src.core.server import Server
 
 
 class ResourceAllocationPolicy(ABC):
@@ -40,9 +40,9 @@ class ResourceAllocationPolicy(ABC):
         # TODO update this to cplex or KKT
         model = CpoModel('resource allocation')
 
-        loading = model.integer_var(min=1, max=server.available_bandwidth-1)
+        loading = model.integer_var(min=1, max=server.available_bandwidth - 1)
         compute = model.integer_var(min=1, max=server.available_computation)
-        sending = model.integer_var(min=1, max=server.available_bandwidth-1)
+        sending = model.integer_var(min=1, max=server.available_bandwidth - 1)
 
         model.add(task.required_storage * compute * sending +
                   loading * task.required_computation * sending +

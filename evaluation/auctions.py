@@ -7,16 +7,16 @@ from __future__ import annotations
 import json
 import pprint
 
-from auctions.critical_value_auction import critical_value_auction
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from auctions.vcg_auction import vcg_auction, fixed_vcg_auction
-from core.core import reset_model, set_initial_price, set_price_change
-from core.fixed_task import FixedTask, FixedSumSpeeds
-from extra.io import parse_args
-from extra.model import ModelDistribution, results_filename
-from greedy.resource_allocation_policy import policies as resource_allocation_policies
-from greedy.server_selection_policy import policies as server_selection_policies
-from greedy.value_density import policies as value_densities
+from src.auctions.critical_value_auction import critical_value_auction
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
+from src.core.core import reset_model, set_initial_price, set_price_change
+from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.extra.io import parse_args
+from src.extra.model import ModelDistribution, results_filename
+from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
+from src.greedy.server_selection_policy import policies as server_selection_policies
+from src.greedy.value_density import policies as value_densities
 
 
 def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, vcg_time_limit: int = 5,

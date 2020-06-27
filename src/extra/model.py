@@ -9,8 +9,8 @@ import json
 import random as rnd
 from typing import TYPE_CHECKING
 
-from core.server import Server
-from core.task import Task
+from src.core.server import Server
+from src.core.task import Task
 
 if TYPE_CHECKING:
     from typing import Tuple, List, Optional
@@ -53,7 +53,7 @@ class ModelDistribution:
                     probability = rnd.random()
                     task_dist = next(task_dist for i, task_dist in enumerate(model_data['task distributions'])
                                      if probability <= sum(model_data['task distributions'][j]['probability']
-                                                           for j in range(i+1)))
+                                                           for j in range(i + 1)))
                     tasks.append(Task.load_dist(task_dist, pos))
             else:
                 tasks = [Task.load(task_model) for task_model in model_data['tasks']]
@@ -64,7 +64,7 @@ class ModelDistribution:
                     probability = rnd.random()
                     server_dist = next(server_dist for i, server_dist in enumerate(model_data['server distributions'])
                                        if probability <= sum(model_data['server distributions'][j]['probability']
-                                                             for j in range(i+1)))
+                                                             for j in range(i + 1)))
                     servers.append(Server.load_dist(server_dist, pos))
             else:
                 servers = [Server.load(server_model) for server_model in model_data['servers']]

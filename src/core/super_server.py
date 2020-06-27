@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from core.server import Server
+from src.core.server import Server
 
 if TYPE_CHECKING:
     from typing import List

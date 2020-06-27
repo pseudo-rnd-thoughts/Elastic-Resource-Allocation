@@ -12,15 +12,15 @@ import pprint
 from random import choice
 from typing import TYPE_CHECKING
 
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from core.core import set_price_change, reset_model, set_initial_price
-from core.task import task_diff
-from extra.io import parse_args
-from extra.model import ModelDistribution, results_filename
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from src.core.core import set_price_change, reset_model, set_initial_price
+from src.core.task import task_diff
+from src.extra.io import parse_args
+from src.extra.model import ModelDistribution, results_filename
 
 if TYPE_CHECKING:
     from typing import TypeVar, List
-    from core.task import Task
+    from src.core.task import Task
 
     T = TypeVar('T')
 

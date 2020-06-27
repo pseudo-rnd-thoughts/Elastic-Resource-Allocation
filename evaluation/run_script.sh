@@ -15,6 +15,7 @@ module load cplex/12.7.1
 
 # Run the python script
 echo $PWD
-cmd="PYTHONPATH=~/Flexible-Cloud-Resource/src/ python evaluation/$file.py -f='$model_file' -t='$num_tasks' -s='$num_servers' -r='$repeat' -e='$extra'"
+PYTHONPATH=~/Flexible-Cloud-Resource/src/
+cmd="python -m evaluation.$file -f='$model_file' -t='$num_tasks' -s='$num_servers' -r='$repeat' -e='$extra'"
 echo "Running $cmd"
 eval "$cmd"
