@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from core.core import reset_model, server_task_allocation, debug
 from extra.result import Result
-from optimal.optimal import optimal_solver
+from optimal.flexible_optimal import optimal_solver
 from optimal.fixed_optimal import fixed_optimal_solver
 
 if TYPE_CHECKING:

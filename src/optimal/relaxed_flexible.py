@@ -10,7 +10,7 @@ from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import server_task_allocation
+from core.core import server_task_allocation, debug
 from extra.pprint import print_model_solution, print_model
 from extra.result import Result
 
@@ -22,14 +22,14 @@ if TYPE_CHECKING:
     from core.task import Task
 
 
-def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, debug_time: bool = False):
+def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, debug_results: bool = False):
     """
     Runs the optimal algorithm solution
 
     :param tasks: A list of tasks
     :param servers: A list of servers
     :param time_limit: The time limit to solve
-    :param debug_time: If to print the time taken
+    :param debug_results: If to debug the results
     :return: The result from optimal solution
     """
     assert 0 < time_limit
@@ -62,10 +62,10 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
     # Run the model
     model_solution: CpoSolveResult = model.solve(log_output=None, RelativeOptimalityTolerance=0.01,
                                                  TimeLimit=time_limit)
-    if debug_time:
-        print(f'Solve time: {round(model_solution.get_solve_time(), 2)} secs, '
-              f'Objective value: {model_solution.get_objective_values()}, '
-              f'bounds: {model_solution.get_objective_bounds()}, gaps: {model_solution.get_objective_gaps()}')
+    debug(f'Solve time: {round(model_solution.get_solve_time(), 2)} secs, '
+          f'Objective value: {model_solution.get_objective_values()}, '
+          f'bounds: {model_solution.get_objective_bounds()}, gaps: {model_solution.get_objective_gaps()}',
+          debug_results)
 
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
@@ -85,7 +85,7 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
     return model_solution, super_server
 
 
-def relaxed(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
+def relaxed_flexible(tasks: List[Task], servers: List[Server], time_limit: int) -> Optional[Result]:
     """
     Runs the relaxed task allocation solver
 

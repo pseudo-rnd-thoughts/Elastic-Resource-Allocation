@@ -98,7 +98,7 @@ def optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     return model_solution
 
 
-def optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
     """
     Runs the optimal task allocation algorithm solver
 
