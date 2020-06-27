@@ -17,8 +17,8 @@ from greedy.resource_allocation_policy import policies as resource_allocation_po
 from greedy.server_selection_policy import policies as server_selection_policies
 from greedy.value_density import policies as value_densities
 from optimal.fixed_optimal import fixed_optimal
-from optimal.optimal import optimal
-from optimal.relaxed import relaxed
+from optimal.flexible_optimal import flexible_optimal
+from optimal.relaxed_flexible import relaxed_flexible
 
 
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
@@ -58,7 +58,7 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
                                          int(server_total_resources[server] * (1 - ratio)))
 
             # Optimal
-            optimal_result = optimal(tasks, servers, optimal_time_limit)
+            optimal_result = flexible_optimal(tasks, servers, optimal_time_limit)
             algorithm_results[optimal_result.algorithm] = optimal_result.store(ratio=ratio)
             pp.pprint(algorithm_results[optimal_result.algorithm])
             reset_model(tasks, servers)
@@ -70,7 +70,7 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
             reset_model(fixed_tasks, servers)
 
             # Find the relaxed solution
-            relaxed_result = relaxed(tasks, servers, relaxed_time_limit)
+            relaxed_result = relaxed_flexible(tasks, servers, relaxed_time_limit)
             algorithm_results[relaxed_result.algorithm] = relaxed_result.store(ratio=ratio)
             pp.pprint(algorithm_results[relaxed_result.algorithm])
             reset_model(tasks, servers)
