@@ -24,12 +24,12 @@ class Result:
             'algorithm': algorithm_name,
             'solve time': round(solve_time, 3),
             'social welfare': sum(task.value for server in servers for task in server.allocated_tasks),
-            'percentage social welfare': round(sum(task.value for task in tasks if task.running_server) /
-                                               sum(task.value for task in tasks), 3),
-            'percentage allocation': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
+            'social welfare percent': round(sum(task.value for task in tasks if task.running_server) /
+                                            sum(task.value for task in tasks), 3),
+            'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
         }
 
-        if limited:
+        if not limited:
             # Server properties
             def resource_usage(server, resource):
                 """Resource usage of a server with a particular resource"""
@@ -38,10 +38,10 @@ class Result:
             self.data.update({
                 'server social welfare': {server.name: sum(task.value for task in server.allocated_tasks)
                                           for server in servers},
-                'server storage usage': {server.name: resource_usage(server, 'storage') for server in servers},
-                'server computation usage': {server.name: resource_usage(server, 'computation') for server in servers},
-                'server bandwidth usage': {server.name: resource_usage(server, 'bandwidth') for server in servers},
-                'server allocated tasks': {server.name: len(server.allocated_tasks) for server in servers}
+                'server storage used': {server.name: resource_usage(server, 'storage') for server in servers},
+                'server computation used': {server.name: resource_usage(server, 'computation') for server in servers},
+                'server bandwidth used': {server.name: resource_usage(server, 'bandwidth') for server in servers},
+                'server num tasks allocated': {server.name: len(server.allocated_tasks) for server in servers}
             })
 
         if is_auction:
@@ -89,9 +89,9 @@ class Result:
     @property
     def percentage_social_welfare(self):
         """Percentage social welfare"""
-        return self.data['percentage social welfare']
+        return self.data['social welfare percent']
 
     @property
-    def percentage_allocation(self):
+    def percentage_tasks_allocated(self):
         """Percentage of task's allocated"""
-        return self.data['percentage allocation']
+        return self.data['percentage tasks allocated']
