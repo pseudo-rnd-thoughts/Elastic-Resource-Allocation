@@ -8,23 +8,27 @@ tasks=()
 servers=()
 while true; do
   read -p 'Num of tasks: ' num_tasks
-  if [ "$num_tasks" == "" ]; then
+  read -p 'Num of servers: ' num_servers
+
+  if [[ "$num_tasks" == '' && "$num_servers" == '' ]]; then
     printf "\nTasks: ${tasks[*]}\nServer: ${servers[*]} \n"
     break
   else
-    read -p 'Num of servers: ' num_servers
-    if [ "$num_servers" == "" ]; then
-      $num_servers = " "
+    if [ "$num_tasks" == '' ]; then
+      $num_tasks=''
     fi
-  fi
+    if [ "$num_servers" == '' ]; then
+      $num_servers=''
+    fi
 
-  tasks+=("$num_tasks")
-  servers+=("$num_servers")
+    tasks+=("$num_tasks")
+    servers+=("$num_servers")
+  fi
 done
 
 read -p 'Extra info: ' extra
 if [ "$extra" == "" ]; then
-  $extra = " "
+  $extra=' '
 fi
 
 for (( pos = 0; pos < ${#tasks[@]}; pos++ )); do
