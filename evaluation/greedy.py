@@ -55,13 +55,13 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         # Find the fixed solution
         fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
-        model_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+        algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
         fixed_optimal_result.pretty_print()
         reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = relaxed_flexible(tasks, servers, relaxed_time_limit)
-        model_results[relaxed_result.algorithm] = relaxed_result.store()
+        algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
         relaxed_result.pretty_print()
         reset_model(tasks, servers)
 
@@ -71,12 +71,12 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
                 for resource_allocation_policy in resource_allocation_policies:
                     greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
                                                      resource_allocation_policy)
-                    model_results[greedy_result.algorithm] = greedy_result.store()
+                    algorithm_results[greedy_result.algorithm] = greedy_result.store()
                     greedy_result.pretty_print()
                     reset_model(tasks, servers)
 
         # Add the results to the data
-        model_results.append(model_results)
+        model_results.append(algorithm_results)
 
     # Save the results to the file
     filename = results_filename('greedy', model_dist, repeat_num)
