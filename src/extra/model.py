@@ -72,17 +72,20 @@ class ModelDistribution:
             return tasks, servers
 
 
-def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None) -> str:
+def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None, save_date: bool = False) -> str:
     """
     Generates the save filename for testing results
 
     :param test_name: The test name
     :param model_dist: The model distribution
     :param repeat: The repeat number
+    :param save_date: If to save the date
     :return: The concatenation of the test name, model distribution name and the repeat
     """
-    date = dt.datetime.now().strftime("%m-%d_%H-%M-%S")
-    if repeat is None:
-        return f'{test_name}_{model_dist.name}_{date}.json'
+    extra_info = f'_{model_dist.num_tasks}' if model_dist.num_tasks else '' + \
+        f'_{model_dist.num_servers}' if model_dist.num_servers else '' + \
+        f'_{dt.datetime.now().strftime("%m-%d_%H-%M-%S")}' if save_date else ''
+    if repeat is None or repeat == 0:
+        return f'{test_name}_{model_dist.name}{extra_info}.json'
     else:
-        return f'{test_name}_{model_dist.name}_{repeat}_{date}.json'
+        return f'{test_name}_{model_dist.name}_{repeat}{extra_info}.json'
