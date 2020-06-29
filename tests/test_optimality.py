@@ -5,6 +5,7 @@ Tests the effectiveness of the optimality time limit for the social welfare of t
 from __future__ import annotations
 
 import json
+import pprint
 from typing import Sequence
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
@@ -16,7 +17,23 @@ from core.super_server import SuperServer
 from extra.io import parse_args
 from extra.pprint import print_model
 from extra.model import ModelDistribution, results_filename
-from optimal.flexible_optimal import optimal_solver
+from optimal.flexible_optimal import optimal_solver, flexible_optimal
+from optimal.relaxed_flexible import relaxed_flexible
+
+
+def test_optimal():
+    model_dist = ModelDistribution('models/caroline.mdl', 28)
+    tasks, servers = model_dist.generate()
+    pp = pprint.PrettyPrinter()
+    pp.pprint({
+        'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+    })
+
+    optimal_result = flexible_optimal(tasks, servers, 5)
+    optimal_result.pretty_print()
+
+    relaxed_result = relaxed_flexible(tasks, servers, 5)
+    relaxed_result.pretty_print()
 
 
 def test_optimal_time_limit(model_dist: ModelDistribution,

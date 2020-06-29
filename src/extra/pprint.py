@@ -62,9 +62,9 @@ def print_model(tasks: List[Task], servers: List[Server]):
     :param tasks: The list of tasks
     :param servers: The list of servers
     """
-    print('Job Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price')
+    print('Task Name | Storage | Computation | Results Data | Value | Loading | Compute | Sending | Deadline | Price')
     for task in tasks:
-        print(f'{task.name:^9s}|{task.required_storage:^9d}|{task.required_computation:^13d}|'
+        print(f'{task.name:^10s}|{task.required_storage:^9d}|{task.required_computation:^13d}|'
               f'{task.required_results_data:^14d}|{task.value:^7.1f}|{task.loading_speed:^9d}|{task.compute_speed:^9d}|'
               f'{task.sending_speed:^9d}|{task.deadline:^10d}| {task.price:.2f}')
 

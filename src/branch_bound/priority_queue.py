@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from enum import Enum, auto
 from math import log2, ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
+
+T = TypeVar('T')
 
 if TYPE_CHECKING:
-    from typing import List, Generic, TypeVar, Callable
-
-    T = TypeVar('T')
+    from typing import List, Callable
 
 
 class Comparison(Enum):

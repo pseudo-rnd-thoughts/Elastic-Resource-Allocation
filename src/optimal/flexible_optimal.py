@@ -45,9 +45,9 @@ def optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} loading speed')
-        compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
-        sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} sending speed')
+        loading_speeds[task] = model.integer_var(min=1, name=f'{task.name} loading speed')
+        compute_speeds[task] = model.integer_var(min=1, name=f'{task.name} compute speed')
+        sending_speeds[task] = model.integer_var(min=1, name=f'{task.name} sending speed')
 
         model.add((task.required_storage / loading_speeds[task]) +
                   (task.required_computation / compute_speeds[task]) +
@@ -76,7 +76,7 @@ def optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print(f'Optimal algorithm failed - status: {model_solution.get_solve_status()}')
+        print(f'Optimal solver failed')
         print_model_solution(model_solution)
         print_model(tasks, servers)
         return None
@@ -111,3 +111,5 @@ def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: int =
     if model_solution:
         return Result('Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status()})
+    else:
+        return Result('Optimal', tasks, servers, 0, limited=True)

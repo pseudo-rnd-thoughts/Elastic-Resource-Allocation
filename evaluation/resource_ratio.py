@@ -49,7 +49,8 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
         }}
         pp.pprint(ratio_results)
 
-        server_total_resources = {server: server.computation_capacity + server.bandwidth_capacity for server in servers}
+        server_total_resources = {server: server.computation_capacity + server.bandwidth_capacity
+                                  for server in servers}
         for ratio in ratios:
             algorithm_results = {}
             # Update server capacities
