@@ -90,8 +90,7 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
             # Find the result with the mutated task
             mutant_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
             mutation_results[f'mutation {model_mutation}'] = mutant_result.store(**{
-                'mutant task': str(mutant_task), 'mutation difference': task_diff(task, mutant_task),
-                'mutant price': mutant_task.price, 'original price': task_prices[task],
+                'mutant task': str(mutant_task), 'mutant price': mutant_task.price, 'original price': task_prices[task],
                 'was allocated': allocated_tasks[task], 'is allocated': task.running_server is not None
             })
             pp.pprint(mutation_results[f'mutation {model_mutation}'])
@@ -102,10 +101,10 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         # Append the results to the data list
         model_results.append(mutation_results)
 
-        # Save all of the results to a file
-        filename = results_filename('task_mutation', model_dist, repeat_num)
-        with open(filename, 'w') as file:
-            json.dump(model_results, file)
+    # Save all of the results to a file
+    filename = results_filename('task_mutation', model_dist, repeat_num)
+    with open(filename, 'w') as file:
+        json.dump(model_results, file)
 
 
 def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.15,
@@ -167,7 +166,8 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                         mutated_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                         mutated_result.pretty_print()
                         mutation_results[f'Mutation {mutation_pos}'] = mutated_result.store(**{
-                            'required storage': required_storage, 'required computation': required_computation,
+                            'mutated task': task.name, 'required storage': required_storage,
+                            'required computation': required_computation,
                             'required results data': required_results_data, 'value': value, 'deadline': deadline,
                             'allocated': mutant_task.running_server is not None, 'task price': mutant_task.price
                         })
@@ -177,10 +177,10 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                         tasks.remove(mutant_task)
                         reset_model(tasks, servers)
 
-        # Save all of the results to a file
-        filename = results_filename('mutation_grid_search', model_dist, repeat_num)
-        with open(filename, 'w') as file:
-            json.dump(mutation_results, file)
+    # Save all of the results to a file
+    filename = results_filename('mutation_grid_search', model_dist, repeat_num)
+    with open(filename, 'w') as file:
+        json.dump(mutation_results, file)
 
 
 if __name__ == "__main__":

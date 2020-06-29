@@ -11,6 +11,7 @@ from docplex.cp.solution import CpoSolveResult
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import server_task_allocation, debug
+from src.core.super_server import SuperServer
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
 
@@ -18,7 +19,6 @@ if TYPE_CHECKING:
     from typing import List, Dict
 
     from src.core.server import Server
-    from src.core.super_server import SuperServer
     from src.core.task import Task
 
 
