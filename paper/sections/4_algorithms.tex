@@ -1,8 +1,14 @@
 \section{Flexible Resource Allocation Mechanisms}\label{sec:flexible-resource-allocation-mechanisms}
-%% TODO the knapsack problem can be solved using a dynamic programming solution then
-
-Due to the optimisation problem in section~\ref{subsec:system-model} previous work described in
-section~\ref{subsec:system-model} is incompatible with this model. Therefore in this section, we propose several
+As explained in the last Section, all previous research described in Section~\ref{sec:related-work} is incompatible
+with our Elastic Resource Allocation Optimisation problem in Section~\ref{sec:problem-formulation}. Therefore in this
+section, we propose three mechanisms for solving this optimisation problem, an approximation algorithm and two
+auction-based mechanisms. \\
+The approximation algorithm is a centralised greedy algorithm (detailed in Subsection~\ref{subsec:greedy-mechanism})
+uses a two stages, the first to rank all tasks by a value density function then secondary loop over the ranked tasks
+allocating each to a server with resources. This algorithm has a lower bound of $\frac{1}{\left|J\right|}$ performance
+guarantee however in practice achieves close to the theoretical optimal while running with polynomial time complexity.
+Due to the optimisation problem in Section~\ref{subsec:system-model} previous work described in
+Section~\ref{subsec:system-model} is incompatible with this model. Therefore in this section, we propose several
 mechanisms for solving the resource allocation problem with elastic resources. First, we discuss a centralized greedy
 algorithm (detailed in Section~\ref{subsec:greedy-mechanism}) with a $\frac{1}{\left|J\right|}$ performance guarantee
 and polynomial run-time. Then, we consider settings where task users are self-interested and may either report their
@@ -48,7 +54,7 @@ tables~\ref{tab:example-servers-properties} and~\ref{tab:example-tasks-propertie
 welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{figs/allocation/greedy_algorithm.png}
+    \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
     \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
     and~\ref{tab:example-servers-properties}}
     \label{fig:greedy-allocation}
@@ -187,6 +193,8 @@ For our proposed auction, we consider four important properties in auction theor
     require kicking tasks off. This can cause the allocation to fall into a local price maxima meaning that the
     server will sometimes not be 100\% economically efficient.
 \end{itemize}
+
+%% Todo - Add limit incentive compatible
 
 The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
 unallocated job to find the price if the job was currently allocated on a server. This is done through first solving

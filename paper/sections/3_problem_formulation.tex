@@ -49,6 +49,7 @@ followed. This problem uses the additional variable $x_{i,j}$ to denote the allo
 server $i$.
 
 %% TODO A problem exists that you must allocate the resources and determine the server at the same time
+%% TODO the knapsack problem can be solved using a dynamic programming solution then
 
 \begin{align}
     \max & \sum_{\forall j \in J} v_j \left(\sum_{\forall i \in I} x_{i,j}\right) \label{eq:objective} \\
@@ -109,7 +110,7 @@ server's resource types, with the percentage of resources used by a task being t
 
 \begin{figure}[th]
     \centering
-    \includegraphics[width=\linewidth]{figs/allocation/fixed_resource_allocation.png}
+    \includegraphics[width=\linewidth]{figs/allocation/optimal_fixed_resource_allocation.png}
     \caption{Optimal solution with fixed resource speeds}
     \label{fig:fixed-resources-speeds}
 \end{figure}
@@ -121,7 +122,7 @@ are run, resulting in a total social welfare of 980 due to server 1 and 2's limi
 
 \begin{figure}[th]
     \centering
-    \includegraphics[width=\linewidth]{figs/allocation/flexible_resource_allocation.png}
+    \includegraphics[width=\linewidth]{figs/allocation/optimal_flexible_resource_allocation.png}
     \caption{Optimal solution with elastic resources speeds}
     \label{fig:flexible-resources-speeds}
 \end{figure}
