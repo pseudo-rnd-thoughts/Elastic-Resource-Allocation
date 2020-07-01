@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import exp
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
@@ -87,19 +86,6 @@ class SumPercentage(ResourceAllocationPolicy):
             (loading_speed + sending_speed) / server.available_bandwidth
 
 
-class SumExpPercentage(ResourceAllocationPolicy):
-    """The sum of exponential percentages"""
-
-    def __init__(self):
-        ResourceAllocationPolicy.__init__(self, "Expo percentage sum")
-
-    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
-                           sending_speed: int) -> float:
-        """Resource evaluator"""
-        return exp(compute_speed / server.available_computation) + \
-            exp((loading_speed + sending_speed) / server.available_bandwidth)
-
-
 class SumSpeed(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
@@ -128,7 +114,6 @@ class DeadlinePercent(ResourceAllocationPolicy):
 
 policies = (
     SumPercentage(),
-    SumExpPercentage(),
     SumSpeed(),
     DeadlinePercent()
 )
