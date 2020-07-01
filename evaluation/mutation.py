@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import set_price_change, reset_model, set_initial_price
-from src.core.task import task_diff
 from src.extra.io import parse_args
 from src.extra.model import ModelDistribution, results_filename
 

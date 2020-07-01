@@ -19,22 +19,27 @@ class Task:
     Constructor arguments are final as they dont need changing after initialisation
     """
 
-    # Allocation information
-    loading_speed: int = 0
-    compute_speed: int = 0
-    sending_speed: int = 0
-    running_server: Optional[Server] = None
-
-    price: float = 0  # This is for auctions only
-
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 value: float, deadline: int):
-        self.name: str = name
-        self.required_storage: int = required_storage
-        self.required_computation: int = required_computation
-        self.required_results_data: int = required_results_data
-        self.value: float = value
-        self.deadline: int = deadline
+                 value: float, deadline: int, loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
+                 running_server: Optional[Server] = None, price: float = 0, auction_time: Optional[int] = None):
+        self.name = name
+
+        self.required_storage = required_storage
+        self.required_computation = required_computation
+        self.required_results_data = required_results_data
+
+        self.value = value  # This is the true private internal evaluation (the max price)
+        self.price = price  # This is only used for auctions
+
+        self.auction_time = auction_time  # This is only used for online vs batched evaluation
+        self.deadline = deadline
+
+        # Allocation information
+        self.loading_speed = loading_speed
+        self.compute_speed = compute_speed
+        self.sending_speed = sending_speed
+
+        self.running_server = running_server
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
@@ -113,7 +118,7 @@ class Task:
 
         :return: Dictionary representing the task attributes
         """
-        return {
+        save_spec = {
             'name': self.name,
             'storage': self.required_storage,
             'computation': self.required_computation,
@@ -121,6 +126,10 @@ class Task:
             'deadline': self.deadline,
             'value': self.value
         }
+        if self.auction_time:
+            save_spec.update({'auction time': self.auction_time})
+
+        return save_spec
 
     def __str__(self) -> str:
         if self.loading_speed > 0:
@@ -144,7 +153,8 @@ class Task:
         return Task(
             name=task_spec['name'], required_storage=task_spec['storage'],
             required_computation=task_spec['computation'], required_results_data=task_spec['results data'],
-            deadline=task_spec['deadline'], value=task_spec['value']
+            deadline=task_spec['deadline'], value=task_spec['value'],
+            auction_time=task_spec['auction time'] if 'auction time' in task_spec else None
         )
 
     @staticmethod
@@ -175,16 +185,3 @@ class Task:
             deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
             value=positive_gaussian(task_dist['value mean'], task_dist['value std'])
         )
-
-
-def task_diff(normal_task: Task, mutate_task: Task) -> str:
-    """
-    Returns a string representation of the task attribute difference between a normal task and a mutated task
-    
-    :param normal_task: The normal task
-    :param mutate_task: The mutated task
-    """
-    return f'{normal_task.name} - {mutate_task.name}: {mutate_task.required_storage - normal_task.required_storage}, ' \
-           f'{mutate_task.required_computation - normal_task.required_computation}, ' \
-           f'{mutate_task.required_results_data - normal_task.required_results_data}, ' \
-           f'{normal_task.deadline - mutate_task.deadline}, {normal_task.value - mutate_task.value}'
