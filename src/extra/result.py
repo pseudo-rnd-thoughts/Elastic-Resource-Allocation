@@ -12,6 +12,11 @@ if TYPE_CHECKING:
     from src.core.task import Task
 
 
+def resource_usage(server, resource):
+    """Resource usage of a server with a particular resource"""
+    return round(1 - getattr(server, f'available_{resource}') / getattr(server, f'{resource}_capacity'), 3)
+
+
 class Result:
     """
     Results class that holds information about the results of an algorithm
@@ -31,10 +36,6 @@ class Result:
 
         if not limited:
             # Server properties
-            def resource_usage(server, resource):
-                """Resource usage of a server with a particular resource"""
-                return round(1 - getattr(server, f'available_{resource}') / getattr(server, f'{resource}_capacity'), 3)
-
             self.data.update({
                 'server social welfare': {server.name: sum(task.value for task in server.allocated_tasks)
                                           for server in servers},
@@ -95,3 +96,28 @@ class Result:
     def percentage_tasks_allocated(self):
         """Percentage of task's allocated"""
         return self.data['percentage tasks allocated']
+
+    @property
+    def server_social_welfare(self):
+        """Dictionary of server based social welfare"""
+        return self.data['server social welfare']
+
+    @property
+    def server_storage_used(self):
+        """Dictionary of server based storage used"""
+        return self.data['server storage used']
+
+    @property
+    def server_computation_used(self):
+        """Dictionary of server based computational used"""
+        return self.data['server computation used']
+
+    @property
+    def server_bandwidth_used(self):
+        """Dictionary of server based bandwidth used"""
+        return self.data['server bandwidth used']
+
+    @property
+    def server_num_tasks_allocated(self):
+        """Dictionary of server based number of tasks allocated"""
+        return self.data['server num tasks allocated']
