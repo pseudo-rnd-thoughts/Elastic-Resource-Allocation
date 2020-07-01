@@ -151,12 +151,12 @@ class Server:
         :return: Dictionary for the server attributes
         """
         return {
-            'name': self.name,
-            'storage capacity': self.storage_capacity,
-            'computation capacity': self.computation_capacity,
-            'bandwidth capacity': self.bandwidth_capacity,
-            'price change': self.price_change,
-            'initial price': self.initial_price
+            "name": self.name,
+            "storage capacity": self.storage_capacity,
+            "computation capacity": self.computation_capacity,
+            "bandwidth capacity": self.bandwidth_capacity,
+            "price change": self.price_change,
+            "initial price": self.initial_price
         }
 
     def __str__(self) -> str:
