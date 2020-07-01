@@ -71,7 +71,7 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
                 for resource_allocation_policy in resource_allocation_policies:
                     critical_value_result = critical_value_auction(tasks, servers, value_density,
                                                                    server_selection_policy, resource_allocation_policy)
-                    model_results[critical_value_result.algorithm] = critical_value_result.store()
+                    algorithm_results[critical_value_result.algorithm] = critical_value_result.store()
                     critical_value_result.pretty_print()
                     reset_model(tasks, servers)
 
