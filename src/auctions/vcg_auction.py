@@ -60,6 +60,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     debug('Running optimal solution', debug_running)
     optimal_results = solver(tasks, servers)
     if optimal_results is None:
+        print(f'Optimal solver failed')
         return 0
     optimal_social_welfare = sum(task.value for task in tasks if task.running_server)
     debug(f'Optimal social welfare: {optimal_social_welfare}', debug_running)
@@ -83,6 +84,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
         debug(f'Solving for without task {task.name}', debug_running)
         prime_results = solver(tasks_prime, servers)
         if prime_results is None:
+            print(f'Failed for task: {task.name}')
             return 0
         else:
             task_prices[task] = optimal_social_welfare - sum(task.value for task in tasks_prime if task.running_server)
@@ -111,7 +113,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
 
     solve_time = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
     if 0 < solve_time:
-        return Result('VCG', tasks, servers, solve_time, is_auction=True)
+        return Result('Flexible VCG', tasks, servers, solve_time, is_auction=True)
 
 
 def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: int = 5,
