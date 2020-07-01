@@ -86,6 +86,19 @@ class SumPercentage(ResourceAllocationPolicy):
             (loading_speed + sending_speed) / server.available_bandwidth
 
 
+class SumPowPercentage(ResourceAllocationPolicy):
+    """The sum of exponential percentages"""
+
+    def __init__(self):
+        ResourceAllocationPolicy.__init__(self, "Expo percentage sum")
+
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
+        """Resource evaluator"""
+        return (compute_speed / server.available_computation) ** 3 + \
+            ((loading_speed + sending_speed) / server.available_bandwidth) ** 3
+
+
 class SumSpeed(ResourceAllocationPolicy):
     """The sum of resource speeds"""
 
@@ -114,6 +127,7 @@ class DeadlinePercent(ResourceAllocationPolicy):
 
 policies = (
     SumPercentage(),
+    SumPowPercentage(),
     SumSpeed(),
     DeadlinePercent()
 )

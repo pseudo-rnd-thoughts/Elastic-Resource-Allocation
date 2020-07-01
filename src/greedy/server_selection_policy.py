@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import exp
 from random import choice
 from typing import TYPE_CHECKING
 
@@ -81,7 +80,7 @@ class SumExpResource(ServerSelectionPolicy):
 
     def value(self, task: Task, server: Server) -> float:
         """Server Selection Value"""
-        return exp(server.available_storage) + exp(server.available_computation) + exp(server.available_bandwidth)
+        return server.available_storage ** 3 + server.available_computation ** 3 + server.available_bandwidth ** 3
 
 
 class Random(ServerSelectionPolicy):
