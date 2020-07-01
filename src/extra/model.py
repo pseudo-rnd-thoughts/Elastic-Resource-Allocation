@@ -25,18 +25,9 @@ class ModelDistribution:
         self.num_servers = num_servers
 
         with open(self.file) as file:
-            model_data = json.load(file)
+            self.model_data = json.load(file)
 
-            self.name: str = model_data['name']
-            if num_tasks is not None:
-                assert 'task distributions' in model_data
-            else:
-                assert 'tasks' in model_data
-
-            if num_servers is not None:
-                assert 'server distributions' in model_data
-            else:
-                assert 'servers' in model_data
+            self.name: str = self.model_data['name']
 
     def generate(self) -> Tuple[List[Task], List[Server]]:
         """
@@ -44,32 +35,55 @@ class ModelDistribution:
 
         :return: A list of tasks and list of servers
         """
-        with open(self.file) as file:
-            model_data = json.load(file)
+        return self.generate_tasks(), self.generate_servers()
 
-            if 'task distributions' in model_data:
-                tasks = []
-                for pos in range(self.num_tasks):
-                    probability = rnd.random()
-                    task_dist = next(task_dist for i, task_dist in enumerate(model_data['task distributions'])
-                                     if probability <= sum(model_data['task distributions'][j]['probability']
-                                                           for j in range(i + 1)))
-                    tasks.append(Task.load_dist(task_dist, pos))
-            else:
-                tasks = [Task.load(task_model) for task_model in model_data['tasks']]
+    def generate_tasks(self) -> List[Task]:
+        """
+        Generate a list of tasks from the model data
 
-            if 'server distributions' in model_data:
-                servers = []
-                for pos in range(self.num_servers):
-                    probability = rnd.random()
-                    server_dist = next(server_dist for i, server_dist in enumerate(model_data['server distributions'])
-                                       if probability <= sum(model_data['server distributions'][j]['probability']
-                                                             for j in range(i + 1)))
-                    servers.append(Server.load_dist(server_dist, pos))
-            else:
-                servers = [Server.load(server_model) for server_model in model_data['servers']]
+        :return: A list of tasks
+        """
+        if 'task distributions' in self.model_data:
+            return [self.generate_rnd_task(task_id) for task_id in range(self.num_tasks)]
+        else:
+            return [Task.load(task_model) for task_model in self.model_data['tasks']]
 
-            return tasks, servers
+    def generate_servers(self) -> List[Server]:
+        """
+        Generate a list of server from the model data
+
+        :return: A list of servers
+        """
+        if 'server distributions' in self.model_data:
+            return [self.generate_rnd_server(server_id) for server_id in range(self.num_servers)]
+        else:
+            return [Server.load(server_model) for server_model in self.model_data['servers']]
+
+    def generate_rnd_task(self, task_id) -> Task:
+        """
+        Generate a new random task using a task id
+
+        :param task_id: The task id
+        :return: A new random task
+        """
+        probability = rnd.random()
+        task_dist = next(task_dist for i, task_dist in enumerate(self.model_data['task distributions'])
+                         if probability <= sum(self.model_data['task distributions'][j]['probability']
+                                               for j in range(i + 1)))
+        return Task.load_dist(task_dist, task_id)
+
+    def generate_rnd_server(self, server_id) -> Server:
+        """
+        Generate a new random serer using a server id
+
+        :param server_id: The server id
+        :return: A new random server
+        """
+        probability = rnd.random()
+        server_dist = next(server_dist for i, server_dist in enumerate(self.model_data['server distributions'])
+                           if probability <= sum(self.model_data['server distributions'][j]['probability']
+                                                 for j in range(i + 1)))
+        return Server.load_dist(server_dist, server_id)
 
 
 def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None, save_date: bool = False) -> str:
