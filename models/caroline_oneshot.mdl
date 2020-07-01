@@ -1,0 +1,85 @@
+{
+    "name": "basic",
+    "task distributions": [
+        {
+            "name": "normal",
+            "probability": 1,
+            "storage mean": 110,
+            "storage std": 20,
+            "computation mean": 90,
+            "computation std": 25,
+            "results data mean": 70,
+            "results data std": 10,
+            "value mean": 40,
+            "value std": 15,
+            "deadline mean": 10,
+            "deadline std": 4
+        }
+    ],
+    "servers": [
+        {
+            "name": "normal 1",
+            "storage capacity": 519,
+            "computation capacity": 266,
+            "bandwidth capacity": 428,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 2",
+            "storage capacity": 470,
+            "computation capacity": 96,
+            "bandwidth capacity": 436,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 3",
+            "storage capacity": 401,
+            "computation capacity": 188,
+            "bandwidth capacity": 668,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 4",
+            "storage capacity": 426,
+            "computation capacity": 156,
+            "bandwidth capacity": 688,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 5",
+            "storage capacity": 491,
+            "computation capacity": 96,
+            "bandwidth capacity": 794,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 6",
+            "storage capacity": 440,
+            "computation capacity": 78,
+            "bandwidth capacity": 634,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 7",
+            "storage capacity": 470,
+            "computation capacity": 96,
+            "bandwidth capacity": 436,
+            "price change": 1,
+            "initial price": 0
+        },
+        {
+            "name": "normal 8",
+            "storage capacity": 401,
+            "computation capacity": 168,
+            "bandwidth capacity": 668,
+            "price change": 1,
+            "initial price": 0
+        }
+    ]
+}
