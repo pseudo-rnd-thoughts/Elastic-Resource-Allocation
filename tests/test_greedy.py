@@ -72,5 +72,18 @@ def test_optimisation(repeats: int = 10):
               f'{str(greedy_matrix_results.data["solve time"]):5} | {greedy_matrix_results.social_welfare:3}')
 
 
+def test_server_can_run():
+    model = ModelDistribution('models/caroline_oneshot.mdl', num_tasks=36)
+
+    for _ in range(5):
+        tasks, servers = model.generate()
+
+        result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+        print(f'Percent tasks: {result.percentage_tasks_allocated}')
+
+        for task in tasks:
+            assert task.running_server or not any(server.can_run(task) for server in servers)
+
+
 if __name__ == "__main__":
     test_greedy_policies()

@@ -7,12 +7,17 @@ import os
 import random as rnd
 import sys
 
+import numpy as np
+
+from core.fixed_task import FixedSumPowerSpeeds, FixedTask
 from extra.io import parse_args
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityDeadlinePerResource
+from online import generate_online_model_dist, batch_tasks
+from optimal.fixed_optimal import fixed_optimal
 
 
 def test_model_distribution():
@@ -85,15 +90,59 @@ def test_args():
     eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], 'models/test.mdl', 10, 11, 12)
 
 
-def test_caroline_model():
-    print(f'\nNum of Tasks | Percent Tasks | Percent Social Welfare')
-    for num_tasks in range(8, 60, 4):
-        model = ModelDistribution('models/caroline.mdl', num_tasks=num_tasks)
+def test_caroline_model(model_file: str = 'models/caroline_oneshot.mdl'):
+    print('\n\n\tGreedy algorithm')
+    print(f'Num of Tasks | Percent Tasks | Percent Social Welfare | Storage usage | Comp usage | Bandwidth usage')
+    for num_tasks in range(24, 60, 4):
+        model = ModelDistribution(model_file, num_tasks=num_tasks)
         tasks, servers = model.generate()
 
         greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-        print(f'{num_tasks:12} | {greedy_result.percentage_tasks_allocated:13} | '
-              f'{greedy_result.percentage_social_welfare:7}')
+        # noinspection PyTypeChecker
+        print(f' {num_tasks:11} | {greedy_result.percentage_tasks_allocated:^13} | '
+              f'{greedy_result.percentage_social_welfare:^22} | '
+              f'{round(np.mean(list(greedy_result.server_storage_used.values())), 3):^13} | '
+              f'{round(np.mean(list(greedy_result.server_computation_used.values())), 3):^10} | '
+              f'{round(np.mean(list(greedy_result.server_bandwidth_used.values())), 3):10}')
+
+    print('\n\tFixed Tasks')
+    print(f'Num Tasks | Percent Tasks | Percent Social Welfare | Storage usage | Comp usage | Bandwidth usage')
+    for num_tasks in (24, 28, 32, 36, 40, 44, 48):
+        model = ModelDistribution(model_file, num_tasks=num_tasks)
+        tasks, servers = model.generate()
+        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+        fixed_optimal_result = fixed_optimal(fixed_tasks, servers, 3)
+
+        # noinspection PyTypeChecker
+        print(f' {num_tasks:8} | {fixed_optimal_result.percentage_tasks_allocated:^13} | '
+              f'{fixed_optimal_result.percentage_social_welfare:^22} | '
+              f'{round(np.mean(list(fixed_optimal_result.server_storage_used.values())), 3):^13} | '
+              f'{round(np.mean(list(fixed_optimal_result.server_computation_used.values())), 3):^10} | '
+              f'{round(np.mean(list(fixed_optimal_result.server_bandwidth_used.values())), 3):10}')
+
+
+def test_online_model_generation():
+    print('')
+    model = ModelDistribution('models/caroline_online.mdl')
+    time_steps = 200
+    tasks, servers = generate_online_model_dist(model, time_steps, 2, 4)
+
+    for batch_length in (1, 2, 4, 5, 10):
+        batched_tasks = batch_tasks(tasks, batch_length, time_steps)
+        assert len(batched_tasks) == time_steps // batch_length
+        print(f'Batch lengths: {", ".join([f"{time_step}: {len(batched_tasks[time_step])}" for time_step in range(0, time_steps // batch_length)])}')
+
+
+def test_convert_online_oneshot():
+    print()
+    model = ModelDistribution('models/caroline_online.mdl', num_tasks=0)
+    tasks, servers = model.generate()
+
+    for server in servers:
+        server.computation_capacity *= 2
+        server.bandwidth_capacity *= 2
+
+    print(f'[{", ".join([server.save() for server in servers])}]')
 
 
 if __name__ == "__main__":
