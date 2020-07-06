@@ -9,7 +9,7 @@ import math
 import random as rnd
 from abc import ABC, abstractmethod
 from time import time
-from typing import TYPE_CHECKING, Tuple, Iterable, TypeVar
+from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
@@ -18,7 +18,7 @@ from src.extra.result import Result
 from src.greedy.value_density import ResourceSum
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import List, Tuple, Iterable, TypeVar, Dict
 
     from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
     from src.core.server import Server
@@ -227,6 +227,7 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
 
     rounds: int = 0
     unallocated_tasks: List[Task] = tasks[:]
+    previous_task_price: Dict[Task, float] = {task: 0 for task in unallocated_tasks}
     while unallocated_tasks:
         task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
 
@@ -237,12 +238,8 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
             if min_price == -1 or price < min_price:
                 min_price, min_speeds, min_server = price, speeds, server
 
-                # if price == min(server.revenue + server.price_change for server in servers):
-                #     break
-
-        if min_price > min(server.revenue + server.price_change for server in servers):
-            print(f'[-] Min price: {min_price}, '
-                  f'Server revenue + price change: {min(server.revenue + server.price_change for server in servers)}')
+                if price <= min(previous_task_price[task] + server.price_change for server in servers):
+                    break
 
         if min_price == -1 or min_price < task.value:
             debug(f'[+] {task.name} Task set to {min_server.name} with price {min_price} '
