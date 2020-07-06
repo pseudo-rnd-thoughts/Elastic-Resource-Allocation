@@ -14,12 +14,12 @@ from typing import TYPE_CHECKING
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import set_price_change, reset_model, set_initial_price
+from src.core.task import Task
 from src.extra.io import parse_args
 from src.extra.model import ModelDistribution, results_filename
 
 if TYPE_CHECKING:
     from typing import TypeVar, List
-    from src.core.task import Task
 
     T = TypeVar('T')
 
@@ -100,10 +100,11 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         # Append the results to the data list
         model_results.append(mutation_results)
 
-    # Save all of the results to a file
-    filename = results_filename('task_mutation', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
+        # Save all of the results to a file
+        filename = results_filename('task_mutation', model_dist, repeat_num)
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')
 
 
 def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.15,
@@ -176,10 +177,11 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                         tasks.remove(mutant_task)
                         reset_model(tasks, servers)
 
-    # Save all of the results to a file
-    filename = results_filename('mutation_grid_search', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(mutation_results, file)
+        # Save all of the results to a file
+        filename = results_filename('mutation_grid_search', model_dist, repeat_num)
+        with open(filename, 'w') as file:
+            json.dump(mutation_results, file)
+    print('Finished running')
 
 
 if __name__ == "__main__":

@@ -89,10 +89,11 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
             ratio_results[f'ratio {ratio}'] = algorithm_results
         model_results.append(ratio_results)
 
-    # Save the results to the file
-    filename = results_filename('resource_ratio', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
+        # Save the results to the file
+        filename = results_filename('resource_ratio', model_dist, repeat_num)
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')
 
 
 if __name__ == "__main__":

@@ -130,8 +130,8 @@ def batch_online(model_dist: ModelDistribution, repeat_num: int, repeats: int = 
             batch_results[f'{batch_length} length'] = algorithm_results
         model_results.append(batch_results)
 
-    # Save the results to the file
-    filename = results_filename('batch_online', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
-    print(f'Successful, data saved to {filename}')
+        # Save the results to the file
+        filename = results_filename('batch_online', model_dist, repeat_num)
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')

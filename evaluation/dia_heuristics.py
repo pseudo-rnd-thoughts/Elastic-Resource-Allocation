@@ -124,11 +124,11 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
 
         model_results.append(algorithm_results)
 
-    # Save the results to the file
-    filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
-    print(f'Successful, data saved to {filename}')
+        # Save the results to the file
+        filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')
 
 
 if __name__ == "__main__":
