@@ -15,8 +15,8 @@ from typing import TYPE_CHECKING
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import set_price_change, reset_model, set_initial_price
 from src.core.task import Task
-from src.extra.io import parse_args
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
 
 if TYPE_CHECKING:
     from typing import TypeVar, List
@@ -37,7 +37,7 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
 
 
 def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10, time_limit=2,
-                             price_change: int = 2, initial_price: int = 10,
+                             price_change: int = 3, initial_price: int = 15,
                              model_mutations: int = 10, mutate_percent: float = 0.1):
     """
     Evaluates the effectiveness of a task mutations on if the mutated task is allocated and if so the difference in
@@ -55,6 +55,7 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
     print(f'Evaluates the possibility of tasks mutating resulting in a lower price')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('task_mutation', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -101,14 +102,13 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         model_results.append(mutation_results)
 
         # Save all of the results to a file
-        filename = results_filename('task_mutation', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')
 
 
 def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.15,
-                         time_limit: int = 2, price_change: int = 2, initial_price: int = 0):
+                         time_limit: int = 2, price_change: int = 3, initial_price: int = 15):
     """
     Attempts a grid search version of the mutation testing above where a single task is mutated in every possible way
         within a particular way to keep that the random testing is not missing anything
@@ -120,6 +120,8 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
     :param price_change: The price change of the servers
     :param initial_price: The initial price for the servers
     """
+    print(f'Completes a grid search of a task known to achieve better results')
+    filename = results_filename('mutation_grid_search', model_dist, repeat_num)
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the tasks and servers
@@ -178,7 +180,6 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                         reset_model(tasks, servers)
 
         # Save all of the results to a file
-        filename = results_filename('mutation_grid_search', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(mutation_results, file)
     print('Finished running')

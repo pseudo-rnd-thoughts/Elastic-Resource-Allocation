@@ -14,12 +14,12 @@ from typing import Iterable
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import set_price_change, reset_model, set_initial_price
-from src.extra.io import parse_args
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
 
 
 def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, time_limit: int = 2,
-                              initial_prices: Iterable[int] = (0, 5, 10, 15, 20),
+                              initial_prices: Iterable[int] = (10, 20, 30, 40),
                               price_changes: Iterable[int] = (1, 2, 5, 8, 10)):
     """
     Evaluates the difference in results with the decentralised iterative auction uses different price changes and
@@ -36,6 +36,7 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
           f'for {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('dia_heuristic_grid_search', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -59,11 +60,10 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
 
         model_results.append(algorithm_results)
 
-    # Save the results to the file
-    filename = results_filename('dia_heuristic_grid_search', model_dist, repeat_num)
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
-    print(f'Successful, data saved to {filename}')
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')
 
 
 def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
@@ -88,6 +88,7 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
           f'using {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
 
     def algorithm_name(_servers):
         """
@@ -125,7 +126,6 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
         model_results.append(algorithm_results)
 
         # Save the results to the file
-        filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')

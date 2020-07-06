@@ -14,12 +14,13 @@ from core.core import reset_model
 from core.fixed_task import FixedTask, FixedSumSpeeds
 from core.server import Server
 from core.task import Task
+from extra.io import results_filename
 from extra.result import Result, resource_usage
 from greedy.greedy import greedy_algorithm
 from optimal.fixed_optimal import fixed_optimal
 from optimal.flexible_optimal import flexible_optimal
 from optimal.relaxed_flexible import relaxed_flexible
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.value_density import policies as value_densities
@@ -80,6 +81,7 @@ def batch_online(model_dist: ModelDistribution, repeat_num: int, repeats: int = 
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('batch_online', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -131,7 +133,6 @@ def batch_online(model_dist: ModelDistribution, repeat_num: int, repeats: int = 
         model_results.append(batch_results)
 
         # Save the results to the file
-        filename = results_filename('batch_online', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')

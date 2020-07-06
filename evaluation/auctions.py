@@ -12,15 +12,15 @@ from src.auctions.decentralised_iterative_auction import optimal_decentralised_i
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from src.core.core import reset_model, set_initial_price, set_price_change
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.extra.io import parse_args
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.value_density import policies as value_densities
 
 
 def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, vcg_time_limit: int = 5,
-                       fixed_vcg_time_limit: int = 5, decentralised_iterative_auction_time_limit: int = 2):
+                       fixed_vcg_time_limit: int = 5, dia_time_limit: int = 2):
     """
     Evaluation of different auction algorithms
 
@@ -29,12 +29,13 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     :param repeats: The number of repeats
     :param vcg_time_limit: The VCG time limit
     :param fixed_vcg_time_limit: The Fixed VCG time limit
-    :param decentralised_iterative_auction_time_limit: Decentralised iterative auction time limit
+    :param dia_time_limit: Decentralised iterative auction time limit
     """
     print(f'Evaluates the auction algorithms (cva, dia, vcg, fixed vcg) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('auctions', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -54,18 +55,19 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         vcg_result.pretty_print()
         reset_model(tasks, servers)
 
+        # Fixed VCG Auctions
         fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=fixed_vcg_time_limit)
         algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
         fixed_vcg_result.pretty_print()
         reset_model(fixed_tasks, servers)
 
         # Decentralised Iterative auction
-        dia_result = optimal_decentralised_iterative_auction(tasks, servers,
-                                                             time_limit=decentralised_iterative_auction_time_limit)
+        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=dia_time_limit)
         algorithm_results[dia_result.algorithm] = dia_result.store()
         dia_result.pretty_print()
         reset_model(tasks, servers)
 
+        # Critical Value Auction
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
@@ -79,7 +81,6 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         model_results.append(model_results)
 
         # Save the results to the file
-        filename = results_filename('auctions', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')

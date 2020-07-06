@@ -9,8 +9,8 @@ import pprint
 
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.extra.io import parse_args
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
@@ -36,6 +36,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('greedy', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -79,7 +80,6 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         model_results.append(algorithm_results)
 
         # Save the results to the file
-        filename = results_filename('greedy', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')

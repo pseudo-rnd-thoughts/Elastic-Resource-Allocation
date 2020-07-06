@@ -10,8 +10,8 @@ from typing import Iterable
 
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
-from src.extra.io import parse_args
-from src.extra.model import ModelDistribution, results_filename
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
@@ -22,7 +22,8 @@ from src.optimal.relaxed_flexible import relaxed_flexible
 
 
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
-                          optimal_time_limit: int = 15, fixed_optimal_time_limit: int = 15, relaxed_time_limit: int = 15,
+                          optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30,
+                          relaxed_time_limit: int = 30,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
     """
     Evaluates the difference in social welfare when the ratio of computational to bandwidth capacity is changed between
