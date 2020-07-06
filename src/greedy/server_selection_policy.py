@@ -19,8 +19,11 @@ if TYPE_CHECKING:
 class ServerSelectionPolicy(ABC):
     """Server Selection Policy"""
 
-    def __init__(self, name: str, maximise: bool = False):
-        self.name = f"{'maximise' if maximise else 'minimise'} {name}"
+    def __init__(self, name: str, maximise: bool = False, long_name: bool = False):
+        if long_name:
+            self.name = f"{'maximise' if maximise else 'minimise'} {name}"
+        else:
+            self.name = name
         self.maximise = maximise
 
     def select(self, task: Task, servers: List[Server]) -> Optional[Server]:
@@ -121,7 +124,6 @@ class TaskSumResources(ServerSelectionPolicy):
 policies = [
     SumResources(),
     ProductResources(),
-    SumExpResource(),
     Random()
 ]
 

@@ -54,7 +54,8 @@ class ResourceAllocationPolicy(ABC):
 
         if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-            print(f'Optimal algorithm failed - status: {model_solution.get_solve_status()}')
+            print(f'Optimal algorithm failed - status: {model_solution.get_solve_status()} '
+                  f'for {str(task)} and {str(server)}')
         return model_solution.get_value(loading), model_solution.get_value(compute), model_solution.get_value(sending)
 
     @abstractmethod
@@ -77,7 +78,7 @@ class SumPercentage(ResourceAllocationPolicy):
     """The sum of percentage"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, 'Percentage Sum')
+        ResourceAllocationPolicy.__init__(self, 'Percent Sum')
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
@@ -90,7 +91,7 @@ class SumPowPercentage(ResourceAllocationPolicy):
     """The sum of exponential percentages"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, "Expo percentage sum")
+        ResourceAllocationPolicy.__init__(self, "Pow percent sum")
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
@@ -127,9 +128,7 @@ class DeadlinePercent(ResourceAllocationPolicy):
 
 policies = (
     SumPercentage(),
-    SumPowPercentage(),
-    SumSpeed(),
-    DeadlinePercent()
+    SumPowPercentage()
 )
 
 max_name_length = max(len(policy.name) for policy in policies)
