@@ -14,9 +14,9 @@ from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import reset_model
 from core.fixed_task import FixedSumSpeeds, FixedTask
 from core.super_server import SuperServer
-from extra.io import parse_args
+from extra.io import parse_args, results_filename
 from extra.pprint import print_model
-from extra.model import ModelDistribution, results_filename
+from extra.model import ModelDistribution
 from optimal.flexible_optimal import optimal_solver, flexible_optimal
 from optimal.relaxed_flexible import relaxed_flexible
 
