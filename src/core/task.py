@@ -132,7 +132,7 @@ class Task:
         return save_spec
 
     def __str__(self) -> str:
-        if self.loading_speed > 0:
+        if self.loading_speed > 0 and self.compute_speed > 0 and self.sending_speed > 0:
             return f'{self.name} Task - Required storage: {self.required_storage}, ' \
                    f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
                    f'deadline: {self.deadline}, value: {self.value}, allocated loading: {self.loading_speed}, ' \
