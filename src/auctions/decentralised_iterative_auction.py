@@ -152,6 +152,7 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     :return: task price and task speeds
     """
     assert 0 < time_limit, f'Time limit: {time_limit}'
+    assert new_task.required_storage <= server.storage_capacity
     model = CpoModel(f'{new_task.name} Task Price')
 
     # Add the new task to the list of server allocated tasks
@@ -187,7 +188,8 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     # If the model solution failed then return an infinite price
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print(f'Cplex model failed - status: {model_solution.get_solve_status()}')
+        print(f'Cplex model failed - status: {model_solution.get_solve_status()} '
+              f'for new {str(new_task)} and {str(server)}')
         return math.inf, {}
 
     # Get the max server profit that the model finds and calculate the task price through a vcg similar function
@@ -234,6 +236,13 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
 
             if min_price == -1 or price < min_price:
                 min_price, min_speeds, min_server = price, speeds, server
+
+                # if price == min(server.revenue + server.price_change for server in servers):
+                #     break
+
+        if min_price > min(server.revenue + server.price_change for server in servers):
+            print(f'[-] Min price: {min_price}, '
+                  f'Server revenue + price change: {min(server.revenue + server.price_change for server in servers)}')
 
         if min_price == -1 or min_price < task.value:
             debug(f'[+] {task.name} Task set to {min_server.name} with price {min_price} '
