@@ -203,8 +203,8 @@ class Value(ValueDensity):
 # Functions you actually want to use
 policies = [
     UtilityPerResources(ResourceSqrt()),
-    UtilityResourcePerDeadline(),
-    UtilityResourcePerDeadline(ResourceSqrt())
+    UtilityDeadlinePerResource(),
+    UtilityDeadlinePerResource(ResourceSqrt())
 ]
 
 all_policies: List[ValueDensity] = [
