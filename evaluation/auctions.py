@@ -78,7 +78,7 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
                     reset_model(tasks, servers)
 
         # Add the results to the data
-        model_results.append(model_results)
+        model_results.append(algorithm_results)
 
         # Save the results to the file
         with open(filename, 'w') as file:
