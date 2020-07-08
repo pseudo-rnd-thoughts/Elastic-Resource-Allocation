@@ -39,6 +39,7 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
     """
     model_results = []
     pp = pprint.PrettyPrinter()
+    filename = results_filename('resource_ratio', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -91,7 +92,6 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
         model_results.append(ratio_results)
 
         # Save the results to the file
-        filename = results_filename('resource_ratio', model_dist, repeat_num)
         with open(filename, 'w') as file:
             json.dump(model_results, file)
     print('Finished running')
