@@ -227,7 +227,7 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
 
     rounds: int = 0
     unallocated_tasks: List[Task] = tasks[:]
-    previous_task_price: Dict[Task, float] = {task: 0 for task in unallocated_tasks}
+    previous_task_price: Dict[Task, float] = {task: 0 for task in tasks}
     while unallocated_tasks:
         task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
 
@@ -238,7 +238,9 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
             if min_price == -1 or price < min_price:
                 min_price, min_speeds, min_server = price, speeds, server
 
-                if price <= min(previous_task_price[task] + server.price_change for server in servers):
+                debug(price < previous_task_price[task] + min(server.price_change for server in servers),
+                      f'')
+                if price <= previous_task_price[task] + min(server.price_change for server in servers):
                     break
 
         if min_price == -1 or min_price < task.value:
@@ -246,6 +248,7 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
                   f'and new {min_server.name} server revenue {min_server.revenue + min_server.price_change}',
                   debug_allocation)
             allocate_task(task, min_price, min_server, unallocated_tasks, min_speeds)
+            previous_task_price[task] = min_price
         else:
             debug(f'[-] Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
                   debug_allocation)
