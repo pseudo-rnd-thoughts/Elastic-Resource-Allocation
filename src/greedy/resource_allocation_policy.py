@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from src.core.fixed_task import FixedTask
+
 if TYPE_CHECKING:
     from typing import Tuple
 
@@ -124,6 +126,22 @@ class DeadlinePercent(ResourceAllocationPolicy):
         return (task.required_storage / loading_speed +
                 task.required_computation / compute_speed +
                 task.required_results_data / sending_speed) / task.deadline
+
+
+class FixedResourceAllocationPolicy(ResourceAllocationPolicy):
+    """Fixed Resource Allocation Policy"""
+
+    def __init__(self):
+        ResourceAllocationPolicy.__init__(self, 'Fixed Task Speeds')
+
+    def allocate(self, task: Task, server: Server) -> Tuple[int, int, int]:
+        assert type(type) is FixedTask
+
+        return task.loading_speed, task.compute_speed, task.sending_speed
+
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
+        raise NotImplementedError()
 
 
 policies = (
