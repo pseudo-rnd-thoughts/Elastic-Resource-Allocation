@@ -10,7 +10,7 @@ from typing import Iterable, Tuple
 
 import matplotlib.pyplot as plt
 
-from extra.model import ModelDistribution
+from src.extra.model import ModelDistribution
 
 
 class ImageFormat(Enum):
@@ -39,15 +39,15 @@ def save_plot(name: str, test_name: str, additional: str = '',
 
     for image_format in image_formats:
         if image_format == ImageFormat.EPS:
-            filename = f'figures/{test_name}/eps/{name}{additional}.eps'
+            filename = f'figs/{test_name}/eps/{name}{additional}.eps'
             print(f"Save file location: {filename}")
             plt.savefig(filename, format='eps', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PNG:
-            filename = f'figures/{test_name}/png/{name}{additional}.png'
+            filename = f'figs/{test_name}/png/{name}{additional}.png'
             print(f'Save file location: {filename}')
             plt.savefig(filename, format='png', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PDF:
-            filename = f'figures/{test_name}/pdf/{name}{additional}.pdf'
+            filename = f'figs/{test_name}/pdf/{name}{additional}.pdf'
             print(f'Save file location: {filename}')
             plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
@@ -66,8 +66,7 @@ def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
            filename.replace(re.findall(r'_j\d+_s\d+_\d+', filename)[0], '')
 
 
-def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int = None,
-                     save_date: bool = True) -> str:
+def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int, save_date: bool = True) -> str:
     """
     Generates the save filename for testing results
 
@@ -77,13 +76,11 @@ def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int 
     :param save_date: If to save the date
     :return: The concatenation of the test name, model distribution name and the repeat
     """
-    extra_info = (f'_{model_dist.num_tasks}' if model_dist.num_tasks is not None else '') + \
-                 (f'_{model_dist.num_servers}' if model_dist.num_servers is not None else '') + \
-                 (f'_{dt.datetime.now().strftime("%m-%d_%H-%M-%S")}' if save_date else '')
-    if repeat is None or repeat == 0:
-        return f'{test_name}_{model_dist.name}{extra_info}.json'
-    else:
-        return f'{test_name}_{model_dist.name}_{repeat}{extra_info}.json'
+    extra_info = (f'_r{repeat}' if repeat != 0 else '') + \
+                 (f'_t{model_dist.num_tasks}' if model_dist.num_tasks is not None else '') + \
+                 (f'_s{model_dist.num_servers}' if model_dist.num_servers is not None else '') + \
+                 (f'_dt{dt.datetime.now().strftime("%m-%d_%H-%M-%S")}' if save_date else '')
+    return f'{test_name}_{model_dist.name}{extra_info}.json'
 
 
 def analysis_filename(test_name: str, axis: str) -> str:
