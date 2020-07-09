@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, TypeVar
 from src.core.core import reset_model, server_task_allocation, debug
 from src.extra.result import Result
 from src.optimal.fixed_optimal import fixed_optimal_solver
-from src.optimal.flexible_optimal import optimal_solver
+from src.optimal.flexible_optimal import flexible_optimal_solver
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
@@ -109,7 +109,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
     :param debug_results: If to debug results
     :return: The results of the VCG auction
     """
-    optimal_solver_fn = functools.partial(optimal_solver, time_limit=time_limit)
+    optimal_solver_fn = functools.partial(flexible_optimal_solver, time_limit=time_limit)
 
     solve_time = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
     if 0 < solve_time:

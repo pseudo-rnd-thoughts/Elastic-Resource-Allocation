@@ -43,19 +43,19 @@ def relaxed_solver(tasks: List[Task], servers: List[Server], time_limit: int, de
     super_server = SuperServer(servers)
 
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
-        compute_speeds[task] = model.integer_var(min=1, max=super_server.computation_capacity)
-        sending_speeds[task] = model.integer_var(min=1, max=super_server.bandwidth_capacity)
+        loading_speeds[task] = model.integer_var(min=1, max=super_server.available_bandwidth)
+        compute_speeds[task] = model.integer_var(min=1, max=super_server.available_computation)
+        sending_speeds[task] = model.integer_var(min=1, max=super_server.available_bandwidth)
         task_allocation[task] = model.binary_var(name=f'{task.name} allocation')
 
         model.add(task.required_storage / loading_speeds[task] +
                   task.required_computation / compute_speeds[task] +
                   task.required_results_data / sending_speeds[task] <= task.deadline)
 
-    model.add(sum(task.required_storage * task_allocation[task] for task in tasks) <= super_server.storage_capacity)
-    model.add(sum(compute_speeds[task] * task_allocation[task] for task in tasks) <= super_server.computation_capacity)
-    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task] for task in
-                  tasks) <= super_server.bandwidth_capacity)
+    model.add(sum(task.required_storage * task_allocation[task] for task in tasks) <= super_server.available_storage)
+    model.add(sum(compute_speeds[task] * task_allocation[task] for task in tasks) <= super_server.available_computation)
+    model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[task]
+                  for task in tasks) <= super_server.available_bandwidth)
 
     model.maximize(sum(task.value * task_allocation[task] for task in tasks))
 

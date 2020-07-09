@@ -44,11 +44,11 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     # Server resource speeds constraints
     for server in servers:
         model.add(sum(task.required_storage * allocations[(task, server)]
-                      for task in tasks) <= server.storage_capacity)
+                      for task in tasks) <= server.available_storage)
         model.add(sum(task.compute_speed * allocations[(task, server)]
-                      for task in tasks) <= server.computation_capacity)
+                      for task in tasks) <= server.available_computation)
         model.add(sum((task.loading_speed + task.sending_speed) * allocations[(task, server)]
-                      for task in tasks) <= server.bandwidth_capacity)
+                      for task in tasks) <= server.available_bandwidth)
 
     # Optimisation problem
     model.maximize(sum(task.value * allocations[(task, server)] for task in tasks for server in servers))
