@@ -133,5 +133,5 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                loc=[1.025, pos], title=r'\textbf{Server resources}')
     axe.add_artist(tasks_legend)
 
-    save_plot(title.lower().replace(' ', '_'), 'allocation', image_formats=save_formats)
+    save_plot(title.lower().replace(' ', '_'), 'example_allocation', image_formats=save_formats)
     plt.show()
