@@ -101,7 +101,7 @@ def generate_batch_tasks(tasks: List[Task], batch_length: int, time_steps: int) 
 def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
                             batch_lengths: Iterable[int] = (1, 3, 5, 7, 10, 15), time_steps: int = 200,
                             mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
-                            optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30):
+                            optimal_time_limit: int = 5, fixed_optimal_time_limit: int = 5):
     """
     Evaluates the batch online
 
