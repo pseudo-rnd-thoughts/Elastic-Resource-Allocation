@@ -186,6 +186,7 @@ class PriorityQueue(Generic[T]):
             center_padding = left_padding
             left_padding = (left_padding - 1) // 2
 
+    # noinspection DuplicatedCode
     def assert_tree(self, pos: int = 0, check: bool = True):
         """
         Checks that the tree is correct

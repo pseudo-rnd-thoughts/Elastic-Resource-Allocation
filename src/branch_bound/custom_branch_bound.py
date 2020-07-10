@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from src.core.server import Server
 
 
+# noinspection DuplicatedCode
 def feasible_allocation(task_server_allocations: Dict[Server, List[Task]]) \
         -> Optional[Dict[Task, Tuple[int, int, int]]]:
     """

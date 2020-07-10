@@ -21,6 +21,7 @@ from src.optimal.flexible_optimal import flexible_optimal
 from src.optimal.relaxed_flexible import relaxed_flexible
 
 
+# noinspection DuplicatedCode
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
                           optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30,
                           relaxed_time_limit: int = 30,
