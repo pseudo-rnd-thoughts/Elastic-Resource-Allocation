@@ -13,7 +13,7 @@ from random import choice
 from typing import TYPE_CHECKING
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from src.core.core import set_price_change, reset_model, set_initial_price
+from src.core.core import reset_model, set_server_heuristics
 from src.core.task import Task
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
@@ -60,8 +60,7 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         tasks, servers = model_dist.generate()
-        set_price_change(servers, price_change)
-        set_initial_price(servers, initial_price)
+        set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
         mutation_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
@@ -126,8 +125,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
 
     # Generate the tasks and servers
     tasks, servers = model_dist.generate()
-    set_price_change(servers, price_change)
-    set_initial_price(servers, initial_price)
+    set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
     # The mutation results
     mutation_results = {'model': {

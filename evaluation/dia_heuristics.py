@@ -13,7 +13,7 @@ from random import gauss
 from typing import Iterable
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from src.core.core import set_price_change, reset_model, set_initial_price
+from src.core.core import reset_model, set_server_heuristics
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 
@@ -48,8 +48,7 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
 
         for initial_price in initial_prices:
             for price_change in price_changes:
-                set_price_change(servers, price_change)
-                set_initial_price(servers, initial_price)
+                set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
                 results = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                 algorithm_results[f'IP: {initial_price}, PC: {price_change}'] = results.store(

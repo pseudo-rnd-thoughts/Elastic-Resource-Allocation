@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from typing import Iterable, List
@@ -41,26 +41,20 @@ def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forget_prices:
         server.reset_allocations()
 
 
-def set_price_change(servers: List[Server], price_change: int):
+def set_server_heuristics(servers: List[Server], price_change: Optional[int] = None,
+                          initial_price: Optional[int] = None):
     """
-    Sets the price change attribute on a list of servers
+    Sets the server heuristics (price change and initial price of all servers)
 
-    :param servers: List of servers to affect
-    :param price_change: Updated price change
-    """
-    for server in servers:
-        server.price_change = price_change
-
-
-def set_initial_price(servers: List[Server], initial_price: int):
-    """
-    Sets the initial price attribute on a list of servers
-
-    :param servers: List of servers to affect
-    :param initial_price: Updated initial price
+    :param servers: List of servers
+    :param price_change: Price change
+    :param initial_price: Initial price
     """
     for server in servers:
-        server.initial_price = initial_price
+        if price_change is not None:
+            server.price_change = price_change
+        if initial_price is not None:
+            server.initial_price = initial_price
 
 
 def debug(message, case):
