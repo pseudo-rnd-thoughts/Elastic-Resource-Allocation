@@ -19,6 +19,33 @@ if TYPE_CHECKING:
     from src.greedy.value_density import ValueDensity
 
 
+def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
+                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
+    """
+    Allocate the tasks to the servers based on the server selection policy and resource allocation policies
+
+    :param tasks: The list of tasks
+    :param servers: The list of servers
+    :param server_selection_policy: The server selection policy
+    :param resource_allocation_policy: The resource allocation policy
+    :param debug_allocation: The task allocation debug
+    """
+
+    # Loop through all of the task in order of values
+    for task in tasks:
+        # Allocate the server using the allocation policy function
+        allocated_server = server_selection_policy.select(task, servers)
+
+        # If an optimal server is found then calculate the bid allocation function
+        if allocated_server:
+            s, w, r = resource_allocation_policy.allocate(task, allocated_server)
+            task.allocate(s, w, r, allocated_server)
+            allocated_server.allocate_task(task)
+
+    if debug_allocation:
+        print_task_allocation(tasks)
+
+
 def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: ValueDensity,
                      server_selection_policy: ServerSelectionPolicy,
                      resource_allocation_policy: ResourceAllocationPolicy, debug_task_values: bool = False,
@@ -50,32 +77,5 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], value_density: Va
     # The algorithm name
     algorithm_name = f'Greedy {value_density.name}, {server_selection_policy.name}, {resource_allocation_policy.name}'
     return Result(algorithm_name, tasks, servers, time() - start_time,
-                  value_density=value_density.name, server_selection_policy=server_selection_policy.name,
-                  resource_allocation_policy=resource_allocation_policy.name)
-
-
-def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
-                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
-    """
-    Allocate the tasks to the servers based on the server selection policy and resource allocation policies
-
-    :param tasks: The list of tasks
-    :param servers: The list of servers
-    :param server_selection_policy: The server selection policy
-    :param resource_allocation_policy: The resource allocation policy
-    :param debug_allocation: The task allocation debug
-    """
-
-    # Loop through all of the task in order of values
-    for task in tasks:
-        # Allocate the server using the allocation policy function
-        allocated_server = server_selection_policy.select(task, servers)
-
-        # If an optimal server is found then calculate the bid allocation function
-        if allocated_server:
-            s, w, r = resource_allocation_policy.allocate(task, allocated_server)
-            task.allocate(s, w, r, allocated_server)
-            allocated_server.allocate_task(task)
-
-    if debug_allocation:
-        print_task_allocation(tasks)
+                  **{'value density': value_density.name, 'server selection policy': server_selection_policy.name,
+                     'resource allocation policy': resource_allocation_policy.name})
