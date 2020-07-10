@@ -27,12 +27,18 @@ class Result:
         self.data = {
             # General properties
             'algorithm': algorithm_name,
-            'solve time': round(solve_time, 3),
-            'social welfare': sum(task.value for server in servers for task in server.allocated_tasks),
-            'social welfare percent': round(sum(task.value for task in tasks if task.running_server) /
-                                            sum(task.value for task in tasks), 3),
-            'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
+            'solve time': round(solve_time, 3)
         }
+
+        if len(tasks):
+            self.data.update({
+                'social welfare': sum(task.value for task in tasks),
+                'social welfare percent': round(sum(task.value for task in tasks if task.running_server) /
+                                                sum(task.value for task in tasks), 3),
+                'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
+            })
+        else:
+            self.data.update({'social welfare': 0, 'social welfare percent': 0, 'percentage tasks allocated': 0})
 
         if not limited:
             # Server properties
