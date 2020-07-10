@@ -19,7 +19,7 @@ from src.extra.model import ModelDistribution
 
 
 def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, time_limit: int = 2,
-                              initial_prices: Iterable[int] = (10, 20, 30, 40),
+                              initial_prices: Iterable[int] = (20, 30, 35, 40),
                               price_changes: Iterable[int] = (1, 2, 5, 8, 10)):
     """
     Evaluates the difference in results with the decentralised iterative auction uses different price changes and
@@ -67,8 +67,8 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
 
 def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
                                   time_limit: int = 2, random_repeats: int = 10,
-                                  price_change_mean: int = 2, price_change_std: int = 4,
-                                  initial_price_mean: int = 2, initial_price_std: int = 4):
+                                  price_change_mean: int = 3, price_change_std: int = 3,
+                                  initial_price_mean: int = 20, initial_price_std: int = 4):
     """
     Evaluates the effect of the server heuristics when they are non-uniform (all server's dont use the same value)
 
