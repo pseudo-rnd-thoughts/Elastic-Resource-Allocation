@@ -135,12 +135,20 @@ class FixedResourceAllocationPolicy(ResourceAllocationPolicy):
         ResourceAllocationPolicy.__init__(self, 'Fixed Task Speeds')
 
     def allocate(self, task: Task, server: Server) -> Tuple[int, int, int]:
+        """
+        Allocates a task's speeds that must be a fixed task
+
+        :param task: A fixed task
+        :param server: The server
+        :return: The fixed task's speeds
+        """
         assert type(type) is FixedTask
 
         return task.loading_speed, task.compute_speed, task.sending_speed
 
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
+        """Resource evaluator"""
         raise NotImplementedError()
 
 
