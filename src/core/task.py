@@ -21,7 +21,7 @@ class Task:
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
                  value: float, deadline: int, loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
-                 running_server: Optional[Server] = None, price: float = 0, auction_time: Optional[int] = None):
+                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = 0):
         self.name = name
 
         self.required_storage = required_storage
@@ -53,7 +53,7 @@ class Task:
         :param price: The price of the task
         """
         # Check that the allocation information is correct
-        assert loading_speed > 0 and compute_speed > 0 and sending_speed > 0, \
+        assert 0 < loading_speed and 0 < compute_speed and 0 < sending_speed, \
             f'Allocation information is incorrect for Task {self.name} with loading {loading_speed} ' \
             f'compute {compute_speed} sending {sending_speed}'
 
@@ -184,4 +184,21 @@ class Task:
             required_results_data=positive_gaussian(task_dist['results data mean'], task_dist['results data std']),
             deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
             value=positive_gaussian(task_dist['value mean'], task_dist['value std'])
+        )
+
+    def batch(self, time_step):
+        """
+        Returns a new batched task based on the time step, auction time and deadline
+
+        :param time_step: The time step where a batch starts
+        :return: A new task
+        """
+        return Task(
+            name=self.name,
+            required_storage=self.required_storage,
+            required_computation=self.required_computation,
+            required_results_data=self.required_results_data,
+            value=self.value,
+            auction_time=self.auction_time,
+            deadline=self.deadline - (time_step - self.auction_time)
         )
