@@ -97,6 +97,7 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
     for task, (s, w, r, server) in allocation_data.items():
         server_task_allocation(server, task, s, w, r)
 
-    return Result(f'Critical Value Auction', tasks, servers, time() - start_time, is_auction=True,
-                  value_density=value_density.name, server_selection_policy=server_selection_policy.name,
-                  resource_allocation_policy=resource_allocation_policy.name)
+    algorithm_name = f'Critical Value Auction {value_density.name}, {server_selection_policy.name}, {resource_allocation_policy.name}'
+    return Result(algorithm_name, tasks, servers, time() - start_time, is_auction=True,
+                  **{'value density': value_density.name, 'server selection policy': server_selection_policy.name,
+                     'resource allocation policy': resource_allocation_policy.name})
