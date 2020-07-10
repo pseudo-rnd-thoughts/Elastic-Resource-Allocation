@@ -14,7 +14,7 @@ from core.core import reset_model
 from core.server import Server
 from core.task import Task
 from extra.model import ModelDistribution
-from optimal.flexible_optimal import optimal_solver, flexible_optimal
+from optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
 
 
 def test_cplex():
@@ -27,15 +27,15 @@ def test_cplex():
 
 
 def test_cp_optimality():
-    model = ModelDistribution('models/basic.mdl', 20, 3)
+    model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
 
-    results = optimal_solver(tasks, servers, time_limit=10)
+    results = flexible_optimal_solver(tasks, servers, time_limit=10)
     print(results.store())
 
 
 def test_mip_model():
-    model = ModelDistribution('models/basic.mdl', 4, 2)
+    model = ModelDistribution('models/paper.mdl', 4, 2)
     tasks, servers = model.generate()
 
     model = Model('test')
@@ -84,7 +84,7 @@ def test_mip_model():
 
 
 def test_branch_bound():
-    model = ModelDistribution('models/basic.mdl', 4, 2)
+    model = ModelDistribution('models/paper.mdl', 4, 2)
     tasks, servers = model.generate()
 
     branch_bound_result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)

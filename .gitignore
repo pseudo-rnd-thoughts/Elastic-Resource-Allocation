@@ -4,9 +4,10 @@ __pycache__/
 
 .idea/
 */.ipynb_checkpoints
-analysis/figs/
 
 paper/related_papers/
 paper/example_papers/
 
+analysis/figs/
 data/
+models/old_models/

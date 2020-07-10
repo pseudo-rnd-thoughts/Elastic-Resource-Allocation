@@ -1,5 +1,5 @@
 {
-  "name": "fog v2",
+  "name": "paper",
   "task distributions": [
     {
       "name": "task",
@@ -20,12 +20,12 @@
     {
       "name": "server",
       "probability": 1,
-      "storage mean": 450,
-      "storage std": 50,
-      "computation mean": 70,
-      "computation std": 25,
-      "bandwidth mean": 290,
-      "bandwidth std": 45
+      "storage mean": 400,
+      "storage std": 40,
+      "computation mean": 40,
+      "computation std": 10,
+      "bandwidth mean": 150,
+      "bandwidth std": 20
     }
   ]
 }

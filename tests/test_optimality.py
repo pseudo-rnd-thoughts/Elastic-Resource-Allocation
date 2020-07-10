@@ -15,9 +15,9 @@ from core.core import reset_model
 from core.fixed_task import FixedSumSpeeds, FixedTask
 from core.super_server import SuperServer
 from extra.io import parse_args, results_filename
-from extra.pprint import print_model
 from extra.model import ModelDistribution
-from optimal.flexible_optimal import optimal_solver, flexible_optimal
+from extra.pprint import print_model
+from optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
 from optimal.relaxed_flexible import relaxed_flexible
 
 
@@ -50,7 +50,7 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
     print_model(tasks, servers)
 
     for time_limit in time_limits:
-        result = optimal_solver(tasks, servers, time_limit)
+        result = flexible_optimal_solver(tasks, servers, time_limit)
         reset_model(tasks, servers)
 
         print(f'\tSolved completely at time limit: {time_limit}, social welfare: {result.social_welfare} '

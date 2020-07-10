@@ -7,11 +7,11 @@ from __future__ import annotations
 
 from auctions.critical_value_auction import critical_value_auction
 from core.core import reset_model
+from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityPerResources
-from extra.model import ModelDistribution
 
 
 def test_critical_value(error: float = 0.05):
@@ -27,7 +27,7 @@ def test_critical_value(error: float = 0.05):
     """
     print()
 
-    model = ModelDistribution('models/basic.mdl', 20, 3)
+    model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
 
     print(f'Critical value auction')

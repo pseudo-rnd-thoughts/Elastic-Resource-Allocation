@@ -20,7 +20,7 @@ def main():
     """
     Runs the main script for testing iridis
     """
-    model = ModelDistribution('models/basic.mdl', 20, 3)
+    model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
     fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
 
@@ -36,7 +36,8 @@ def main():
     greedy_results.pretty_print()
 
     reset_model(tasks, servers)
-    critical_value_results = critical_value_auction(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+    critical_value_results = critical_value_auction(tasks, servers, UtilityPerResources(), SumResources(),
+                                                    SumPercentage())
     critical_value_results.pretty_print()
 
     reset_model(tasks, servers)

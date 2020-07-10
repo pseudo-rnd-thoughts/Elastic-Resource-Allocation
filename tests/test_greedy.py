@@ -19,7 +19,7 @@ from greedy_matrix.matrix_greedy import greedy_matrix_algorithm
 
 def test_greedy_policies():
     print()
-    model = ModelDistribution('models/basic.mdl', 20, 3)
+    model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
 
     policy_results = {}
@@ -54,7 +54,7 @@ def test_optimisation(repeats: int = 10):
 
     :param repeats: Number of repeats
     """
-    model = ModelDistribution('models/basic.mdl', 20, 3)
+    model = ModelDistribution('models/paper.mdl', 20, 3)
 
     greedy_results, greedy_matrix_time = [], []
     print(f' Greedy     | Greedy Matrix')
