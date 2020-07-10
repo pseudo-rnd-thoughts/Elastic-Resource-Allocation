@@ -34,6 +34,7 @@ def test_cp_optimality():
     print(results.store())
 
 
+# noinspection DuplicatedCode
 def test_mip_model():
     model = ModelDistribution('models/paper.mdl', 4, 2)
     tasks, servers = model.generate()

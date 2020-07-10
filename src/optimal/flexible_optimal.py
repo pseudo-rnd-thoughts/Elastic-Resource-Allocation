@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from src.core.task import Task
 
 
+# noinspection DuplicatedCode
 def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     """
     Optimal algorithm

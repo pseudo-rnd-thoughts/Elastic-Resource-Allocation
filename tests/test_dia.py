@@ -9,7 +9,7 @@ from copy import copy
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
-from core.core import reset_model, server_task_allocation, set_price_change
+from core.core import reset_model, server_task_allocation, set_server_heuristics
 from extra.model import ModelDistribution
 from greedy.resource_allocation_policy import SumPercentage
 
@@ -18,7 +18,7 @@ def test_optimal_dia():
     print()
     model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
-    set_price_change(servers, 5)
+    set_server_heuristics(servers, price_change=5)
 
     result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1, debug_allocation=True)
     result.pretty_print()
@@ -35,7 +35,7 @@ def test_greedy_dia():
     model = ModelDistribution('models/paper.mdl', 20, 3)
 
     tasks, servers = model.generate()
-    set_price_change(servers, 5)
+    set_server_heuristics(servers, price_change=5)
 
     result = greedy_decentralised_iterative_auction(tasks, servers, PriceResourcePerDeadline(), SumPercentage(),
                                                     debug_allocation=True)
@@ -104,7 +104,7 @@ def test_optimal_greedy_dia(repeats: int = 5):
     print(f'Time  | SW  | Time   | SW')
     for repeat in range(repeats):
         tasks, servers = model.generate()
-        set_price_change(servers, 5)
+        set_server_heuristics(servers, price_change=5)
 
         optimal_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1)
 
