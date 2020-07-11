@@ -18,7 +18,7 @@ from src.extra.result import Result
 from src.greedy.value_density import ResourceSum
 
 if TYPE_CHECKING:
-    from typing import List, Tuple, Iterable, TypeVar, Dict
+    from typing import List, Tuple, Iterable, TypeVar
 
     from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
     from src.core.server import Server
@@ -211,8 +211,8 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     return task_price, speeds
 
 
-def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
-               debug_allocation: bool = False) -> Tuple[int, float]:
+def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], task_price_solver,
+                                   debug_allocation: bool = False) -> Tuple[int, float]:
     """
     Decentralised iterative auction solver
 
@@ -223,32 +223,29 @@ def dia_solver(tasks: List[Task], servers: List[Server], task_price_solver,
     :return: A tuple with the number of rounds and the solver time length
     """
     start_time = time()
-    assert all(0 < server.price_change for server in servers)
 
     rounds: int = 0
     unallocated_tasks: List[Task] = tasks[:]
-    previous_task_price: Dict[Task, float] = {task: 0 for task in tasks}
+    # previous_task_price = {task: 0 for task in tasks}
     while unallocated_tasks:
         task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
 
         min_price, min_speeds, min_server = -1, None, None
         for server in servers:
-            price, speeds = task_price_solver(task, server)
+            if server.can_run_empty(task):
+                price, speeds = task_price_solver(task, server)
 
-            if min_price == -1 or price < min_price:
-                min_price, min_speeds, min_server = price, speeds, server
+                if min_price == -1 or price < min_price:
+                    min_price, min_speeds, min_server = price, speeds, server
 
-                debug(price < previous_task_price[task] + min(server.price_change for server in servers),
-                      f'')
-                if price <= previous_task_price[task] + min(server.price_change for server in servers):
-                    break
-
-        if min_price == -1 or min_price < task.value:
-            debug(f'[+] {task.name} Task set to {min_server.name} with price {min_price} '
-                  f'and new {min_server.name} server revenue {min_server.revenue + min_server.price_change}',
-                  debug_allocation)
+        # print(f'[*] min price: {min_price}, previous task price: {previous_task_price[task]}, '
+        #       f'min possible price: {min(max(previous_task_price[task] + _server.price_change, _server.initial_price) for _server in servers)}')
+        if 0 < min_price < task.value:
             allocate_task(task, min_price, min_server, unallocated_tasks, min_speeds)
-            previous_task_price[task] = min_price
+            debug(f'[+] {task.name} Task set to {min_server.name} with price {task.price} '
+                  f'for server revenue of {min_server.revenue}',
+                  debug_allocation)
+            # previous_task_price[task] = min_price
         else:
             debug(f'[-] Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
                   debug_allocation)
@@ -271,7 +268,7 @@ def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Ser
     :return: The results of the auction
     """
     solver = functools.partial(optimal_task_price, time_limit=time_limit)
-    rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
+    rounds, solve_time = decentralised_iterative_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Optimal DIA', tasks, servers, solve_time, is_auction=True,
                   **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
@@ -293,8 +290,10 @@ def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Serv
     """
     solver = functools.partial(greedy_task_price, price_density=price_density,
                                resource_allocation_policy=resource_allocation_policy)
-    rounds, solve_time = dia_solver(tasks, servers, solver, debug_allocation)
+    rounds, solve_time = decentralised_iterative_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,
                   **{'server price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
-                     'server initial price': {server.name: server.initial_price for server in servers}})
+                     'server initial price': {server.name: server.initial_price for server in servers},
+                     'price density': price_density.name, 'resource allocation policy': resource_allocation_policy.name
+                     })
