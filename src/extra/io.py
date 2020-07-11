@@ -4,9 +4,8 @@ Input/Output functions
 
 import argparse
 import datetime as dt
-import re
 from enum import auto, Enum
-from typing import Iterable, Tuple
+from typing import Iterable
 
 import matplotlib.pyplot as plt
 
@@ -22,8 +21,8 @@ class ImageFormat(Enum):
     PDF = auto()
 
 
-def save_plot(name: str, test_name: str, additional: str = '',
-              image_formats: Iterable[ImageFormat] = (), lgd=None, dpi=1000):
+def save_plot(name: str, test_name: str, additional: str = '', lgd=None, dpi=1000,
+              image_formats: Iterable[ImageFormat] = (ImageFormat.EPS, ImageFormat.PNG, ImageFormat.PDF)):
     """
     Saves the plot to a file of the particular image format
 
@@ -52,20 +51,6 @@ def save_plot(name: str, test_name: str, additional: str = '',
             plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
 
-# noinspection LongLine
-def decode_filename(folder: str, filename: str) -> Tuple[str, str, str]:
-    """
-    Decodes the filename to recover the file location, the model name and the greedy name
-
-    :param folder: The data folder
-    :param filename: The encoded filename
-    :return: Tuple of the location of the file and the model type
-    """
-    return f'../results/{folder}/{filename}.json', \
-           re.findall(r'j\d+_s\d+', filename)[0].replace('_', ' ').replace('s', 'Servers: ').replace('t', 'Tasks: '), \
-           filename.replace(re.findall(r'_j\d+_s\d+_\d+', filename)[0], '')
-
-
 def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int, save_date: bool = True) -> str:
     """
     Generates the save filename for testing results
@@ -76,25 +61,11 @@ def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int,
     :param save_date: If to save the date
     :return: The concatenation of the test name, model distribution name and the repeat
     """
-    extra_info = (f'_r{repeat}' if repeat != 0 else '') + \
+    extra_info = (f'_r{repeat}' if repeat != 0 or repeat is not None else '') + \
                  (f'_t{model_dist.num_tasks}' if model_dist.num_tasks is not None else '') + \
                  (f'_s{model_dist.num_servers}' if model_dist.num_servers is not None else '') + \
                  (f'_dt{dt.datetime.now().strftime("%m-%d_%H-%M-%S")}' if save_date else '')
     return f'{test_name}_{model_dist.name}{extra_info}.json'
-
-
-def analysis_filename(test_name: str, axis: str) -> str:
-    """
-    Generates the save filename for Analysis plot results
-
-    :param test_name: The test name
-    :param axis: The axis name
-    :return: The concatenation of the test name and the axis
-    """
-    if test_name == "":
-        return axis.lower().replace(" ", "_")
-    else:
-        return f'{test_name}_{axis.lower().replace(" ", "_")}'
 
 
 def parse_args() -> argparse.Namespace:
