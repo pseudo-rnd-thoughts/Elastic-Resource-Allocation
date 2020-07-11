@@ -10,10 +10,10 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel, CpoVariable
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from extra.visualise import minimise_resource_allocation
 from src.core.core import server_task_allocation
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
+from src.extra.visualise import minimise_resource_allocation
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
