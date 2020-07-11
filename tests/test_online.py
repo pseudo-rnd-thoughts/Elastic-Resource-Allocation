@@ -53,8 +53,8 @@ def test_online_solver(model_dist=ModelDistribution('models/paper.mdl', num_serv
     print(result.data)
 
 
-def test_optimal_solutions(model_dist=ModelDistribution('models/paper.mdl', num_servers=8), time_steps: int = 50,
-                           mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
+def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
+                           time_steps: int = 50, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
     fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
@@ -107,5 +107,28 @@ def test_batch_lengths(model_dist=ModelDistribution('models/online_paper.mdl', n
                                             server_selection_policy=server_selection_policy,
                                             resource_allocation_policy=resource_allocation_policy)
         results.append(greedy_result)
-        print(f'Batch length: {batch_length}, social welfare: {greedy_result.social_welfare}')
+        print(f'Batch length: {batch_length}, social welfare percent: {greedy_result.percentage_social_welfare}, '
+              f'social welfare: {greedy_result.social_welfare}')
         reset_model(flattened_tasks, servers)
+
+
+def test_caroline_online_models(batch_length: int = 1):
+    model_dist = ModelDistribution('models/online_caroline_u4.mdl')
+    tasks, servers = model_dist.generate()
+    batched_tasks = generate_batch_tasks(tasks, batch_length, 200)
+    greedy_result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy',
+                                        greedy_algorithm, value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                        server_selection_policy=SumResources(),
+                                        resource_allocation_policy=SumPowPercentage())
+    print(f'\nMean 4 - Social welfare percentage: {greedy_result.percentage_social_welfare}, '
+          f'percent tasks allocated: {greedy_result.percentage_tasks_allocated}')
+
+    model_dist = ModelDistribution('models/online_caroline_u7.mdl')
+    model_dist.generate()
+    batched_tasks = generate_batch_tasks(tasks, batch_length, 200)
+    greedy_result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy',
+                                        greedy_algorithm, value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                        server_selection_policy=SumResources(),
+                                        resource_allocation_policy=SumPowPercentage())
+    print(f'\nMean 7 - Social welfare percentage: {greedy_result.percentage_social_welfare}, '
+          f'percent tasks allocated: {greedy_result.percentage_tasks_allocated}')
