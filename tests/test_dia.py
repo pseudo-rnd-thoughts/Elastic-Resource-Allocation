@@ -18,7 +18,7 @@ def test_optimal_dia():
     print()
     model = ModelDistribution('models/paper.mdl', 20, 3)
     tasks, servers = model.generate()
-    set_server_heuristics(servers, price_change=5)
+    set_server_heuristics(servers, price_change=5, initial_price=20)
 
     result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1, debug_allocation=True)
     result.pretty_print()
