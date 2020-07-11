@@ -32,7 +32,7 @@ class Result:
 
         if len(tasks):
             self.data.update({
-                'social welfare': sum(task.value for task in tasks),
+                'social welfare': sum(task.value for task in tasks if task.running_server is not None),
                 'social welfare percent': round(sum(task.value for task in tasks if task.running_server) /
                                                 sum(task.value for task in tasks), 3),
                 'percentage tasks allocated': round(sum(1 for task in tasks if task.running_server) / len(tasks), 3)
