@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import pprint
+from math import floor
 from time import time
 from typing import Iterable, List
 
@@ -55,24 +56,25 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             server_bandwidth_usage[server].append(resource_usage(server, 'bandwidth'))
             server_num_tasks_allocated[server].append(len(server.allocated_tasks))
 
-            next_time_step = batch_length * (batch_num + 1)
+            current_time_step, next_time_step = batch_length * batch_num, batch_length * (batch_num + 1)
             server.allocated_tasks = [task for task in server.allocated_tasks
-                                      if task.auction_time + task.deadline < next_time_step]
+                                      if current_time_step < task.auction_time + task.deadline]
             batch_percent = {task: 1 if next_time_step < task.auction_time + task.deadline else
-                             ((task.auction_time + task.deadline - next_time_step) / batch_length)
+                             ((task.auction_time + task.deadline - current_time_step) / batch_length)
                              for task in server.allocated_tasks}
-            assert all(0 < percent <= 1 for percent in batch_percent.values())
-            server.available_storage = server.storage_capacity - sum(task.required_storage * batch_percent[task]
-                                                                     for task in server.allocated_tasks)
-            server.available_computation = server.computation_capacity - sum(task.compute_speed * batch_percent[task]
-                                                                             for task in server.allocated_tasks)
+            assert all(0 < percent <= 1 for percent in batch_percent.values()), list(batch_percent.values())
+            server.available_storage = server.storage_capacity - \
+                floor(sum(task.required_storage for task in server.allocated_tasks))
+            server.available_computation = server.computation_capacity - \
+                floor(sum(task.compute_speed * batch_percent[task] for task in server.allocated_tasks))
             server.available_bandwidth = server.bandwidth_capacity - \
-                sum((task.loading_speed + task.sending_speed) * batch_percent[task] for task in server.allocated_tasks)
-            assert 0 <= server.available_storage and 0 <= server.available_computation and 0 <= server.available_bandwidth
+                floor(sum((task.loading_speed + task.sending_speed) * batch_percent[task]
+                          for task in server.allocated_tasks))
+            assert 0 <= server.available_storage <= server.storage_capacity, server.available_storage
+            assert 0 <= server.available_computation <= server.computation_capacity, server.available_computation
+            assert 0 <= server.available_bandwidth <= server.bandwidth_capacity, server.available_bandwidth
 
     flatten_tasks = [task for tasks in batched_tasks for task in tasks]
-    print(f'Number of tasks: {len(flatten_tasks)}, '
-          f'Social welfare: {sum(task.value for task in flatten_tasks)}')
     return Result(solver_name, flatten_tasks, servers, time() - start_time, limited=True, **{
         'server social welfare': {server.name: server_social_welfare[server] for server in servers},
         'server storage used': {server.name: server_storage_usage[server] for server in servers},
