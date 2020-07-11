@@ -21,7 +21,7 @@ class Task:
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
                  value: float, deadline: int, loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
-                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = 0):
+                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = -1):
         self.name = name
 
         self.required_storage = required_storage
@@ -126,7 +126,7 @@ class Task:
             'deadline': self.deadline,
             'value': self.value
         }
-        if self.auction_time:
+        if 0 < self.auction_time:
             save_spec.update({'auction time': self.auction_time})
 
         return save_spec
@@ -154,7 +154,7 @@ class Task:
             name=task_spec['name'], required_storage=task_spec['storage'],
             required_computation=task_spec['computation'], required_results_data=task_spec['results data'],
             deadline=task_spec['deadline'], value=task_spec['value'],
-            auction_time=task_spec['auction time'] if 'auction time' in task_spec else None
+            auction_time=task_spec['auction time'] if 'auction time' in task_spec else 0
         )
 
     @staticmethod
