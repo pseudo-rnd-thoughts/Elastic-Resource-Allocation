@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from random import choice
+import random as rnd
 from typing import TYPE_CHECKING
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
@@ -75,12 +75,13 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         # Save the task prices and server revenues
         task_prices = {task: task.price for task in tasks}
         allocated_tasks = {task: task.running_server is not None for task in tasks}
+        to_mutate_tasks = list(allocated_tasks.values())
         reset_model(tasks, servers)
 
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
-        for model_mutation in range(model_mutations):
+        for model_mutation in range(max(model_mutations, len(to_mutate_tasks))):
             # Choice a random task and mutate it
-            task: Task = choice(allocated_tasks.keys())
+            task: Task = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
             mutant_task = task.mutate(mutate_percent)
 
             # Replace the task with the mutant task in the task list
