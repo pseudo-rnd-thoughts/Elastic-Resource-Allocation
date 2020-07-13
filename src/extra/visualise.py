@@ -8,8 +8,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from docplex.cp.model import CpoModel, CpoVariable
+from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
+from core.core import server_task_allocation
 from src.extra.io import ImageFormat, save_plot
 
 if TYPE_CHECKING:
@@ -26,7 +27,7 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
     """
     Minimise resource allocation of a list of servers
 
-    :param tasks: List of tasks
+    :param tasks: List of new tasks to the server (this is important for the online flexible case)
     :param servers: List of servers
     :param time_limit: Solve time limit
     """
@@ -56,22 +57,29 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
                       (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
         model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
-        model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= server.computation_capacity)
-        model.add(sum(loading_speeds[task] + sending_speeds[task]
-                      for task in server.allocated_tasks) <= server.bandwidth_capacity)
+        model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= max_computation)
+        model.add(sum(loading_speeds[task] + sending_speeds[task] for task in server.allocated_tasks) <= max_bandwidth)
 
         model.minimize(sum(loading_speeds[task] ** 3 + compute_speeds[task] ** 3 + sending_speeds[task] ** 3
                            for task in server_new_tasks))
 
         model_solution = model.solve(log_output=None, TimeLimit=time_limit)
 
+        # Check that it is solved
+        if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
+                model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
+            print(f'Minimise resource allocation solver failed')
+
         allocated_tasks = server.allocated_tasks.copy()
         server.reset_allocations()
         for task in allocated_tasks:
-            task.reset_allocation()
-            task.allocate(model_solution.get_value(loading_speeds[task]),
-                          model_solution.get_value(compute_speeds[task]),
-                          model_solution.get_value(sending_speeds[task]), server)
+            if task in server_new_tasks:
+                task.reset_allocation()
+                server_task_allocation(server, task, model_solution.get_value(loading_speeds[task]),
+                                       model_solution.get_value(compute_speeds[task]),
+                                       model_solution.get_value(sending_speeds[task]))
+            else:
+                server.allocate_task(task)
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
