@@ -109,8 +109,8 @@ class Task:
                     int(self.required_storage + abs(gauss(0, self.required_storage * percent))),
                     int(self.required_computation + abs(gauss(0, self.required_computation * percent))),
                     int(self.required_results_data + abs(gauss(0, self.required_results_data * percent))),
-                    int(max(1, self.deadline - abs(gauss(0, self.required_results_data * percent)))),
-                    int(max(1, self.value - abs(gauss(0, self.required_results_data * percent)))))
+                    int(max(1, self.deadline - abs(gauss(0, self.deadline * percent)))),
+                    int(max(1, self.value - abs(gauss(0, self.value * percent)))))
 
     def save(self):
         """
