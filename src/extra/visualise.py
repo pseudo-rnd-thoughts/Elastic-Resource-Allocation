@@ -23,7 +23,7 @@ matplotlib.rcParams['font.family'] = 'monospace'
 matplotlib.rc('text', usetex=True)
 
 
-def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_limit: int = 2):
+def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_limit: int = 1):
     """
     Minimise resource allocation of a list of servers
 
@@ -56,9 +56,9 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
                       (task.required_computation / compute_speeds[task]) +
                       (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
-        model.add(sum(task.required_storage for task in server.allocated_tasks) <= server.storage_capacity)
-        model.add(sum(compute_speeds[task] for task in server.allocated_tasks) <= max_computation)
-        model.add(sum(loading_speeds[task] + sending_speeds[task] for task in server.allocated_tasks) <= max_bandwidth)
+        model.add(sum(task.required_storage for task in server_new_tasks) <= server.storage_capacity)
+        model.add(sum(compute_speeds[task] for task in server_new_tasks) <= max_computation)
+        model.add(sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) <= max_bandwidth)
 
         model.minimize(sum(loading_speeds[task] ** 3 + compute_speeds[task] ** 3 + sending_speeds[task] ** 3
                            for task in server_new_tasks))
@@ -69,6 +69,7 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
             print(f'Minimise resource allocation solver failed')
+            return
 
         allocated_tasks = server.allocated_tasks.copy()
         server.reset_allocations()
