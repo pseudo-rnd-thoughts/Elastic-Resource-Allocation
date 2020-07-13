@@ -17,9 +17,10 @@ from core.server import Server
 from core.task import Task
 from extra.io import results_filename, parse_args
 from extra.result import Result, resource_usage
+from extra.visualise import minimise_resource_allocation
 from greedy.greedy import greedy_algorithm
 from optimal.fixed_optimal import fixed_optimal_solver
-from optimal.flexible_optimal import minimal_flexible_optimal_solver
+from optimal.flexible_optimal import flexible_optimal_solver
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
@@ -100,10 +101,24 @@ def generate_batch_tasks(tasks: List[Task], batch_length: int, time_steps: int) 
     ]
 
 
+def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
+                                    solver_time_limit: int = 3, minimise_time_limit: int = 2):
+    """
+    Minimise the resources used by flexible optimal solver
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param solver_time_limit: Solver time limit
+    :param minimise_time_limit: Minimise solver time limit
+    """
+    flexible_optimal_solver(tasks, servers, solver_time_limit)
+    minimise_resource_allocation(tasks, servers, minimise_time_limit)
+
+
 def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
                             batch_lengths: Iterable[int] = (1, 3, 5, 7, 10, 15), time_steps: int = 200,
                             mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
-                            optimal_time_limit: int = 5, fixed_optimal_time_limit: int = 5):
+                            optimal_time_limit: int = 3, fixed_optimal_time_limit: int = 5):
     """
     Evaluates the batch online
 
@@ -177,7 +192,7 @@ def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repe
                         reset_model(flattened_tasks, servers)
 
             # Add the results to the data
-            batch_results[f'{batch_length} length'] = algorithm_results
+            batch_results[f'batch length {batch_length}'] = algorithm_results
         model_results.append(batch_results)
 
         # Save the results to the file

@@ -13,7 +13,6 @@ from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 from src.core.core import server_task_allocation
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
-from src.extra.visualise import minimise_resource_allocation
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
@@ -99,20 +98,6 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
         return None
 
     return model_solution
-
-
-def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
-                                    solver_time_limit: int, minimise_time_limit: int = 2):
-    """
-    Minimise the resources used by flexible optimal solver
-
-    :param tasks: List of tasks
-    :param servers: List of servers
-    :param solver_time_limit: Solver time limit
-    :param minimise_time_limit: Minimise solver time limit
-    """
-    flexible_optimal_solver(tasks, servers, solver_time_limit)
-    minimise_resource_allocation(tasks, servers, minimise_time_limit)
 
 
 def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
