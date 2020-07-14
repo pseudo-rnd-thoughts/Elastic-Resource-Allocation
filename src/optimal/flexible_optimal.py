@@ -7,7 +7,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING
 
-from docplex.cp.model import CpoModel, CpoVariable
+from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import server_task_allocation
@@ -15,16 +15,15 @@ from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Tuple, Optional
+    from typing import List, Optional
 
     from src.core.server import Server
     from src.core.task import Task
 
 
-# noinspection DuplicatedCode
 def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
     """
-    Optimal algorithm
+    Flexible Optimal algorithm solver using cplex
 
     :param tasks: List of tasks
     :param servers: List of servers
@@ -36,20 +35,13 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     model = CpoModel('Flexible Optimal')
 
     # The resource speed variables and the allocation variables
-    loading_speeds: Dict[Task, CpoVariable] = {}
-    compute_speeds: Dict[Task, CpoVariable] = {}
-    sending_speeds: Dict[Task, CpoVariable] = {}
-    task_allocation: Dict[Tuple[Task, Server], CpoVariable] = {}
-
-    # The maximum bandwidth and the computation that the speed can be
-    max_bandwidth = max(server.available_bandwidth for server in servers) - 1
-    max_computation = max(server.available_computation for server in servers)
+    loading_speeds, compute_speeds, sending_speeds, task_allocation = {}, {}, {}, {}
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} loading speed')
-        compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
-        sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth, name=f'{task.name} sending speed')
+        loading_speeds[task] = model.integer_var(min=1, max=task.loading_ub(), name=f'{task.name} loading speed')
+        compute_speeds[task] = model.integer_var(min=1, max=task.compute_ub(), name=f'{task.name} compute speed')
+        sending_speeds[task] = model.integer_var(min=1, max=task.sending_ub(), name=f'{task.name} sending speed')
 
         model.add((task.required_storage / loading_speeds[task]) +
                   (task.required_computation / compute_speeds[task]) +
@@ -92,24 +84,22 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(loading_speeds[task]),
                                            model_solution.get_value(compute_speeds[task]),
                                            model_solution.get_value(sending_speeds[task]))
+        return model_solution
     except (AssertionError, KeyError) as e:
         print('Error: ', e)
         print_model_solution(model_solution)
-        return None
-
-    return model_solution
 
 
 def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
     """
-    Runs the optimal task allocation algorithm solver
+    Runs the optimal task allocation algorithm solver for the time limit given the list of tasks and servers
 
     :param tasks: List of tasks
     :param servers: List of servers
     :param time_limit: The time limit for the cplex solver
-    :return: Optional optimal results
+    :return: Optimal results find setting is valid
     """
-    model_solution = flexible_optimal_solver(tasks, servers, time_limit=time_limit)
+    model_solution = flexible_optimal_solver(tasks, servers, time_limit)
     if model_solution:
         return Result('Flexible Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status()})
