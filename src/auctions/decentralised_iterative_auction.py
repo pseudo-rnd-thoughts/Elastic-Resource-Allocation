@@ -159,25 +159,26 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     tasks = server.allocated_tasks + [new_task]
 
     # Create all of the resource speeds variables
-    loading_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
-    compute_speed = {task: model.integer_var(min=1, max=server.computation_capacity) for task in tasks}
-    sending_speed = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
+    loading_speeds = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
+    compute_speeds = {task: model.integer_var(min=1, max=server.computation_capacity) for task in tasks}
+    sending_speeds = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
+
     # Create all of the allocation variables however only on the currently allocated tasks
     allocation = {task: model.binary_var(name=f'{task.name} Task allocated') for task in server.allocated_tasks}
 
     # Add the deadline constraint
     for task in tasks:
-        model.add((task.required_storage / loading_speed[task]) +
-                  (task.required_computation / compute_speed[task]) +
-                  (task.required_results_data / sending_speed[task]) <= task.deadline)
+        model.add((task.required_storage / loading_speeds[task]) +
+                  (task.required_computation / compute_speeds[task]) +
+                  (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
     # Add the server resource constraints
     model.add(sum(task.required_storage * allocated for task, allocated in allocation.items()) +
               new_task.required_storage <= server.storage_capacity)
-    model.add(sum(compute_speed[task] * allocated for task, allocated in allocation.items()) +
-              compute_speed[new_task] <= server.computation_capacity)
-    model.add(sum((loading_speed[task] + sending_speed[task]) * allocated for task, allocated in allocation.items()) +
-              (loading_speed[new_task] + sending_speed[new_task]) <= server.bandwidth_capacity)
+    model.add(sum(compute_speeds[task] * allocated for task, allocated in allocation.items()) +
+              compute_speeds[new_task] <= server.computation_capacity)
+    model.add(sum((loading_speeds[task] + sending_speeds[task]) * allocated for task, allocated in allocation.items()) +
+              (loading_speeds[new_task] + sending_speeds[new_task]) <= server.bandwidth_capacity)
 
     # The optimisation function
     model.maximize(sum(task.price * allocated for task, allocated in allocation.items()))
@@ -198,9 +199,9 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
 
     # Get the resource speeds and task allocations
     speeds = {
-        task: (model_solution.get_value(loading_speed[task]),
-               model_solution.get_value(compute_speed[task]),
-               model_solution.get_value(sending_speed[task]),
+        task: (model_solution.get_value(loading_speeds[task]),
+               model_solution.get_value(compute_speeds[task]),
+               model_solution.get_value(sending_speeds[task]),
                model_solution.get_value(allocation[task]) if task in allocation else True)
         for task in tasks
     }
