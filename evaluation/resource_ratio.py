@@ -8,6 +8,7 @@ import json
 import pprint
 from typing import Iterable
 
+from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.extra.io import parse_args, results_filename
@@ -18,11 +19,10 @@ from src.greedy.server_selection_policy import policies as server_selection_poli
 from src.greedy.value_density import policies as value_densities
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
-from src.optimal.relaxed_flexible import relaxed_flexible
 
 
 # noinspection DuplicatedCode
-def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
+def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25,
                           optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30,
                           relaxed_time_limit: int = 30,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
@@ -74,7 +74,7 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
             reset_model(fixed_tasks, servers)
 
             # Find the relaxed solution
-            relaxed_result = relaxed_flexible(tasks, servers, relaxed_time_limit)
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
             algorithm_results[relaxed_result.algorithm] = relaxed_result.store(ratio=ratio)
             pp.pprint(algorithm_results[relaxed_result.algorithm])
             reset_model(tasks, servers)

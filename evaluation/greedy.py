@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import pprint
 
+from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, FixedSumSpeeds
 from src.extra.io import parse_args, results_filename
@@ -17,7 +18,6 @@ from src.greedy.server_selection_policy import policies as server_selection_poli
 from src.greedy.value_density import policies as value_densities
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
-from src.optimal.relaxed_flexible import relaxed_flexible
 
 
 # noinspection DuplicatedCode
@@ -62,7 +62,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
-        relaxed_result = relaxed_flexible(tasks, servers, relaxed_time_limit)
+        relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
         algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
         relaxed_result.pretty_print()
         reset_model(tasks, servers)
