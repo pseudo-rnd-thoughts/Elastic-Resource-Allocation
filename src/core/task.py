@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from math import ceil
 from random import gauss
 from typing import TYPE_CHECKING
 
@@ -202,3 +203,30 @@ class Task:
             auction_time=self.auction_time,
             deadline=self.deadline - (time_step - self.auction_time)
         )
+
+    def loading_ub(self):
+        """
+        Reasonable values for the upper bound of the loading speed for the task in order to speed cplex and reduce
+            wasted resources
+
+        :return: Reasonable upper bound for the loading speed
+        """
+        return ceil(5 * self.required_storage / self.deadline)
+
+    def compute_ub(self):
+        """
+        Reasonable values for the upper bound of the compute speed for the task in order to speed cplex and reduce
+            wasted resources
+
+        :return: Reasonable upper bound for the compute speed
+        """
+        return ceil(5 * self.required_computation / self.deadline)
+
+    def sending_ub(self):
+        """
+        Reasonable values for the upper bound of the sending speed for the task in order to speed cplex and reduce
+            wasted resources
+
+        :return: Reasonable upper bound for the sending speed
+        """
+        return ceil(5 * self.required_results_data / self.deadline)
