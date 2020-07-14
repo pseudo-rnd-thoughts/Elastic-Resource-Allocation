@@ -67,7 +67,7 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
 
 def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
                                   time_limit: int = 2, random_repeats: int = 10,
-                                  price_change_mean: int = 3, price_change_std: int = 2,
+                                  price_change_mean: int = 4, price_change_std: int = 2,
                                   initial_price_mean: int = 25, initial_price_std: int = 4):
     """
     Evaluates the effect of the server heuristics when they are non-uniform (all server's dont use the same value)
@@ -89,16 +89,6 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
     pp = pprint.PrettyPrinter()
     filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
 
-    def algorithm_name(_servers):
-        """
-        Generates the algorithm name from the initial price and price change of a list of servers
-
-        :param _servers: List of servers
-        :return: String representing the algorithm name
-        """
-        return f'IP: [{" ".join([str(server.initial_price) for server in _servers])}], ' \
-               f'PC: [{" ".join([str(server.price_change) for server in _servers])}]'
-
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         tasks, servers = model_dist.generate()
@@ -109,20 +99,19 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
 
         set_server_heuristics(servers, price_change=price_change_mean, initial_price=initial_price_mean)
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-        algorithm_results[algorithm_name(servers)] = dia_result.store()
+        algorithm_results['normal'] = dia_result.store()
         dia_result.pretty_print()
         reset_model(tasks, servers)
 
-        for _ in range(random_repeats):
+        for random_repeat in range(random_repeats):
             for server in servers:
                 server.price_change = max(1, int(gauss(price_change_mean, price_change_std)))
                 server.initial_price = max(1, int(gauss(initial_price_mean, initial_price_std)))
 
-                dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
-                algorithm_results[algorithm_name(servers)] = dia_result.store()
-                dia_result.pretty_print()
-                reset_model(tasks, servers)
-
+            dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
+            algorithm_results[f'repeat {random_repeat}'] = dia_result.store()
+            dia_result.pretty_print()
+            reset_model(tasks, servers)
         model_results.append(algorithm_results)
 
         # Save the results to the file
