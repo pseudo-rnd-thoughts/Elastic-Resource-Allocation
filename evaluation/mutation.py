@@ -75,7 +75,7 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         # Save the task prices and server revenues
         task_prices = {task: task.price for task in tasks}
         allocated_tasks = {task: task.running_server is not None for task in tasks}
-        to_mutate_tasks = list(allocated_tasks.values())
+        to_mutate_tasks = list(allocated_tasks.keys())
         reset_model(tasks, servers)
 
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
