@@ -108,7 +108,7 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
         pp.pprint(algorithm_results)
 
         set_server_heuristics(servers, price_change=price_change_mean, initial_price=initial_price_mean)
-        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
         algorithm_results[algorithm_name(servers)] = dia_result.store()
         dia_result.pretty_print()
         reset_model(tasks, servers)
@@ -118,7 +118,7 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
                 server.price_change = max(1, int(gauss(price_change_mean, price_change_std)))
                 server.initial_price = max(1, int(gauss(initial_price_mean, initial_price_std)))
 
-                dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+                dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                 algorithm_results[algorithm_name(servers)] = dia_result.store()
                 dia_result.pretty_print()
                 reset_model(tasks, servers)
