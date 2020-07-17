@@ -254,6 +254,7 @@ def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], tas
         # debug(f'Number of unallocated tasks: {len(unallocated_tasks)}', debug_allocation)
         rounds += 1
 
+    assert all(0 < task.price for task in tasks if task.running_server)
     return rounds, time() - start_time
 
 
