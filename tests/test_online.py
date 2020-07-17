@@ -14,9 +14,8 @@ from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
-from online import generate_batch_tasks, online_batch_solver
+from online import generate_batch_tasks, online_batch_solver, minimal_flexible_optimal_solver
 from optimal.fixed_optimal import fixed_optimal_solver
-from optimal.flexible_optimal import minimal_flexible_optimal_solver
 
 
 def test_online_model_generation(model_dist=ModelDistribution('models/paper.mdl', num_servers=8),
