@@ -75,32 +75,36 @@ def task_mutation_evaluation(model_dist: ModelDistribution, repeat_num: int, rep
         # Save the task prices and server revenues
         task_prices = {task: task.price for task in tasks}
         allocated_tasks = {task: task.running_server is not None for task in tasks}
-        to_mutate_tasks = list(allocated_tasks.keys())
+        to_mutate_tasks = [task for task, allocated in allocated_tasks.items()]  # if allocated todo future testing
         reset_model(tasks, servers)
 
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
-        for model_mutation in range(max(model_mutations, len(to_mutate_tasks))):
+        for model_mutation in range(min(model_mutations, len(to_mutate_tasks))):
             # Choice a random task and mutate it
             task: Task = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
             mutant_task = task.mutate(mutate_percent)
 
             # Replace the task with the mutant task in the task list
             list_item_replacement(tasks, task, mutant_task)
+            assert mutant_task in tasks
+            assert task not in tasks
 
             # Find the result with the mutated task
             mutant_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
             mutation_results[f'mutation {model_mutation}'] = mutant_result.store(**{
                 'task price': task_prices[task], 'task allocated': allocated_tasks[task],
-                'mutant task name': task.name, 'mutant task storage': mutant_task.required_storage,
+                'mutant price': mutant_task.price, 'mutant task allocated': mutant_task.running_server is not None,
+                'mutant task name': task.name, 'mutant task deadline': mutant_task.deadline,
+                'mutant task value': mutant_task.value, 'mutant task storage': mutant_task.required_storage,
                 'mutant task computation': mutant_task.required_computation,
                 'mutant task results data': mutant_task.required_results_data,
-                'mutant task deadline': mutant_task.deadline, 'mutant task value': mutant_task.value,
-                'mutant price': mutant_task.price, 'mutant task allocated': task.running_server is not None
             })
             pp.pprint(mutation_results[f'mutation {model_mutation}'])
 
             # Replace the mutant task with the task in the task list
             list_item_replacement(tasks, mutant_task, task)
+            assert mutant_task not in tasks
+            assert task in tasks
 
         # Append the results to the data list
         model_results.append(mutation_results)
