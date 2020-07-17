@@ -5,10 +5,8 @@ Tests the effectiveness of the optimality time limit for the social welfare of t
 from __future__ import annotations
 
 import json
-import pprint
 from typing import Sequence
 
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import reset_model
@@ -17,23 +15,47 @@ from core.super_server import SuperServer
 from extra.io import parse_args, results_filename
 from extra.model import ModelDistribution
 from extra.pprint import print_model
+from greedy.greedy import greedy_algorithm
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.value_density import UtilityDeadlinePerResource
 from optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
-from optimal.relaxed_flexible import relaxed_flexible
+from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 
 
 def test_optimal():
-    model_dist = ModelDistribution('models/caroline.mdl', 28)
+    model_dist = ModelDistribution('models/paper.mdl', num_tasks=20, num_servers=4)
     tasks, servers = model_dist.generate()
-    pp = pprint.PrettyPrinter()
-    pp.pprint({
-        'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
-    })
+
+    greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+    print(f'\nGreedy - {greedy_result.social_welfare}')
+    reset_model(tasks, servers)
 
     optimal_result = flexible_optimal(tasks, servers, 5)
-    optimal_result.pretty_print()
+    print(f'Optimal - {optimal_result.social_welfare}')
+    reset_model(tasks, servers)
 
-    relaxed_result = relaxed_flexible(tasks, servers, 5)
-    relaxed_result.pretty_print()
+    server_relaxed_result = server_relaxed_flexible_optimal(tasks, servers, 5)
+    print(f'Server relaxed - {server_relaxed_result.social_welfare}')
+    reset_model(tasks, servers)
+
+
+def test_optimal_deadline_factor(deadline_factors=(0, 1, 10, 50)):
+    model_dist = ModelDistribution('models/paper.mdl', num_tasks=40, num_servers=8)
+    for _ in range(10):
+        tasks, servers = model_dist.generate()
+
+        greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+        print(f'\nGreedy - {greedy_result.social_welfare}')
+        reset_model(tasks, servers)
+
+        for deadline_factor in deadline_factors:
+            optimal_result = flexible_optimal(tasks, servers, 5, deadline_factor)
+            reset_model(tasks, servers)
+            server_relaxed_result = server_relaxed_flexible_optimal(tasks, servers, 5, deadline_factor)
+            reset_model(tasks, servers)
+            print(f'Factor: {deadline_factor} - Optimal: {optimal_result.social_welfare}, '
+                  f'Relaxed: {server_relaxed_result.social_welfare}')
 
 
 def test_optimal_time_limit(model_dist: ModelDistribution,
@@ -68,31 +90,25 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
     :param repeats: The number of repeats
     """
     data = []
+    filename = results_filename('paper', model_dist, repeat)
     for _ in range(repeats):
         tasks, servers = model_dist.generate()
 
-        results = {}
         optimal_result = branch_bound_algorithm(tasks, servers)
-        results['optimal'] = optimal_result.store()
+        results = {'optimal': optimal_result.store()}
         reset_model(tasks, servers)
+
         relaxed_result = branch_bound_algorithm(tasks, [SuperServer(servers)])
-        results['relaxed'] = relaxed_result.store()
+        results['server relaxed'] = relaxed_result.store()
         reset_model(tasks, servers)
+
         fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
         fixed_result = branch_bound_algorithm(fixed_tasks, servers, feasibility=fixed_feasible_allocation)
         results['fixed'] = fixed_result.store()
-        reset_model(tasks, servers)
-
-        for price_change in [1, 2, 3, 5, 10]:
-            dia_result = optimal_decentralised_iterative_auction(tasks, servers)
-            results[f'dia {price_change}'] = dia_result.store()
-
-            reset_model(tasks, servers)
 
         data.append(results)
 
         # Save the results to the file
-        filename = results_filename('paper', model_dist, repeat)
         with open(filename, 'w') as file:
             json.dump(data, file)
 
