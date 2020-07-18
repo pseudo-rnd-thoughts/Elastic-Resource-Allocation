@@ -127,7 +127,7 @@ class Task:
             'deadline': self.deadline,
             'value': self.value
         }
-        if 0 < self.auction_time:
+        if 0 <= self.auction_time:
             save_spec.update({'auction time': self.auction_time})
 
         return save_spec
@@ -199,6 +199,9 @@ class Task:
             required_storage=self.required_storage,
             required_computation=self.required_computation,
             required_results_data=self.required_results_data,
+            loading_speed=self.loading_speed,
+            compute_speed=self.compute_speed,
+            sending_speed=self.sending_speed,
             value=self.value,
             auction_time=self.auction_time,
             deadline=self.deadline - (time_step - self.auction_time)
