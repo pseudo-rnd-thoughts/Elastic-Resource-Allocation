@@ -10,7 +10,7 @@ from typing import Sequence
 from branch_bound.branch_bound import branch_bound_algorithm
 from branch_bound.feasibility_allocations import fixed_feasible_allocation
 from core.core import reset_model
-from core.fixed_task import FixedSumSpeeds, FixedTask
+from core.fixed_task import FixedTask, FixedSumPowerSpeeds
 from core.super_server import SuperServer
 from extra.io import parse_args, results_filename
 from extra.model import ModelDistribution
@@ -50,9 +50,9 @@ def test_optimal_deadline_factor(deadline_factors=(0, 1, 10, 50)):
         reset_model(tasks, servers)
 
         for deadline_factor in deadline_factors:
-            optimal_result = flexible_optimal(tasks, servers, 5, deadline_factor)
+            optimal_result = flexible_optimal(tasks, servers, 5)
             reset_model(tasks, servers)
-            server_relaxed_result = server_relaxed_flexible_optimal(tasks, servers, 5, deadline_factor)
+            server_relaxed_result = server_relaxed_flexible_optimal(tasks, servers, 5)
             reset_model(tasks, servers)
             print(f'Factor: {deadline_factor} - Optimal: {optimal_result.social_welfare}, '
                   f'Relaxed: {server_relaxed_result.social_welfare}')
@@ -102,7 +102,7 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
         results['server relaxed'] = relaxed_result.store()
         reset_model(tasks, servers)
 
-        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
         fixed_result = branch_bound_algorithm(fixed_tasks, servers, feasibility=fixed_feasible_allocation)
         results['fixed'] = fixed_result.store()
 
