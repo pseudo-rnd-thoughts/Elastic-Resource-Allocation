@@ -1,4 +1,5 @@
-\section{Related work}\label{sec:related-work}
+\section{Related work}
+\label{sec:related-work}
 There is a considerable amount of research in the area of resource allocation and pricing in cloud computing, some of
 which use auction mechanisms to deal with competition~\cite{KUMAR2017234,Zhang2017,Du2019,Bi2019}.
 However, these approaches assume that users request a fixed amount of resources system resources and processing rates,
@@ -16,3 +17,24 @@ Our problem is related to multidimensional knapsack problems. In particular~\cit
 the allocation, with linear constraints that are used for elastic weights. The paper provides a pseudo-polynomial time
 complexity algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is
 similar to their, but differ due to constraints with our using non-linear not linear constraints.
+
+A majority of approaches taken for task pricing and resource allocation in Cloud Computing uses a fixed resource
+allocation mechanism, such that each user requests a fixed amount of resources for a task from a server. However this
+mechanism, as previously explained, provides no control for the server over the quantity of resource allocated to a task,
+only determining the task's price. As a result, a majority of approaches don't consider the server's management of
+resource allocation. Thus research has focused on designing efficient and incentive compatible auction mechanisms.
+
+Work by~\cite{KUMAR2017234} provides a systematic study of double auction mechanisms that are suitable for a range
+of distributed systems like Grid computing, Cloud computing, Inter-Cloud systems. The work reviewed 21 different
+proposed auction mechanisms over a range of important auction properties like Economic Efficiency,
+Incentive Compatibility and Budget-Balance. In a majority of the proposed auction mechanisms, truthfulness was only
+considered for the user, thus a Truthful Multi-Unit Double auction mechanism was presented as such that both users and
+server should act truthfully.
+
+Some approaches have been taken to increase flexibility within Fog Cloud Computing \citep{Bi2019} through efficient
+distribution of data centers and connections to maximise social welfare. A truthful online mechanism was
+proposed that was incentive compatible and individually rational, to allow tasks to arrive over time by solving an
+integer programming optimisation problem. Similar research in~\cite{vaji_infocom}, considers the placement of code/data
+needed to run specific tasks over time where the demands change over time while also considering the operational costs
+and system stability. An approximation algorithm achieved 90\% of the optimal social welfare by converting the problem
+to a set function optimisation problem.

@@ -1,4 +1,8 @@
-\section{Flexible Resource Allocation Mechanisms}\label{sec:flexible-resource-allocation-mechanisms}
+\section{Flexible Resource Allocation Mechanisms}
+\label{sec:flexible-resource-allocation-mechanisms}
+%% TODO A problem exists that you must allocate the resources and determine the server at the same time
+%% TODO the knapsack problem can be solved using a dynamic programming solution then
+
 As explained in the last Section, all previous research described in Section~\ref{sec:related-work} is incompatible
 with our Elastic Resource Allocation Optimisation problem in Section~\ref{sec:problem-formulation}. Therefore in this
 section, we propose three mechanisms for solving this optimisation problem, an approximation algorithm and two
@@ -17,7 +21,8 @@ with such cases, we propose two auction-based mechanisms, one of which can be ex
 (Section~\ref{subsec:decentralised-iterative-auction}) and the other that is incentive compatible
 (Section~\ref{subsec:critical-value-auction}).
 
-\subsection{Greedy Mechanism}\label{subsec:greedy-mechanism}
+\subsection{Greedy Mechanism}
+\label{subsec:greedy-mechanism}
 As solving the allocation problem with elastic resources is NP-hard, we here propose a greedy algorithm
 (Algorithm~\ref{alg:greedy-mechanism}) that considers tasks individually, based on an appropriate task value density
 function and resource weight functions.
@@ -30,6 +35,14 @@ resources. The first of these heuristics is called the server selection heuristi
 for the task to be allocated to the server. Using the server selection heuristic, the best available server for the
 task can be found. The second heuristic, called the resource allocation heuristic, finds the best permutations of
 resource to minimise a resource weighting function i.e\. the percentage of server resources used by the task.
+
+\begin{wrapfigure}{r}{0.6\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
+    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
+    and~\ref{tab:example-servers-properties}}
+    \label{fig:example-greedy-allocation}
+\end{wrapfigure}
 
 For this algorithm, the lower bound of the algorithm is $\frac{1}{\left|J\right|}$ (where $\left|J\right|$ is the
 number of tasks) where the value density heuristic just considers the value of a task and any server selection or
@@ -49,16 +62,9 @@ that perform best over a range of settings.
     bound of the algorithm is $\frac{1}{n}$ of the optimal social welfare.
 \end{proof}
 
-Figure~\ref{fig:greedy-allocation} is an example allocation using the greedy algorithm using the model from
+Figure~\ref{fig:example-greedy-allocation} is an example allocation using the greedy algorithm using the model from
 tables~\ref{tab:example-servers-properties} and~\ref{tab:example-tasks-properties} achieving the optimal social
 welfare using 100\% allocation of tasks. %% TODO ADD HEURISTICS USED
-
-\begin{figure}[H]
-    \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
-    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
-    and~\ref{tab:example-servers-properties}}
-    \label{fig:greedy-allocation}
-\end{figure}
 
 \begin{algorithm}
     \caption{Pseudo code of Greedy Mechanism}
@@ -194,19 +200,6 @@ For our proposed auction, we consider four important properties in auction theor
     server will sometimes not be 100\% economically efficient.
 \end{itemize}
 
-%% Todo - Add limit incentive compatible
-
-The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
-unallocated job to find the price if the job was currently allocated on a server. This is done through first solving
-the program in section~\ref{subsubsec:decentralised-iterative-problem} which calculates the new revenue if the task was
-forced to be allocated with a price of zero. The task price is equal to the current server revenue minus the new
-revenue with the task allocated plus a price change variable in order to increase the revenue of the server. The
-minimum price returned by $P(i, k)$ is then compared to the job's maximum reserve price (that would be private in the
-equivalent decentralised algorithm) to confirm if the job is willing to pay at that price. If the job is willing then
-the job is allocated to the minimum price server and the job price set to the agreed price. However in the process of
-allocating a job then the currently allocated jobs on the server could be unallocated so these jobs allocation's and
-price's are reset then appended to the set of unallocated jobs.
-
 \begin{algorithm}[H]
     \caption{Decentralised Iterative Auction}
     \label{alg:dia}
@@ -235,6 +228,19 @@ price's are reset then appended to the set of unallocated jobs.
     \end{algorithmic}
 \end{algorithm}
 
+The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
+unallocated job to find the price if the job was currently allocated on a server. This is done through first solving
+the program in section~\ref{subsubsec:decentralised-iterative-problem} which calculates the new revenue if the task was
+forced to be allocated with a price of zero. The task price is equal to the current server revenue minus the new
+revenue with the task allocated plus a price change variable in order to increase the revenue of the server. The
+minimum price returned by $P(i, k)$ is then compared to the job's maximum reserve price (that would be private in the
+equivalent decentralised algorithm) to confirm if the job is willing to pay at that price. If the job is willing then
+the job is allocated to the minimum price server and the job price set to the agreed price. However in the process of
+allocating a job then the currently allocated jobs on the server could be unallocated so these jobs allocation's and
+price's are reset then appended to the set of unallocated jobs.
+
+%% Todo - Add limit incentive compatible
+
 \subsection{Attributes of proposed algorithms}\label{subsec:attributes-of-proposed-algorithms}
 In this paper, we have presented three mechanisms to solve the optimisation problem proposed in
 section~\ref{subsec:optimisation-problem}. The table~\ref{tab:attributes_algorithms} considers a range of
@@ -243,13 +249,13 @@ Critical Value auction(CVA) and Decentralised Iterative auction (DIA).
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{|p{2.2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+    \begin{tabular}{|c|c|c|c|}
         \hline
         Attribute                           & GM  & CVA & DIA                   \\ \hline
         Truthfulness                        &     & Yes & No                    \\ \hline
         Optimality                          & No  & No  & No                    \\ \hline
         Scalability                         & Yes & Yes & No                    \\ \hline
-        Information requirements from users & All & All & Not the reserve value \\ \hline
+        Task information requirements from users & All & All & All except the task value \\ \hline
         Communication over heads            & Low & Low & High                  \\ \hline
         Decentralisation                    & No  & No  & Yes                   \\ \hline
     \end{tabular}

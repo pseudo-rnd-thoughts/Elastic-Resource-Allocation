@@ -1,6 +1,7 @@
-\section{Introduction}\label{sec:introduction}
+\section{Introduction}
+\label{sec:introduction}
 In the last few years, cloud computing~\cite{cloud_cite} has become a popular solution for running data-intensive
-applications remotely. However, large scale data-centres are not a feasible in application domains that require low
+applications remotely. However, large scale data-centres may not a feasible for application domains that require low
 latency or high security and privacy. To deal with such domains, \emph{fog/edge computing} has emerged as a
 complementary paradigm allowing tasks to be executed at the edge of networks, close to the user, in small data-centers,
 known as \emph{edge clouds}.
@@ -26,14 +27,26 @@ particularly challenging, because users in edge clouds are typically self-intere
 strategically~\cite{Bi2019} or may prefer not to reveal private information about their values to a central allocation
 mechanism~\cite{Pai2013}.
 
-An important shortcoming of existing work of resource allocation in edge cloud computing is that it assumes tasks have
+An important shortcoming of existing work around resource allocation in edge cloud computing is that it assumes tasks have
 strict resource requirements -- that is, each task must be allocate a fixed amount of CPU cycles or bandwidth by a
-server. This can cause bottlenecks for certain resources when multiple tasks over-request resources. However, in
-practice tasks have flexibility in how resources are allocated given the task is computed within a time limit. This
-ability to flexibility allocate resource is additionally important in the case of edge computing due to the limited
-resource capacities that servers have in comparison to large data-centre. Using this idea of task resource flexibility,
-in this paper, we proposed a new optimisation problem that is incompatible with previous research. Therefore three
-mechanisms are proposed for the problem: a greedy mechanism, an incentive compatible centralised auction and a novel
-decentralised iterative auction that achieve ~95\% of the theoretical optimal.
+server. This is often achieved by users selecting a particular VM specification however this can cause both inefficient 
+allocation of resources and bottlenecks on certain resources for servers when multiple tasks over-request resources. 
+This work utilises the ability for tasks to have flexibility in how its resources are allocated as the time taken 
+for a program to be download by the server is generally proportional to the bandwidth. This linear relationship means that 
+the time taken is proportional to the bandwidth allocated. This is similarly true for sending back of results to the users.
+Computation is more difficult as certain program allow for linear scaling of resources, e.g. while other programs do not 
+scaling as such. Therefore this work assumes that a programs computation scales linearly and to leave future work for the
+ability that task computation to scale non-linearly. 
+
+This work utilises the ability for tasks, to in practice, have flexibility in how its resources are allocated given
+the task is still completed within its deadline. This ability to flexibility allocate resource is additionally important
+in the case of edge computing due to the limited resource capacities that servers have in comparison to large data-centre
+used in standard cloud computing. Using this idea of task resource flexibility, we proposed a new optimisation problem
+enabling servers to have greater flexibility in how resources are allocating. However this problem is also incompatible
+with previous research therefore this work presents in Section~\ref{sec:flexible-resource-allocation-mechanisms}. 
 
 %% TODO Make an addition to why this flexibility breaks everything previously
+In the following section, an overview of related work. Section~\ref{sec:problem-formulation} presents the problem 
+formulation, an optimisation problem and an example case. Using this formulation, Section~\ref{sec:flexible-resource-allocation-mechanisms} presents three different algorithm: a modular greedy algorithm,
+a centralised incentive compatible auction and a novel decentralised iterative auction. Using these algorithms, 
+Section~\ref{sec:empirical-results} presents extension analysis of the algorithms. 
