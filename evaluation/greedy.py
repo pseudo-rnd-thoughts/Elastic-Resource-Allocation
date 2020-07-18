@@ -9,7 +9,7 @@ import pprint
 
 from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, FixedSumSpeeds
+from src.core.fixed_task import FixedTask, FixedSumPowerSpeeds
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -43,7 +43,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
-        fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
