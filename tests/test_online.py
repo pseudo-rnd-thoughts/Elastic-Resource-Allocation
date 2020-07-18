@@ -8,13 +8,13 @@ from math import ceil
 from typing import Iterable
 
 from core.core import reset_model
-from core.fixed_task import FixedSumSpeeds, FixedTask
+from core.fixed_task import FixedTask, FixedSumPowerSpeeds
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
-from online import generate_batch_tasks, online_batch_solver, minimal_flexible_optimal_solver
+from online import generate_batch_tasks, online_batch_solver
 from optimal.fixed_optimal import fixed_optimal_solver
 
 
@@ -53,21 +53,20 @@ def test_online_solver(model_dist=ModelDistribution('models/paper.mdl', num_serv
 
 
 def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
-                           time_steps: int = 50, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
-    print()
+                           time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [FixedTask(task, FixedSumSpeeds()) for task in tasks]
+    fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
 
-    batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
-    optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
-                                         minimal_flexible_optimal_solver, solver_time_limit=2)
-    print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
-    reset_model([], servers)
+    # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
+    # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
+    #                                      minimal_flexible_optimal_solver, solver_time_limit=2)
+    # print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
+    # reset_model([], servers)
 
     fixed_batched_tasks = generate_batch_tasks(fixed_tasks, 1, time_steps)
-    fixed_optimal_result = online_batch_solver(fixed_batched_tasks, servers, 1, 'Online Fixed Optimal',
+    fixed_optimal_result = online_batch_solver(fixed_batched_tasks, servers, 1, 'Fixed Optimal',
                                                fixed_optimal_solver, time_limit=2)
-    print(f'Fixed Optimal - Social welfare: {fixed_optimal_result.social_welfare}')
+    print(f'\nFixed Optimal - Social welfare: {fixed_optimal_result.social_welfare}')
     reset_model([], servers)
 
     batched_tasks = generate_batch_tasks(tasks, 4, time_steps)
