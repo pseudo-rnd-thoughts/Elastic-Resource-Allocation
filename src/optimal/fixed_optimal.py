@@ -59,7 +59,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     # Check that the model is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Fixed VCG model failure')
+        print('Fixed optimal failure')
         print_model_solution(model_solution)
         return None
 
