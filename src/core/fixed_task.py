@@ -16,19 +16,22 @@ if TYPE_CHECKING:
 
 
 class FixedTask(Task):
-    """Job with a fixing resource usage speed"""
+    """Task with a fixing resource usage speed"""
 
     def __init__(self, task: Task, fixed_value: FixedValue, fixed_name: bool = True):
         name = f'Fixed {task.name}' if fixed_name else task.name
-        Task.__init__(self, name, task.required_storage, task.required_computation, task.required_results_data,
-                      task.value, task.deadline)
-        self.original_task = task
-        self.loading_speed, self.compute_speed, self.sending_speed = self.calculate_fixed_speeds(fixed_value)
+        loading_speed, compute_speed, sending_speed = self.calculate_fixed_speeds(task, fixed_value)
+        Task.__init__(self, name=name, required_storage=task.required_storage,
+                      required_computation=task.required_computation, required_results_data=task.required_results_data,
+                      value=task.value, deadline=task.deadline, loading_speed=loading_speed,
+                      compute_speed=compute_speed, sending_speed=sending_speed, auction_time=task.auction_time)
 
-    def calculate_fixed_speeds(self, fixed_value: FixedValue) -> Tuple[int, int, int]:
+    @staticmethod
+    def calculate_fixed_speeds(task: Task, fixed_value: FixedValue) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
+        :param task: The task to used
         :param fixed_value: The fixed value function to value the speeds
         :return: Fixed speeds
         """
@@ -37,13 +40,17 @@ class FixedTask(Task):
         compute_speed = model.integer_var(min=1)
         sending_speed = model.integer_var(min=1)
 
-        model.add(self.required_storage / loading_speed +
-                  self.required_computation / compute_speed +
-                  self.required_results_data / sending_speed <= self.deadline)
+        model.add(task.required_storage / loading_speed +
+                  task.required_computation / compute_speed +
+                  task.required_results_data / sending_speed <= task.deadline)
 
         model.minimize(fixed_value.evaluate(loading_speed, compute_speed, sending_speed))
 
         model_solution = model.solve(log_output=None)
+        assert model_solution is not None
+        assert 0 < model_solution.get_value(loading_speed) and \
+            0 < model_solution.get_value(loading_speed) and \
+            0 < model_solution.get_value(loading_speed)
 
         return model_solution.get_value(loading_speed), \
             model_solution.get_value(compute_speed), \
