@@ -1,17 +1,13 @@
 \section{Problem formulation}
 \label{sec:problem-formulation}
-In this section, an outline of the system model describes servers and tasks attributes (subsection~\ref{subsec:system-model})
-that is used in constructing an optimisation problem for the flexible resource allocation
-(subsection~\ref{subsec:optimisation-problem}). Finally, an example problem is used to demonstrate the effectiveness of
-our flexible resource allocation scheme compared to a fixed resource allocation scheme in previous work.
+In this section, an outline of the system model describes servers and tasks attributes
+(subsection~\ref{subsec:system-model}) used in the resource elastic optimisation problem
+(subsection~\ref{subsec:optimisation-problem}). Using this model, we prove that it is NP-Hard
+(subsection~\ref{subsec:time-complexity}). Finally, using a example program, we demonstrate the effectiveness of our
+flexible resource allocation scheme compared to a fixed resource allocation scheme used in previous work as explained
+the previous section (subsection~\ref{subsec:example-problem-case}).
 
 \subsection{System model}\label{subsec:system-model}
-\begin{wrapfigure}{r}{0.5\linewidth}
-    \centering
-    \includegraphics[width=0.48\linewidth]{figs/system_model.pdf}
-    \caption{System Model}
-    \label{fig:system-model}
-\end{wrapfigure}
 A sketch of the system is shown in Fig.~\ref{fig:system-model}.
 We assume that there are a set of servers $I = \{1,2,\ldots,\left|I\right|\}$, which could be accessed either through
 cellular base stations or WiFi access points (APs). These servers have different types of limited resources:
@@ -23,13 +19,15 @@ access per second, GPU usage and more. The servers are also assumed to be hetero
 Formally, we denote the storage capacity of server $i$ with $S_i$, computation capacity with $W_i$, and the 
 bandwidth capacity with $R_i$.
 
+\begin{wrapfigure}{r}{0.6\linewidth}
+    \centering
+    \includegraphics[width=0.58\linewidth]{figs/system_model.pdf}
+    \caption{System Model}
+    \label{fig:system-model}
+\end{wrapfigure}
+
 The system also contains a set $J = \{1,2,\ldots,\left| J \right|\}$ different tasks that each require service from one
-of the servers $I$.
-%% TODO maybe add this not as a footnote
-\footnote{We focus on a single-shot setting in this paper. In practice, an allocation mechanism would repeat the
-allocation decisions described here over regular time intervals, with longer-running tasks re-appearing on consecutive
-time intervals. In subsection~\ref{subsec:batching-verse-online-task-allocation} to evaluate the effectiveness 
-of the mechanism batched, we leave a detailed study of this to future work.} Each task has a monetary value, denoted $v_j$,
+of the servers $I$. Each task has a monetary value, denoted $v_j$,
 representing the maximum price the owner is willing to pay to compute the task. \\
 In order to run a task requires the server to load the appropriate code/data on the server from a source, then to
 compute the code of the task and to send back results to the user. Therefore for each of these stages, we consider
@@ -87,6 +85,13 @@ speeds for each stage ($s^{'}_j$, $w^{'}_j$ and $r^{'}_j$) are all positive and 
 Finally, as every task can only be served by at most one server, constraints~\ref{eq:server-task-allocation}
 and~\ref{eq:task-allocation} enforce this.
 
+This model focus on a single-shot setting where all tasks arrival at the same time to the system. To use this system
+in practice where tasks arrival progressively over time, an allocation mechanism would repeat the allocation decisions
+described here over regular time intervals, with longer-running tasks re-appearing on consecutive time intervals.
+In subsection~\ref{subsec:batching-verse-online-task-allocation} evaluates the effectiveness such a batching mechanism
+compared to an online mechanism. We leave a detailed study of online mechanisms where the resource allocate can
+dynamically change at each time to future work.
+
 \subsection{Time Complexity}
 \label{subsec:time-complexity}
 As the optimisation problem as described in Subsection~\ref{subsec:optimisation-problem} is an extension of the
@@ -97,11 +102,13 @@ Knapsack problem.
     The optimisation problem in subsection~\ref{subsec:optimisation-problem} is NP-hard.
 \end{theorem}
 \begin{proof}
-    The optimization problem without the constraint~\ref{eq:task-deadline} is a 0--1 multidimensional knapsack
-    problem~\cite{knapsackproblems_2004}, which is a generalization of a simple 0--1 knapsack problem. The latter is an
-    NP-hard problem~\cite{knapsackproblems_2004}. Given this, it follows that the 0--1 multidimensional knapsack problem
-    is also NP-hard. Since optimization problem (Eqs~\ref{eq:objective} -~\ref{eq:task-allocation}) is a
-    generalization of a 0--1 multidimensional knapsack problem, it follows that it is NP-hard as well.
+    The task resource elasticity~\ref{eq:task-deadline} can removed from the optimisation problem to simplify the model
+    by setting the task resource speeds to a fixed value that satisfy the deadline constraint. This reduces the model
+    to a 0--1 multidimensional knapsack problem~\cite{knapsackproblems_2004}, which is a generalization of a
+    simple 0--1 knapsack problem. The latter is an NP-hard problem~\cite{knapsackproblems_2004}. Given this, it follows
+    that the 0--1 multidimensional knapsack problem is also NP-hard. Since optimization problem
+    (Eqs~\ref{eq:objective} -~\ref{eq:task-allocation}) is a generalization of a 0--1 multidimensional knapsack
+    problem, it follows that it is NP-hard as well.
 \end{proof}
 
 \subsection{Example Problem Case}
@@ -112,11 +119,11 @@ Knapsack problem.
     \caption{Optimal solution with fixed resource speeds}
     \label{fig:example-fixed-allocation}
 \end{wrapfigure}
-Before we propose our novel allocation mechanisms in the next section, we present an example case to illustrate 
-why elasticity is important. In this example, there are 12 potential tasks and 3 servers with the flexible solution able 
-to achieve XX\% better social welfare compared to the fixed resource allocation solution. 
+Before we propose our allocation mechanisms in the next section, we present an example case to illustrate
+why elasticity is important. In this example, there are 12 potential tasks and 3 servers with the flexible solution
+able to achieve 18\% better social welfare compared to the fixed resource allocation solution.
 The exact settings can be found in Appendix A with table~\ref{tab:example-tasks-properties}
-for the tasks and table~\ref{tab:example-servers-properties} for the servers. \\
+for the task attributes and table~\ref{tab:example-servers-properties} for the server attributes. \\
 The figures~\ref{fig:example-fixed-allocation} and~\ref{fig:example-flexible-allocation} represents each server as a
 group of three bars, each relating to the each server's resource types, with the percentage of resources used by a task
 being the size of the bar.
@@ -133,7 +140,8 @@ were set by minimising the total amount of resources to be completed within the 
 are run, resulting in a total social welfare of 980 due to server 1 and 2's limited computational capacity and server
 3' limited communication capacity.
 
-In contrast to figure~\ref{fig:example-fixed-allocation}, Figure~\ref{fig:example-flexible-allocation} depicts the optimal
-allocation if elastic resources are considered. Here, all of the resources are used by the servers whereas the fixed
-example~\ref{fig:example-fixed-allocation} cant do this. In total, the elastic approach manages to schedule all 12 tasks
-within the resource constraints, achieving a total social welfare of 1200 (an 18\% improvement over the fixed approach).
+In contrast to figure~\ref{fig:example-fixed-allocation}, Figure~\ref{fig:example-flexible-allocation} depicts the
+optimal allocation if elastic resources are considered. Here, all of the resources are used by the servers whereas the
+fixed example~\ref{fig:example-fixed-allocation} cant do this. In total, the elastic approach manages to schedule all
+12 tasks within the resource constraints, achieving a total social welfare of 1200 (an 18\% improvement over the fixed
+approach).

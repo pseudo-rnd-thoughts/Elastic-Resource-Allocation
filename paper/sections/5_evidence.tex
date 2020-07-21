@@ -1,12 +1,12 @@
 \section{Empirical Results}
 \label{sec:empirical-results}
 To evaluate the algorithms presented in Section~\ref{sec:flexible-resource-allocation-mechanisms},
-this sections analysis the different algorithms, the possibility of misreporting task attributes, 
-the effect of the server resource capacity and online task arrival. 
+this sections analysis the different algorithms, the possibility of misreporting task attributes,
+the effect of the server resource capacity and online task arrival.
 
 To do evaluate our algorithms, synthetic models have been used to generate servers and tasks where
 each attribute was taken from a Gaussian distribution. The reason this was done was due to there not
-being a De-Facto standard to test cloud computing resource allocation algorithms and that those used
+being a de facto standard to test cloud computing resource allocation algorithms and that those used
 in related work do not consider a deadline for a task.
 
 \subsection{Evaluation of the Greedy Algorithm}
@@ -19,7 +19,6 @@ value density function was $\frac{v_j}{s_j + w_j + r_j}$, server selection was
 $\text{argmin}_{\forall i \in I} S^{'}_i + W^{'}_i + R^{'}_i$ and the resource allocation was
 $\min s^{'}_j + w^{'}_j + r^{'}_j$ for job $j$ and servers $I$.
 
-% Greedy mechanisms
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/greedy/greedy_algorithms.png}
@@ -52,6 +51,13 @@ change variables.
     \label{fig:dia_sw_rev_grid_search}
 \end{figure}
 
+\begin{wrapfigure}{r}{0.45\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{figs/dia_heuristics/revenue_grid.png}
+    \caption{Grid search for rounds}
+    \label{fig:dia_rounds_grid_search}
+\end{wrapfigure}
+
 Within the context of edge cloud computing, the number of rounds for the decentralised iterative auction is important
 to making it a feasible auction as it is proportional to the time required to run. We investigated the effect of two
 heuristic on the number of rounds and social welfare of the auction; the price change variable and initial cost
@@ -61,13 +67,6 @@ using a price change of 10 and initial cost of 20 means that only on average 80 
 using high initial cost and price change heuristics, this can prevent tasks from being allocated,
 figure~\ref{fig:dia_sw_rev_grid_search}, shows that the difference in social welfare is only 2\% from minimum to
 maximum heuristics.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.3\linewidth]{figs/dia_heuristics/revenue_grid.png}
-    \caption{Grid search for rounds}
-    \label{fig:dia_rounds_grid_search}
-\end{figure}
 
 \subsection{Possibility of Task Mutation in Decentralised Iterative Auction}
 \label{subsec:possibility-of-task-mutation-in-decentralised-iterative-auction}
@@ -114,4 +113,11 @@ This can be seen more clear by plotting the average server resource usage each o
 \label{subsec:batching-verse-online-task-allocation}
 * Explain the reason for the evaluation
 * Add figure
-* Explanation for DIA advantage as runs over batch
+* Explanation for DIA advantage as can run over the batch not just at the end
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figs/online/online_batch_lengths.png}
+    \caption{Online batch lengths}
+    \label{fig:batch-task-allocation}
+\end{figure}

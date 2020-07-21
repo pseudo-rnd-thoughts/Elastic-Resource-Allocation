@@ -34,15 +34,3 @@
     considered by the flexible resource allocation.}
     \label{tab:example-tasks-properties}
 \end{table}
-
-\subsection*{Online Fixed Resource Allocation Optimisation Problem}
-
-\begin{align}
-    \max & \sum_{i \in I, j \in J^{'}} x_{i,j} \label{eq:fixed-env-objective} \\
-    \mbox{s.t.} \nonumber \\
-    & \sum_{\{j \in J^{'} | a_j \leq t \leq d_j\}} \text{min}(s_j \text{, } s^{'}_j \cdot (t + 1 - a_j)) \cdot x_{i,j} \leq S_i && \forall{i \in I} \label{eq:fixed-server-storage-capacity} \\
-    & \sum_{\{j \in J^{'} | a_j \leq t \leq d_j\}} w^{'}_j x_{i,j} \leq W_i && \forall{i \in I} \label{eq:fixed-server-computation-capacity} \\
-    & \sum_{\{j \in J^{'} | a_j \leq t \leq d_j\}} (s^{'}_j + r^{'}_j) \cdot x_{i,j} \leq R_i && \forall{i \in I} \label{eq:fixed-server-bandwidth-capacity} \\
-    & \sum_{i \in I} x_{i,j} \leq 1 && \forall{j \in J^{'}} \label{eq:fixed-env-allocation-limit} \\
-    & x_{i,j} \in \{0, 1\} && \forall{i \in I, j \in J^{'}} \label{eq:fixed-env-allocation-set}
-\end{align}
