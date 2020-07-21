@@ -72,7 +72,7 @@ class PriceResourcePerDeadline(PriceDensity):
 
     def evaluate(self, task: Task) -> float:
         """Value density function"""
-        return task.price * self.resource_func.evaluate(task) / task.deadline
+        return task.price * task.deadline / self.resource_func.evaluate(task)
 
 
 def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
@@ -273,7 +273,7 @@ def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Ser
     rounds, solve_time = decentralised_iterative_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Optimal DIA', tasks, servers, solve_time, is_auction=True,
-                  **{'price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
+                  **{'server price change': {server.name: server.price_change for server in servers}, 'rounds': rounds,
                      'server initial price': {server.name: server.initial_price for server in servers}})
 
 
