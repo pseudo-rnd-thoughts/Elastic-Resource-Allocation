@@ -246,7 +246,7 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
                 task_mutation_results[f'value {value}'] = mutant_result.store(**{
                     'price': task.price, 'allocated': task.running_server is not None, 'value': task.value
                 })
-                pp.pprint(mutation_results[f'value {value}'])
+                pp.pprint(task_mutation_results[f'value {value}'])
                 reset_model(tasks, servers)
 
             task.value = task_value
