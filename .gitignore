@@ -5,9 +5,11 @@ __pycache__/
 .idea/
 */.ipynb_checkpoints
 
-paper/related_papers/
-paper/example_papers/
-
 analysis/figs/
 data/
 models/old_models/
+evaluation/run_bash_cmds.sh
+
+paper/acm_example
+paper/related_papers
+paper/acm_paper.synctex.gz
