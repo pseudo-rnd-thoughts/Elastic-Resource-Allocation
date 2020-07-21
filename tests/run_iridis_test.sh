@@ -14,6 +14,8 @@ source activate env37
 module load cplex/12.7.1
 
 # Run the python script
-cmd="PYTHONPATH=~/Flexible-Cloud-Resource/src/ python tests/test_iridis"
+echo $PWD
+PYTHONPATH=~/Flexible-Cloud-Resource/src/
+cmd="python -m tests.$file -f='$model_file' -t='$num_tasks' -s='$num_servers' -r='$repeat' -e='$extra'"
 echo "Running $cmd"
 eval "$cmd"

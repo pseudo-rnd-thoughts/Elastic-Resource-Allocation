@@ -111,6 +111,4 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
 
 if __name__ == "__main__":
     args = parse_args()
-    loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
-
-    optimal_testing(loaded_model_dist)
+    optimal_testing(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
