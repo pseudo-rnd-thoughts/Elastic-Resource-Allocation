@@ -7,20 +7,17 @@ from __future__ import annotations
 import json
 from typing import Sequence
 
-from branch_bound.branch_bound import branch_bound_algorithm
-from branch_bound.feasibility_allocations import fixed_feasible_allocation
-from core.core import reset_model
-from core.fixed_task import FixedTask, FixedSumPowerSpeeds
-from core.super_server import SuperServer
-from extra.io import parse_args, results_filename
-from extra.model import ModelDistribution
-from extra.pprint import print_model
-from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.value_density import UtilityDeadlinePerResource
-from optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
-from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from src.core.core import reset_model, set_server_heuristics
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
+from src.extra.pprint import print_model
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.value_density import UtilityDeadlinePerResource
+from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
+from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 
 
 def test_optimal():
@@ -90,23 +87,22 @@ def optimal_testing(model_dist: ModelDistribution, repeat: int, repeats: int = 2
     :param repeats: The number of repeats
     """
     data = []
-    filename = results_filename('paper', model_dist, repeat)
+    filename = results_filename('testing', model_dist, repeat)
     for _ in range(repeats):
         tasks, servers = model_dist.generate()
+        model_results = {}
 
-        optimal_result = branch_bound_algorithm(tasks, servers)
-        results = {'optimal': optimal_result.store()}
+        optimal_result = flexible_optimal(tasks, servers, 30)
+        model_results[optimal_result.algorithm] = optimal_result.store()
         reset_model(tasks, servers)
 
-        relaxed_result = branch_bound_algorithm(tasks, [SuperServer(servers)])
-        results['server relaxed'] = relaxed_result.store()
-        reset_model(tasks, servers)
+        for pos in range(5):
+            set_server_heuristics(servers, price_change=3, initial_price=25)
+            dia_result = optimal_decentralised_iterative_auction(tasks, servers, 2)
+            model_results[f'DIA {pos}'] = dia_result
+            reset_model(tasks, servers)
 
-        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
-        fixed_result = branch_bound_algorithm(fixed_tasks, servers, feasibility=fixed_feasible_allocation)
-        results['fixed'] = fixed_result.store()
-
-        data.append(results)
+        data.append(model_results)
 
         # Save the results to the file
         with open(filename, 'w') as file:
@@ -117,4 +113,4 @@ if __name__ == "__main__":
     args = parse_args()
     loaded_model_dist = ModelDistribution(args['model'], args['tasks'], args['servers'])
 
-    test_optimal_time_limit(loaded_model_dist)
+    optimal_testing(loaded_model_dist)
