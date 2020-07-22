@@ -12,7 +12,7 @@ from time import time
 from typing import Iterable, List
 
 from core.core import reset_model
-from core.fixed_task import FixedTask, FixedSumPowerSpeeds
+from core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from core.server import Server
 from core.task import Task
 from extra.io import results_filename, parse_args
@@ -127,7 +127,7 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
 
 
 def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
-                            batch_lengths: Iterable[int] = (1, 3, 5, 7, 10, 15), time_steps: int = 200,
+                            batch_lengths: Iterable[int] = (1, 2, 3, 4, 5), time_steps: int = 200,
                             mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
                             optimal_time_limit: int = 3, fixed_optimal_time_limit: int = 5):
     """
@@ -153,7 +153,7 @@ def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repe
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
         original_server_capacities = {server: (server.computation_capacity, server.bandwidth_capacity)
                                       for server in servers}
         batch_results = {'model': {
