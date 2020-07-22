@@ -7,9 +7,10 @@ from __future__ import annotations
 import json
 import pprint
 
+from greedy.fixed_greedy import fixed_greedy_algorithm
 from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, FixedSumPowerSpeeds
+from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -21,8 +22,8 @@ from src.optimal.flexible_optimal import flexible_optimal
 
 
 # noinspection DuplicatedCode
-def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50,
-                      optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30, relaxed_time_limit: int = 30):
+def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, optimal_time_limit: int = 150,
+                      fixed_optimal_time_limit: int = 150, relaxed_time_limit: int = 150, with_optimal: bool = True):
     """
     Evaluation of different greedy algorithms
 
@@ -32,6 +33,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
     :param optimal_time_limit: The compute time for the optimal algorithm
     :param fixed_optimal_time_limit: The compute time for the fixed optimal algorithm
     :param relaxed_time_limit: The compute time for the relaxed algorithm
+    :param with_optimal: If to run the optimal algorithms
     """
     print(f'Evaluates the greedy algorithms (plus optimal, fixed and relaxed) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -43,23 +45,24 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
-        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
         pp.pprint(algorithm_results)
 
-        # Find the optimal solution
-        optimal_result = flexible_optimal(tasks, servers, optimal_time_limit)
-        algorithm_results[optimal_result.algorithm] = optimal_result.store()
-        optimal_result.pretty_print()
-        reset_model(tasks, servers)
+        if with_optimal:
+            # Find the optimal solution
+            optimal_result = flexible_optimal(tasks, servers, optimal_time_limit)
+            algorithm_results[optimal_result.algorithm] = optimal_result.store()
+            optimal_result.pretty_print()
+            reset_model(tasks, servers)
 
-        # Find the fixed solution
-        fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
-        algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-        fixed_optimal_result.pretty_print()
-        reset_model(fixed_tasks, servers)
+            # Find the fixed solution
+            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
+            algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+            fixed_optimal_result.pretty_print()
+            reset_model(fixed_tasks, servers)
 
         # Find the relaxed solution
         relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
@@ -77,6 +80,14 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
                     greedy_result.pretty_print()
                     reset_model(tasks, servers)
 
+        # Loop over all of the fixed greedy policies permutations
+        for value_density in value_densities:
+            for server_selection_policy in server_selection_policies:
+                fixed_greedy_result = fixed_greedy_algorithm(fixed_tasks, servers, value_density, server_selection_policy)
+                algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
+                fixed_greedy_result.pretty_print()
+                reset_model(fixed_tasks, servers)
+
         # Add the results to the data
         model_results.append(algorithm_results)
 
@@ -88,4 +99,8 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
 if __name__ == "__main__":
     args = parse_args()
-    greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+
+    if args.extra == '' or args.extra == 'full':
+        greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'reduced':
+        greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_optimal=False)
