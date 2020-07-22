@@ -12,8 +12,8 @@ from greedy.server_selection_policy import ServerSelectionPolicy
 from greedy.value_density import ValueDensity
 
 
-def fixed_greedy(tasks: List[FixedTask], servers: List[Server],
-                 value_density: ValueDensity, server_selection: ServerSelectionPolicy):
+def fixed_greedy_algorithm(tasks: List[FixedTask], servers: List[Server],
+                           value_density: ValueDensity, server_selection: ServerSelectionPolicy):
     """
     Runs the greedy algorithm using a fixed resource allocation policy
 
