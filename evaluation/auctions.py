@@ -11,7 +11,7 @@ from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import FixedTask, FixedSumPowerSpeeds
+from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -19,8 +19,9 @@ from src.greedy.server_selection_policy import policies as server_selection_poli
 from src.greedy.value_density import policies as value_densities
 
 
-def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, vcg_time_limit: int = 10,
-                       fixed_vcg_time_limit: int = 10, dia_time_limit: int = 1.5):
+def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, vcg_time_limit: int = 30,
+                       fixed_vcg_time_limit: int = 30, dia_time_limit: int = 3, price_change: int = 3,
+                       initial_price: int = 25, with_vcg: bool = True):
     """
     Evaluation of different auction algorithms
 
@@ -30,6 +31,9 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     :param vcg_time_limit: The VCG time limit
     :param fixed_vcg_time_limit: The Fixed VCG time limit
     :param dia_time_limit: Decentralised iterative auction time limit
+    :param price_change: The default price change for DIA
+    :param initial_price: The default initial price for DIA
+    :param with_vcg: If to run the vcg auctions
     """
     print(f'Evaluates the auction algorithms (cva, dia, vcg, fixed vcg) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -41,24 +45,25 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
-        set_server_heuristics(servers, 3, 25)
-        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+        set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
+        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
         pp.pprint(algorithm_results)
 
-        # VCG Auctions
-        vcg_result = vcg_auction(tasks, servers, time_limit=vcg_time_limit)
-        algorithm_results[vcg_result.algorithm] = vcg_result.store()
-        vcg_result.pretty_print()
-        reset_model(tasks, servers)
+        if with_vcg:
+            # VCG Auctions
+            vcg_result = vcg_auction(tasks, servers, time_limit=vcg_time_limit)
+            algorithm_results[vcg_result.algorithm] = vcg_result.store()
+            vcg_result.pretty_print()
+            reset_model(tasks, servers)
 
-        # Fixed VCG Auctions
-        fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=fixed_vcg_time_limit)
-        algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
-        fixed_vcg_result.pretty_print()
-        reset_model(fixed_tasks, servers)
+            # Fixed VCG Auctions
+            fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=fixed_vcg_time_limit)
+            algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
+            fixed_vcg_result.pretty_print()
+            reset_model(fixed_tasks, servers)
 
         # Decentralised Iterative auction
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=dia_time_limit)
@@ -87,4 +92,8 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
 
 if __name__ == "__main__":
     args = parse_args()
-    auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+
+    if args.extra == '' or args.extra == 'full':
+        auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'reduced':
+        auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_vcg=False)
