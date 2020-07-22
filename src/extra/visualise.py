@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from docplex.cp.model import CpoModel, CpoVariable, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from core.core import server_task_allocation
+from src.core.core import server_task_allocation
 from src.extra.io import ImageFormat, save_plot
 
 if TYPE_CHECKING:
@@ -45,6 +45,7 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
                                                         if task not in server_new_tasks)
         max_computation = server.computation_capacity - sum(task.compute_speed for task in server.allocated_tasks
                                                             if task not in server_new_tasks)
+        assert 1 <= max_bandwidth and 1 <= max_computation
 
         # Loop over each task to allocate the variables and add the deadline constraints
         for task in server_new_tasks:
@@ -56,20 +57,19 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
                       (task.required_computation / compute_speeds[task]) +
                       (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
-        model.add(sum(task.required_storage for task in server_new_tasks) <= server.storage_capacity)
         model.add(sum(compute_speeds[task] for task in server_new_tasks) <= max_computation)
         model.add(sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) <= max_bandwidth)
 
-        model.minimize(sum(loading_speeds[task] ** 3 + compute_speeds[task] ** 3 + sending_speeds[task] ** 3
-                           for task in server_new_tasks))
+        model.minimize((sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) / max_bandwidth) ** 3 +
+                       (sum(compute_speeds[task] for task in server_new_tasks) / max_computation) ** 3)
 
         model_solution = model.solve(log_output=None, TimeLimit=time_limit)
 
         # Check that it is solved
         if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-            print(f'Minimise resource allocation solver failed')
-            return
+            print(f'Minimise {server.name} server resources allocated failed: {model_solution.get_solve_status()}')
+            continue
 
         allocated_tasks = server.allocated_tasks.copy()
         server.reset_allocations()
@@ -84,8 +84,7 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
-                            save_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF),
-                            minimum_allocation: bool = False):
+                            save_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF)):
     """
     Plots the allocation results
 
@@ -93,10 +92,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     :param servers: List of servers
     :param title: The title
     :param save_formats: The save format list
-    :param minimum_allocation: If to use minimum allocation of tasks and servers
     """
-    if minimum_allocation:
-        minimise_resource_allocation(tasks, servers)
 
     allocated_tasks = [task for task in tasks if task.running_server]
     loading_df = pd.DataFrame(
