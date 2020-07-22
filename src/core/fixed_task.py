@@ -18,16 +18,19 @@ if TYPE_CHECKING:
 class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
-    def __init__(self, task: Task, fixed_value: FixedValue, fixed_name: bool = True):
+    def __init__(self, task: Task, fixed_value_policy: FixedValuePolicy, fixed_name: bool = True):
         name = f'Fixed {task.name}' if fixed_name else task.name
-        loading_speed, compute_speed, sending_speed = self.calculate_fixed_speeds(task, fixed_value)
+
+        self.fixed_value_policy = fixed_value_policy
+        loading_speed, compute_speed, sending_speed = self.calculate_fixed_speeds(task, fixed_value_policy)
+
         Task.__init__(self, name=name, required_storage=task.required_storage,
                       required_computation=task.required_computation, required_results_data=task.required_results_data,
                       value=task.value, deadline=task.deadline, loading_speed=loading_speed,
                       compute_speed=compute_speed, sending_speed=sending_speed, auction_time=task.auction_time)
 
     @staticmethod
-    def calculate_fixed_speeds(task: Task, fixed_value: FixedValue) -> Tuple[int, int, int]:
+    def calculate_fixed_speeds(task: Task, fixed_value: FixedValuePolicy) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
@@ -83,8 +86,13 @@ class FixedTask(Task):
         if forget_price:
             self.price = 0
 
+    def batch(self, time_step):
+        # noinspection PyUnresolvedReferences
+        batch_task = super().batch(time_step)
+        return FixedTask(batch_task, self.fixed_value_policy, False)
 
-class FixedValue(ABC):
+
+class FixedValuePolicy(ABC):
     """
     Fixed Value policy for the fixed task to select the speed
     """
@@ -105,22 +113,22 @@ class FixedValue(ABC):
         pass
 
 
-class FixedSumSpeeds(FixedValue):
+class SumSpeedsFixedPolicy(FixedValuePolicy):
     """Fixed sum of speeds"""
 
     def __init__(self):
-        FixedValue.__init__(self, 'Sum speeds')
+        FixedValuePolicy.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
 
 
-class FixedSumPowerSpeeds(FixedValue):
+class SumSpeedPowsFixedPolicy(FixedValuePolicy):
     """Fixed Exp Sum of speeds"""
 
     def __init__(self):
-        FixedValue.__init__(self, 'Exp Sum Speeds')
+        FixedValuePolicy.__init__(self, 'Exp Sum Speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculate the value by summing the expo of speeds"""
