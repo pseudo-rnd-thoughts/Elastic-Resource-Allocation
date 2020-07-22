@@ -87,6 +87,11 @@ class FixedTask(Task):
             self.price = 0
 
     def batch(self, time_step):
+        """
+        Overrides the task batch function to update the deadline and task resource speeds to match
+        :param time_step:
+        :return:
+        """
         # noinspection PyUnresolvedReferences
         batch_task = super().batch(time_step)
         return FixedTask(batch_task, self.fixed_value_policy, False)
