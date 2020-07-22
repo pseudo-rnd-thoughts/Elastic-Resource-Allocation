@@ -60,8 +60,9 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         model.add(sum(compute_speeds[task] for task in server_new_tasks) <= max_computation)
         model.add(sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) <= max_bandwidth)
 
-        model.minimize((sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) / max_bandwidth) ** 3 +
-                       (sum(compute_speeds[task] for task in server_new_tasks) / max_computation) ** 3)
+        model.minimize(
+            (sum(loading_speeds[task] + sending_speeds[task] for task in server_new_tasks) / max_bandwidth) ** 3 +
+            (sum(compute_speeds[task] for task in server_new_tasks) / max_computation) ** 3)
 
         model_solution = model.solve(log_output=None, TimeLimit=time_limit)
 

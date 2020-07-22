@@ -29,5 +29,6 @@ def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server], ti
     super_server = SuperServer(servers)
     model_solution = flexible_optimal_solver(tasks, [super_server], time_limit)
     if model_solution:
-        return Result('Server Relaxed Flexible Optimal', tasks, [super_server], round(model_solution.get_solve_time(), 2),
+        return Result('Server Relaxed Flexible Optimal', tasks, [super_server],
+                      round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status()})
