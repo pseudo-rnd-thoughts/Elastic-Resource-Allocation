@@ -7,9 +7,10 @@ from __future__ import annotations
 import json
 import pprint
 
+from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from greedy.fixed_greedy import fixed_greedy_algorithm
 from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
-from src.core.core import reset_model
+from src.core.core import reset_model, set_server_heuristics
 from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
@@ -70,6 +71,13 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         relaxed_result.pretty_print()
         reset_model(tasks, servers)
 
+        # Runs the DIA as an alternative method of getting a optimal social welfare
+        set_server_heuristics(servers, 3, 25)
+        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=3)
+        algorithm_results[dia_result.algorithm] = dia_result.store()
+        dia_result.pretty_print()
+        reset_model(tasks, servers)
+
         # Loop over all of the greedy policies permutations
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
@@ -83,7 +91,8 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         # Loop over all of the fixed greedy policies permutations
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
-                fixed_greedy_result = fixed_greedy_algorithm(fixed_tasks, servers, value_density, server_selection_policy)
+                fixed_greedy_result = fixed_greedy_algorithm(fixed_tasks, servers, value_density,
+                                                             server_selection_policy)
                 algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
                 fixed_greedy_result.pretty_print()
                 reset_model(fixed_tasks, servers)
