@@ -126,10 +126,9 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
     minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
 
 
-def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 10,
-                            batch_lengths: Iterable[int] = (1, 2, 3, 4, 5), time_steps: int = 200,
-                            mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
-                            optimal_time_limit: int = 3, fixed_optimal_time_limit: int = 5):
+def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
+                     batch_lengths: Iterable[int] = (1, 2, 3, 4, 5), time_steps: int = 200, mean_arrival_rate: int = 3,
+                     std_arrival_rate: float = 2, optimal_time_limit: int = 10, fixed_optimal_time_limit: int = 10):
     """
     Evaluates the batch online
 
@@ -214,11 +213,4 @@ def batch_online_evaluation(model_dist: ModelDistribution, repeat_num: int, repe
 
 if __name__ == "__main__":
     args = parse_args()
-
-    if args.extra == '' or args.extra == 'mean4':
-        batch_online_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
-    elif args.extra == 'mean7':
-        batch_online_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
-                                mean_arrival_rate=7)
-    else:
-        raise Exception(f'Unknown extra argument: {args.extra}')
+    batch_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
