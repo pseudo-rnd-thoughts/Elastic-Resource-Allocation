@@ -10,7 +10,7 @@ import sys
 import numpy as np
 
 from core.core import reset_model
-from core.fixed_task import FixedSumPowerSpeeds, FixedTask
+from core.fixed_task import SumSpeedPowsFixedPolicy, FixedTask
 from extra.io import parse_args
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
@@ -97,7 +97,7 @@ def test_model_tasks(model_file: str = 'models/paper.mdl', num_servers=8):
     for num_tasks in range(24, 60, 4):
         model = ModelDistribution(model_file, num_tasks=num_tasks, num_servers=num_servers)
         tasks, servers = model.generate()
-        fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
 
         greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(),
                                                            SumResources(), SumPercentage())])

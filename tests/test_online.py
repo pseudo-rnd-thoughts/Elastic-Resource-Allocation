@@ -8,7 +8,7 @@ from math import ceil
 from typing import Iterable
 
 from core.core import reset_model
-from core.fixed_task import FixedTask, FixedSumPowerSpeeds
+from core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
@@ -55,7 +55,7 @@ def test_online_solver(model_dist=ModelDistribution('models/paper.mdl', num_serv
 def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [FixedTask(task, FixedSumPowerSpeeds()) for task in tasks]
+    fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
 
     # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
     # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
@@ -130,3 +130,18 @@ def test_caroline_online_models(batch_length: int = 1):
                                         resource_allocation_policy=SumPowPercentage())
     print(f'\nMean 7 - Social welfare percentage: {greedy_result.percentage_social_welfare}, '
           f'percent tasks allocated: {greedy_result.percentage_tasks_allocated}')
+
+
+def test_online_fixed_task():
+    model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
+    tasks, servers = model_dist.generate_online(20, 4, 2)
+    fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+    batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
+
+    for batch_fixed_tasks in batched_fixed_tasks:
+        for fixed_task in batch_fixed_tasks:
+            time_taken = fixed_task.required_storage * fixed_task.compute_speed * fixed_task.sending_speed + \
+                         fixed_task.loading_speed * fixed_task.required_computation * fixed_task.sending_speed + \
+                         fixed_task.loading_speed * fixed_task.compute_speed * fixed_task.required_results_data
+            assert time_taken <= fixed_task.deadline * fixed_task.loading_speed * \
+                fixed_task.compute_speed * fixed_task.sending_speed

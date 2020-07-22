@@ -4,42 +4,17 @@ Tests the decentralised iterative auction
 
 from __future__ import annotations
 
+import json
 import random as rnd
 from copy import copy
 
 from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
 from core.core import reset_model, server_task_allocation, set_server_heuristics
+from extra.io import results_filename, parse_args
 from extra.model import ModelDistribution
 from greedy.resource_allocation_policy import SumPercentage
-
-
-def test_optimal_dia():
-    print()
-    model = ModelDistribution('models/paper.mdl', 20, 3)
-    tasks, servers = model.generate()
-    set_server_heuristics(servers, price_change=5, initial_price=20)
-
-    result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1, debug_allocation=True)
-    result.pretty_print()
-
-    for task in tasks:
-        if task.running_server:
-            assert 0 < task.price
-        else:
-            assert task.price == 0
-
-
-def test_greedy_dia():
-    print()
-    model = ModelDistribution('models/paper.mdl', 20, 3)
-
-    tasks, servers = model.generate()
-    set_server_heuristics(servers, price_change=5)
-
-    result = greedy_decentralised_iterative_auction(tasks, servers, PriceResourcePerDeadline(), SumPercentage(),
-                                                    debug_allocation=True)
-    result.pretty_print()
+from optimal.flexible_optimal import flexible_optimal
 
 
 def test_greedy_task_price():
@@ -96,7 +71,7 @@ def test_greedy_task_price():
                    task.value == new_task.value and task.name == new_task.name
 
 
-def test_optimal_greedy_dia(repeats: int = 5):
+def test_optimal_vs_greedy_dia(repeats: int = 5):
     print()
     model = ModelDistribution('models/paper.mdl', 20, 3)
 
@@ -116,5 +91,37 @@ def test_optimal_greedy_dia(repeats: int = 5):
               f'{greedy_result.solve_time} | {greedy_result.social_welfare}')
 
 
+def test_dia_social_welfare(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
+    """
+    Evaluates the results using the optimality
+
+    :param model_dist: The model distribution
+    :param repeat: The repeat of the testing
+    :param repeats: The number of repeats
+    """
+    data = []
+    filename = results_filename('testing', model_dist, repeat)
+    for _ in range(repeats):
+        tasks, servers = model_dist.generate()
+        model_results = {}
+
+        optimal_result = flexible_optimal(tasks, servers, 30)
+        model_results[optimal_result.algorithm] = optimal_result.store()
+        reset_model(tasks, servers)
+
+        for pos in range(5):
+            set_server_heuristics(servers, price_change=3, initial_price=25)
+            dia_result = optimal_decentralised_iterative_auction(tasks, servers, 2)
+            model_results[f'DIA {pos}'] = dia_result
+            reset_model(tasks, servers)
+
+        data.append(model_results)
+
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(data, file)
+
+
 if __name__ == "__main__":
-    test_greedy_dia()
+    args = parse_args()
+    test_dia_social_welfare(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
