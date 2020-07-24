@@ -149,7 +149,7 @@ def test_online_fixed_task():
                          fixed_task.loading_speed * fixed_task.required_computation * fixed_task.sending_speed + \
                          fixed_task.loading_speed * fixed_task.compute_speed * fixed_task.required_results_data
             assert time_taken <= fixed_task.deadline * fixed_task.loading_speed * \
-                   fixed_task.compute_speed * fixed_task.sending_speed
+                fixed_task.compute_speed * fixed_task.sending_speed
 
 
 def test_minimise_resources():
@@ -168,8 +168,8 @@ def test_minimise_resources():
             max_bandwidth = server.bandwidth_capacity - sum(
                 task.loading_speed + task.sending_speed for task in server_old_tasks)
             max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
-            assert compute_availability == max_computation
-            assert bandwidth_availability == max_bandwidth
+            assert compute_availability == max_computation, f'Availability: {compute_availability}, actual: {max_computation}'
+            assert bandwidth_availability == max_bandwidth, f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
 
         minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
 

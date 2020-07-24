@@ -128,8 +128,8 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
         max_bandwidth = server.bandwidth_capacity - sum(
             task.loading_speed + task.sending_speed for task in server_old_tasks)
         max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
-        assert compute_availability == max_computation
-        assert bandwidth_availability == max_bandwidth
+        assert compute_availability == max_computation, f'Availability: {compute_availability}, actual: {max_computation}'
+        assert bandwidth_availability == max_bandwidth, f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
     minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
 
 
