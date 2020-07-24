@@ -120,8 +120,7 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
     :param solver_time_limit: Solver time limit
     :param minimise_time_limit: Minimise solver time limit
     """
-    valid_servers = [server for server in servers
-                     if 1 <= server.available_computation and 1 <= server.available_bandwidth]
+    valid_servers = [server for server in servers if 1 <= server.available_computation and 1 <= server.available_bandwidth]
     flexible_optimal_solver(tasks, valid_servers, solver_time_limit)
     minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
 

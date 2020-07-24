@@ -32,7 +32,8 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
     :param time_limit: Solve time limit
     """
     for server in servers:
-        server_new_tasks = [task for task in tasks if task.running_server is server]
+        server_new_tasks = [task for task in server.allocated_tasks if task in tasks]
+        server_old_tasks = [task for task in server.allocated_tasks if task not in tasks]
         model = CpoModel('MinimumAllocation')
 
         loading_speeds: Dict[Task, CpoVariable] = {}
@@ -40,12 +41,9 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         sending_speeds: Dict[Task, CpoVariable] = {}
 
         # The maximum bandwidth and the computation that the speed can be
-        max_bandwidth = server.bandwidth_capacity - sum(task.loading_speed + task.sending_speed
-                                                        for task in server.allocated_tasks
-                                                        if task not in server_new_tasks)
-        max_computation = server.computation_capacity - sum(task.compute_speed for task in server.allocated_tasks
-                                                            if task not in server_new_tasks)
-        assert 1 <= max_bandwidth and 1 <= max_computation
+        max_bandwidth = server.bandwidth_capacity - sum(task.loading_speed + task.sending_speed for task in server_old_tasks)
+        max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
+        assert 1 <= max_bandwidth and 1 <= max_computation, f'Max bandwidth: {max_bandwidth}, computation: {max_computation}'
 
         # Loop over each task to allocate the variables and add the deadline constraints
         for task in server_new_tasks:
