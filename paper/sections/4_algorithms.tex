@@ -5,25 +5,25 @@ with our resource elastic optimisation problem in Section~\ref{sec:problem-formu
 section, we propose three mechanisms for solving this optimisation problem: an approximation algorithm and two
 auction-based mechanisms.
 
-The optimisation problem is a extended version of the knapsack problem which is often solved using an dynamic
+The optimisation problem is a extended version of the knapsack problem, which is often solved using an dynamic
 programming method that has pseudo-polynomial time complexity. The solution requires building a table of items to bags
-allocation. For our problem, as the resource speeds must be considered at the same time, such a solver can is
+allocation. For our problem, as the resource speeds must be considered at the same time, such a solver can are
 infeasible due to both the space and time complexity required.
 
-Because of this issue of allocating both tasks to server and server resources to tasks, this work proposes an
-approximation algorithm where tasks are allocated to server with resources in series not in parallel. The centralised
+Because of this issue of allocating both tasks to a server and a server's resources to a task, this work proposes an
+approximation algorithm where tasks are allocated to a server with resources in series not in parallel. The centralised
 greedy algorithm (detailed in Subsection~\ref{subsec:greedy-algorithm}) ranks tasks that are each allocated to a server
 with resources with each stage using an separate ranking function. This algorithm has a social welfare lower bound
-of $\frac{1}{\left|J\right|}$ however in practice achieves close to the theoretical optimal while running with
+of $\frac{1}{\left|J\right|}$, however in practice achieves close to the theoretical optimal while running with
 polynomial time complexity.
 
 As task users can be self-interested, they may report their task values or requirements strategically. Traditionally,
-VCG~\citep{vickrey,Clarke,groves} is used for such system due to its ability to use any optimisation problem to
-calculate a task price. However due to the difficulty of calculating the optimal allocation for this problem, VCG is
-infeasible to use in this application. Therefore to deal with self-interested user, we propose two auction-based
-mechanisms, an incentive compatible auction using the centralised greedy algorithm
-(Section~\ref{subsec:critical-value-auction}). While the second is a one of which is a novel decentralized iterative
-auction (Section~\ref{subsec:decentralised-iterative-auction}) that do not require users to reveal the task value.
+VCG~\cite{vickrey,Clarke,groves} is used for such systems due to its ability to use any optimisation problem to
+calculate a task price. However, due to the difficulty of calculating the optimal allocation for this problem, VCG is
+infeasible to use in this application. Therefore, to deal with self-interested users, we propose two auction-based
+mechanisms, an incentive-compatible auction using the centralised greedy algorithm
+(Section~\ref{subsec:critical-value-auction}). While the second is a novel decentralized iterative
+auction (Section~\ref{subsec:decentralised-iterative-auction}) that does not require users to reveal the task value.
 
 \subsection{Greedy Algorithm}
 \label{subsec:greedy-algorithm}
@@ -31,7 +31,7 @@ To solve a knapsack problem, a greedy approximation algorithm is often used that
 specificity in subsection~\ref{subsec:optimisation-problem}. Because of this elastic nature of task resources means
 that an additional stage is required to determine these speeds.
 
-\begin{wrapfigure}{r}{0.6\linewidth}
+\begin{wrapfigure}{r}{0.5\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
     \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
@@ -40,10 +40,11 @@ that an additional stage is required to determine these speeds.
 \end{wrapfigure}
 
 More specifically, the greedy algorithm has two stages; stage one sorts the list of tasks based on the value
-density of each task that is calculate based on task attributes: value, required resources and deadline. The second
+density of each task that is calculated based on task attributes: value, required resources and deadline. The second
 stage uses the sorted list of tasks to iterate through applying two heuristics to select the server based on
 available server resources and to allocate resources based on the available server resources and the required resources
-of the task. \\
+of the task.
+
 Using the example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 11/12 of
 the tasks achieving XX\% more social welfare than the fixed solution. This is due to the algorithm being unable to % TODO
 consider other tasks resource requirement while allocating resource. %% Todo add greedy heuristics functions
@@ -77,7 +78,7 @@ consider other tasks resource requirement while allocating resource. %% Todo add
 \subsubsection{Greedy Lower Bound}
 \label{subsubsec:greedy-lower-bound}
 The lower bound of the algorithm is $\frac{1}{\left|J\right|}$ (where $\left|J\right|$ is the number of tasks) with
-the task value as the value density function. This lower bound is no affected by the server selection policy or the
+the task value as the value density function. This lower bound is not affected by the server selection policy or the
 resource allocation policy. \\
 However in testing, we found that the task value function is not the best value density heuristic as it does not
 consider the effect of deadlines or the required resources of the task. In Section~\ref{sec:empirical-results}, we
@@ -90,7 +91,7 @@ considered a wide range of heuristics, showing the results of the best heuristic
     Due to a task not considering other task's resource requirements then no matter the server selection or resource
     allocation function, it can't be guaranteed that subsequent tasks can be allocated to any server. As a result,
     the algorithm can be guaranteed to achieve at least $\frac{1}{n}$ of the optimal social welfare through using a
-    value density function ($v(j) = j_v$). Using this, first task from the sorted task list will have the maximum task
+    value density function ($v(j) = j_v$). Using this, the first task from the sorted task list will have the maximum task
     value meaning the lower bound of the algorithm is $\frac{1}{n}$ of the optimal social welfare.
 \end{proof}
 
@@ -105,29 +106,29 @@ $O(\left|J\right| \left|I\right|)$.
     %% TODO to check if the resource allocation heuristic is constant time complexity (KKT) probably wrong
 \end{theorem}
 \begin{proof}
-    The time complexity of the stage 1 of the mechanism is $O(\left|J\right| \log(\left|J\right|))$ due to sorting the
-    tasks and stage 2 has complexity $O(\left|J\right| \left|I\right|)$ due to looping over all of the tasks and
+    The time complexity of stage 1 of the mechanism is $O(\left|J\right| \log(\left|J\right|))$ due to sorting the
+    tasks and stage 2 has complexity $O(\left|J\right| \left|I\right|)$ due to looping over all the tasks and
     applying the server selection and resource allocation heuristics. Therefore the overall time complexity is
     $O(\left|J\right| \left|I\right| + \left|J\right| \log(\left|J\right|) = O(\left|J\right| \left|I\right|)$.
 \end{proof}
 
 \subsection{Critical Value Auction}
 \label{subsec:critical-value-auction}
-Due to the problem case being non-cooperative, if the greedy mechanism was used to allocate resources such that the
+Due to the problem case of being non-cooperative, if the greedy mechanism was used to allocate resources such that the
 value is the price paid. This would be open to manipulation and misreporting of task attributes like the value,
-deadline or resource requirements. Therefore in this section we propose an auction that is strategyproof
-(weakly-dominant incentive compatible) so users have no incentive to misreport task attributes.
+deadline or resource requirements. Therefore, in this section we propose an auction that is strategy-proof
+(weakly dominant incentive compatible) so users have no incentive to misreport task attributes.
 
 Single-Parameter domain auctions are extensively studied in mechanism design~\cite{nisan2007algorithmic_228} and are
-used where an agent's valuation function can be represented as single value. The task price is calculated by finding
-the critical value, the minimum task price required for the task to still allocated to a server. This has
-been shown to be a strategyproof~\cite{nisan2007algorithmic_229_230} auction making it a weakly-dominant strategy for
+used where an agent's valuation function can be represented as a single value. The task price is calculated by finding
+the critical value, the minimum task price required for the task still allocated to any server. This has
+been shown to be a strategy-proof~\cite{nisan2007algorithmic_229_230} auction making it a weakly dominant strategy for
 a user to honestly reveal a task's attribute.
 
 The auction is implemented using the greedy mechanism from section~\ref{subsec:greedy-algorithm} by finding an initial
 allocation using every task's reported value. Then for each task that is allocated, the task price is equal to the
 critical value is found by finding the minimum value of the task such that it is still allocated. \\
-To find the minimum value is a two step process of removing the task from the list of tasks then running the greedy
+To find the minimum value is a two-step process of removing the task from the list of tasks then running the greedy
 mechanism however after each task is allocated. Then a check is done if the critical task could be allocated to any
 server. This is a constant time complexity operation by assuming that the server would allocate all of its available
 resources for the deadline constant (eq~\ref{eq:task-deadline}). If the task can't be allocated to any server then the
@@ -144,13 +145,13 @@ mechanism repeated $\left|J\right|$ due to calculating each task's critical valu
     The time complexity of the critical value auction is $O(\left|J\right| \left|J\right| \left|I\right|$.
 \end{theorem}
 \begin{proof}
-    The auction uses the greedy mechanism, who's time complexity is $O(\left|J\right| \left|I\right|)$,
+    The auction uses the greedy mechanism, who has time complexity is $O(\left|J\right| \left|I\right|)$,
     (subsubsection~\ref{subsubsec:greedy-time-complexity}) to find all task's that are allocated to a server. Using the %% Todo, do I really reference the subsubsection
     list of all task's allocated, the critical value of each task must be found. This is done by repeating the
-    greedy algorithm for all task (excluding the critical task) with time complexity,
-    $O(\left|J\right| \left|I\right|)$, till the critical task can no longer to allocated (a constant time function).
-    Where the task's critical value is calculated, a constant time function. As a result, the time complexity for
-    calculating the critical value for an individual task is $O(\left|J\right| \left|I\right|)$. Thus the overall time
+    server selection and resource allocation each all task (excluding the critical task) with time complexity,
+    $O(\left|J\right| \left|I\right|)$, till the critical task can no longer be allocated to any server (a constant time function).
+    The task's critical value is calculated in constant time function. As a result, the time complexity for
+    calculating the critical value for an individual task is $O(\left|J\right| \left|I\right|)$. Thus, the overall time
     complexity is $O(\left|J\right| \left|J\right| \left|I\right|$ due to the critical value possibly being
     found for every task.
 \end{proof}
@@ -177,24 +178,37 @@ such that the resulting auction is strategyproof.
 
 \subsection{Decentralised Iterative Auction}
 \label{subsec:decentralised-iterative-auction}
-In some application of edge cloud computing, keeping the value of a task a secret is important for example in
+In some applications of edge cloud computing, keeping the value of a task a secret is important for example in
 military-tactical networks. Therefore we propose a novel decentralised iterative auction based on the pricing principle
-of the VCG auction~\cite{vickrey,Clarke,groves}. VCG auctions calculates the price of an item by finding the
-difference in social welfare if the item exists and doesn't exist. Our proposed novel auction uses the same principle,
-except in reverse by finding the difference between the current server revenue and the revenue when the task is
-required to be allocated with a price of zero. To cause the overall revenue and servers revenue to increase, a small
-value called the Price change variable is added to the task price.
+of the VCG auction~\cite{vickrey,Clarke,groves}. VCG auction calculates the price of an item by finding the
+difference in social welfare if the item exists and does not exist.
 
-Our auction uses this principle by iteratively letting a task advertise its requirements to all of the servers, who
+Our proposed novel auction uses the same principle, except in reverse by finding the difference between the current
+server revenue and the revenue when the task is required to be allocated with a price of zero. To cause the overall
+revenue and servers revenue to increase, a small value called the Price change variable is added to the task price.
+
+Our auction uses this principle by iteratively letting a task advertise its requirements to all the servers, who
 respond with their price to run the task. This price is equal to the server's current revenue minus the solution to the
 problem in section~\ref{subsubsec:decentralised-iterative-problem} plus a small value referred to as the price change
 variable. The reason for the price change variable is to increase the revenue of the server (otherwise the total
-revenue of the server doesn't increase by accepting the task) and is be chosen by the server. Once all of the servers
+revenue of the server doesn't increase by accepting the task) and is to be chosen by the server. Once all of the servers
 have responded, the task can compare the minimum server prices to its private value. If the price is less then the
 task will accept the server with the lowest price, otherwise the task must stop advertising as the price for the task
 to run on any server is greater than its reserve price preventing the task from ever being allocated again.
 
-\begin{algorithm}[H]
+The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
+unallocated task to find the price if the task was currently allocated on a server. This is done through first solving
+the program in section~\ref{subsubsec:decentralised-iterative-problem} which calculates the new revenue if the task was
+forced to be allocated with a price of zero. The task price is equal to the current server revenue minus the new
+revenue with the task allocated plus a price change variable in order to increase the revenue of the server. The
+minimum price returned by $P(i, k)$ is then compared to the task's maximum reserve price (that would be private in the
+equivalent decentralised algorithm) to confirm if the task is willing to pay at that price. If the task is willing then
+the task is allocated to the minimum price server and the task price set to the agreed price. However in the process of
+allocating a task then the currently allocated tasks on the server could be unallocated so these tasks allocation's and
+price's are reset then appended to the set of unallocated tasks.
+
+%% TODO recode the DIA
+\begin{algorithm}
     \caption{Decentralised Iterative Auction}
     \label{alg:dia}
     \begin{algorithmic}
@@ -222,22 +236,21 @@ to run on any server is greater than its reserve price preventing the task from 
     \end{algorithmic}
 \end{algorithm}
 
-The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
-unallocated job to find the price if the job was currently allocated on a server. This is done through first solving
-the program in section~\ref{subsubsec:decentralised-iterative-problem} which calculates the new revenue if the task was
-forced to be allocated with a price of zero. The task price is equal to the current server revenue minus the new
-revenue with the task allocated plus a price change variable in order to increase the revenue of the server. The
-minimum price returned by $P(i, k)$ is then compared to the job's maximum reserve price (that would be private in the
-equivalent decentralised algorithm) to confirm if the job is willing to pay at that price. If the job is willing then
-the job is allocated to the minimum price server and the job price set to the agreed price. However in the process of
-allocating a job then the currently allocated jobs on the server could be unallocated so these jobs allocation's and
-price's are reset then appended to the set of unallocated jobs.
-
 \subsubsection{Server revenue optimisation problem}
 \label{subsubsec:decentralised-iterative-problem}
-To find the optimal revenue for a server $m$ given a new task $n^{'}$ and set of currently allocated tasks $N$ has a
+To find the optimal revenue for a server $m$ given a new task $n^{'}$ and a set of currently allocated tasks $N$ has a
 similar formulation to the optimisation problem in section~\ref{subsec:optimisation-problem}. Except with an additional
 variable for the task price $p_n$ for each task $n$.
+
+The objective (Eq.~\eqref{eq:dia-objective}) is to maximize the price of all currently allocated tasks (not including
+the new task as the price is zero). The server resource capacity constraints
+(Eqs.~\eqref{eq:dia-server-storage-constraint},~\eqref{eq:dia-server-computation-constraint}
+and~\eqref{eq:dia-server-communication-constraint}) are similar to the constraints in the standard model set out in
+section~\ref{subsec:optimisation-problem} except with the assumption that the task $n^{'}$ is running so there is no
+need to consider if it is running or not. The deadline and non-negative resource speeds constraints
+(\ref{eq:dia-task-deadline},~\ref{eq:dia-loading-speeds},~\ref{eq:dia-compute-speeds} and~\ref{eq:dia-sending-speeds})
+are all the same equation as the standard formulation for all the tasks plus the new task. As this formulation only
+considers a single server, the task allocation constraint is not considered.
 
 \begin{align}
     \max & \sum_{\forall n \in N} p_n x_n\label{eq:dia-objective}\\
@@ -249,18 +262,8 @@ variable for the task price $p_n$ for each task $n$.
     & 0 < s^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-loading-speeds}\\
     & 0 < w^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-compute-speeds}\\
     & 0 < r^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-sending-speeds}\\
-    & x_n \in \{0,1\} &~ \forall{n \in N} \label{eq:dia-job-allocation}
+    & x_n \in \{0,1\} &~ \forall{n \in N} \label{eq:dia-task-allocation}
 \end{align}
-
-The objective (Eq.~\eqref{eq:dia-objective}) is to maximize the price of all currently allocated tasks (not including
-the new task as the price is zero). The server resource capacity constraints
-(Eqs.~\eqref{eq:dia-server-storage-constraint},~\eqref{eq:dia-server-computation-constraint}
-and~\eqref{eq:dia-server-communication-constraint}) are similar to the constraints in the standard model set out in
-section~\ref{subsec:optimisation-problem} except with the assumption that the task $n^{'}$ is running so there is no
-need to consider if it is running or not. The deadline and non-negative resource speeds constraints
-(\ref{eq:dia-task-deadline},~\ref{eq:dia-loading-speeds},~\ref{eq:dia-compute-speeds} and~\ref{eq:dia-sending-speeds})
-are all the same equation as the standard formulation for all of the tasks plus the new task. As this formulation only
-considers a single server, the task allocation constraint is not consider.
 
 \subsubsection{Decentralised Iterative Auction properties}
 \label{subsubsec:decentralised-iterative-auction-properties}
@@ -274,16 +277,16 @@ For our proposed auction, we consider four important properties in auction theor
         more than it is willing.
     \item Incentive Compatible - False. While a task's cannot determine the choices of other task for which server they
         will choose, the order task pricing as this is random or lie about the task value as this information isn't
-        revealed. Task's can misreport it's attribute to force other task's to make decisions that would otherwise
+        revealed. Task's can misreport it's attributes to force other task's to make decisions that would otherwise
         result in the misreporting task from being deallocated from a server. For example, if task misreports some
         attributes it may result in it being cheaper for another task to select a different server. This would mean
         that misreported task from not being deallocated. However for large scale systems, intentionally misreporting
         such attribute is extremely difficult to profit from. This is empirically shown in
         subsection~\ref{subsec:possibility-of-task-mutation-in-decentralised-iterative-auction}.
-    \item Economic efficiency - False. The allocation of task's to server is completely random till server becomes full,
-        because of this initially allocation and the random selection of task's meaning that often task's result in a
+    \item Economic efficiency - False. The allocation of task's to server is completely random until server becomes full,
+        because of this initial allocation and the random selection of task's meaning that often task's result in a
         local maxima rather than the global maxima. As a result, the auction is not 100\% economically efficient
-        however the local optima is often close to the global maxima as shown in
+        however the local optima are often close to the global maxima as shown in
         subsection~\ref{subsec:evaluation-of-the-auction-mechanisms}.
 \end{itemize}
 
@@ -300,13 +303,13 @@ important attributes of the proposed algorithm to allow easy comparison between 
 Critical Value auction and Decentralised Iterative auction.
 
 \begin{table}[H]
-    \begin{tabular}{|l|c|c|c|}
+    \begin{tabular}{|p{3cm}|c|c|c|}
         \hline
         \textbf{Attribute} & Greedy Algorithm & Critical Value Auction & Decentralised Iterative Auction \\ \hline
         Truthfulness & & Yes & No \\ \hline
         Optimality & No  & No & No \\ \hline
         Scalability & Yes & Yes & No \\ \hline
-        Task information requirements\newline from users & All & All & All except the task value \\ \hline
+        Task information requirements from users & All & All & All except the task value \\ \hline
         Communication over heads & Low & Low & High \\ \hline
         Decentralisation & No  & No  & Yes \\ \hline
     \end{tabular}

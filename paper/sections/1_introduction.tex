@@ -1,53 +1,60 @@
 \section{Introduction}
 \label{sec:introduction}
 In the last few years, cloud computing~\cite{cloud_cite} has become a popular solution for running data-intensive
-applications remotely. However, large scale data-centres may not a feasible for application domains that require low
-latency or high security and privacy. To deal with such domains, \emph{fog/edge computing} has emerged as a
-complementary paradigm allowing tasks to be executed at the edge of networks, close to the user, in small data-centers,
-known as \emph{edge clouds}.
+applications remotely. However, large-scale data centres are not feasible for application domains that require low
+latency or high security and privacy. To deal with such domains, \emph{fog/edge computing}~\cite{mobile_edge_IoT} has
+emerged as a complementary paradigm allowing tasks to be executed at the edge of networks, close to the user, in small
+data centers, known as \emph{edge clouds}.
 
-As the Internet-of-things grows, fog/edge cloud computing is a key enabling technology in particular for applications
-in smart cities, disaster response scenarios, home automation systems, etc. In these applications, low-powered devices
-generate data or tasks that can't be processed locally but are impractical to use with standard cloud computing
-services. More specifically, in smart cities, these devices could be used control smart traffic light systems which
-collect data from roadside sensors to optimise the traffic light sequence to minimise vehicle waiting times or to
-analyse videos feeds from CCTV cameras. In disaster response, sensor data from autonomous vehicles can be aggregated
-to produce real-time maps of devastated areas to help first responders better understand the situation and search for
-survivors.
+As the Internet-of-things grows, fog/edge cloud computing is a key enabling
+technology~\cite{mobile_edge_IoT, edge_computing_iot}, in particular for applications
+in smart cities~\cite{mobile_edge_smart}, disaster response scenarios~\cite{mobile_edge_disaster, smart_disaster_management},
+home automation systems, etc. In these applications, low-powered devices
+generate data or tasks that cannot be processed locally but are impractical to use with standard cloud computing
+services. More specifically, in smart cities, these devices could be used to control smart traffic light
+systems~\cite{smart_cities_traffic_lights} which collect data from roadside sensors to optimise the traffic light
+sequence to minimise vehicle waiting times or to analyse video feeds from CCTV cameras~\cite{Sreenu2019}. In disaster
+response~\cite{smart_disaster_management}, sensor data from autonomous vehicles can be aggregated to produce real-time
+maps of devastated areas to help first responders better understand the situation and search for survivors.
 
-To accomplish these tasks, there are typically several types of resources that are needed including but not exclusively
-communication bandwidth, computational power and data storage resources~\cite{vaji_infocom}. These are tasks are
+To accomplish these tasks, there are typically several types of resources that are needed, including but not exclusively
+communication bandwidth, computational power, and data storage resources~\cite{vaji_infocom}. These are tasks are
 generally delay-sensitive, meaning the task may be finished as fast as possible or by a specific completion deadline. \\
 When accomplished, different tasks carry different values for their owners often dependant on the importance of the
 program tasks, e.g., analysing current levels of air pollution may be less important than preventing a large-scale
 traffic jam at peak times or tracking a criminal on the run. \\
 Given that edge clouds are often highly constrained in their resources~\cite{edge_limitations}, we are interested in
 allocating tasks to edge cloud servers to maximize the overall social welfare achieved (i.e., the sum of completed task
-values). This is particularly challenging, because users in edge clouds are typically self-interested and may behave
+values). This is particularly challenging, since users in edge clouds are typically self-interested and may behave
 strategically~\cite{Bi2019} or may prefer not to reveal private information about their values to a central allocation
 mechanism~\cite{Pai2013}.
 
 An important shortcoming of existing work around resource allocation in edge cloud computing is that it assumes tasks
-have strict resource requirements -- that is, each task must be allocate a fixed amount of CPU cycles or bandwidth by a
-server. This is often achieved by users selecting a particular VM specification for their task however this can cause
-both inefficient allocation of resources and bottlenecks on certain server resources when multiple tasks over-request
-particular resources. \\
-This work utilises the ability for tasks to have flexibility in how its resources are allocated due to the linear
-relationships of many task attribute. An example is the time taken for a program to be download by the server is
+have strict resource requirements -- that is, each task must be allocated a fixed amount of CPU cycles or bandwidth by a
+server. This is often achieved by users selecting a particular VM specification for their task, however, this can cause
+both inefficient allocation of resources and bottlenecks on certain server resources when multiple tasks overrequest
+particular resources.
+
+Previous work~\cite{ServerElasticity} has considered the ability of cloud servers to flexibly respond to usage by
+expanding resource capacity when needed. Due to the often ad hoc nature of fog cloud networks, such an ability is
+generally not feasible, therefore in this work we utilise the ability for tasks to have flexibility in how its
+resources are allocated due to the linear relationships of many task attributes.
+
+An example is the time taken for a program to be download by the server is
 generally proportional to the bandwidth allocated. This is similarly true for sending back of results to the users.
 Computation is more difficult as the scalability of a program is dependant on the particular program, therefore this
 work considers only tasks that are linearly scalability. We leaves for future work, the ability for task's to be
 considered that scale non-linearly.
 
-Using this ability to flexibility allocate resource is additionally important in the case of edge computing due to the
-limited resource capacities that servers have in comparison to large data-centre used in standard cloud computing.
-Therefore using task resource flexibility, we propose a new resource allocation optimisation problem that enables
-servers to have greater flexibility over how it's resource are allocated. However this new optimisation problem is
-incompatible with previous research in this area thus we propose three mechanisms that utilise this flexibility.
+Using this capability to flexibly allocate resources is additionally important in the case of edge computing due to the
+limited resources capacities that servers have in comparison to the large data centres used in standard cloud computing.
+Therefore, using task resources flexibility, we propose a new resources allocation optimisation problem that enables
+servers to have greater flexibility over how its resources are allocated. However, this new optimisation problem is
+incompatible with previous research in this area, thus we propose three mechanisms that utilise this flexibility.
 
 In the following section, an overview of related work is provided. Section~\ref{sec:problem-formulation} presents the
-problem formulation, an optimisation problem and an example case to show the effectiveness of such a system. Using this
-formulation, Section~\ref{sec:flexible-resource-allocation-mechanisms} presents three different algorithm: a modular
-greedy algorithm, a centralised incentive compatible auction and a novel decentralised iterative auction. Using these
-algorithms, Section~\ref{sec:empirical-results} presents extension analysis such mechanisms compared to the optimal
-task flexible solution and a strict resource requirement solution. .
+problem formulation, an optimisation problem, and an example case to show the effectiveness of such a system. Using this
+formulation, Section~\ref{sec:flexible-resource-allocation-mechanisms} presents three different algorithms: a modular
+greedy algorithm, a centralised incentive-compatible auction, and a novel decentralised iterative auction. Using these
+algorithms, Section~\ref{sec:empirical-results} presents an extensive analysis of our mechanisms compared to the optimal
+task, flexible solution and a strict resource requirement solution. .

@@ -1,40 +1,60 @@
 \section{Related work}
 \label{sec:related-work}
-There is a considerable amount of research in the area of resource allocation and pricing in cloud computing, some of
-which use auction mechanisms to deal with competition~\cite{KUMAR2017234,Zhang2017,Du2019,Bi2019}.
-However, these approaches assume that users request a fixed amount of resources system resources and processing rates,
-with the cloud provider having no control over the speeds, only the servers that the task was allocated to. In our
-work, tasks' owners report deadlines and overall data and computation requirements, allowing the edge cloud server to
-distribute its resources more efficiently based on each task's requirements.
+Within Fog Computing, a range of approaches have been proposed for resource management including:
+application placement, resource scheduling, task offloading, load balancing, resource allocation,
+and resource provisioning~\cite{ghobaei2019resource}. As this work bridges a range of these topics, an outline of
+related works from several approaches are explained.
 
-Other closely related work on resource allocation in edge clouds~\cite{vaji_infocom} considers both the placement of
-code/data needed to run a specific task, as well as the scheduling of tasks to different edge clouds. The goal there is
-to maximize the expected rate of successfully accomplished tasks over time. Our work is different both in the setup and
-the objective function. Our objective is to maximize the value over all tasks. In terms of the setup, they assume that
-data/code can be shared and they do not consider the elasticity of resources.
+Auctions are a popular method for dealing with self-interested users to limit their ability to gain utility due to misreporting
+information. This is also a helpful method of determining the value when allocating multiple limited
+resources. Edge-MAP~\cite{tasiopoulos2018edge} provides a client-to-cloud model for tasks with short deadlines
+(10-50ms). Through using a Vickrey-English-Dutch (VED) auction, the system arrives at the unique minimum competitive
+equilibrium price. Using this, the system is highly scalable and adaptable to dynamically changing network topologies
+with cloudlet nodes at the edge of the network. \\
+An alternative market-based framework by~\cite{8373684} allows for resources to be efficiently allocated by edge nodes that
+are geographically distributed. To maximise the use of node resource, the framework finds the market
+equilibrium through optimally allocating resources bundles to a service given each task's budget. This market
+equilibrium is found using the Eisenberg-Gale convex program to allow services to maximise their revenue, while a novel
+convex optimisation problem is proved to achieve market equilibrium when services maximise their net profit
+(revenue minus cost). \\
+Within auctions in cloud computing there is a large corpus of research, ~\cite{KUMAR2017234} provides a systematic study
+of double auction mechanisms that are suitable for a range of distributed systems like Grid computing, Cloud computing,,
+Inter-Cloud systems. The work reviewed 21 different proposed auction mechanisms over a range of important auction
+properties like Economic Efficiency, Incentive Compatibility, and Budget-Balance. In a majority of the proposed auction
+mechanisms, truthfulness was only considered for the user, thus a Truthful Multi-Unit Double auction mechanism was
+presented as such that both users and servers should act truthfully.
 
-Our problem is related to multidimensional knapsack problems. In particular~\cite{Nip2017}, consider flexibility in
-the allocation, with linear constraints that are used for elastic weights. The paper provides a pseudo-polynomial time
-complexity algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is
-similar to their, but differ due to constraints with our using non-linear not linear constraints.
+An advantage of fog nodes is that due to the proximity, nodes can find other nodes in its vicinity to assist in a task.
+Using this ability, ~\cite{8839780} has propose a resource allocation mechanism to allow fog nodes to offload multiple
+tasks with delay guarantees. This is helpful due to the limited resources of nodes, thus the system allows for
+both other fog nodes or remote cloud centers for further computational resources. This causes an issue to decide where
+to offload and how much partial task data to be offloaded under delay guarantee. By formulating the problem as a
+Quadratically Constraint Quadratic Programming allows for a solution to be found.
 
-A majority of approaches taken for task pricing and resource allocation in Cloud Computing uses a fixed resource
-allocation mechanism, such that each user requests a fixed amount of resources for a task from a server. However this
-mechanism, as previously explained, provides no control for the server over the quantity of resource allocated to a task,
-only determining the task's price. As a result, a majority of approaches don't consider the server's management of
-resource allocation. Thus research has focused on designing efficient and incentive compatible auction mechanisms.
+Quality of service is an alternative metric for measuring the success of a system compared to social welfare used in a
+majority of mechanisms.~\cite{8379445} propose a resource-efficient computation offloading mechanism for users, where
+communication and computation are joined by the node operation when allocating resources. Using a task graph model, the
+resource demands of a task are calculated, which are used to compute the optimal communication and computation resource
+demand profile for a user in order to minimise a tasks resource occupancy. As the problem is a NP-Hard problem, through an
+efficient approximation algorithm, a truthful pricing scheme is used to calculate the critical value for the task to
+prevent users from misreporting task valuation.
 
-Work by~\cite{KUMAR2017234} provides a systematic study of double auction mechanisms that are suitable for a range
-of distributed systems like Grid computing, Cloud computing, Inter-Cloud systems. The work reviewed 21 different
-proposed auction mechanisms over a range of important auction properties like Economic Efficiency,
-Incentive Compatibility and Budget-Balance. In a majority of the proposed auction mechanisms, truthfulness was only
-considered for the user, thus a Truthful Multi-Unit Double auction mechanism was presented as such that both users and
-server should act truthfully.
+As Fog Computing often requiring the placement of fog nodes within the system for both localised fog networks and
+geographically distance systems due to the short deadline constraints of tasks. Work by~\cite{vaji_infocom}, considers
+the placement of code/data needed to run specific tasks over time where the demands change over time while also
+considering the operational costs and system stability. Using a proposed approximation algorithm, they achieved 90\% of
+the optimal social welfare by converting the problem to a set function optimisation problem. By doing this allows the
+algorithm to run in polynomial time complexity. \\
+Alternative work by~\cite{Bi2019} to efficiently distribute data centers and connections aims to maximise social
+welfare instead of the number of tasks completed. A truthful online mechanism was proposed that was incentive compatible and individually rational, to allow
+tasks to arrive over time by solving an integer programming optimisation problem.
 
-Some approaches have been taken to increase flexibility within Fog Cloud Computing~\citep{Bi2019} through efficient
-distribution of data centers and connections to maximise social welfare. A truthful online mechanism was
-proposed that was incentive compatible and individually rational, to allow tasks to arrive over time by solving an
-integer programming optimisation problem. Similar research in~\cite{vaji_infocom}, considers the placement of code/data
-needed to run specific tasks over time where the demands change over time while also considering the operational costs
-and system stability. An approximation algorithm achieved 90\% of the optimal social welfare by converting the problem
-to a set function optimisation problem.
+All of the approaches explained above for task pricing and resource allocation in Cloud Computing use a form of fixed resource
+allocation, where each user requests a fixed amount of resources for a task from a server. This is often as a VM of different specifications. However, this
+mechanism, as previously explained, provides no control for the server over the amount of resources allocated to a
+task, only allowing the server to determine a task's price.
+
+Our problem is related to multidimensional knapsack problems where there is a large body of
+works~\cite{knapsacks, numbers}. In particular~\cite{Nip2017}, considers the flexibility of item weights with a linear constraint that must be fulfilled for the item to be allocated. The paper provides a pseudo-polynomial time complexity algorithm for
+solving this problem to maximize the values in the knapsack. Our optimisation problem case is similar to their, but
+differs due to constraints with our using non-linear not linear constraints.
