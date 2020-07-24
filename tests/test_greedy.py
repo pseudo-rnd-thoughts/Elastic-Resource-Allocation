@@ -8,7 +8,9 @@ from __future__ import annotations
 import numpy as np
 
 from core.core import reset_model
+from core.fixed_task import SumSpeedPowsFixedPolicy, FixedTask
 from extra.model import ModelDistribution
+from greedy.fixed_greedy import fixed_greedy_algorithm
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
 from greedy.server_selection_policy import SumResources, all_policies as server_selection_policies
@@ -46,6 +48,20 @@ def test_greedy_policies():
     print(f'Algorithm | Avg SW | Avg Time | Social Welfare')
     for algorithm, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1]):
         print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
+
+
+def test_fixed_greedy_policies():
+    print()
+    model = ModelDistribution('models/paper.mdl', 20, 3)
+    tasks, servers = model.generate()
+    fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+
+    print('Policies')
+    for value_density in value_density_policies:
+        for server_selection_policy in server_selection_policies:
+            result = fixed_greedy_algorithm(fixed_tasks, servers, value_density, server_selection_policy)
+            print(f'{result.algorithm}: {result.social_welfare}')
+            reset_model(fixed_tasks, servers)
 
 
 def test_optimisation(repeats: int = 10):
