@@ -10,13 +10,13 @@ from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import server_task_allocation
+from src.core.fixed_task import FixedTask
 from src.extra.pprint import print_model_solution
 from src.extra.result import Result
 
 if TYPE_CHECKING:
     from typing import List, Optional
 
-    from src.core.fixed_task import FixedTask
     from src.core.server import Server
 
 
@@ -29,7 +29,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     :param time_limit: The time limit to solve with
     :return: The results
     """
-    assert all(type(task) is FixedTask for task in tasks)
+    assert all(type(task) is FixedTask for task in tasks), ', '.join([str(type(task) for task in tasks)])
     assert 0 < time_limit, f'Time limit: {time_limit}'
 
     model = CpoModel('vcg')
@@ -89,6 +89,7 @@ def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: int
     :param time_limit: Cplex time limit
     :return: Optional results
     """
+    assert all(type(task) is FixedTask for task in tasks)
     model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),

@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.fixed_task import FixedTask
-
 if TYPE_CHECKING:
     from typing import Tuple
 

@@ -5,17 +5,21 @@ Tests the evaluation online environment works as intended
 from __future__ import annotations
 
 from math import ceil
-from typing import Iterable
+from typing import Iterable, List
 
 from core.core import reset_model
 from core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
+from core.server import Server
+from core.task import Task
 from extra.model import ModelDistribution
+from extra.visualise import minimise_resource_allocation
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
 from online import generate_batch_tasks, online_batch_solver
 from optimal.fixed_optimal import fixed_optimal_solver
+from optimal.flexible_optimal import flexible_optimal_solver
 
 
 def test_online_model_generation(model_dist=ModelDistribution('models/paper.mdl', num_servers=8),
@@ -34,14 +38,15 @@ def test_online_model_generation(model_dist=ModelDistribution('models/paper.mdl'
         print(f'Batch lengths: [{", ".join([f"{len(batch_tasks)}" for batch_tasks in batched_tasks])}]')
 
 
-def test_online_solver(model_dist=ModelDistribution('models/paper.mdl', num_servers=8), time_steps: int = 50,
-                       batch_length: int = 3, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
+def test_online_server_capacities(model_dist=ModelDistribution('models/paper.mdl', num_servers=8), time_steps: int = 50,
+                                  batch_length: int = 3, mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
+                                  capacities: float = 0.3):
     print()
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
     for server in servers:
-        server.storage_capacity = int(server.storage_capacity * 0.3)
-        server.computation_capacity = int(server.computation_capacity * 0.3)
-        server.bandwidth_capacity = int(server.bandwidth_capacity * 0.3)
+        server.storage_capacity = int(server.storage_capacity * capacities)
+        server.computation_capacity = int(server.computation_capacity * capacities)
+        server.bandwidth_capacity = int(server.bandwidth_capacity * capacities)
     batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
     print(f'Tasks per batch time step: [{", ".join([str(len(batch_tasks)) for batch_tasks in batched_tasks])}]')
     result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy', greedy_algorithm,
@@ -144,4 +149,32 @@ def test_online_fixed_task():
                          fixed_task.loading_speed * fixed_task.required_computation * fixed_task.sending_speed + \
                          fixed_task.loading_speed * fixed_task.compute_speed * fixed_task.required_results_data
             assert time_taken <= fixed_task.deadline * fixed_task.loading_speed * \
-                fixed_task.compute_speed * fixed_task.sending_speed
+                   fixed_task.compute_speed * fixed_task.sending_speed
+
+
+def test_minimise_resources():
+    model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
+    tasks, servers = model_dist.generate_online(20, 4, 2)
+
+    def custom_solver(tasks: List[Task], servers: List[Server],
+                      solver_time_limit: int = 3, minimise_time_limit: int = 2):
+        valid_servers = [server for server in servers if
+                         1 <= server.available_computation and 1 <= server.available_bandwidth]
+        server_availability = {server: (server.available_computation, server.available_bandwidth) for server in servers}
+        flexible_optimal_solver(tasks, valid_servers, solver_time_limit)
+
+        for server, (compute_availability, bandwidth_availability) in server_availability.items():
+            server_old_tasks = [task for task in server.allocated_tasks if task not in tasks]
+            max_bandwidth = server.bandwidth_capacity - sum(
+                task.loading_speed + task.sending_speed for task in server_old_tasks)
+            max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
+            assert compute_availability == max_computation
+            assert bandwidth_availability == max_bandwidth
+
+        minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
+
+    batched_tasks = generate_batch_tasks(tasks, 1, 20)
+    optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
+                                         custom_solver, solver_time_limit=2)
+    print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
+    reset_model([], servers)
