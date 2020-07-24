@@ -91,6 +91,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         # Loop over all of the fixed greedy policies permutations
         for value_density in value_densities:
             for server_selection_policy in server_selection_policies:
+                assert all(type(task) is FixedTask for task in fixed_tasks)
                 fixed_greedy_result = fixed_greedy_algorithm(fixed_tasks, servers, value_density,
                                                              server_selection_policy)
                 algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()

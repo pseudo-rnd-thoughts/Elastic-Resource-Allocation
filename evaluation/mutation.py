@@ -115,8 +115,8 @@ def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     print('Finished running')
 
 
-def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.15,
-                         time_limit: int = 2, price_change: int = 3, initial_price: int = 25):
+def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.10,
+                         time_limit: int = 3, price_change: int = 3, initial_price: int = 25):
     """
     Attempts a grid search version of the mutation testing above where a single task is mutated in every possible way
         within a particular way to keep that the random testing is not missing anything
