@@ -5,6 +5,8 @@ from __future__ import annotations
 from random import gauss
 from typing import TYPE_CHECKING, Dict, Any
 
+from core.fixed_task import FixedTask
+
 if TYPE_CHECKING:
     from typing import List
 
@@ -46,7 +48,10 @@ class Server:
         """
 
         if not (task.required_storage <= self.available_storage and
-                self.available_bandwidth >= 2 and self.available_computation >= 1):
+                2 <= self.bandwidth_capacity and 1 <= self.computation_capacity):
+            return False
+
+        if type(task) is FixedTask and self.available_computation < task.compute_speed:
             return False
 
         for s in range(1, self.available_bandwidth):
@@ -67,7 +72,7 @@ class Server:
         """
 
         if not (task.required_storage <= self.storage_capacity and
-                self.bandwidth_capacity >= 2 and self.computation_capacity >= 1):
+                2 <= self.bandwidth_capacity and 1 <= self.computation_capacity):
             return False
 
         for s in range(1, self.bandwidth_capacity):
@@ -84,16 +89,16 @@ class Server:
 
         :param task: The task being allocated
         """
-        assert task.loading_speed > 0 and task.compute_speed > 0 and task.sending_speed > 0, \
+        assert 0 < task.loading_speed and 0 < task.compute_speed and 0 < task.sending_speed, \
             f'Job speed failure for Job {task.name} - loading: {task.loading_speed}, ' \
             f'compute: {task.compute_speed}, sending: {task.sending_speed}'
-        assert self.available_storage >= task.required_storage, \
+        assert task.required_storage <= self.available_storage, \
             f'Server storage failure for Server {self.name} available storage {self.available_storage}, ' \
             f'task required storage {task.required_storage}'
-        assert self.available_computation >= task.compute_speed, \
+        assert task.compute_speed <= self.available_computation, \
             f'Server computation failure for Server {self.name} available computation {self.available_computation}, ' \
             f'task compute speed {task.compute_speed}'
-        assert self.available_bandwidth >= task.loading_speed + task.sending_speed, \
+        assert task.loading_speed + task.sending_speed <= self.available_bandwidth, \
             f'Server available bandwidth failure for Server {self.name} available bandwidth {self.available_bandwidth}, ' \
             f'task loading speed {task.loading_speed} and sending speed {task.sending_speed}'
         assert task not in self.allocated_tasks, \
