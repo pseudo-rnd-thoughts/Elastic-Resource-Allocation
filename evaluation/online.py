@@ -18,6 +18,7 @@ from core.task import Task
 from extra.io import results_filename, parse_args
 from extra.result import Result, resource_usage
 from extra.visualise import minimise_resource_allocation
+from greedy.fixed_greedy import fixed_greedy_algorithm
 from greedy.greedy import greedy_algorithm
 from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
@@ -127,9 +128,12 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
     flexible_optimal_solver(tasks, valid_servers, solver_time_limit)
 
     for server, (compute_availability, bandwidth_availability) in server_availability.items():
-        assert all(task.required_storage for task in server.allocated_tasks) + server.available_storage == server.storage_capacity
-        assert all(task.compute_speed for task in server.allocated_tasks) + server.available_computation == server.computation_capacity
-        assert all(task.loading_speed + task.sending_speed for task in server.allocated_tasks) + server.available_bandwidth == server.bandwidth_capacity
+        assert all(task.required_storage for task in
+                   server.allocated_tasks) + server.available_storage == server.storage_capacity
+        assert all(task.compute_speed for task in
+                   server.allocated_tasks) + server.available_computation == server.computation_capacity
+        assert all(task.loading_speed + task.sending_speed for task in
+                   server.allocated_tasks) + server.available_bandwidth == server.bandwidth_capacity
 
         server_old_tasks = [task for task in server.allocated_tasks if task not in tasks]
         max_bandwidth = server.bandwidth_capacity - sum(task.loading_speed + task.sending_speed
@@ -140,9 +144,12 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
     minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
 
     for server in servers:
-        assert all(task.required_storage for task in server.allocated_tasks) + server.available_storage == server.storage_capacity
-        assert all(task.compute_speed for task in server.allocated_tasks) + server.available_computation == server.computation_capacity
-        assert all(task.loading_speed + task.sending_speed for task in server.allocated_tasks) + server.available_bandwidth == server.bandwidth_capacity
+        assert all(task.required_storage for task in
+                   server.allocated_tasks) + server.available_storage == server.storage_capacity
+        assert all(task.compute_speed for task in
+                   server.allocated_tasks) + server.available_computation == server.computation_capacity
+        assert all(task.loading_speed + task.sending_speed for task in
+                   server.allocated_tasks) + server.available_bandwidth == server.bandwidth_capacity
 
 
 def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
@@ -182,8 +189,10 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         # Batch greedy algorithm
         for batch_length in batch_lengths:
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
-            fixed_batched_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
+            batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
+
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
+            flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
 
             # Update the server capacities
             for server in servers:
@@ -193,11 +202,11 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
             algorithm_results = {}
 
             # Online fixed optimal
-            fixed_optimal_result = online_batch_solver(fixed_batched_tasks, servers, batch_length, 'Fixed Optimal',
+            fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
                                                        fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
-            reset_model([], servers)
+            reset_model(flattened_fixed_tasks, servers)
 
             # Online flexible optimal
             optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
@@ -219,6 +228,17 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
                         algorithm_results[greedy_result.algorithm] = greedy_result.store()
                         greedy_result.pretty_print()
                         reset_model(flattened_tasks, servers)
+
+            # Loop over all of the greedy policies permutations
+            for value_density in value_densities:
+                for server_selection_policy in server_selection_policies:
+                    name = f'Fixed Greedy {value_density.name}, {server_selection_policy.name}'
+                    fixed_greedy_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, name,
+                                                              fixed_greedy_algorithm, value_density=value_density,
+                                                              server_selection_policy=server_selection_policy)
+                    algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
+                    fixed_greedy_result.pretty_print()
+                    reset_model(flattened_fixed_tasks, servers)
 
             # Add the results to the data
             batch_results[f'batch length {batch_length}'] = algorithm_results
