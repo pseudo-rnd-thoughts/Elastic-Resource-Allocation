@@ -75,7 +75,8 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         for task in allocated_tasks:
             if task in server_new_tasks:
                 task.reset_allocation()
-                server_task_allocation(server, task, model_solution.get_value(loading_speeds[task]),
+                server_task_allocation(server, task,
+                                       model_solution.get_value(loading_speeds[task]),
                                        model_solution.get_value(compute_speeds[task]),
                                        model_solution.get_value(sending_speeds[task]))
             else:
