@@ -51,7 +51,7 @@ class Server:
                 2 <= self.bandwidth_capacity and 1 <= self.computation_capacity):
             return False
 
-        if type(task) is FixedTask and self.available_computation < task.compute_speed:
+        if 0 < task.compute_speed and self.available_computation < task.compute_speed:
             return False
 
         for s in range(1, self.available_bandwidth):
