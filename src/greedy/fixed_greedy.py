@@ -45,7 +45,6 @@ class FixedResourceAllocationPolicy(ResourceAllocationPolicy):
         :param server: The server
         :return: The fixed task's speeds
         """
-        assert isinstance(task, FixedTask), type(task)
 
         return task.loading_speed, task.compute_speed, task.sending_speed
 
