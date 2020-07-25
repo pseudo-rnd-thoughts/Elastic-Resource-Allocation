@@ -3,14 +3,10 @@
 from __future__ import annotations
 
 from random import gauss
-from typing import TYPE_CHECKING, Dict, Any
+from typing import Dict, Any
+from typing import List
 
-from core.fixed_task import FixedTask
-
-if TYPE_CHECKING:
-    from typing import List
-
-    from src.core.task import Task
+from src.core.task import Task
 
 
 class Server:
