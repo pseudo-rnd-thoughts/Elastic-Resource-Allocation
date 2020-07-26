@@ -184,11 +184,11 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
             reset_model(flattened_fixed_tasks, servers)
 
             # Online flexible optimal
-            optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
-                                                 minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
-            algorithm_results[optimal_result.algorithm] = optimal_result.store()
-            optimal_result.pretty_print()
-            reset_model(flattened_tasks, servers)
+            # optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
+            #                                      minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
+            # algorithm_results[optimal_result.algorithm] = optimal_result.store()
+            # optimal_result.pretty_print()
+            # reset_model(flattened_tasks, servers)
 
             # Loop over all of the greedy policies permutations
             for value_density in value_densities:

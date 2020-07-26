@@ -42,7 +42,6 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         # The maximum bandwidth and the computation that the speed can be
         max_bandwidth = sum(task.loading_speed + task.sending_speed for task in server_new_tasks)
         max_computation = sum(task.compute_speed for task in server_new_tasks)
-        assert 1 <= max_bandwidth and 1 <= max_computation, f'Max bandwidth: {max_bandwidth}, computation: {max_computation}'
 
         # Loop over each task to allocate the variables and add the deadline constraints
         for task in server_new_tasks:
