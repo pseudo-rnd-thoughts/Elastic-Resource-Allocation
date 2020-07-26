@@ -5,6 +5,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
+from core.core import server_task_allocation
 from src.extra.pprint import print_task_values, print_task_allocation
 from src.extra.result import Result
 
@@ -39,8 +40,7 @@ def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_po
         # If an optimal server is found then calculate the bid allocation function
         if allocated_server:
             s, w, r = resource_allocation_policy.allocate(task, allocated_server)
-            task.allocate(s, w, r, allocated_server)
-            allocated_server.allocate_task(task)
+            server_task_allocation(allocated_server, task, s, w, r)
 
     if debug_allocation:
         print_task_allocation(tasks)

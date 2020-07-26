@@ -48,8 +48,9 @@ class Server:
             return False
 
         # Case of fixed task (the required storage is checked above)
-        if 0 < task.compute_speed and self.available_computation < task.compute_speed and 0 < task.loading_speed and \
-                0 < task.sending_speed and task.loading_speed + task.sending_speed < self.available_bandwidth:
+        if 0 < task.compute_speed and 0 < task.loading_speed and 0 < task.sending_speed \
+                and self.available_bandwidth < task.loading_speed + task.sending_speed \
+                and self.available_computation < task.compute_speed:
             return False
 
         for s in range(1, self.available_bandwidth):
