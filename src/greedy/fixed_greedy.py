@@ -14,7 +14,7 @@ from greedy.value_density import ValueDensity
 
 
 def fixed_greedy_algorithm(tasks: List[FixedTask], servers: List[Server],
-                           value_density: ValueDensity, server_selection: ServerSelectionPolicy):
+                           value_density: ValueDensity, server_selection_policy: ServerSelectionPolicy):
     """
     Runs the greedy algorithm using a fixed resource allocation policy
 
@@ -25,7 +25,7 @@ def fixed_greedy_algorithm(tasks: List[FixedTask], servers: List[Server],
     :return: Results
     """
 
-    result = greedy_algorithm(tasks, servers, value_density, server_selection, FixedResourceAllocationPolicy())
+    result = greedy_algorithm(tasks, servers, value_density, server_selection_policy, FixedResourceAllocationPolicy())
     # Update the algorithm name
     result.data['algorithm'].replace('Greedy', 'Fixed Greedy').replace(', Fixed Task Speeds', '')
     return result
