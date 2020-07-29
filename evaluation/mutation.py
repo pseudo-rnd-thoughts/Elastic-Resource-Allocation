@@ -167,7 +167,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                     # Create the new mutated task and create new tasks list with the mutant task replacing the task
                     mutant_task = Task(f'mutated {task.name}', required_storage=required_storage,
                                        required_computation=required_computation,
-                                       required_results_data=required_results_data, value=value, deadline=deadline)
+                                       required_results_data=required_results_data, deadline=deadline, value=task.value)
                     tasks.append(mutant_task)
 
                     # Calculate the task price with the mutated task
