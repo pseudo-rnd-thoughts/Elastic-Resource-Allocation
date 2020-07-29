@@ -46,15 +46,16 @@ considering the operational costs and system stability. Using a proposed approxi
 the optimal social welfare by converting the problem to a set function optimisation problem. By doing this allows the
 algorithm to run in polynomial time complexity. \\
 Alternative work by~\cite{Bi2019} to efficiently distribute data centers and connections aims to maximise social
-welfare instead of the number of tasks completed. A truthful online mechanism was proposed that was incentive compatible and individually rational, to allow
-tasks to arrive over time by solving an integer programming optimisation problem.
+welfare instead of the number of tasks completed. A truthful online mechanism was proposed that was incentive compatible
+and individually rational, to allow tasks to arrive over time by solving an integer programming optimisation problem.
 
-All of the approaches explained above for task pricing and resource allocation in Cloud Computing use a form of fixed resource
-allocation, where each user requests a fixed amount of resources for a task from a server. This is often as a VM of different specifications. However, this
-mechanism, as previously explained, provides no control for the server over the amount of resources allocated to a
-task, only allowing the server to determine a task's price.
+All of the approaches explained above for task pricing and resource allocation in Cloud Computing use a form of fixed
+resource allocation, where each user requests a fixed amount of resources for a task from a server. This is often as a
+VM of different specifications. However, this mechanism, as previously explained, provides no control for the server
+over the amount of resources allocated to a task, only allowing the server to determine a task's price.
 
 Our problem is related to multidimensional knapsack problems where there is a large body of
-works~\cite{knapsacks, numbers}. In particular~\cite{Nip2017}, considers the flexibility of item weights with a linear constraint that must be fulfilled for the item to be allocated. The paper provides a pseudo-polynomial time complexity algorithm for
-solving this problem to maximize the values in the knapsack. Our optimisation problem case is similar to their, but
-differs due to constraints with our using non-linear not linear constraints.
+works~\cite{knapsacks, numbers}. In particular~\cite{Nip2017}, considers the flexibility of item weights with a linear
+constraint that must be fulfilled for the item to be allocated. The paper provides a pseudo-polynomial time complexity
+algorithm for solving this problem to maximize the values in the knapsack. Our optimisation problem case is similar to
+their, but differs due to constraints with our using non-linear not linear constraints.

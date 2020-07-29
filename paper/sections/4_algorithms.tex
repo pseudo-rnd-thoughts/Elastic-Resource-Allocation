@@ -47,7 +47,11 @@ of the task.
 
 Using the example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 11/12 of
 the tasks achieving XX\% more social welfare than the fixed solution. This is due to the algorithm being unable to % TODO
-consider other tasks resource requirement while allocating resource. %% Todo add greedy heuristics functions
+consider other tasks resource requirement while allocating resource. The greedy algorithm used for the value density
+function, $\frac{v_j \cdot d_j}{s_j + w_j + r_j}$, for server selection, $\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i$
+for task $j$ and servers $I$ and for the resource allocation is
+$\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3$
+is task $j$ and server $i$.
 
 \begin{algorithm}
     \caption{Pseudo code of Greedy Algorithm}
@@ -146,7 +150,7 @@ mechanism repeated $\left|J\right|$ due to calculating each task's critical valu
 \end{theorem}
 \begin{proof}
     The auction uses the greedy mechanism, who has time complexity is $O(\left|J\right| \left|I\right|)$,
-    (subsubsection~\ref{subsubsec:greedy-time-complexity}) to find all task's that are allocated to a server. Using the %% Todo, do I really reference the subsubsection
+    (subsection~\ref{subsec:greedy-algorithm}) to find all task's that are allocated to a server. Using the
     list of all task's allocated, the critical value of each task must be found. This is done by repeating the
     server selection and resource allocation each all task (excluding the critical task) with time complexity,
     $O(\left|J\right| \left|I\right|)$, till the critical task can no longer be allocated to any server (a constant time function).
@@ -213,23 +217,18 @@ price's are reset then appended to the set of unallocated tasks.
     \label{alg:dia}
     \begin{algorithmic}
         \REQUIRE $I$ is the set of servers
-        \REQUIRE $J$ is the set of unallocated tasks, which initial is the set of all tasks to be allocated
-        \REQUIRE $P(i, k)$ is solution to the problem in section~\ref{subsubsec:decentralised-iterative-problem}
-        using the server $i$ and new task $k$.
-        The server's current tasks is known to itself and its current revenue from tasks so not passed as arguments.
-        \REQUIRE $R(i, k)$ is a function returning the list of tasks not able to run if task $k$ is allocated to server $i$
+        \REQUIRE $J$ is the set of unallocated tasks, that is initial the set of all tasks
+        \REQUIRE $P(i, k)$ is the solution to the problem in section~\ref{subsubsec:decentralised-iterative-problem}
+            using the server $i$ and new task $k$. The server's current tasks is known to itself and its current
+            revenue from tasks so not passed as arguments.
         \REQUIRE $\leftarrow_R$ will randomly select an element from a set
+
         \WHILE{$|J| > 0$}
             \STATE{$j \leftarrow_R J$}
-            \STATE{$p, i \leftarrow argmin_{i \in I} P(i, j)$}
+            \STATE{$p, i \leftarrow \min_{i \in I} P(i, j)$}
             \IF{$p \leq v_j$}
                 \STATE{$p_j \leftarrow p$}
                 \STATE{$x_{i, j} \leftarrow 1$}
-                \FORALL{$j^{'} \in R(i, j)$}
-                    \STATE{$x_{i, j^{'}} \leftarrow 0$}
-                    \STATE{$p_j^{'} \leftarrow 0$}
-                    \STATE{$J \leftarrow J \cup j^{'}$}
-                \ENDFOR
             \ENDIF
             \STATE{$J \leftarrow J \setminus \{j\}$}
         \ENDWHILE
@@ -241,16 +240,6 @@ price's are reset then appended to the set of unallocated tasks.
 To find the optimal revenue for a server $m$ given a new task $n^{'}$ and a set of currently allocated tasks $N$ has a
 similar formulation to the optimisation problem in section~\ref{subsec:optimisation-problem}. Except with an additional
 variable for the task price $p_n$ for each task $n$.
-
-The objective (Eq.~\eqref{eq:dia-objective}) is to maximize the price of all currently allocated tasks (not including
-the new task as the price is zero). The server resource capacity constraints
-(Eqs.~\eqref{eq:dia-server-storage-constraint},~\eqref{eq:dia-server-computation-constraint}
-and~\eqref{eq:dia-server-communication-constraint}) are similar to the constraints in the standard model set out in
-section~\ref{subsec:optimisation-problem} except with the assumption that the task $n^{'}$ is running so there is no
-need to consider if it is running or not. The deadline and non-negative resource speeds constraints
-(\ref{eq:dia-task-deadline},~\ref{eq:dia-loading-speeds},~\ref{eq:dia-compute-speeds} and~\ref{eq:dia-sending-speeds})
-are all the same equation as the standard formulation for all the tasks plus the new task. As this formulation only
-considers a single server, the task allocation constraint is not considered.
 
 \begin{align}
     \max & \sum_{\forall n \in N} p_n x_n\label{eq:dia-objective}\\
@@ -264,6 +253,16 @@ considers a single server, the task allocation constraint is not considered.
     & 0 < r^{'}_n < \infty, &~ \forall{n \in N \cup \{n^{'}\}} \label{eq:dia-sending-speeds}\\
     & x_n \in \{0,1\} &~ \forall{n \in N} \label{eq:dia-task-allocation}
 \end{align}
+
+The objective (Eq.~\eqref{eq:dia-objective}) is to maximize the price of all currently allocated tasks (not including
+the new task as the price is zero). The server resource capacity constraints
+(Eqs.~\eqref{eq:dia-server-storage-constraint},~\eqref{eq:dia-server-computation-constraint}
+and~\eqref{eq:dia-server-communication-constraint}) are similar to the constraints in the standard model set out in
+section~\ref{subsec:optimisation-problem} except with the assumption that the task $n^{'}$ is running so there is no
+need to consider if it is running or not. The deadline and non-negative resource speeds constraints
+(\ref{eq:dia-task-deadline},~\ref{eq:dia-loading-speeds},~\ref{eq:dia-compute-speeds} and~\ref{eq:dia-sending-speeds})
+are all the same equation as the standard formulation for all the tasks plus the new task. As this formulation only
+considers a single server, the task allocation constraint is not considered
 
 \subsubsection{Decentralised Iterative Auction properties}
 \label{subsubsec:decentralised-iterative-auction-properties}
@@ -282,7 +281,7 @@ For our proposed auction, we consider four important properties in auction theor
         attributes it may result in it being cheaper for another task to select a different server. This would mean
         that misreported task from not being deallocated. However for large scale systems, intentionally misreporting
         such attribute is extremely difficult to profit from. This is empirically shown in
-        subsection~\ref{subsec:possibility-of-task-mutation-in-decentralised-iterative-auction}.
+        subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}.
     \item Economic efficiency - False. The allocation of task's to server is completely random until server becomes full,
         because of this initial allocation and the random selection of task's meaning that often task's result in a
         local maxima rather than the global maxima. As a result, the auction is not 100\% economically efficient
