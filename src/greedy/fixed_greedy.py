@@ -21,13 +21,13 @@ def fixed_greedy_algorithm(tasks: List[FixedTask], servers: List[Server],
     :param tasks: List of tasks
     :param servers: List of servers
     :param value_density: Value density function
-    :param server_selection: Server selection policy
+    :param server_selection_policy: Server selection policy
     :return: Results
     """
 
     result = greedy_algorithm(tasks, servers, value_density, server_selection_policy, FixedResourceAllocationPolicy())
     # Update the algorithm name
-    result.data['algorithm'].replace('Greedy', 'Fixed Greedy').replace(', Fixed Task Speeds', '')
+    result.data['algorithm'] = f'Fixed Greedy {value_density.name}, {server_selection_policy.name}'
     return result
 
 
