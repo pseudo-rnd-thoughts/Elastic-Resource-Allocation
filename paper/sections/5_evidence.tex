@@ -1,21 +1,21 @@
 \section{Empirical Results}
 \label{sec:empirical-results}
 To evaluate the algorithms presented in Section~\ref{sec:flexible-resource-allocation-mechanisms},
-this sections analysis the performance of both the greedy and auctions algorithms
+this section analyses the performance of both the greedy and auctions algorithms
 (subsections~\ref{subsec:evaluation-of-the-greedy-algorithm} and~\ref{subsec:evaluation-of-the-auction-mechanisms}).
-We investigate the effect of server heuristics on decentralised iterative auction
+We investigate the effect of server heuristics on the Decentralised Iterative Auction
 (subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}) and
-the possibility of misreporting task attributes within the decentralised iterative auction
+the possibility of misreporting task attributes within the Decentralised Iterative Auction
 (subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}).
-Finally we analysis, the effective of elastic resources given server resource capacity ratio
+Finally we analyse the effectiveness of elastic resource allocation given server resource capacity ratios
 (subsection~\ref{subsec:the-effective-of-elastic-resources-given-server-resource-capacity-ratio})
 and the comparison between online and batched resource allocation
 (subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}).
 
-To evaluate our algorithms, synthetic models have been used to generate servers and tasks where
-each attribute was taken from a Gaussian distribution. The reason this was done was due to there not
-being a de facto standard to test cloud computing resource allocation algorithms and that those used
-in related work do not consider a deadline for a task.
+Within Edge Cloud Computing, we have found no de facto standard for testing resource allocation algorithms and
+those used in related work do not consider a deadline applicable for our work. Therefore we have generated synthetic
+models for our servers and tasks. This is done using a handcraft Gaussian distribution for each attribute (this can be
+found in Appendix~\ref{}). %% TODO
 
 In order to compare the results of the difference algorithms, a branch and bound solution was implemented to solve
 the optimisation problem, from section~\ref{subsec:optimisation-problem}, optimally. However due to the difficulty of

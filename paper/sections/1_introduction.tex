@@ -43,13 +43,13 @@ resources are allocated due to the linear relationships of many task attributes.
 An example is the time taken for a program to be download by the server is
 generally proportional to the bandwidth allocated. This is similarly true for sending back of results to the users.
 Computation is more difficult as the scalability of a program is dependant on the particular program, therefore this
-work considers only tasks that are linearly scalability. We leaves for future work, the ability for task's to be
-considered that scale non-linearly.
+work considers only tasks that are linearly scalable. We leave for tasks to be able to scale non-linearly for future
+work.
 
 Using this capability to flexibly allocate resources is additionally important in the case of edge computing due to the
-limited resources capacities that servers have in comparison to the large data centres used in standard cloud computing.
-Therefore, using task resources flexibility, we propose a new resources allocation optimisation problem that enables
-servers to have greater flexibility over how its resources are allocated. However, this new optimisation problem is
+limited resource capacities that servers have in comparison to the large data centres used in standard cloud computing.
+Therefore, using resource task flexibility, we propose a novel resources allocation optimisation problem that enables
+servers to have greater flexibility over resource allocation. However, this new optimisation problem is
 incompatible with previous research in this area, thus we propose three mechanisms that utilise this flexibility.
 
 In the following section, an overview of related work is provided. Section~\ref{sec:problem-formulation} presents the
@@ -57,4 +57,4 @@ problem formulation, an optimisation problem, and an example case to show the ef
 formulation, Section~\ref{sec:flexible-resource-allocation-mechanisms} presents three different algorithms: a modular
 greedy algorithm, a centralised incentive-compatible auction, and a novel decentralised iterative auction. Using these
 algorithms, Section~\ref{sec:empirical-results} presents an extensive analysis of our mechanisms compared to the optimal
-task, flexible solution and a strict resource requirement solution. .
+task, flexible solution and a strict resource requirement solution.

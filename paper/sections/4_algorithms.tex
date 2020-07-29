@@ -6,7 +6,7 @@ section, we propose three mechanisms for solving this optimisation problem: an a
 auction-based mechanisms.
 
 The optimisation problem is a extended version of the knapsack problem, which is often solved using an dynamic
-programming method that has pseudo-polynomial time complexity. The solution requires building a table of items to bags
+programming method that has pseudo-polynomial time complexity~\cite{}. The solution requires building a table of items to bags
 allocation. For our problem, as the resource speeds must be considered at the same time, such a solver can are
 infeasible due to both the space and time complexity required.
 
@@ -21,15 +21,16 @@ As task users can be self-interested, they may report their task values or requi
 VCG~\cite{vickrey,Clarke,groves} is used for such systems due to its ability to use any optimisation problem to
 calculate a task price. However, due to the difficulty of calculating the optimal allocation for this problem, VCG is
 infeasible to use in this application. Therefore, to deal with self-interested users, we propose two auction-based
-mechanisms, an incentive-compatible auction using the centralised greedy algorithm
-(Section~\ref{subsec:critical-value-auction}). While the second is a novel decentralized iterative
-auction (Section~\ref{subsec:decentralised-iterative-auction}) that does not require users to reveal the task value.
+mechanisms. The first being an incentive-compatible auction using the centralised greedy algorithm
+(Section~\ref{subsec:critical-value-auction}) and the second being a novel Decentralized Iterative
+Auction (Section~\ref{subsec:decentralised-iterative-auction}) that does not require users to reveal the task value.
 
 \subsection{Greedy Algorithm}
 \label{subsec:greedy-algorithm}
-To solve a knapsack problem, a greedy approximation algorithm is often used that we have extended to this problem
-specificity in subsection~\ref{subsec:optimisation-problem}. Because of this elastic nature of task resources means
-that an additional stage is required to determine these speeds.
+To solve a knapsack problem, a greedy approximation algorithm is often used~\cite{}. We have applied a similar approach
+to this problem specified in subsection~\ref{subsec:optimisation-problem}. As a result of the elastic nature of task
+resources, an additional stage is required once a task has been allocated to a server in order to determine the task's
+resource speeds.
 
 \begin{wrapfigure}{r}{0.5\linewidth}
     \centering
@@ -40,7 +41,7 @@ that an additional stage is required to determine these speeds.
 \end{wrapfigure}
 
 More specifically, the greedy algorithm has two stages; stage one sorts the list of tasks based on the value
-density of each task that is calculated based on task attributes: value, required resources and deadline. The second
+density of each task calculated using task attributes: value, required resources and deadline. The second
 stage uses the sorted list of tasks to iterate through applying two heuristics to select the server based on
 available server resources and to allocate resources based on the available server resources and the required resources
 of the task.
@@ -94,7 +95,7 @@ considered a wide range of heuristics, showing the results of the best heuristic
 \begin{proof}
     Due to a task not considering other task's resource requirements then no matter the server selection or resource
     allocation function, it can't be guaranteed that subsequent tasks can be allocated to any server. As a result,
-    the algorithm can be guaranteed to achieve at least $\frac{1}{n}$ of the optimal social welfare through using a
+    the algorithm can be guaranteed to achieve at least $\frac{1}{n}$ of the optimal social welfare by using a
     value density function ($v(j) = j_v$). Using this, the first task from the sorted task list will have the maximum task
     value meaning the lower bound of the algorithm is $\frac{1}{n}$ of the optimal social welfare.
 \end{proof}
@@ -118,7 +119,7 @@ $O(\left|J\right| \left|I\right|)$.
 
 \subsection{Critical Value Auction}
 \label{subsec:critical-value-auction}
-Due to the problem case of being non-cooperative, if the greedy mechanism was used to allocate resources such that the
+Due to the problem case being non-cooperative, if the greedy mechanism was used to allocate resources such that the
 value is the price paid. This would be open to manipulation and misreporting of task attributes like the value,
 deadline or resource requirements. Therefore, in this section we propose an auction that is strategy-proof
 (weakly dominant incentive compatible) so users have no incentive to misreport task attributes.
@@ -143,31 +144,33 @@ value density function, with regards to the task value allows the task critical 
 
 \subsubsection{Critical Value Auction Time Complexity}
 \label{subsubsec:critical-value-auction-time-complexity}
-The time complexity of the auction is $O(\left|J\right| \left|J\right| \left|I\right|$, the greedy
+The time complexity of the auction is $O(\left|J\right| \left|J\right| \left|I\right|)$, the greedy
 mechanism repeated $\left|J\right|$ due to calculating each task's critical value.
 \begin{theorem}
-    The time complexity of the critical value auction is $O(\left|J\right| \left|J\right| \left|I\right|$.
+    The time complexity of the critical value auction is $O(\left|J\right| \left|J\right| \left|I\right|)$.
 \end{theorem}
 \begin{proof}
-    The auction uses the greedy mechanism, who has time complexity is $O(\left|J\right| \left|I\right|)$,
-    (subsection~\ref{subsec:greedy-algorithm}) to find all task's that are allocated to a server. Using the
-    list of all task's allocated, the critical value of each task must be found. This is done by repeating the
-    server selection and resource allocation each all task (excluding the critical task) with time complexity,
-    $O(\left|J\right| \left|I\right|)$, till the critical task can no longer be allocated to any server (a constant time function).
+    %% Todo to rewrite after algorithm made
+    The auction uses the greedy algorithm (subsection~\ref{subsec:greedy-algorithm}), that has time complexity of
+    $O(\left|J\right| \left|I\right|)$. For each task allocated by the greedy algorithm, the critical value must be
+    found. To find the critical value of each task requires rerunning a modified greedy algorithm, such that after each
+    task is allocated a check is done to see if the current task could be allocated to any server. This is done by repeating the server selection and resource allocation functions for each task (excluding
+    the critical task) with time complexity,
+    $O(\left|J\right| \left|I\right|)$, until the critical task can no longer be allocated to any server (a constant time function).
     The task's critical value is calculated in constant time function. As a result, the time complexity for
     calculating the critical value for an individual task is $O(\left|J\right| \left|I\right|)$. Thus, the overall time
-    complexity is $O(\left|J\right| \left|J\right| \left|I\right|$ due to the critical value possibly being
+    complexity is $O(\left|J\right| \left|J\right| \left|I\right|)$ due to the critical value being
     found for every task.
 \end{proof}
 
-\subsubsection{Critical Value Auction Strategyproof}
+\subsubsection{Demonstrating that the Critical Value Auction is Strategyproof}
 \label{subsubsec:critical-value-auction-strategyproof}
 In order that the auction is strategyproof, the value density function must be
-monotonic~\cite{nisan2007algorithmic_229_230} so that misreporting of any task attributes will result in the value
-density decreasing. Therefore a value density function of the form $\frac{v_j d_j}{\alpha(s_j, w_j, r_j)}$ must be used
-such that the resulting auction is strategyproof.
+monotonic~\cite{nisan2007algorithmic_229_230}. This ensures that if a task misreports any attributes, it will result
+in the value density of the task decreasing. Therefore a value density function must be in the form of
+$\frac{v_j \cdot d_j}{\alpha(s_j, w_j, r_j)}$ such it is monotonic decreasing.
 \begin{theorem}
-    The value density function $\frac{v_j d_j}{\alpha(s_j, w_j, r_j)}$ is monotonic increasing for task $j$ assuming
+    The value density function $\frac{v_j \cdot d_j}{\alpha(s_j, w_j, r_j)}$ is monotonic increasing for task $j$ assuming
     the function $\alpha(s_j, w_j, r_j)$ is monotonic increasing for each variable.
 \end{theorem}
 \begin{proof}
@@ -193,12 +196,11 @@ revenue and servers revenue to increase, a small value called the Price change v
 
 Our auction uses this principle by iteratively letting a task advertise its requirements to all the servers, who
 respond with their price to run the task. This price is equal to the server's current revenue minus the solution to the
-problem in section~\ref{subsubsec:decentralised-iterative-problem} plus a small value referred to as the price change
-variable. The reason for the price change variable is to increase the revenue of the server (otherwise the total
-revenue of the server doesn't increase by accepting the task) and is to be chosen by the server. Once all of the servers
-have responded, the task can compare the minimum server prices to its private value. If the price is less then the
-task will accept the server with the lowest price, otherwise the task must stop advertising as the price for the task
-to run on any server is greater than its reserve price preventing the task from ever being allocated again.
+problem in subsection~\ref{subsubsec:decentralised-iterative-problem} plus a small value referred to as the price change
+variable. This is done to ensure that the total server revenue increases by accepting the task. Once all of the servers
+have responded, the task can compare the minimum server prices to its private evaluation. This allows the task to
+privately select the server that it runs on (assumed to be the server with the lowest price) otherwise the task will
+stop advertising as it knows that its evaluation is lower than the price of any server.
 
 The algorithm~\ref{alg:dia} is a centralised version of the auction. It works through iteratively checking a currently
 unallocated task to find the price if the task was currently allocated on a server. This is done through first solving
