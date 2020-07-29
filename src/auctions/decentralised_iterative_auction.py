@@ -85,7 +85,11 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     :param unallocated_tasks: List of unallocated tasks
     :param task_speeds: Dictionary of task speeds
     """
+    allocated_tasks = server.allocated_tasks[:]
     server.reset_allocations()
+    for task in allocated_tasks:
+        if task not in task_speeds:
+            server.allocate_task(task)
 
     # For each of the task, if the task is allocated then allocate the task or reset the task
     new_task.price = task_price
@@ -159,9 +163,9 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     tasks = server.allocated_tasks + [new_task]
 
     # Create all of the resource speeds variables
-    loading_speeds = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
-    compute_speeds = {task: model.integer_var(min=1, max=server.computation_capacity) for task in tasks}
-    sending_speeds = {task: model.integer_var(min=1, max=server.bandwidth_capacity - 1) for task in tasks}
+    loading_speeds = {task: model.integer_var(min=1, max=task.loading_ub()) for task in tasks}
+    compute_speeds = {task: model.integer_var(min=1, max=task.compute_ub()) for task in tasks}
+    sending_speeds = {task: model.integer_var(min=1, max=task.sending_ub()) for task in tasks}
 
     # Create all of the allocation variables however only on the currently allocated tasks
     allocation = {task: model.binary_var(name=f'{task.name} Task allocated') for task in server.allocated_tasks}
