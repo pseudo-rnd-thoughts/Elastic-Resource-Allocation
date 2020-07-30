@@ -2,7 +2,6 @@
 \section*{Appendices}
 
 \subsection*{Appendix A: Example problem case task and server attributes}
-\label{app:example-problem-attributes}
 Within subsection~\ref{subsec:example-problem-case} and~\ref{subsec:greedy-algorithm}, this example problem case is used
 to demonstrate the effectiveness of elastic resource allocation compared to fixed resource allocation.
 \begin{table}[h]
@@ -40,7 +39,6 @@ to demonstrate the effectiveness of elastic resource allocation compared to fixe
 \end{table}
 
 \subsection*{Appendix B: Synthetic Model}
-\label{app:synthetic-model}
 For the evaluation of the work in section~\ref{sec:empirical-results}, we used the following models. The left model
 for the majority of the analyse with static one-shot cases and the right model for the analysing the online and batch
 resource allocation methods.
@@ -79,3 +77,17 @@ resource allocation methods.
     \end{minipage}
     \label{tab:synthetic-models}
 \end{table}
+
+\subsection*{Appendix C: Server Relaxed Optimisation Problem}
+\begin{align}
+    \max & \sum_{\forall j \in J} v_j x_j \label{eq:relaxed-objective} \\
+    \mbox{s.t.} \nonumber \\
+    & \sum_{\forall j \in J} s_j x_j \leq S_i, \label{eq:relaxed-server-storage-constraint} \\
+    & \sum_{\forall j \in J} w^{'}_j x_j \leq W_i,  \label{eq:relaxed-server-computation-constraint} \\
+    & \sum_{\forall j \in J} (r^{'}_j + s^{'}_j) \cdot x_j \leq R_i \label{eq:relaxed-server-bandwidth-constraint} \\
+    & \frac{s_j}{s^{'}_j} + \frac{w_j}{w^{'}_j} + \frac{r_j}{r^{'}_j} \leq d_j, &~ \forall{j \in J} \label{eq:relaxed-task-deadline} \\
+    & 0 < s^{'}_j, &~ \forall{j \in J} \label{eq:relaxed-loading-speeds} \\
+    & 0 < w^{'}_j, &~ \forall{j \in J} \label{eq:relaxed-compute-speeds} \\
+    & 0 < r^{'}_j, &~ \forall{j \in J} \label{eq:relaxed-sending-speeds} \\
+    & x_j \in \{0, 1\}, &~ \forall{j \in J} \label{eq:relaxed-task-allocation}
+\end{align}

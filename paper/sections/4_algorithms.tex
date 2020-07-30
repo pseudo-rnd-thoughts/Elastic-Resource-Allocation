@@ -45,13 +45,13 @@ deadline. The second stage uses the sorted list of tasks to iterate through appl
 server based on available server resources and to allocate resources based on the available server resources and the
 required resources of the task.
 
-Using the example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 11/12 of
+Using the same example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 11/12 of
 the tasks achieving XX\% more social welfare than the fixed solution. This is due to the algorithm being unable to % TODO
-consider other tasks resource requirement while allocating resources. The greedy algorithm uses the value density
-function, $\frac{v_j \cdot d_j}{s_j + w_j + r_j}$, for server selection,
-$\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i$ for task $j$ and servers $I$ and for the resource allocation
-$\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3$
-for task $j$ and server $i$.
+consider other tasks resource requirement while allocating resources. The greedy algorithm uses the value density function:
+\[\frac{v_j \cdot d_j}{s_j + w_j + r_j}\] server selection:
+ \[\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i\] for task $j$ and servers $I$ and the resource allocation:
+\[\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3\]
+is task $j$ and server $i$.
 
 \begin{algorithm}
     \caption{Pseudo code of Greedy Algorithm}
@@ -108,7 +108,6 @@ $O(\left|J\right| \left|I\right|)$.
     Time complexity of the greedy algorithm is $O(\left|J\right| \left|I\right|)$, where $\left|J\right|$ is the number
     of tasks and $\left|I\right|$ is the number of servers. Assuming that the value density and resource allocation
     heuristics have constant time complexity and the server selection function is $O(\left|I\right|)$.
-    %% TODO to check if the resource allocation heuristic is constant time complexity (KKT) probably wrong
 \end{theorem}
 \begin{proof}
     The time complexity of stage 1 of the algorithm is $O(\left|J\right| \log(\left|J\right|))$ due to sorting the
@@ -193,7 +192,6 @@ algorithm repeated $\left|J\right|$ due to calculating each task's critical valu
     The time complexity of the critical value auction is $O(\left|J\right| \left|J\right| \left|I\right|)$.
 \end{theorem}
 \begin{proof}
-    %% Todo to rewrite after algorithm made
     As explained more fully in subsection~\ref{subsec:critical-value-auction}, the auction uses the greedy algorithm
     (subsection~\ref{subsec:greedy-algorithm}) that has time complexity $O(\left|J\right| \left|I\right|)$. The
     auction then repeats a modified version of the greedy algorithm for each task allocated initially such that after
