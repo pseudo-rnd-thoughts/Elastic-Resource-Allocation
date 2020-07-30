@@ -2,23 +2,23 @@
 \label{sec:empirical-results}
 To evaluate the algorithms presented in Section~\ref{sec:flexible-resource-allocation-mechanisms},
 this section analyses the performance of both the greedy and auctions algorithms
-(subsections~\ref{subsec:evaluation-of-the-greedy-algorithm} and~\ref{subsec:evaluation-of-the-auction-mechanisms}).
+(Subsections~\ref{subsec:evaluation-of-the-greedy-algorithm} and~\ref{subsec:evaluation-of-the-auction-mechanisms}).
 We investigate the effect of server heuristics on the Decentralised Iterative Auction
-(subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}) and
+(Subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}) and
 the possibility of misreporting task attributes within the Decentralised Iterative Auction
-(subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}).
+(Subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}).
 Finally we analyse the effectiveness of elastic resource allocation given server resource capacity ratios
-(subsection~\ref{subsec:the-effective-of-elastic-resources-given-server-resource-capacity-ratio})
+(Subsection~\ref{subsec:the-effective-of-elastic-resources-given-server-resource-capacity-ratio})
 and the comparison between online and batched resource allocation methods
-(subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}).
+(Subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}).
 
-Within Edge Cloud Computing, we have found no de facto standard for testing resource allocation algorithms and
+Within Edge Cloud Computing, we have found no \emph{de facto} standard for testing resource allocation algorithms and
 those used in related work do not consider a deadline applicable for our work. Therefore we have generated synthetic
 models for our servers and tasks. This is done using a handcraft Gaussian distribution for each attribute that can be
 found in Appendix B\@.
 
 In order to compare the results of the different algorithms, a branch and bound solution was implemented to solve
-the optimisation problem, from subsection~\ref{subsec:optimisation-problem}. However due to the difficulty of
+the optimisation problem, from Subsection~\ref{subsec:optimisation-problem}. However due to the difficulty of
 finding the optimal solution, this algorithm was only used in smaller settings were the optimal could be found within
 a reasonable amount of time. \\
 The settings chosen were 3 servers and 15 tasks, 6 servers and 30 tasks and 8 servers and 40 tasks where \~70\% of
@@ -60,9 +60,9 @@ with self-interested users due to being incentive compatible. However, this requ
 for each individual task making such a mechanism infeasible except for small setting. Because of this, VCG is used for
 a comparison with the Critical Value Auction and Decentralised Iterative Auction in the smaller settings. \\
 For the Critical Value Auction, the same function were used for the analyse of the greedy algorithm, in
-subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}. For the Decentralised Iterative Auction, the server
+Subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}. For the Decentralised Iterative Auction, the server
 heuristics are a price change of 3 and an initial price of 25 for all servers. The reason for these heuristics over
-others is explained in subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}.
+others is explained in Subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}.
 
 \begin{figure}[h]
     \centering
@@ -162,7 +162,7 @@ are modified is due to elasticity not affect the server's storage just its bandw
 (eq~\ref{eq:server-bandwidth-constraint} for loading and sending results and eq~\ref{eq:server-computation-constraint}
 for computation results). \\
 Server resources are redistributed using a percentage of the server's total (computation + bandwidth) resources.
-This is shown as a ratio of server computation to bandwidth ratios in figures~\ref{fig:resource-ratio-social-welfare}
+This is shown as a ratio of server computation to bandwidth ratios in Figures~\ref{fig:resource-ratio-social-welfare}
 and~\ref{fig:resource-ratio-server-resource-usage}.
 
 \begin{figure}[h]
@@ -221,5 +221,3 @@ longer batch lengths unwarranted.
     \caption{Online batch lengths}
     \label{fig:batch-task-allocation}
 \end{figure}
-
-%% TODO explain results
