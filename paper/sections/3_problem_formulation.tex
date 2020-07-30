@@ -4,7 +4,7 @@ In this section, an outline of the system model describes servers and tasks attr
 (subsection~\ref{subsec:system-model}) used in the resource elastic optimisation problem
 (subsection~\ref{subsec:optimisation-problem}). Using this model, we prove that it is NP-Hard
 (subsection~\ref{subsec:time-complexity}). Finally, using a example program, we demonstrate in the effectiveness of our
-flexible resource allocation scheme compared to an fixed resource allocation scheme used in previous work as explained
+flexible resource allocation scheme compared to an fixed resource allocation scheme used in previous work, as explained
 the previous section (subsection~\ref{subsec:example-problem-case}).
 
 \subsection{System model}\label{subsec:system-model}
@@ -25,10 +25,10 @@ access per second, GPU usage, and more. The servers are also assumed to be heter
 Formally, we denote the storage capacity of server $i$ with $S_i$, the computation capacity with $W_i$, and the
 bandwidth capacity with $R_i$.
 
-The system also contains a set $J = \{1,2,\ldots,\left| J \right|\}$, of different tasks that each require service from one
-of the servers $I$. Each task has a monetary value, denoted $v_j$,
-representing the maximum price the owner is willing to pay to compute the task. \\
-In order to run a task requires the server to load the appropriate code/data on the server from a source, then to
+The system also contains a set $J = \{1,2,\ldots,\left| J \right|\}$, of different tasks that each require service from
+one of the servers $I$. Each task has a monetary value, denoted $v_j$, representing the maximum price the owner is
+willing to pay for the task to be computed. \\
+In order to run a task, the server is required to load the appropriate code/data onto the server from a source, then to
 compute the code of the task and to send back results to the user. Therefore, for each of these stages, we consider
 separate speeds that the operations could occur at to enable the greatest flexibility for the server at each stage. \\
 The storage size for the task $j$ is denoted as $s_j$ with the rate that the program is transferred to the server
@@ -36,7 +36,8 @@ as $s^{'}_j$. For a task to be computed successfully, it must fetch and execute 
 total number of CPU cycles required for the program to be $w_j$, where the number of CPU cycles assigned to the task
 per unit of time as $w^{'}_j$. Finally, after the task is run and the results obtained, the latter need to be sent back
 to the user. The size of the results for task $j$ is denoted with $r_j$, and the bandwidth used to sent back results to
-the user as $r^{'}_j$. \\
+the user as $r^{'}_j$.
+
 In order to force the server to complete the task with a reasonable time, each task sets a deadline, denoted by $d_j$,
 representing the maximum amount of time for a task to be completed successfully within. This includes: the time
 required to load the data/code onto the server, run it, and send back results to the user. We assume that there
@@ -86,17 +87,17 @@ and~\ref{eq:task-allocation} enforce this.
 
 This model focus on a single-shot setting where all tasks arrival at the same time to the system. To use this system
 in practice where tasks arrival progressively over time, an allocation mechanism would repeat the allocation decisions
-described here over regular time intervals, with longer running tasks reappearing on consecutive time intervals.
-In subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation} evaluates the effectiveness of
-such a batching mechanism compared to an online mechanism. We leave a detailed study of online mechanisms where the
-resource allocated can dynamically change at each time to future work.
+described here over regular time intervals. As a result, longer running tasks would reappearing in consecutive time
+intervals.
+In subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}, we evaluate the effectiveness of
+such a batching mechanism compared to online mechanisms. We leave a detailed study of online mechanisms to future work.
+A probably advantage of such a system is the ability to dynamically change the resource allocation at each time step.
 
 \subsection{Time Complexity}
 \label{subsec:time-complexity}
 As the optimisation problem as described in Subsection~\ref{subsec:optimisation-problem} is an extension of the
-Knapsack problem which is well-studied problem in computer science that known to be NP-Hard.
-Therefore, the time complexity of the problem is NP-Hard as well due to the problem being an extension of
-Knapsack problem.
+Knapsack problem, a well-studied problem in computer science that known to be NP-Hard. By transforming the problem into
+a standard knapsack problem, the time complexity of the problem is also NP-Hard.
 \begin{theorem}
     The optimisation problem in subsection~\ref{subsec:optimisation-problem} is NP-hard.
 \end{theorem}
@@ -106,7 +107,7 @@ Knapsack problem.
     to a 0--1 multidimensional knapsack problem~\cite{knapsackproblems_2004}, which is a generalization of a
     simple 0--1 knapsack problem. The latter is an NP-hard problem~\cite{knapsackproblems_2004}. Given this, it follows
     that the 0--1 multidimensional knapsack problem is also NP-hard. Since the optimization problem
-    (Eqs~\ref{eq:objective} -~\ref{eq:task-allocation}) is a generalization of a 0--1 multidimensional knapsack
+    (Eqs.~\ref{eq:objective} -~\ref{eq:task-allocation}) is a generalization of a 0--1 multidimensional knapsack
     problem, it follows that it is NP-hard as well.
 \end{proof}
 
@@ -119,8 +120,8 @@ Knapsack problem.
     \label{fig:example-fixed-allocation}
 \end{wrapfigure}
 Before we propose our allocation mechanisms in the next section, we present an example case to illustrate
-why elasticity is important. In this example, there are 12 potential tasks and 3 servers with the flexible solution
-able to achieve 18\% better social welfare compared to the fixed resource allocation solution.
+why elasticity is important. In this example, there are 12 potential tasks and 3 servers where the flexible solution
+is able to achieve 18\% better social welfare compared to the fixed resource allocation solution.
 The exact settings can be found in Appendix A with table~\ref{tab:example-tasks-properties}
 for the task attributes and table~\ref{tab:example-servers-properties} for the server attributes. \\
 The figures~\ref{fig:example-fixed-allocation} and~\ref{fig:example-flexible-allocation} represent each server as a
