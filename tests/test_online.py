@@ -13,6 +13,7 @@ from core.server import Server
 from core.task import Task
 from extra.model import ModelDistribution
 from extra.visualise import minimise_resource_allocation
+from greedy.fixed_greedy import fixed_greedy_algorithm
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
@@ -149,7 +150,7 @@ def test_online_fixed_task():
                          fixed_task.loading_speed * fixed_task.required_computation * fixed_task.sending_speed + \
                          fixed_task.loading_speed * fixed_task.compute_speed * fixed_task.required_results_data
             assert time_taken <= fixed_task.deadline * fixed_task.loading_speed * \
-                fixed_task.compute_speed * fixed_task.sending_speed
+                   fixed_task.compute_speed * fixed_task.sending_speed
 
 
 def test_minimise_resources():
@@ -178,3 +179,48 @@ def test_minimise_resources():
                                          custom_solver, solver_time_limit=2)
     print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
     reset_model([], servers)
+
+
+def test_batch_length(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8), batch_lengths=(1, 2, 3),
+                      time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
+    print('')
+    tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
+    original_server_capacities = {server: (server.computation_capacity, server.bandwidth_capacity)
+                                  for server in servers}
+
+    # Batch greedy algorithm
+    for batch_length in batch_lengths:
+        batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
+        flattened_tasks = [task for tasks in batched_tasks for task in tasks]
+
+        # Update the server capacities
+        for server in servers:
+            server.computation_capacity = original_server_capacities[server][0] * batch_length
+            server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
+
+        greedy_result = online_batch_solver(batched_tasks, servers, batch_length, '', greedy_algorithm,
+                                            value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                            server_selection_policy=SumResources(),
+                                            resource_allocation_policy=SumPowPercentage())
+        print(f'Batch length: {batch_length} - social welfare: {greedy_result.social_welfare}, '
+              f'percentage run: {greedy_result.percentage_tasks_allocated}')
+        tasks_allocated = [task.name for task in flattened_tasks if task.running_server is not None]
+        print(f'Tasks allocated ({len(tasks_allocated)}): [{", ".join(tasks_allocated)}]')
+        reset_model(flattened_tasks, servers)
+
+
+def test_task_batching(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
+                       time_steps: int = 10, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
+    tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
+
+    batched_tasks = generate_batch_tasks(tasks, 3, time_steps)
+    for pos, batch_task in enumerate(batched_tasks):
+        print(f'Time step: {3 * pos} - [{", ".join([str(task.auction_time) for task in batch_task])}]')
+
+    flatten = lambda tss: [t for ts in tss for t in ts]
+    batch1_tasks = flatten(generate_batch_tasks(tasks, 1, time_steps))
+    batch2_tasks = flatten(generate_batch_tasks(tasks, 2, time_steps))
+    batch3_tasks = flatten(generate_batch_tasks(tasks, 3, time_steps))
+
+    for task_1, task_2, task_3 in zip(batch1_tasks, batch2_tasks, batch3_tasks):
+        print(f'Task: {task_1.name}, deadlines: [{task_1.deadline}, {task_2.deadline}, {task_3.deadline}]')

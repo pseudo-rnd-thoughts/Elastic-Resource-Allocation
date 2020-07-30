@@ -22,9 +22,9 @@
       "probability": 1,
       "storage mean": 400,
       "storage std": 40,
-      "computation mean": 40,
-      "computation std": 10,
-      "bandwidth mean": 150,
+      "computation mean": 110,
+      "computation std": 15,
+      "bandwidth mean": 175,
       "bandwidth std": 20
     }
   ]

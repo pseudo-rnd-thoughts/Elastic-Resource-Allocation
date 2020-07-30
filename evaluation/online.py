@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 import pprint
-from math import floor
+from math import ceil
 from time import time
 from typing import Iterable, List
 
@@ -23,9 +23,9 @@ from greedy.greedy import greedy_algorithm
 from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
 from src.extra.model import ModelDistribution
-from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
-from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.value_density import policies as value_densities
+from src.greedy.resource_allocation_policy import SumPowPercentage
+from src.greedy.server_selection_policy import ProductResources
+from src.greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
 
 
 def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], batch_length: int,
@@ -64,12 +64,12 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
 
             # Update the server allocation task to only tasks within the next batch step time
             server.allocated_tasks = [task for task in server.allocated_tasks
-                                      if current_time_step < task.auction_time + task.deadline]
+                                      if next_time_step <= task.auction_time + task.deadline]
             # Calculate how much of the batch, the task will be allocate for
-            batch_percent = {task: 1 if next_time_step < task.auction_time + task.deadline else
-                             ((task.auction_time + task.deadline - current_time_step) / batch_length)
-                             for task in server.allocated_tasks}
-            assert all(0 < percent <= 1 for percent in batch_percent.values()), list(batch_percent.values())
+            # batch_percent = {task: 1 if next_time_step <= task.auction_time + task.deadline else
+            #                  ((task.auction_time + task.deadline - next_time_step) / batch_length)
+            #                  for task in server.allocated_tasks}
+            # assert all(0 < percent <= 1 for percent in batch_percent.values()), list(batch_percent.values())
 
             # Update the server available resources
             server.available_storage = server.storage_capacity - \
@@ -77,12 +77,11 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             assert 0 <= server.available_storage <= server.storage_capacity, server.available_storage
 
             server.available_computation = server.computation_capacity - \
-                floor(sum(task.compute_speed * batch_percent[task] for task in server.allocated_tasks))
+                ceil(sum(task.compute_speed for task in server.allocated_tasks))
             assert 0 <= server.available_computation <= server.computation_capacity, server.available_computation
 
             server.available_bandwidth = server.bandwidth_capacity - \
-                floor(sum((task.loading_speed + task.sending_speed) * batch_percent[task]
-                          for task in server.allocated_tasks))
+                ceil(sum((task.loading_speed + task.sending_speed) for task in server.allocated_tasks))
             assert 0 <= server.available_bandwidth <= server.bandwidth_capacity, server.available_bandwidth
 
     flatten_tasks = [task for tasks in batched_tasks for task in tasks]
@@ -106,8 +105,8 @@ def generate_batch_tasks(tasks: List[Task], batch_length: int, time_steps: int) 
     """
     return [
         [task.batch(time_step)
-         for task in tasks if time_step <= task.auction_time < time_step + batch_length]
-        for time_step in range(0, time_steps + time_steps % batch_length, batch_length)
+         for task in tasks if time_step - batch_length < task.auction_time <= time_step]
+        for time_step in range(0, time_steps + time_steps % batch_length + 1, batch_length)
     ]
 
 
@@ -128,7 +127,7 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
 
 
 def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 2, 3, 4, 5), time_steps: int = 200, mean_arrival_rate: int = 3,
+                     batch_lengths: Iterable[int] = (1, 2, 4, 6), time_steps: int = 200, mean_arrival_rate: int = 3,
                      std_arrival_rate: float = 2, optimal_time_limit: int = 10, fixed_optimal_time_limit: int = 10):
     """
     Evaluates the batch online
@@ -175,45 +174,41 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
                 server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
             algorithm_results = {}
+            if batch_length == 1:
+                optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
+                                                     minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
+                algorithm_results[optimal_result.algorithm] = optimal_result.store()
+                optimal_result.pretty_print()
+                reset_model(flattened_tasks, servers)
 
-            # Online fixed optimal
-            fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
-                                                       fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
-            algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-            fixed_optimal_result.pretty_print()
+                fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
+                                                           fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
+                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+                fixed_optimal_result.pretty_print()
+                reset_model(flattened_fixed_tasks, servers)
+
+            # Loop over all of the greedy policies permutations
+            value_density = UtilityDeadlinePerResource(ResourceSqrt())
+            server_selection_policy = ProductResources()
+            resource_allocation_policy = SumPowPercentage()
+            name = f'Greedy {value_density.name}, {server_selection_policy.name}, ' \
+                   f'{resource_allocation_policy.name}'
+            greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
+                                                greedy_algorithm, value_density=value_density,
+                                                server_selection_policy=server_selection_policy,
+                                                resource_allocation_policy=resource_allocation_policy)
+            algorithm_results[greedy_result.algorithm] = greedy_result.store()
+            greedy_result.pretty_print()
+            reset_model(flattened_tasks, servers)
+
+            # Loop over all of the greedy policies permutations
+            name = f'Fixed Greedy {value_density.name}, {server_selection_policy.name}'
+            fixed_greedy_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, name,
+                                                      fixed_greedy_algorithm, value_density=value_density,
+                                                      server_selection_policy=server_selection_policy)
+            algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
+            fixed_greedy_result.pretty_print()
             reset_model(flattened_fixed_tasks, servers)
-
-            # Online flexible optimal
-            # optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
-            #                                      minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
-            # algorithm_results[optimal_result.algorithm] = optimal_result.store()
-            # optimal_result.pretty_print()
-            # reset_model(flattened_tasks, servers)
-
-            # Loop over all of the greedy policies permutations
-            for value_density in value_densities:
-                for server_selection_policy in server_selection_policies:
-                    for resource_allocation_policy in resource_allocation_policies:
-                        name = f'Greedy {value_density.name}, {server_selection_policy.name}, ' \
-                               f'{resource_allocation_policy.name}'
-                        greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
-                                                            greedy_algorithm, value_density=value_density,
-                                                            server_selection_policy=server_selection_policy,
-                                                            resource_allocation_policy=resource_allocation_policy)
-                        algorithm_results[greedy_result.algorithm] = greedy_result.store()
-                        greedy_result.pretty_print()
-                        reset_model(flattened_tasks, servers)
-
-            # Loop over all of the greedy policies permutations
-            for value_density in value_densities:
-                for server_selection_policy in server_selection_policies:
-                    name = f'Fixed Greedy {value_density.name}, {server_selection_policy.name}'
-                    fixed_greedy_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, name,
-                                                              fixed_greedy_algorithm, value_density=value_density,
-                                                              server_selection_policy=server_selection_policy)
-                    algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
-                    fixed_greedy_result.pretty_print()
-                    reset_model(flattened_fixed_tasks, servers)
 
             # Add the results to the data
             batch_results[f'batch length {batch_length}'] = algorithm_results
