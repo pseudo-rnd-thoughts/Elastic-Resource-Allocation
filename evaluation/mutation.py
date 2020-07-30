@@ -143,11 +143,11 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
 
     no_mutation_dia = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
     no_mutation_dia.pretty_print()
-    mutation_results['no mutation'] = no_mutation_dia.store(**{'allocated': tasks[0].running_server is not None,
-                                                               'task price': tasks[0].price})
+    task = next(task for task in tasks if task.running_server is not None)
+    mutation_results['no mutation'] = no_mutation_dia.store(**{'allocated': task.running_server is not None,
+                                                               'task price': task.price})
 
     # The original task not mutated that is randomly selected (given the tasks are already randomly generated)
-    task = next(task for task in tasks if task.running_server is not None)
     permutations = ((int(task.required_storage * positive_percent) + 1) - task.required_storage) * \
                    ((int(task.required_computation * positive_percent) + 1) - task.required_computation) * \
                    ((int(task.required_results_data * positive_percent) + 1) - task.required_results_data) * \
