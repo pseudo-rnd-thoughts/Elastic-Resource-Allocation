@@ -145,7 +145,6 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
     no_mutation_dia.pretty_print()
     mutation_results['no mutation'] = no_mutation_dia.store(**{'allocated': tasks[0].running_server is not None,
                                                                'task price': tasks[0].price})
-    reset_model(tasks, servers)
 
     # The original task not mutated that is randomly selected (given the tasks are already randomly generated)
     task = next(task for task in tasks if task.running_server is not None)
@@ -155,7 +154,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                    ((task.deadline + 1) - int(task.deadline * negative_percent))
     print(f'Number of permutations: {permutations}, original solve time: {no_mutation_dia.solve_time}, '
           f'estimated time: {round(permutations * no_mutation_dia.solve_time / 60, 1)} minutes')
-
+    reset_model(tasks, servers)
     mutation_pos = 0
     # Loop over all of the permutations that the task requirement resources have up to the mutate percentage
     for required_storage in range(task.required_storage, int(task.required_storage * positive_percent) + 1):
