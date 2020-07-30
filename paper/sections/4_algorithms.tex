@@ -34,8 +34,8 @@ order to determine the task's resource speeds.
 \begin{wrapfigure}{r}{0.5\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
-    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-properties}
-    and~\ref{tab:example-servers-properties}}
+    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-server-properties}
+             with task and server attributes}
     \label{fig:example-greedy-allocation}
 \end{wrapfigure}
 
@@ -137,8 +137,8 @@ all users to honestly reveal their task attributes.
         \REQUIRE $J$ is the set of tasks and $I$ is the set of servers
         \REQUIRE $S^{'}_i$, $W^{'}_i$ and $R^{'}_i$ is the available resources
             (storage, computation and bandwidth respectively) of server $i$
-        \REQUIRE $v(j)$ is the value density function of task $j$ with $v^{-1}$ being the inverse of the value density
-            function making the value the subject of the function
+        \REQUIRE $v(j)$ is the value density function of task $j$
+        \REQUIRE $v^{-1}$ is the inverse of the value density function making the value the subject of the function
         \REQUIRE $s(j, I)$ is the server selection function of task $j$ and set of servers $I$ returning the best
             server, or $\emptyset$ if the task is not able to be run on any server
         \REQUIRE $r(j, i)$ is the resource allocation function of a task and server returning a tuple of the
@@ -166,19 +166,24 @@ all users to honestly reveal their task attributes.
     \end{algorithmic}
 \end{algorithm}
 
-% TODO rewrite
-The auction (algorithm~\ref{alg:critical-value-auction}) is implemented using the greedy algorithm from
-section~\ref{subsec:greedy-algorithm} by finding an initial allocation using every task's reported value. Then for
-each task that is allocated, the task price is equal to the critical value is found by finding the minimum value of the
-task such that it is still allocated. \\
-To find the minimum value is a two-step process of removing the task from the list of tasks then running the greedy
-algorithm. However after each task is allocated, a check is done to see if the critical task could be allocated to any
-server. This is a constant time complexity operation by assuming that the server would allocate all of its available
-resources for the deadline constant (eq~\ref{eq:task-deadline}). If the task can't be allocated to any server then the
-value density of last task allocated is equalled to the required value density of the critical task (this assumes that
-in the sorted list, the critical task would appear ahead thus a minor amount could be add thus to guarantee the
-critical task is above). Using the value density and the value density function, through finding the inverse of the
-value density function, with regards to the task value allows the task critical value to be calculated.
+The auction (specified in algorithm~\ref{alg:critical-value-auction}) is implemented using the greedy algorithm from
+subsection~\ref{subsec:greedy-algorithm} both in finding the initial allocation and critical value for each task (at
+least in a modified form). This helpful as it allows the auction to inherit many of the properties of the greedy
+algorithm like social welfare and time complexity. \\
+By running the greedy algorithm with all of tasks reported values then an initial allocation can be found. Then for
+each task that was allocated the critical value for the task must be found meaning that the task will pay the minimum
+possible value (price) such that the task would still have been allocated by the greedy mechanism. \\
+To find the critical value of the task (referred to here as the critical task) is relatively simple by just modifying
+the greedy algorithm. So when looping through the list of tasks sorted by value density, the critical task is ignored
+here, once a task is allocated to a server with resources a check is done to see if the critical task could be
+allocated to any server. This check has linear time complexity as it is assumed that the server could allocate all of
+its available resources to the task, only requiring the bandwidth resources to split between loading and sending speeds.
+Therefore a linear search is required to check if any split would allow the task to be completed. \\
+This process of allocating tasks and checking if the critical task could be allocated is repeated till the critical
+task can't be allocated to any server. At which point, the value density of the task just allocated is equal to the
+minimum value density of the critical task such that the critical task could have been allocated. Using this
+information, the critical value is equal to the inverse of the value density function (where the value is the subject
+of the function not the value density) using the value density of the previously allocated task's value density.
 
 \subsubsection{Critical Value Auction Time Complexity}
 \label{subsubsec:critical-value-auction-time-complexity}
@@ -189,13 +194,13 @@ algorithm repeated $\left|J\right|$ due to calculating each task's critical valu
 \end{theorem}
 \begin{proof}
     %% Todo to rewrite after algorithm made
-    The auction uses the greedy algorithm (subsection~\ref{subsec:greedy-algorithm}), that has time complexity of
-    $O(\left|J\right| \left|I\right|)$. For each task allocated by the greedy algorithm, the critical value must be
-    found. To find the critical value of each task requires rerunning a modified greedy algorithm, such that after each
-    task is allocated a check is done to see if the current task could be allocated to any server. This is done by
+    As explained more fully in subsection~\ref{subsec:critical-value-auction}, the auction uses the greedy algorithm
+    (subsection~\ref{subsec:greedy-algorithm}) that has time complexity $O(\left|J\right| \left|I\right|)$. The
+    auction then repeats a modified version of the greedy algorithm for each task allocated initially such that after
+    each task is allocated a check is done to see if the current task could be allocated to any server. This is done by
     repeating the server selection and resource allocation functions for each task (excluding the critical task) with
     time complexity, $O(\left|J\right| \left|I\right|)$, until the critical task can no longer be allocated to any
-    server (a constant time function). The task's critical value is calculated in constant time function. As a result,
+    server (a linear time function). The task's critical value is calculated in constant time function. As a result,
     the time complexity for calculating the critical value for an individual task is $O(\left|J\right| \left|I\right|)$.
     Thus, the overall time complexity is $O(\left|J\right| \left|J\right| \left|I\right|)$ due to the critical value
     being found for every task.

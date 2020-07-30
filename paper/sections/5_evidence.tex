@@ -9,31 +9,32 @@ the possibility of misreporting task attributes within the Decentralised Iterati
 (subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}).
 Finally we analyse the effectiveness of elastic resource allocation given server resource capacity ratios
 (subsection~\ref{subsec:the-effective-of-elastic-resources-given-server-resource-capacity-ratio})
-and the comparison between online and batched resource allocation
+and the comparison between online and batched resource allocation methods
 (subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}).
 
 Within Edge Cloud Computing, we have found no de facto standard for testing resource allocation algorithms and
 those used in related work do not consider a deadline applicable for our work. Therefore we have generated synthetic
-models for our servers and tasks. This is done using a handcraft Gaussian distribution for each attribute (this can be
-found in Appendix~\ref{}). %% TODO
+models for our servers and tasks. This is done using a handcraft Gaussian distribution for each attribute that can be
+found in subsection~\ref{subsec:appendix-b}.
 
 In order to compare the results of the difference algorithms, a branch and bound solution was implemented to solve
 the optimisation problem, from section~\ref{subsec:optimisation-problem}, optimally. However due to the difficulty of
-finding the optimally solution, this solution was only used in small settings tested. \\
-For comparing to previous work with a fixed resource requirement, the minimum total resource required to run a task
-within its deadline was found. These speeds were then used as the resource speeds of the task giving each task an
-balanced amount of each resource. This is believed to be the best case as some tasks may required an extremely
-unbalanced amount of resource.
+finding the optimal solution, this algorithm was only used in smaller settings were the optimal could be found without
+a reasonable amount of time. \\
+To compare to previous work that utilise a fixed resource requirement, for each task the minimum sum total of resource
+speeds were found according to the task deadline. These speeds were then set as the task's fixed resource speed, this
+aimed to give each task a balanced amount of each resource making comparisons as fair as possible. This is believed to
+be the best case as some tasks in reality may required an extremely unbalanced amount of resource.
 
 \subsection{Evaluation of the Greedy Algorithm}
 \label{subsec:evaluation-of-the-greedy-algorithm}
 Using the optimal solution, as described above, the greedy solution can be compared to both the flexible resource
-allocation optimal social welfare solution and the fixed resource allocation optimal solution. As well as this, a
+allocation optimal solution and the fixed resource allocation optimal solution. As well as this, a
 relaxed version of the problem was implemented as an upper bound. This was done by combining all of the servers into
 a single server with the combined resource capacity. \\
 To implement the greedy mechanism, the value density function is $\frac{v_j \cdot d_j}{s_j + w_j + r_j}$, server selection
-is $\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i$ for task $j$ and servers $I$ and the resource
-allocation is $\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3$
+is $\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i$ for task $j$ and servers $I$ and the resource allocation is
+$\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3$
 is task $j$ and server $i$.
 
 \begin{figure}
@@ -81,29 +82,22 @@ Figure~\ref{fig:auction-mechanisms-revenue} compares the revenue instead.
 
 \subsection{Effectiveness of Decentralised Iterative Auction Heuristics}
 \label{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}
-As explained in subsection~\ref{subsec:decentralised-iterative-auction}, the price of task is calculated by the
-Decentralised Iterative Auction through the difference in revenue between the task being allocated (with a price of
+As explained in subsection~\ref{subsec:decentralised-iterative-auction}, the Decentralised Iterative Auction
+calculates the price of task by the difference in revenue between the task being allocated (with a price of
 zero) and not being allocated. To increase a server revenue, a server will increase the price by a value referred to as
 the price change variable. This is important as if a task has a value of 10 and the difference in revenue is 7 but the
-price change is 4 then the resulting price is 11 above the task's value. As a result, the task won't be allocate to the
-server however if the price change was 3 then the task could have been allocated resulting in the server's total
-revenue benefiting both the server and the task in question. \\
+price change is 4 then the resulting price is 11, above the task's value prevent it from being allocated. As a result,
+the task won't be allocate to the server however if the price change was 3 then the task could have been allocated
+resulting in the server's total revenue benefiting both the server and the task in question. \\
 A second heuristic, the initial price variable, is used to speed up the auction and reduce the number of rounds by
-aiming to set the price close to the task's actual value. However, a similar problem as the price change variable exists
-such that if a task's initial price is greater than the task's actual value then the task will never be allocated to a
-task. \\
+aiming to set the price close to the task's actual value. This in turn reduces the number of rounds for the task price
+to converge on the task value. However, a similar problem as the price change variable exists such that if the initial
+price is greater than a tasks actual value then the task will never be allocated to a server. \\
 Therefore the selection of price change and initial price can have a significant impact on the social welfare, revenue
-and number of rounds the auction takes.
-
-Within the context of edge cloud computing, the number of rounds for the decentralised iterative auction is important
-to making it a feasible auction as it is proportional to the time required to run. We investigated the effect of two
-heuristic on the number of rounds and social welfare of the auction; the price change variable and initial cost
-heuristic. With an auction using as minimum heuristic values for the price change and initial cost,
-figure~\ref{fig:dia_rounds_grid_search}, on average 400 rounds were required for the price to converge while an auction
-using a price change of 10 and initial cost of 20 means that only on average 80 rounds are required, 5x less. But by
-using high initial cost and price change heuristics, this can prevent tasks from being allocated,
-figure~\ref{fig:dia_sw_rev_grid_search}, shows that the difference in social welfare is only 2\% from minimum to
-maximum heuristics.
+and number of rounds the auction takes. As the mean value of tasks is 50 (see subsection~\ref{app:synthetic-model}),
+the initial prices were set at 20, 25, 30, 35 and 40 while the price change variables were set at 1, 3, 5, 7, 10. These
+values were chosen to allow for fine tuned allocation occurring and to see when must larger values are used with their
+affect on social welfare, revenue and number of rounds taken.
 
 \begin{figure}[h]
     \centering
@@ -111,15 +105,36 @@ maximum heuristics.
     \includegraphics[width=0.45\linewidth]{figs/dia_heuristics/revenue_grid.pdf}
     \caption{Grid search of difference server price change and task initial cost effect on social welfare (left) and
              revenue (right)}
-    \label{fig:dia_sw_rev_grid_search}
+    \label{fig:dia-sw-rev-grid-search}
 \end{figure}
+
+Figure~\ref{fig:dia-sw-rev-grid-search} maps a grid search of different price change and initial price values plotting
+the social welfare on the left and the total revenue on the right. The value are normalised with the result of the
+solution with a price change of 1 and initial price of 20. For the social welfare the percentage different between the
+best case (price change of 1 and initial price of 20) to the worst results (price change of 10 and initial price of 40)
+is only -7\% meaning that the auction is resilient to a range of price change and initial price values. While
+interesting when measuring the revenue, the lowest revenue occurs for the case of price change of 1 and initial price
+of 20. This is understandable as the system will arrive at a revenue local optima and for this case a majority of
+tasks will pay their critical value however this also results in servers not gaining by forcing tasks by paying more
+than they could have. However for the case with an initial price of 40 forces tasks off the bat to pay a price of 40,
+probably more than their critical value for a case where the initial price is lower.
+
+Within the context of edge cloud computing, the number of rounds for the decentralised iterative auction is important
+to making it a feasible auction as it is proportional to the time required to run. We investigated the effect of two
+heuristic on the number of rounds and social welfare of the auction; the price change variable and initial cost
+heuristic. With an auction using as minimum heuristic values for the price change and initial cost,
+figure~\ref{fig:dia-rounds-grid-search}, on average 400 rounds were required for the price to converge while an auction
+using a price change of 10 and initial cost of 20 means that only on average 80 rounds are required, 5x less. But by
+using high initial cost and price change heuristics, this can prevent tasks from being allocated,
+figure~\ref{fig:dia-sw-rev-grid-search}, shows that the difference in social welfare is only 2\% from minimum to
+maximum heuristics.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.45\linewidth]{figs/dia_heuristics/rounds_grid.pdf}
     \caption{Grid search of difference server price change and task initial cost effect on round count and number of
              task rounds}
-    \label{fig:dia_rounds_grid_search}
+    \label{fig:dia-rounds-grid-search}
 \end{figure}
 
 \subsection{The Possibility of Misreporting Task Attributes in Decentralised Iterative Auction}
