@@ -66,10 +66,10 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             server.allocated_tasks = [task for task in server.allocated_tasks
                                       if next_time_step <= task.auction_time + task.deadline]
             # Calculate how much of the batch, the task will be allocate for
-            # batch_percent = {task: 1 if next_time_step <= task.auction_time + task.deadline else
-            #                  ((task.auction_time + task.deadline - next_time_step) / batch_length)
-            #                  for task in server.allocated_tasks}
-            # assert all(0 < percent <= 1 for percent in batch_percent.values()), list(batch_percent.values())
+            batch_multiplier = {task: batch_length if next_time_step <= task.auction_time + task.deadline else
+                             (task.auction_time + task.deadline - next_time_step) for task in server.allocated_tasks}
+            assert all(0 < multiplier <= batch_length for multiplier in batch_multiplier.values()), \
+                list(batch_multiplier.values())
 
             # Update the server available resources
             server.available_storage = server.storage_capacity - \
@@ -77,11 +77,12 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             assert 0 <= server.available_storage <= server.storage_capacity, server.available_storage
 
             server.available_computation = server.computation_capacity - \
-                ceil(sum(task.compute_speed for task in server.allocated_tasks))
+                ceil(sum(task.compute_speed * batch_multiplier[task] for task in server.allocated_tasks))
             assert 0 <= server.available_computation <= server.computation_capacity, server.available_computation
 
             server.available_bandwidth = server.bandwidth_capacity - \
-                ceil(sum((task.loading_speed + task.sending_speed) for task in server.allocated_tasks))
+                ceil(sum((task.loading_speed + task.sending_speed) * batch_multiplier[task]
+                         for task in server.allocated_tasks))
             assert 0 <= server.available_bandwidth <= server.bandwidth_capacity, server.available_bandwidth
 
     flatten_tasks = [task for tasks in batched_tasks for task in tasks]
