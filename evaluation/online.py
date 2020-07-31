@@ -66,10 +66,10 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             server.allocated_tasks = [task for task in server.allocated_tasks
                                       if next_time_step <= task.auction_time + task.deadline]
             # Calculate how much of the batch, the task will be allocate for
-            batch_multiplier = {task: batch_length if next_time_step <= task.auction_time + task.deadline else
-                             (task.auction_time + task.deadline - next_time_step) for task in server.allocated_tasks}
-            assert all(0 < multiplier <= batch_length for multiplier in batch_multiplier.values()), \
-                list(batch_multiplier.values())
+            # batch_multiplier = {task: batch_length if next_time_step <= task.auction_time + task.deadline else
+            #                  (task.auction_time + task.deadline - next_time_step) for task in server.allocated_tasks}
+            # assert all(0 < multiplier <= batch_length for multiplier in batch_multiplier.values()), \
+            #     list(batch_multiplier.values())
 
             # Update the server available resources
             server.available_storage = server.storage_capacity - \
@@ -77,11 +77,11 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             assert 0 <= server.available_storage <= server.storage_capacity, server.available_storage
 
             server.available_computation = server.computation_capacity - \
-                ceil(sum(task.compute_speed * batch_multiplier[task] for task in server.allocated_tasks))
+                ceil(sum(task.compute_speed for task in server.allocated_tasks))
             assert 0 <= server.available_computation <= server.computation_capacity, server.available_computation
 
             server.available_bandwidth = server.bandwidth_capacity - \
-                ceil(sum((task.loading_speed + task.sending_speed) * batch_multiplier[task]
+                ceil(sum((task.loading_speed + task.sending_speed)
                          for task in server.allocated_tasks))
             assert 0 <= server.available_bandwidth <= server.bandwidth_capacity, server.available_bandwidth
 
@@ -154,8 +154,8 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
         fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
-        original_server_capacities = {server: (server.computation_capacity, server.bandwidth_capacity)
-                                      for server in servers}
+        # original_server_capacities = {server: (server.computation_capacity, server.bandwidth_capacity)
+        #                               for server in servers}
         batch_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -170,23 +170,24 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
             flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
 
             # Update the server capacities
-            for server in servers:
-                server.computation_capacity = original_server_capacities[server][0] * batch_length
-                server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
+            # for server in servers:
+            #     server.computation_capacity = original_server_capacities[server][0] * batch_length
+            #     server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
             algorithm_results = {}
             if batch_length == 1:
-                optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
-                                                     minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
-                algorithm_results[optimal_result.algorithm] = optimal_result.store()
-                optimal_result.pretty_print()
-                reset_model(flattened_tasks, servers)
+                # optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
+                #                                      minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
+                # algorithm_results[optimal_result.algorithm] = optimal_result.store()
+                # optimal_result.pretty_print()
+                # reset_model(flattened_tasks, servers)
 
-                fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
-                                                           fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
-                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-                fixed_optimal_result.pretty_print()
-                reset_model(flattened_fixed_tasks, servers)
+                # fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
+                #                                            fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
+                # algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+                # fixed_optimal_result.pretty_print()
+                # reset_model(flattened_fixed_tasks, servers)
+                pass
 
             # Loop over all of the greedy policies permutations
             value_density = UtilityDeadlinePerResource(ResourceSqrt())
