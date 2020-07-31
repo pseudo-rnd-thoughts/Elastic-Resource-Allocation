@@ -5,7 +5,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
-from core.core import server_task_allocation
+from src.core.core import server_task_allocation
 from src.extra.pprint import print_task_values, print_task_allocation
 from src.extra.result import Result
 

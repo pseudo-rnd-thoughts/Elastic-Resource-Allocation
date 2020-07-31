@@ -33,7 +33,7 @@ class Task:
         self.price = price  # This is only used for auctions
 
         self.auction_time = auction_time  # This is only used for online vs batched evaluation
-        self.deadline = deadline
+        self.deadline = max(deadline, 4)
 
         # Allocation information
         self.loading_speed = loading_speed
