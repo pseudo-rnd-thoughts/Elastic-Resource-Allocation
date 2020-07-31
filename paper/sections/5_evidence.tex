@@ -51,6 +51,11 @@ is task $j$ and server $i$.
              optimal fixed solution}
     \label{fig:greedy-algorithm-comparison}
 \end{figure}
+
+Figure~\ref{fig:greedy-algorithm-comparison} shows the social welfare achieved by the five algorithms using the
+three different settings. The average percentage difference per setting for the fixed and flexible optimal solution is
+0.79\% and 0.81\% while the difference for the greedy algorithm and flexible optimal solution is 0.95\% and 0.97\%. For
+the relaxed solution, the difference with the greedy algorithm is 0.94\%, 0.92\% and 0.91\% with the cases.
 %% TODO Explain the results, percentage difference in social welfare with each algorithm and the difference
 %% between the solutions for the optimal and approximation
 
@@ -77,6 +82,12 @@ others is explained in Subsection~\ref{subsec:effectiveness-of-decentralised-ite
     \caption{Comparison of the social welfare for the auction mechanisms}
     \label{fig:auction-mechanisms-revenue}
 \end{figure}
+
+Figures~\ref{fig:auction-mechanisms-social-welfare} and~\ref{fig:auction-mechanisms-revenue} plot the social welfare
+and revenue of the auction mechanisms. The percentage difference in revenue between the Critical Value Auction and
+Decentralised Iterative Auction is 0.88\% for all settings meaning that on averages tasks pay less to be allocated and
+run compared to the Critical Value Auction. However in comparison in social welfare the two mechanism achieve results
+on average less than 4\% different.
 
 %% TODO explain the results, percentage difference in social welfare for the DIA and difference in revenue between
 %%  algorithms
@@ -111,7 +122,6 @@ variables, in order to see the effect on social welfare, revenue and number of r
     \label{fig:dia-sw-rev-grid-search}
 \end{figure}
 
-%% TODO reread to make sure it makes sense
 Figure~\ref{fig:dia-sw-rev-grid-search} maps a grid search of different price change and initial price values plotting
 the social welfare on the left and the total revenue on the right. The value are normalised with the result of the
 solution with a price change of 1 and initial price of 20. For the social welfare the percentage different between the
@@ -127,9 +137,9 @@ Within the context of edge cloud computing, the number of rounds for the Decentr
 to making it a feasible auction as the time taken is proportional to the number of rounds run.
 Figure~\ref{fig:dia-rounds-grid-search} shows the number of rounds required on average for each heuristic. For the case where the
 auction used the minimum heuristic values (price change of 1 and initial price of 20) that achieves the highest social
-welfare comes at the close of requiring on average 400 rounds. This means that on average tasks require XX number %% TODO
-of individual rounds to converge on a price. In comparison when the price change is set to 10 and the initial price is
-kept at 20, the average number of rounds required is 5x less at 80.
+welfare comes at the close of requiring on average 400 rounds. This means that on average tasks require 11  %% TODO
+individual rounds to converge on a price. In comparison when the price change is set to 10 and the initial price is
+kept at 20, the average number of rounds required is 5x less at 80 with individual task requiring 2 rounds.
 
 This shows that the Decentralised Iterative Auction is an effective auction but has tradeoffs for server who must
 choose whether to maximise social welfare, revenue or rounds as each requires a different selection of heuristics.
@@ -159,7 +169,7 @@ increasing important if task requirements are unbalanced compared to server reso
 of elastic resource allocation compared to fixed resource allocation, server computation and bandwidth capacities
 are redistributed to different ratios in order to compare. The reason only the computation and bandwidth capacities
 are modified is due to elasticity not affect the server's storage just its bandwidth and computation
-(eq~\ref{eq:server-bandwidth-constraint} for loading and sending results and eq~\ref{eq:server-computation-constraint}
+(Eq.~(\ref{eq:server-bandwidth-constraint}) for loading and sending results and Eq.~(\ref{eq:server-computation-constraint})
 for computation results). \\
 Server resources are redistributed using a percentage of the server's total (computation + bandwidth) resources.
 This is shown as a ratio of server computation to bandwidth ratios in Figures~\ref{fig:resource-ratio-social-welfare}
@@ -221,3 +231,5 @@ longer batch lengths unwarranted.
     \caption{Online batch lengths}
     \label{fig:batch-task-allocation}
 \end{figure}
+
+%% TODO Explain results
