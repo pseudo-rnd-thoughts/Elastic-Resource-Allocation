@@ -3,9 +3,9 @@
 In this section, an outline of the system model describes servers and tasks attributes
 (subsection~\ref{subsec:system-model}) used in the resource elastic optimisation problem
 (subsection~\ref{subsec:optimisation-problem}). Using this model, we prove that it is NP-Hard
-(subsection~\ref{subsec:time-complexity}). Finally, using a example program, we demonstrate in the effectiveness of our
-flexible resource allocation scheme compared to an fixed resource allocation scheme used in previous work, as explained
-the previous section (subsection~\ref{subsec:example-problem-case}).
+(subsection~\ref{subsec:time-complexity}). Finally, using a example program, we demonstrate the effectiveness of our
+flexible resource allocation scheme compared to a fixed resource allocation scheme used in previous work, as explained
+in the previous section (subsection~\ref{subsec:example-problem-case}).
 
 \subsection{System model}\label{subsec:system-model}
 \begin{wrapfigure}{r}{0.4\linewidth}
@@ -15,7 +15,7 @@ the previous section (subsection~\ref{subsec:example-problem-case}).
     \label{fig:system-model}
 \end{wrapfigure}
 A sketch of the system is shown in Fig.~\ref{fig:system-model}.
-We assume that there are a set of servers $I = \{1,2,\ldots,\left|I\right|\}$, which could be accessed either through
+We assume that there is a set of servers $I = \{1,2,\ldots,\left|I\right|\}$, which could be accessed either through
 cellular base stations or WiFi access points (APs). These servers have different types of limited resources:
 storage for the code/data needed to run a task (e.g., measured in Gb), computation capacity in terms of CPU cycles per
 time interval (e.g., measured in GHz), and communication bandwidth to receive the data and to send back the results
@@ -35,7 +35,7 @@ The storage size for the task $j$ is denoted as $s_j$ with the rate that the pro
 as $s^{'}_j$. For a task to be computed successfully, it must fetch and execute instructions on a CPU. We consider the
 total number of CPU cycles required for the program to be $w_j$, where the number of CPU cycles assigned to the task
 per unit of time as $w^{'}_j$. Finally, after the task is run and the results obtained, the latter need to be sent back
-to the user. The size of the results for task $j$ is denoted with $r_j$, and the bandwidth used to sent back results to
+to the user. The size of the results for task $j$ is denoted with $r_j$, and the bandwidth used to send back results to
 the user as $r^{'}_j$.
 
 In order to force the server to complete the task with a reasonable time, each task sets a deadline, denoted by $d_j$,
@@ -47,7 +47,7 @@ task is completed within its deadline.
 \subsection{Optimisation problem}
 \label{subsec:optimisation-problem}
 Given the aforementioned assumptions and variables from the system model, an optimisation problem is constructed as
-followed. This problem uses the additional variable $x_{i,j}$ to denote the allocation of a task $j$ that will run on
+follows. This problem uses the additional variable $x_{i,j}$ to denote the allocation of a task $j$ that will run on
 server $i$.
 
 \begin{align}
@@ -65,16 +65,16 @@ server $i$.
 \end{align}
 
 The objective (Eq.~(\ref{eq:objective})) is to maximize the total value over all tasks (i.e.,\ social welfare) that
-are completed within their deadline (eq.~\ref{eq:task-deadline}).
-Constraints~\ref{eq:server-storage-constraint},~\ref{eq:server-computation-constraint}
-and~\ref{eq:server-bandwidth-constraint}, prevent over allocation of server resources to allocated tasks.
-For the server's storage capacity (constraint~\ref{eq:server-storage-constraint}), each server's storage must be less
+are completed within their deadline (Eq.~\ref{eq:task-deadline}).
+Constraints~(\ref{eq:server-storage-constraint}),~(\ref{eq:server-computation-constraint})
+and~(\ref{eq:server-bandwidth-constraint}), prevent over allocation of server resources to allocated tasks.
+For the server's storage capacity (constraint~(\ref{eq:server-storage-constraint})), each server's storage must be less
 than the allocated task's storage requirements. While for the server's computational capacity
-(constraint~\ref{eq:server-computation-constraint}), the capacity is limited by a server's allocated tasks
-compute resources ($w^{'}_j$). The server's bandwidth capacity (constraint~(\ref{eq:server-bandwidth-constraint}))
+(constraint~(\ref{eq:server-computation-constraint})), the capacity is limited by a server's allocated tasks
+computing resources ($w^{'}_j$). The server's bandwidth capacity (constraint~(\ref{eq:server-bandwidth-constraint}))
 comprises of two parts: the first for loading of data/code of a task onto the server and the second for sending
-back result to the user. \\
-To force the task to the completed within its assigned deadline, constraint~\ref{eq:task-deadline} required the sum
+back results to the user. \\
+To force the task to the completed within its assigned deadline, constraint~(\ref{eq:task-deadline}) required the sum
 of time taken for each stages of the task, completed in series, to be less than the deadline value.
 Note that if a task is not allocated to any server, this constraints can be satisfied by choosing arbitrarily
 resource speed as these resources do not use up any servers' resources in
@@ -85,13 +85,14 @@ speeds for each stage ($s^{'}_j$, $w^{'}_j$, and $r^{'}_j$) are all positive and
 Finally, as every task can only be served by at most one server, constraints~(\ref{eq:server-task-allocation})
 and~(\ref{eq:task-allocation}) enforce this.
 
-This model focus on a single-shot setting where all tasks arrival at the same time to the system. To use this system
-in practice where tasks arrival progressively over time, an allocation mechanism would repeat the allocation decisions
-described here over regular time intervals. As a result, longer running tasks would reappearing in consecutive time
+This model focuses on a single-shot setting where all tasks arrival at the same time to the system. To use this system
+in practice where tasks arrive progressively over time, an allocation mechanism would repeat the allocation decisions
+described here over regular time intervals. As a result, longer running tasks would reappear in consecutive time
 intervals.
 In subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}, we evaluate the effectiveness of
 such a batching mechanism compared to online mechanisms. We leave a detailed study of online mechanisms to future work.
-A probably advantage of such a system is the ability to dynamically change the resource allocation at each time step.
+A probable advantage of such a system is the ability to dynamically change the resource allocation at each time step
+which is not possible with current methods.
 
 \subsection{Time Complexity}
 \label{subsec:time-complexity}
@@ -102,7 +103,7 @@ a standard knapsack problem, the time complexity of the problem is also NP-Hard.
     The optimisation problem in subsection~\ref{subsec:optimisation-problem} is NP-hard.
 \end{theorem}
 \begin{proof}
-    The task resource elasticity~\ref{eq:task-deadline} can removed from the optimisation problem to simplify the model
+    The task resource elasticity~\ref{eq:task-deadline} can be removed from the optimisation problem to simplify the model
     by setting the task resource speeds to a fixed value that satisfies the deadline constraint. This reduces the model
     to a 0--1 multidimensional knapsack problem~\cite{knapsackproblems_2004}, which is a generalization of a
     simple 0--1 knapsack problem. The latter is an NP-hard problem~\cite{knapsackproblems_2004}. Given this, it follows
@@ -113,35 +114,26 @@ a standard knapsack problem, the time complexity of the problem is also NP-Hard.
 
 \subsection{Example Problem Case}
 \label{subsec:example-problem-case}
-\begin{wrapfigure}{l}{0.5\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{figs/allocation/optimal_fixed_resource_allocation.png}
-    \caption{Optimal solution with fixed resource speeds}
-    \label{fig:example-fixed-allocation}
-\end{wrapfigure}
 Before we propose our allocation mechanisms in the next section, we present an example case to illustrate
 why elasticity is important. In this example, there are 12 potential tasks and 3 servers where the flexible solution
-is able to achieve 18\% better social welfare compared to the fixed resource allocation solution.
-The exact settings can be found in Appendix A with tables~\ref{tab:example-tasks-server-properties}
-for the task and server attributes. \\
-The figures~\ref{fig:example-fixed-allocation} and~\ref{fig:example-flexible-allocation} represent each server as a
+is able to achieve 21\% better social welfare compared to the fixed resource allocation solution.
+The exact settings can be found in Appendix A for the task and server attributes. \\
+The figures~\ref{fig:example-solutions} represent each server as a
 group of three bars, each relating to each server's resource type, with the percentage of resources used by a task
 being the size of the bar.
 
+The two figures (Figure~\ref{fig:example-solutions}) shows the optimal allocation for the example
+case with fixed resource speeds (the left figure) and the flexible resource allocation
+(the right figure). The tasks' fixed resource speeds are set by minimising the total
+amount of resources to be completed within the deadline. For the Fixed Resource allocation,
+only 9 of the tasks can run, resulting in social welfare of 955 due to server 1 and 2's
+limited computational capacity and server 3's limited communication capacity.
+In contrast, the flexible allocation is able run all 12 tasks achieving a total social welfare of 1200, a 21\% difference with the fixed resource allocation.
+
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{figs/allocation/optimal_flexible_resource_allocation.png}
-    \caption{Optimal solution with elastic resources speeds}
-    \label{fig:example-flexible-allocation}
+    \includegraphics[width=0.48\linewidth]{figs/allocation/optimal_fixed_resource_allocation.png}
+    \includegraphics[width=0.48\linewidth]{figs/allocation/optimal_flexible_resource_allocation.png}
+    \caption{Optimal solution with fixed resource speeds and flexible resource allocation}
+    \label{fig:example-solutions}
 \end{figure}
-
-Figure~\ref{fig:example-fixed-allocation} shows the best possible allocation if tasks have fixed resource speeds (which
-were set by minimising the total amount of resources to be completed within the deadline). Here, only 9 of the tasks
-are run, resulting in a total social welfare of 980 due to server 1 and 2's limited computational capacity and server
-3' limited communication capacity.
-
-In contrast to Figure~\ref{fig:example-fixed-allocation}, Figure~\ref{fig:example-flexible-allocation} depicts the
-optimal allocation if elastic resources are considered. Here, all the resources are used by the servers, whereas the
-fixed example~\ref{fig:example-fixed-allocation} cant do this. In total, the elastic approach manages to schedule all
-12 tasks within the resource constraints, achieving a total social welfare of 1200 (an 18\% improvement over the fixed
-approach).

@@ -14,7 +14,7 @@ and the comparison between online and batched resource allocation methods
 
 Within Edge Cloud Computing, we have found no \emph{de facto} standard for testing resource allocation algorithms and
 those used in related work do not consider a deadline applicable for our work. Therefore we have generated synthetic
-models for our servers and tasks. This is done using a handcraft Gaussian distribution for each attribute that can be
+models for our servers and tasks. This is done using a synthetic Gaussian distribution for each attribute that can be
 found in Appendix B\@.
 
 In order to compare the results of the different algorithms, a branch and bound solution was implemented to solve
@@ -37,14 +37,14 @@ allocation case in the large setting. \\
 Along with this, a relaxed solution was implemented with the branch and bound algorithm containing just a single
 server that combined all of the server capacities into one. The optimisation problem for it can be found in Appendix C\@.
 This was used as the upper bound for the social welfare as the server is able to complete at least as much as all of the
-servers individual as well as use the remaining resources of the servers to possible compute more tasks. \\
+servers individually as well as use the remaining resources of the servers to possibly complete more tasks.
 For the greedy algorithm, a wide range of possible functions were tested with the best found being - value density
 function: \[\frac{v_j \cdot d_j}{s_j + w_j + r_j}\] server selection:
 \[\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i\] for task $j$ and servers $I$ and the resource allocation:
 \[\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3\]
 is task $j$ and server $i$.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/greedy/multi_setting_social_welfare.pdf}
     \caption{Social welfare of the greedy algorithm, optimal flexible solution, optimal server relaxed solution,
@@ -54,43 +54,39 @@ is task $j$ and server $i$.
 
 Figure~\ref{fig:greedy-algorithm-comparison} shows the social welfare achieved by the five algorithms using the
 three different settings. The average percentage difference per setting for the fixed and flexible optimal solution is
-0.79\% and 0.81\% while the difference for the greedy algorithm and flexible optimal solution is 0.95\% and 0.97\%. For
-the relaxed solution, the difference with the greedy algorithm is 0.94\%, 0.92\% and 0.91\% with the cases.
-%% TODO Explain the results, percentage difference in social welfare with each algorithm and the difference
-%% between the solutions for the optimal and approximation
+79\% and 81\% while the difference for the greedy algorithm and flexible optimal solution is 95\% and 97\%. For
+the relaxed solution, the difference with the greedy algorithm is 94\%, 92\% and 91\% with the cases.
 
 \subsection{Evaluation of the Auction mechanisms}\label{subsec:evaluation-of-the-auction-mechanisms}
 VCG, as explained in section~\ref{sec:flexible-resource-allocation-mechanisms}, is the traditional method of dealing
 with self-interested users due to being incentive compatible. However, this requires solving the optimal solution
 for each individual task making such a mechanism infeasible except for small setting. Because of this, VCG is used for
-a comparison with the Critical Value Auction and Decentralised Iterative Auction in the smaller settings. \\
-For the Critical Value Auction, the same function were used for the analyse of the greedy algorithm, in
-Subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}. For the Decentralised Iterative Auction, the server
-heuristics are a price change of 3 and an initial price of 25 for all servers. The reason for these heuristics over
-others is explained in Subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}.
+a comparison with the Critical Value Auction and Decentralised Iterative Auction in the smaller settings.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/auctions/multi_setting_social_welfare.pdf}
-    \caption{Comparison of the social welfare for the auction mechanisms}
+    \caption{Comparison of social welfare by the auction mechanisms}
     \label{fig:auction-mechanisms-social-welfare}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/auctions/multi_setting_revenue.pdf}
-    \caption{Comparison of the social welfare for the auction mechanisms}
+    \caption{Comparison of revenue by the auction mechanisms}
     \label{fig:auction-mechanisms-revenue}
 \end{figure}
 
+For the Critical Value Auction, the same function were used for the analyse of the greedy algorithm, in
+Subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}. For the Decentralised Iterative Auction, the server
+heuristics are a price change of 3 and an initial price of 25 for all servers. The reason for these heuristics over
+others is explained in Subsection~\ref{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}.
+
 Figures~\ref{fig:auction-mechanisms-social-welfare} and~\ref{fig:auction-mechanisms-revenue} plot the social welfare
 and revenue of the auction mechanisms. The percentage difference in revenue between the Critical Value Auction and
-Decentralised Iterative Auction is 0.88\% for all settings meaning that on averages tasks pay less to be allocated and
+Decentralised Iterative Auction is 88\% for all settings meaning that on averages tasks pay less to be allocated and
 run compared to the Critical Value Auction. However in comparison in social welfare the two mechanism achieve results
 on average less than 4\% different.
-
-%% TODO explain the results, percentage difference in social welfare for the DIA and difference in revenue between
-%%  algorithms
 
 \subsection{Effectiveness of Decentralised Iterative Auction Heuristics}
 \label{subsec:effectiveness-of-decentralised-iterative-auction-heuristics}
@@ -137,7 +133,7 @@ Within the context of edge cloud computing, the number of rounds for the Decentr
 to making it a feasible auction as the time taken is proportional to the number of rounds run.
 Figure~\ref{fig:dia-rounds-grid-search} shows the number of rounds required on average for each heuristic. For the case where the
 auction used the minimum heuristic values (price change of 1 and initial price of 20) that achieves the highest social
-welfare comes at the close of requiring on average 400 rounds. This means that on average tasks require 11  %% TODO
+welfare comes at the close of requiring on average 400 rounds. This means that on average tasks require 11
 individual rounds to converge on a price. In comparison when the price change is set to 10 and the initial price is
 kept at 20, the average number of rounds required is 5x less at 80 with individual task requiring 2 rounds.
 
@@ -147,20 +143,32 @@ choose whether to maximise social welfare, revenue or rounds as each requires a 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.45\linewidth]{figs/dia_heuristics/rounds_grid.pdf}
-    \caption{Grid search of difference server price change and task initial cost effect on round count and number of
-             task rounds}
+    \caption{Grid search of difference server price change and task initial cost effect on the number of round required for the auction}
     \label{fig:dia-rounds-grid-search}
 \end{figure}
 
 \subsection{The Possibility of Misreporting Task Attributes in Decentralised Iterative Auction}
 \label{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}
-In Subsection~\ref{subsec:decentralised-iterative-auction}, the Decentralised Iterative Auction was shown to be not
+In Subsection~\ref{subsec:decentralised-iterative-auction}, the Decentralised Iterative Auction was shown to not be
 incentive compatible in specials cases however it is doubted that the ability for users to cheat more generally was
-possible. Therefore, this problem was addressed by applying a grid search of task attributes and to randomly modify
-individual tasks to investigate if tasks can pay less compared to if it didn't misreport.
+possible. Therefore, this problem was addressed by applying a grid search of task attributes to investigate if
+tasks can pay less compared to if it didn't misreport at all. The grid search checked misreport values within
+10\% of the original value in order to limit the search area. The settings used were 6 servers and 30 tasks
+with the server heuristics being price change of 3 and an initial price of 25.
 
-For the random modification search, this was done by taking a random task and mutating each of the task's attributes.
-% Todo Explain the grid search and random mutation results
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/mutation/grid search.pdf}
+    \caption{Histogram of task prices for misreported tasks}
+    \label{fig:mutation-grid-search}
+\end{figure}
+
+In the Figure~\ref{fig:mutation-grid-search}, a histogram of the different mutated task prices are shown with the red line
+representing the price of the task unmodified. For top two cases, misreported tasks are not able to achieve a price
+less than the original price achieved by the task unmodified. However in the bottom two cases, misreported tasks were able
+to pay less than the original in a third of cases with a price difference of up to 6 in some cases. The reason why none of
+the task in the first two cases did not achieve a lower price by misreporting is unclear so more work is required to
+understand this.
 
 \subsection{The Effective of Elastic Resources given Server Resource Capacity Ratio}
 \label{subsec:the-effective-of-elastic-resources-given-server-resource-capacity-ratio}
@@ -189,7 +197,7 @@ seen on the figures at the ratio extremes, there is a significant difference in 
 resource allocation. This can be seen more clear by the right graph, that plots the difference in social welfare per
 model with the error bars. \\
 This observation is important for Edge Computing as nodes may have a large discrepancy in server resource capacity
-due several reasons, i.e. a persistence task running over a long period of time, internet connection issues limiting
+due several reasons, i.e.\ a persistence task running over a long period of time, internet connection issues limiting
 overall bandwidth, etc. For these cases, the elasticity of tasks has a significant boost to the number of tasks and
 in social welfare in comparison to fixed resource allocation.
 
@@ -209,27 +217,43 @@ allocating tasks.
 \subsection{Comparison between Online and Batched Resource Allocation}
 \label{subsec:comparison-between-online-and-batched-resource-allocation}
 The purpose of this work has to be explore to use of elastic resource allocation in a static one-shot environment
-meaning that all tasks arrive at the start, that are then allocated. However a problem exists with this formulation
-that in reality, task do arrive over time. Section~\ref{sec:problem-formulation} proposed tasks are run in batches
-overtime allowing no modifications to the algorithms proposed. This means that that as tasks arrive they are added to a
+meaning that all tasks to allocated are present together. However a problem exists with this formulation
+that in reality, that task do arrive over time and don't all appear at the same time.
+Section~\ref{sec:problem-formulation} proposed that tasks could be run in batches allowing no modifications to our
+algorithms being required. This means that that as tasks arrive they are added to a
 queue, such that when a new batch occurs, all of the tasks in the queue can be processed using the proposed algorithms
-with no modifications. \\
+with no modifications.
+
+The advantage of using elastic resource allocation with an online system is that the server can intentionally finish
+tasks early in order to free up resources for other task arriving. It can also allow the server to use all of its
+resources each time to allow tasks to finish faster. Such a system is not possible where the user selects
+the resources.
+
 Therefore choosing the right branch length is important as the more competition means better selection of tasks
-increasing social welfare while the longer the branch length reduces the length of the task processing time. For the
-Decentralised Iterative Auction, it has an advantage practically of being run in a batch as the auction doesn't need to
+increasing social welfare while the longer the branch length reduces the length of the task processing time. \\
+For the Decentralised Iterative Auction, it has an advantage practically of being run in a batch as the auction doesn't need to
 wait for all of the tasks to arrive compared to the Critical Value Auction. Therefore the auction can run during the
 batch time frame with the task allocation at the end of the batch being the allocation.
 
-We choose the batch lengths: 1, 2, 3, 4 because the mean length of a task is 10, any longer than this would result in
+We choose the batch lengths: 2, 4, 6 because the mean length of a task is 10, any longer than this would result in
 tasks on average tasks having to be computed in half their possible time. Plus, as can be seen in
-figure~\ref{fig:batch-task-allocation}, the total social welfare decreases as the batch lengths increase investigating
-longer batch lengths unwarranted.
+figure~\ref{fig:batch-task-allocation}, the total social welfare decreases as the batch lengths increase meant
+investigating longer batch lengths was unwarranted. As a optimal solution can only exist by solving the whole problem
+over all time steps, as it may be optimal to not run a task currently to be able to run a task at the next time step,
+it is infeasible this problem optimally. Because of this, only the greedy algorithms were used. In order that the
+results be comparable to the results found in Subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}, 8 servers
+were used over 200 time steps with the number of tasks being generated from a Gaussian distribution with a mean of 4
+and standard deviation of 2. These settings mean that on 80\% on tasks are completed over the time series.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{figs/online/online_batch_lengths.pdf}
-    \caption{Online batch lengths}
+    \caption{Comparison between Online and different Batch Lengths in Social Welfare}
     \label{fig:batch-task-allocation}
 \end{figure}
 
-%% TODO Explain results
+As can be seen in Figure~\ref{fig:batch-task-allocation}, for all cases the flexible allocation was able
+to achieve a greater social welfare compared to the fixed greedy algorithms. Using a batch length of
+4 achieved the highest average social welfare as on average task deadline will be shorten by only
+2 time steps while having the increased amount of competition allows the algorithm to select the best
+tasks.

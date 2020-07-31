@@ -3,12 +3,11 @@
 Within Fog Computing, there exist a wide range of approaches to resource management including:
 application placement, resource scheduling, task offloading, load balancing, resource allocation,
 and resource provisioning~\cite{ghobaei2019resource}. As this work bridges a range of these topics, an outline of
-related works from several approaches have been explained.
+related paper from several approaches have been explained.
 
 Auctions are a popular method for both dealing with self-interested users and in determining the value when allocating
-multiple limited resources. \\
-Due to the large corpus of research, Kumar et al. provides a systematic study of double auction mechanisms that are
-suitable for a range of distributed systems like Grid computing, Cloud computing and Inter-Cloud
+multiple limited resources. Due to the large corpus of research, Kumar et al. provides a systematic study of double
+auction mechanisms that are suitable for a range of distributed systems like Grid computing, Cloud computing and Inter-Cloud
 systems~\cite{KUMAR2017234}. The work reviewed 21 different proposed auction mechanisms over a range of important auction
 properties like Economic Efficiency, Incentive Compatibility, and Budget-Balance. In a majority of the proposed auction
 mechanisms, truthfulness was only considered for the user, thus a Truthful Multi-Unit Double auction mechanism was
@@ -19,7 +18,7 @@ equilibrium price. Because of this, the system is highly scalable and adaptable 
 topologies. \\
 An alternative market-based framework by Nguyen \emph{et al.}, allows for resources to be efficiently allocated by edge nodes
 that are geographically distributed~\cite{8373684}. To maximise the use of node resource, the framework finds the market
-equilibrium through optimally allocating resources bundles to services given each task's budget. The market's
+equilibrium through optimally allocating resource bundles to services given each task's budget. The market's
 equilibrium is found using the Eisenberg-Gale convex program~\cite{JAIN201084} which allows services to maximise their revenue. They
 additionally proved a novel convex optimisation problem that achieves market equilibrium when services instead maximise
 their net profit (revenue minus cost).
@@ -39,8 +38,8 @@ computation resource demand profile for a user in order to minimise a tasks reso
 NP-Hard problem, through an efficient approximation algorithm, a truthful pricing scheme is used to calculate the
 critical value for the task to prevent users from misreporting task valuation.
 
-As Fog Computing often requiring the placement of fog nodes within the system for both localised fog networks and
-geographically distance systems due to the short deadline constraints of tasks. Work by Farhadi \emph{et al.}~\cite{vaji_infocom}, considers
+As Fog Computing often requires the placement of fog nodes within the system for both localised fog networks and
+geographically distant systems due to the short deadline constraints of tasks. Work by Farhadi \emph{et al.}~\cite{vaji_infocom}, considers
 the placement of code/data needed to run specific tasks over time where the demands change over time while also
 considering the operational costs and system stability~\cite{vaji_infocom}. Using a proposed approximation algorithm,
 they achieved 90\% of the optimal social welfare by converting the problem to a set function optimisation problem. By

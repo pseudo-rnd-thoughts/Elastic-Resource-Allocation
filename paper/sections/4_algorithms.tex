@@ -6,8 +6,8 @@ section, we propose three mechanisms for solving this optimisation problem: an a
 auction-based mechanisms. \\
 The optimisation problem is a extended version of the knapsack problem, which is often solved using an dynamic
 programming method that has pseudo-polynomial time complexity~\cite{toth1980dynamic}. The solution requires building
-a table of items to bags allocation. For our problem, as the resource speeds must be considered at the same time, such
-a solver can are infeasible due to both the space and time complexity required.
+a table of items to bags allocation. For our problem, as the resource speeds must be considered at the same time, this
+makes such a solver infeasible due to both the space and time complexity required.
 
 Because of this issue of allocating both tasks to a server and a server's resources to a task, this work proposes an
 approximation algorithm where tasks are allocated to a server with resources in series not in parallel. The centralised
@@ -45,9 +45,9 @@ deadline. The second stage uses the sorted list of tasks to iterate through appl
 server based on available server resources and to allocate resources based on the available server resources and the
 required resources of the task.
 
-Using the same example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 11/12 of
-the tasks achieving XX\% more social welfare than the fixed solution. This is due to the algorithm being unable to % TODO
-consider other tasks resource requirement while allocating resources. The greedy algorithm uses the value density function:
+Using the same example case from subsection~\ref{subsec:example-problem-case}, the greedy algorithm can complete 12/12 of
+the tasks achieving 21\% more social welfare than the fixed solution, same as the optimal flexible solution.
+The greedy algorithm uses the value density function:
 \[\frac{v_j \cdot d_j}{s_j + w_j + r_j}\] server selection:
  \[\text{argmin}_{\forall i \in I} S^{'}_i \cdot W^{'}_i \cdot R^{'}_i\] for task $j$ and servers $I$ and the resource allocation:
 \[\text{argmin}_{s^{'}_j, w^{'}_j, r^{'}_j} \left(\frac{w^{'}_j}{W^{'}_i}\right)^3 + \left(\frac{s^{'}_j + r^{'}_j}{R^{'}_i}\right)^3\]
@@ -93,8 +93,9 @@ considered a wide range of heuristics, showing the results of the best heuristic
 \end{theorem}
 \begin{proof}
     Due to a task not considering other task's resource requirements when allocating resources then no matter the
-    server selection or resource allocation function, it can't be guaranteed that subsequent tasks can be allocated to
-    any server. As a result, the algorithm can be guaranteed to achieve at least $\frac{1}{n}$ of the optimal social
+    server selection or resource allocation function, it can not be guaranteed that any subsequent tasks could be
+    allocated to any server after the first task is allocated.
+    As a result, the algorithm can be guaranteed to achieve at least $\frac{1}{n}$ of the optimal social
     welfare by sorting the tasks by task value ($v(j) = j_v$). Using this, the first task from the sorted task list
     will have the maximum task value meaning the lower bound of the algorithm is $\frac{1}{n}$ of the optimal social
     welfare.
@@ -119,7 +120,7 @@ $O(\left|J\right| \left|I\right|)$.
 \subsection{Critical Value Auction}
 \label{subsec:critical-value-auction}
 Due to the problem case being non-cooperative, if the greedy algorithm was used to allocate resources such that the
-value is the price paid. This would be open to manipulation and misreporting of task attributes like the value,
+value is the price paid, this would be open to manipulation and misreporting of task attributes like the value,
 deadline or resource requirements. Therefore, in this section we propose an auction that is strategy-proof
 (weakly dominant incentive compatible) so users have no incentive to misreport task attributes.
 
@@ -167,9 +168,9 @@ all users to honestly reveal their task attributes.
 
 The auction (specified in algorithm~\ref{alg:critical-value-auction}) is implemented using the greedy algorithm from
 subsection~\ref{subsec:greedy-algorithm} both in finding the initial allocation and critical value for each task (at
-least in a modified form). This helpful as it allows the auction to inherit many of the properties of the greedy
-algorithm like social welfare and time complexity. \\
-By running the greedy algorithm with all of tasks reported values then an initial allocation can be found. Then for
+least in a modified form). This is helpful as it allows the auction to inherit many of the properties of the greedy
+algorithm like social welfare and time complexity.
+By running the greedy algorithm with all of the tasks' reported values then an initial allocation can be found. Then for
 each task that was allocated the critical value for the task must be found meaning that the task will pay the minimum
 possible value (price) such that the task would still have been allocated by the greedy mechanism. \\
 To find the critical value of the task (referred to here as the critical task) is relatively simple by just modifying
@@ -206,9 +207,9 @@ algorithm repeated $\left|J\right|$ due to calculating each task's critical valu
 
 \subsubsection{Demonstrating that the Critical Value Auction is Strategyproof}
 \label{subsubsec:critical-value-auction-strategyproof}
-In order that the auction is strategyproof, the value density function must be
+In order to make the auction strategyproof, the value density function must be
 monotonic~\cite{nisan2007algorithmic_229_230}. This ensures that if a task misreports any attributes, it will result
-in the value density of the task decreasing, increasing the price payed. Therefore a value density function must be in
+in the value density of the task decreasing, increasing the price paid. Therefore a value density function must be in
 the form of $\frac{v_j \cdot d_j}{\alpha(s_j, w_j, r_j)}$ such it is monotonic decreasing if a task attribute is
 misreported.
 \begin{theorem}
@@ -221,7 +222,7 @@ misreported.
     The opposite is true for a task's required resources (storage, compute and result data), as the misreported value
     must be greater than the true value otherwise the task would not be able to be completed. Therefore as the $\alpha$
     function will increase as the resource requirements increase, the resulting value density will decrease. \\
-    So in all cases, the overall value density will decrease if the owner doesn't accurately report a task's attribute,
+    So in all cases, the overall value density will decrease if the owner does not accurately report a task's attribute,
     making the function monotonic.
 \end{proof}
 
@@ -230,7 +231,7 @@ misreported.
 In some applications of edge cloud computing, keeping the value of a task a secret is important, for example in
 military-tactical networks. Therefore we propose a novel Decentralised Iterative Auction based on the pricing principle
 of the VCG auction~\cite{vickrey,Clarke,groves}. VCG auction calculates the price of an item by finding the
-difference in social welfare if the item exists and when it doesn't exist.
+difference in social welfare if the item exists and when it does not exist.
 
 Our proposed novel auction uses the same principle, except in reverse by finding the difference between the current
 server revenue and the revenue when the task is allocated with a price of zero. To cause the overall revenue and
@@ -255,7 +256,7 @@ subsection~\ref{subsubsec:decentralised-iterative-problem} to calculate the task
 $P(i, k)$ is compared to the task's reverse price (the maximum amount the task is willing to pay). If the price is less
 than the task value then the task is allocated to the minimum price server and the task price set to the agreed price.
 Otherwise the task is removed from the set of tasks to be allocated. In the process of allocating a task to a server
-could result in some other tasks being deallocated from teh server. These deallocated tasks are then added back to the
+could result in some other tasks being deallocated from the server. These deallocated tasks are then added back to the
 set of tasks to be allocated to be selected again.
 
 \begin{algorithm}
@@ -318,27 +319,26 @@ For our proposed auction, we consider four important properties in auction theor
     \item Budget balanced - True. Since the auction can run without an auctioneer, the auction can be run in a
         decentralised system with no ''middlemen'' taking some money. This means that all revenue goes straight to
         the servers from the tasks.
-    \item Individually Rational - True. As the server need to confirm with the task if it is willing to pay an amount
+    \item Individually Rational - True. As the server needs to confirm with the task if it is willing to pay an amount
         to be allocated, the task can check this against its secret reserved price preventing the task from ever paying
         more than it is willing.
-    \item Incentive Compatible - False. The ability for tasks to profit from misreport task attribute is difficult to
-        numerous reason: a task's cannot determine the choices of other task for which server they will choose, the
+    \item Truthfulness - False. The ability for tasks to profit from misreport task attribute is difficult to
+        numerous reason: a task cannot determine the choices of other task for which server they will choose, the
         order task get priced in (this is random) and can't lie about their value as this information isn't
-        revealed. Task's can misreport it's attributes to force other task's to make decisions that would otherwise
+        revealed. But tasks can misreport it's attributes to force other task's to make decisions that would otherwise
         result in the misreporting task from being deallocated from a server. For example, if a task misreports some
         attributes it may result in it being cheaper for another task to select a different server. This would mean
-        that the misreported task would not being deallocated that would otherwise would be. However for large scale
-        systems, intentionally misreporting such attribute is extremely difficult to profit from. This is empirically
-        shown in subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}.
-    \item Economic efficiency - False. The allocation of task's to server is completely random until server becomes full,
-        because of this, the initial allocation and the random selection of task's meaning that often task's result in a
+        that the misreported task would not being deallocated that would otherwise would be. This is investigated
+        empirically in Subsection~\ref{subsec:possibility-of-misreporting-task-attributes-in-decentarlised-iterative-auction}.
+    \item Economic efficiency - False. The allocation of tasks to server is completely random until server becomes full,
+        because of this, the initial allocation and the random selection of tasks meaning that often tasks result in a
         local maxima rather than the global maxima. As a result, the auction is not 100\% economically efficient
         however the local optima are often close to the global maxima as shown in
         subsection~\ref{subsec:evaluation-of-the-auction-mechanisms}.
 \end{itemize}
 
 While the auction is not incentive compatible and tasks do not pay the critical value, unlike the critical value
-auction, task's do pay the minimal amount for the task to be allocated. This is different from the critical value for
+auction, tasks do pay the minimal amount for the task to be allocated. This is different from the critical value for
 two reasons: the critical value is not found through a deterministic process and the auction is not economically
 efficient resulting in the global maxima always being found possibly resulting in the task paying a different price
 each time the auction runs.
