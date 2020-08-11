@@ -34,7 +34,7 @@ order to determine the task's resource speeds.
 \begin{wrapfigure}{r}{0.5\linewidth}
     \centering
     \includegraphics[width=\linewidth]{figs/allocation/greedy_flexible_resource_allocation.png}
-    \caption{Example Greedy allocation using the model from table~\ref{tab:example-tasks-server-properties}
+    \caption{Example Greedy allocation using the model from Appendix A
              with task and server attributes}
     \label{fig:example-greedy-allocation}
 \end{wrapfigure}
@@ -83,7 +83,7 @@ is task $j$ and server $i$.
 \label{subsubsec:greedy-lower-bound}
 The lower bound of the algorithm is $\frac{1}{\left|J\right|}$ (where $\left|J\right|$ is the number of tasks) with
 the task value as the value density function. This lower bound is not affected by the server selection policy or the
-resource allocation policy. \\
+resource allocation policy.
 However in testing, we found that the task value function is not the best value density heuristic as it does not
 consider the effect of deadlines or the required resources of the task. In Section~\ref{sec:empirical-results}, we
 considered a wide range of heuristics, showing the results of the best heuristics over a range of settings.
@@ -351,6 +351,8 @@ important attributes of the proposed algorithm to allow easy comparison between 
 Critical Value auction and Decentralised Iterative auction.
 
 \begin{table}[H]
+    \caption{Attributes of the proposed algorithms: Greedy Algorithm, Critical Value Auction and the
+    Decentralised Iterative auction}
     \begin{tabular}{|p{3cm}|c|c|c|}
         \hline
         \textbf{Attribute} & Greedy Algorithm & Critical Value Auction & Decentralised Iterative Auction \\ \hline
@@ -361,7 +363,5 @@ Critical Value auction and Decentralised Iterative auction.
         Communication over heads & Low & Low & High \\ \hline
         Decentralisation & No  & No  & Yes \\ \hline
     \end{tabular}
-    \caption{Attributes of the proposed algorithms: Greedy Algorithm, Critical Value Auction and the
-    Decentralised Iterative auction}
     \label{tab:attributes_algorithms}
 \end{table}

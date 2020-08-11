@@ -1,12 +1,17 @@
-\section{Conclusion and Future work}\label{sec:conclusion-and-future-work}
-In this paper, we studied a resource allocation problem in edge clouds, where resources are elastic and can be
-allocated to tasks at varying speeds to satisfy heterogeneous requirements and deadlines. To solve the problem,
-we proposed a centralized greedy mechanism with a guaranteed performance bound, and a number of auction-based
-mechanisms that also consider the elasticity of resources and limit the potential for strategic manipulation. We show
-that explicitly taking advantage of resource elasticity leads to significantly better performance than current
-approaches that assume fixed resources.
+\section{Conclusion and Future work}
+\label{sec:conclusion-and-future-work}
+In this work, we have investigate the possibility of using elasticity in resource allocation to tasks in 
+edge cloud computing. This has important impacts on the uses of edge cloud computing were resources are more 
+limited than traditional cloud computing enabling more tasks to be run over time. This is empirically shown 
+with proposed algorithms achieve ~20\% greater social welfare than a fixed resource allocation scheme currently
+utilised. To do this, we proposed three mechanisms; a centralised modular greedy approximation algorithm,
+a centralised incentive compatible auction and a novel Decentralised Iterative Auction.
+For each algorithm we presented extension analyse comparing results to the optimal solutions, as well as
+investigating the effect of server resource capacity ratios, the ability to misreport information and a
+batching based solver on the algorithms. 
 
-In future work, while this research considers online based mechanisms
-(Subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation}), this was not the primary
-environment these mechanisms were intended to occur within. Therefore additional research will focus primarily on this
-online scenario.
+In this work, the optimisation problem has been modelled for a static one-shot case where all tasks arrive at
+the first time step. However as has been noticed in Subsection~\ref{subsec:comparison-between-online-and-batched-resource-allocation},
+in reality tasks do arrive progressively over time. In this work we are proposed a method of batching tasks
+over time to account for this. Future work could be done for provide a fully online elastic
+resource allocation optimisation problem and solutions. 

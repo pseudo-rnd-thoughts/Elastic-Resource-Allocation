@@ -158,7 +158,7 @@ with the server heuristics being price change of 3 and an initial price of 25.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figs/mutation/grid search.pdf}
+    \includegraphics[width=\linewidth]{figs/mutation/grid_search.pdf}
     \caption{Histogram of task prices for misreported tasks}
     \label{fig:mutation-grid-search}
 \end{figure}
@@ -243,7 +243,7 @@ over all time steps, as it may be optimal to not run a task currently to be able
 it is infeasible this problem optimally. Because of this, only the greedy algorithms were used. In order that the
 results be comparable to the results found in Subsection~\ref{subsec:evaluation-of-the-greedy-algorithm}, 8 servers
 were used over 200 time steps with the number of tasks being generated from a Gaussian distribution with a mean of 4
-and standard deviation of 2. These settings mean that on 80\% on tasks are completed over the time series.
+and standard deviation of 2. These settings mean that on 80\% on tasks are completed over the time series. 
 
 \begin{figure}[h]
     \centering
@@ -252,8 +252,8 @@ and standard deviation of 2. These settings mean that on 80\% on tasks are compl
     \label{fig:batch-task-allocation}
 \end{figure}
 
-As can be seen in Figure~\ref{fig:batch-task-allocation}, for all cases the flexible allocation was able
-to achieve a greater social welfare compared to the fixed greedy algorithms. Using a batch length of
-4 achieved the highest average social welfare as on average task deadline will be shorten by only
-2 time steps while having the increased amount of competition allows the algorithm to select the best
-tasks.
+As can be seen in Figure~\ref{fig:batch-task-allocation}, for all cases the flexible allocation was able 
+to achieve a greater social welfare compared to the fixed greedy algorithms. Using a batch length of 
+4 achieved the highest average social welfare as on average task deadline will be shorten by only 
+2 time steps while having the increased amount of competition allows the algorithm to select the best 
+tasks.  
