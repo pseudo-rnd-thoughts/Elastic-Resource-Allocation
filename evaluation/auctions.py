@@ -95,5 +95,5 @@ if __name__ == "__main__":
 
     if args.extra == '' or args.extra == 'optimal':
         auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
-    elif args.extra == 'timelimited':
+    elif args.extra == 'time limited':
         auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_vcg=False)

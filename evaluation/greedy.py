@@ -111,5 +111,5 @@ if __name__ == "__main__":
 
     if args.extra == '' or args.extra == 'optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
-    elif args.extra == 'timelimited':
+    elif args.extra == 'time limited':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_optimal=False)
