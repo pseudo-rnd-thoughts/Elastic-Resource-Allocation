@@ -98,7 +98,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     return time() - start_time
 
 
-def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
+def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[int] = 5,
                 debug_results: bool = False) -> Optional[Result]:
     """
     VCG auction algorithm
@@ -116,7 +116,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
         return Result('Flexible VCG', tasks, servers, solve_time, is_auction=True)
 
 
-def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: int = 5,
+def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: Optional[int] = 5,
                       debug_results: bool = False) -> Optional[Result]:
     """
     Fixed VCG auction algorithm

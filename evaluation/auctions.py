@@ -54,13 +54,13 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
 
         if with_vcg:
             # VCG Auctions
-            vcg_result = vcg_auction(tasks, servers, time_limit=vcg_time_limit)
+            vcg_result = vcg_auction(tasks, servers, time_limit=None)
             algorithm_results[vcg_result.algorithm] = vcg_result.store()
             vcg_result.pretty_print()
             reset_model(tasks, servers)
 
             # Fixed VCG Auctions
-            fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=fixed_vcg_time_limit)
+            fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
             fixed_vcg_result.pretty_print()
             reset_model(fixed_tasks, servers)
@@ -93,7 +93,7 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == '' or args.extra == 'full':
+    if args.extra == '' or args.extra == 'optimal':
         auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
-    elif args.extra == 'reduced':
+    elif args.extra == 'timelimited':
         auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_vcg=False)

@@ -54,13 +54,13 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         if with_optimal:
             # Find the optimal solution
-            optimal_result = flexible_optimal(tasks, servers, optimal_time_limit)
+            optimal_result = flexible_optimal(tasks, servers, time_limit=None)
             algorithm_results[optimal_result.algorithm] = optimal_result.store()
             optimal_result.pretty_print()
             reset_model(tasks, servers)
 
             # Find the fixed solution
-            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
+            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
@@ -109,7 +109,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == '' or args.extra == 'full':
+    if args.extra == '' or args.extra == 'optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
-    elif args.extra == 'reduced':
+    elif args.extra == 'timelimited':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_optimal=False)
