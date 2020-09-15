@@ -258,6 +258,49 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
     print('Finished running')
 
 
+def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, auction_repeats: int = 5,
+               time_limit: int = 2, price_change: int = 3, initial_price: int = 25):
+    """
+    Tests the Decentralised iterative auction by repeating the auction to see if the same local / global maxima is
+        achieved
+
+    :param model_dist: The model distribution
+    :param repeat_num: The repeat number
+    :param repeats: The number of repeats
+    :param auction_repeats: The number of auction repeats
+    :param time_limit: The auction time limit
+    :param price_change: Price change
+    :param initial_price: The initial price
+    """
+    print(f'Evaluation of DIA by repeating the auction')
+    model_results = []
+    pp = pprint.PrettyPrinter()
+    filename = results_filename('repeat_dia', model_dist, repeat_num)
+
+    for repeat in range(repeats):
+        print(f'\nRepeat: {repeat}')
+        tasks, servers = model_dist.generate()
+        set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
+
+        repeat_results = {'model': {
+            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+        }}
+        pp.pprint(repeat_results)
+
+        for auction_repeat in range(auction_repeats):
+            auction_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
+            auction_result.pretty_print()
+            repeat_results[f'repeat {auction_repeat}'] = auction_result
+
+            reset_model(tasks, servers)
+
+        model_results.append(repeat_results)
+        # Save all of the results to a file
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+        print('Finished running')
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -267,5 +310,7 @@ if __name__ == "__main__":
         mutation_grid_search(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'value only':
         value_only_mutation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'dia repeat':
+        dia_repeat(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

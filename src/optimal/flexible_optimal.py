@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from src.core.task import Task
 
 
-def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit: int):
+def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit: Optional[int]):
     """
     Flexible Optimal algorithm solver using cplex
 
@@ -30,7 +30,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     :param time_limit: Time limit for cplex
     :return: the results of the algorithm
     """
-    assert 0 < time_limit, f'Time limit: {time_limit}'
+    assert 0 < time_limit or time_limit is None, f'Time limit: {time_limit}'
 
     model = CpoModel('Flexible Optimal')
 

@@ -17,7 +17,8 @@ if TYPE_CHECKING:
     from src.core.task import Task
 
 
-def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: int = 15) -> Optional[Result]:
+def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server],
+                                    time_limit: Optional[int] = 15) -> Optional[Result]:
     """
     Runs the relaxed task allocation solver
 

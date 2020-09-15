@@ -65,11 +65,19 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
-        # Find the relaxed solution
-        relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
-        algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
-        relaxed_result.pretty_print()
-        reset_model(tasks, servers)
+            # Find the relaxed solution
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
+            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
+            relaxed_result.pretty_print()
+            reset_model(tasks, servers)
+        else:
+            # Find the relaxed solution
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
+            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
+            relaxed_result.pretty_print()
+            reset_model(tasks, servers)
+
+
 
         # Runs the DIA as an alternative method of getting a optimal social welfare
         set_server_heuristics(servers, 3, 25)
