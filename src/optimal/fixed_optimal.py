@@ -29,7 +29,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     :param time_limit: The time limit to solve with
     :return: The results
     """
-    assert 0 < time_limit or time_limit is None, f'Time limit: {time_limit}'
+    assert time_limit is None or 0 < time_limit, f'Time limit: {time_limit}'
 
     model = CpoModel('vcg')
 
