@@ -288,17 +288,16 @@ def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25
         pp.pprint(repeat_results)
 
         for auction_repeat in range(auction_repeats):
+            reset_model(tasks, servers)
             auction_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
             auction_result.pretty_print()
             repeat_results[f'repeat {auction_repeat}'] = auction_result
-
-            reset_model(tasks, servers)
 
         model_results.append(repeat_results)
         # Save all of the results to a file
         with open(filename, 'w') as file:
             json.dump(model_results, file)
-        print('Finished running')
+    print('Finished running')
 
 
 if __name__ == "__main__":
