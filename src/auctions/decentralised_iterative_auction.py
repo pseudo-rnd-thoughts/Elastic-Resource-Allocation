@@ -85,11 +85,7 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
     :param unallocated_tasks: List of unallocated tasks
     :param task_speeds: Dictionary of task speeds
     """
-    allocated_tasks = server.allocated_tasks[:]
     server.reset_allocations()
-    for task in allocated_tasks:
-        if task not in task_speeds:
-            server.allocate_task(task)
 
     # For each of the task, if the task is allocated then allocate the task or reset the task
     new_task.price = task_price
