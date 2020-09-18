@@ -1,4 +1,6 @@
-
+"""
+Stage 5 for the calculating tasks from google cloud dataset
+"""
 import pandas as pd
 import json
 

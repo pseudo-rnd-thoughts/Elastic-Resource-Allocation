@@ -110,7 +110,7 @@ class Task:
                     required_storage=int(self.required_storage + abs(gauss(0, self.required_storage * mutation_percent))),
                     required_computation=int(self.required_computation + abs(gauss(0, self.required_computation * mutation_percent))),
                     required_results_data=int(self.required_results_data + abs(gauss(0, self.required_results_data * mutation_percent))),
-                    deadline=int(max(1, self.deadline - abs(gauss(0, self.deadline * mutation_percent)))),
+                    deadline=max(1, int(self.deadline - abs(gauss(0, self.deadline * mutation_percent)))),
                     value=self.value)
 
     def save(self):

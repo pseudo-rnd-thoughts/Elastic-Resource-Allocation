@@ -36,6 +36,7 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
     lists.append(new_item)
 
 
+# noinspection DuplicatedCode
 def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, time_limit: int = 2,
                        price_change: int = 3, initial_price: int = 25,
                        model_mutations: int = 15, mutate_percent: float = 0.1):
@@ -189,6 +190,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
     print('Finished running')
 
 
+# noinspection DuplicatedCode
 def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, time_limit: int = 2,
                         price_change: int = 3, initial_price: int = 25, model_mutations: int = 15,
                         value_mutations: Iterable[int] = (1, 2, 3, 4)):
@@ -258,6 +260,7 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
     print('Finished running')
 
 
+# noinspection DuplicatedCode
 def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, auction_repeats: int = 5,
                time_limit: int = 2, price_change: int = 3, initial_price: int = 25):
     """
@@ -291,7 +294,7 @@ def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25
             reset_model(tasks, servers)
             auction_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
             auction_result.pretty_print()
-            repeat_results[f'repeat {auction_repeat}'] = auction_result
+            repeat_results[f'repeat {auction_repeat}'] = auction_result.store()
 
         model_results.append(repeat_results)
         # Save all of the results to a file

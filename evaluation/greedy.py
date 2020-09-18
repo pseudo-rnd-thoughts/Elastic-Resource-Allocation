@@ -77,8 +77,6 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
             relaxed_result.pretty_print()
             reset_model(tasks, servers)
 
-
-
         # Runs the DIA as an alternative method of getting a optimal social welfare
         set_server_heuristics(servers, 3, 25)
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=3)

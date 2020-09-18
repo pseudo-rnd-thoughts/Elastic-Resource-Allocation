@@ -217,7 +217,15 @@ def test_task_batching(model_dist=ModelDistribution('models/online_paper.mdl', n
     for pos, batch_task in enumerate(batched_tasks):
         print(f'Time step: {3 * pos} - [{", ".join([str(task.auction_time) for task in batch_task])}]')
 
-    flatten = lambda tss: [t for ts in tss for t in ts]
+    def flatten(tss):
+        """
+        Faltten all of the task from time based to 1 dimensional
+
+        :param tss: Time series of batched tasks
+        :return: List  of tasks
+        """
+        return [t for ts in tss for t in ts]
+
     batch1_tasks = flatten(generate_batch_tasks(tasks, 1, time_steps))
     batch2_tasks = flatten(generate_batch_tasks(tasks, 2, time_steps))
     batch3_tasks = flatten(generate_batch_tasks(tasks, 3, time_steps))

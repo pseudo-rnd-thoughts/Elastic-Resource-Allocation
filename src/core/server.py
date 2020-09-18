@@ -135,9 +135,9 @@ class Server:
         :param percent: The percentage to increase the max resources by
         """
         return Server(f'mutated {self.name}',
-                      int(max(1, self.storage_capacity - abs(gauss(0, self.storage_capacity * percent)))),
-                      int(max(1, self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
-                      int(max(1, self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
+                      max(1, int(self.storage_capacity - abs(gauss(0, self.storage_capacity * percent)))),
+                      max(1, int(self.computation_capacity - abs(gauss(0, self.computation_capacity * percent)))),
+                      max(1, int(self.bandwidth_capacity - abs(gauss(0, self.bandwidth_capacity * percent)))),
                       self.price_change)
 
     def update_capacities(self, computation_capacity: int, bandwidth_capacity: int):
