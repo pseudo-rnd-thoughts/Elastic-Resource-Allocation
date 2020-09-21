@@ -39,9 +39,14 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, max=task.loading_ub(), name=f'{task.name} loading speed')
-        compute_speeds[task] = model.integer_var(min=1, max=task.compute_ub(), name=f'{task.name} compute speed')
-        sending_speeds[task] = model.integer_var(min=1, max=task.sending_ub(), name=f'{task.name} sending speed')
+        if time_limit is None:
+            loading_speeds[task] = model.integer_var(min=1, max=task.required_storage, name=f'{task.name} loading speed')
+            compute_speeds[task] = model.integer_var(min=1, max=task.required_computation, name=f'{task.name} compute speed')
+            sending_speeds[task] = model.integer_var(min=1, max=task.required_results_data, name=f'{task.name} sending speed')
+        else:
+            loading_speeds[task] = model.integer_var(min=1, max=task.loading_ub(), name=f'{task.name} loading speed')
+            compute_speeds[task] = model.integer_var(min=1, max=task.compute_ub(), name=f'{task.name} compute speed')
+            sending_speeds[task] = model.integer_var(min=1, max=task.sending_ub(), name=f'{task.name} sending speed')
 
         model.add((task.required_storage / loading_speeds[task]) +
                   (task.required_computation / compute_speeds[task]) +
