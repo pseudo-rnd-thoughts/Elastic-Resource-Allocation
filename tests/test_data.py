@@ -25,3 +25,26 @@ def test_data_repeats():
 
                 if all(social_welfare[0] == sw for sw in social_welfare):
                     print(f'[-] Social welfare is bugged ({filename})')
+
+
+def test_optimal_data():
+    print()
+    for filename in os.listdir('../data/greedy'):
+        with open(f'../data/greedy/{filename}') as file:
+            data = json.load(file)
+
+        if all('Flexible Optimal' in model for model in data):
+            solve_status = sum('Flexible Optimal' in model and 'solve status' in model['Flexible Optimal']
+                               for model in data)
+            # print(f'{filename}: {solve_status/len(data):.3f}')
+            if all('solve status' in model['Flexible Optimal'] for model in data):
+                optimal_percent = sum('Flexible Optimal' in model and 'solve status' in model['Flexible Optimal'] and
+                                      model['Flexible Optimal']['solve status'] == 'Optimal' for model in data)
+                solve_types = {model['Flexible Optimal']['solve status'] for model in data}
+                print(f'{filename}: {optimal_percent/len(data):.3f}')
+                # print(solve_types)
+            else:
+                print(f'{filename} not solve status')
+        else:
+            print(f'{filename} not flexible optimal')
+
