@@ -127,6 +127,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     axe.set_xlabel(r'\textbf{Servers}', fontsize=12)
 
     axe.set_ylabel(r'\textbf{Resource Usage}', fontsize=12)
+    axe.set_ylim((0.0, 1.0))
     axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'])
 
