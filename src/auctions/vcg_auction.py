@@ -8,6 +8,7 @@ Todo add fixed_vcg auction
 from __future__ import annotations
 
 import functools
+import sys
 from time import time
 from typing import TYPE_CHECKING, TypeVar
 
@@ -41,7 +42,7 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     return list_copy
 
 
-def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: bool = False) -> float:
+def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: bool = False):
     """
     VCG auction solver
 
@@ -61,7 +62,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     optimal_results = solver(tasks, servers)
     if optimal_results is None:
         print(f'Optimal solver failed')
-        return 0
+        return None
     optimal_social_welfare = sum(task.value for task in tasks if task.running_server)
     debug(f'Optimal social welfare: {optimal_social_welfare}', debug_running)
 
@@ -85,7 +86,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
         prime_results = solver(tasks_prime, servers)
         if prime_results is None:
             print(f'Failed for task: {task.name}')
-            return 0
+            return None
         else:
             task_prices[task] = optimal_social_welfare - sum(task.value for task in tasks_prime if task.running_server)
             debug(f'{task.name} Task: £{task_prices[task]:.1f}, Value: {task.value} ', debug_running)
@@ -95,7 +96,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: 
     for task, (s, w, r, server) in task_allocation.items():
         server_task_allocation(server, task, s, w, r, price=task_prices[task])
 
-    return time() - start_time
+    return optimal_results
 
 
 def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[int] = 5,
@@ -111,9 +112,13 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[i
     """
     optimal_solver_fn = functools.partial(flexible_optimal_solver, time_limit=time_limit)
 
-    solve_time = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
-    if 0 < solve_time:
-        return Result('Flexible VCG', tasks, servers, solve_time, is_auction=True)
+    global_model_solution = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
+    if global_model_solution:
+        return Result('Flexible VCG', tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
+                      **{'solve status': global_model_solution.get_solve_status()})
+    else:
+        print(f'Flexible VCG Auction error', file=sys.stderr)
+        return Result('Flexible VCG', tasks, servers, 0, limited=True)
 
 
 def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: Optional[int] = 5,
@@ -129,6 +134,10 @@ def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_
     """
     fixed_solver_fn = functools.partial(fixed_optimal_solver, time_limit=time_limit)
 
-    solve_time = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
-    if 0 < solve_time:
-        return Result('Fixed VCG', fixed_tasks, servers, solve_time, is_auction=True)
+    global_model_solution = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
+    if global_model_solution:
+        return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
+                      **{'solve status': global_model_solution.get_solve_status()})
+    else:
+        print(f'Fixed VCG Auction error', file=sys.stderr)
+        return Result('Fixed VCG', fixed_tasks, servers, 0, limited=True)
