@@ -8,7 +8,7 @@ import sys
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
-from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
+from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
 
 from src.core.core import server_task_allocation
 from src.extra.pprint import print_model_solution, print_model
@@ -70,7 +70,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     model.maximize(sum(task.value * task_allocation[(task, server)] for task in tasks for server in servers))
 
     # Solve the cplex model with time limit
-    model_solution = model.solve(log_output=None, TimeLimit=time_limit)
+    model_solution: CpoSolveResult = model.solve(log_output=None, TimeLimit=time_limit)
 
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
@@ -89,6 +89,8 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(loading_speeds[task]),
                                            model_solution.get_value(compute_speeds[task]),
                                            model_solution.get_value(sending_speeds[task]))
+
+        assert model_solution.get_objective_values()[0] == sum(task.value for task in tasks if task.running_server)
         return model_solution
     except (AssertionError, KeyError) as e:
         print('Error: ', e)

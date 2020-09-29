@@ -75,7 +75,8 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
         print_model_solution(model_solution)
         return None
 
-    # Return the sum of the task value for all of teh running tasks
+    # Return the sum of the task value for all of the running tasks
+    assert model_solution.get_objective_values()[0] == sum(task.value for task in tasks if task.running_server)
     return model_solution
 
 

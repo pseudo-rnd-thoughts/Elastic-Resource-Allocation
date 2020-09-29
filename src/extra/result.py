@@ -43,12 +43,9 @@ class Result:
         if not limited:
             # Server properties
             self.data.update({
-                'server social welfare': {server.name: sum(task.value for task in server.allocated_tasks)
-                                          for server in servers},
-                'server storage used': {server.name: resource_usage(server, 'storage') for server in servers},
-                'server computation used': {server.name: resource_usage(server, 'computation') for server in servers},
-                'server bandwidth used': {server.name: resource_usage(server, 'bandwidth') for server in servers},
-                'server num tasks allocated': {server.name: len(server.allocated_tasks) for server in servers}
+                'task resource usage': {task.name: (task.loading_speed, task.compute_speed,
+                                                    task.sending_speed, task.running_server.name)
+                                        for task in tasks if task.running_server}
             })
 
         if is_auction:

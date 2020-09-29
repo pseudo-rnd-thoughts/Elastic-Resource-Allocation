@@ -10,7 +10,9 @@ from __future__ import annotations
 import functools
 import sys
 from time import time
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, TypeVar, Callable
+
+from docplex.cp.solution import CpoSolveResult
 
 from src.core.core import reset_model, server_task_allocation, debug
 from src.extra.result import Result
@@ -42,7 +44,8 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     return list_copy
 
 
-def vcg_solver(tasks: List[Task], servers: List[Server], solver, debug_running: bool = False):
+def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
+               debug_running: bool = False) -> Optional[CpoSolveResult]:
     """
     VCG auction solver
 
@@ -114,6 +117,7 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[i
 
     global_model_solution = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
     if global_model_solution:
+        assert global_model_solution.get_objective_values()[0] == all(task.value for task in tasks if task.running_server)
         return Result('Flexible VCG', tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
                       **{'solve status': global_model_solution.get_solve_status()})
     else:
@@ -136,6 +140,7 @@ def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_
 
     global_model_solution = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
     if global_model_solution:
+        assert global_model_solution.get_objective_values()[0] == all(task.value for task in fixed_tasks if task.running_server)
         return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
                       **{'solve status': global_model_solution.get_solve_status()})
     else:
