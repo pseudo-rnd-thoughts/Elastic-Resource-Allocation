@@ -131,14 +131,16 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
     axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'])
 
-    axe.set_title(title, fontsize=16)
+    # axe.set_title(title, fontsize=16)
 
-    pos = -0.1 if sum(task.running_server is not None for task in tasks) else 0.0
+    pos = 1 - 0.0625 * sum(task.running_server is not None for task in tasks) - 0.08
     server_resources_legend = [axe.bar(0, 0, color="gray", hatch=hatching * i) for i in range(3)]
-    tasks_legend = axe.legend(h[:n_col], _l[:n_col], loc=[1.025, pos + 0.325], title=r'\textbf{Tasks}')
+    tasks_legend = axe.legend(h[:n_col], _l[:n_col], loc=[1.025, pos], title=r'\textbf{Tasks}')  # 0.17
     plt.legend(server_resources_legend, ['Storage', 'Computation', 'Bandwidth'],
-               loc=[1.025, pos], title=r'\textbf{Server resources}')
+               loc=[1.025, pos - 0.29], title=r'\textbf{Server resources}')  # -0.12
     axe.add_artist(tasks_legend)
+
+    plt.tight_layout()
 
     save_plot(title.lower().replace(' ', '_'), 'example_allocation', image_formats=save_formats)
     plt.show()
