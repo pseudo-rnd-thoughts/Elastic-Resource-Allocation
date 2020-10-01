@@ -23,7 +23,7 @@ from src.optimal.flexible_optimal import flexible_optimal
 
 # noinspection DuplicatedCode
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25,
-                          run_flexible: bool = False, run_fixed: bool = False,
+                          run_flexible: bool = True, run_fixed: bool = True,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
     """
     Evaluates the difference in social welfare when the ratio of computational to bandwidth capacity is changed between
@@ -103,4 +103,10 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
 
 if __name__ == "__main__":
     args = parse_args()
-    server_resource_ratio(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    if args.extra == '' or args.extra == 'full optimal':
+        server_resource_ratio(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'fixed optimal':
+        server_resource_ratio(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, run_flexible=False)
+    elif args.extra == 'time limited':
+        server_resource_ratio(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
+                              run_flexible=False, run_fixed=False)
