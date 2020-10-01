@@ -9,7 +9,6 @@ import pprint
 from typing import Iterable
 
 from greedy.fixed_greedy import fixed_greedy_algorithm
-from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
@@ -24,8 +23,7 @@ from src.optimal.flexible_optimal import flexible_optimal
 
 # noinspection DuplicatedCode
 def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25,
-                          optimal_time_limit: int = 30, fixed_optimal_time_limit: int = 30,
-                          relaxed_time_limit: int = 30, with_optimal: bool = False,
+                          run_flexible: bool = False, run_fixed: bool = False,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
     """
     Evaluates the difference in social welfare when the ratio of computational to bandwidth capacity is changed between
@@ -34,10 +32,8 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
     :param model_dist: The model distribution
     :param repeat_num: The repeat number
     :param repeats: The number of repeats
-    :param optimal_time_limit: The optimal solver time limit
-    :param fixed_optimal_time_limit: The fixed optimal solver time limit
-    :param relaxed_time_limit: The relaxed solver time limit
-    :param with_optimal: If to run the optimal algorithms
+    :param run_flexible: If to run the optimal flexible solver
+    :param run_fixed: If to run the optimal fixed solver
     :param ratios: List of ratios to test
     """
     model_results = []
@@ -63,24 +59,19 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
                 server.update_capacities(int(server_total_resources[server] * ratio),
                                          int(server_total_resources[server] * (1 - ratio)))
 
-            if with_optimal:
+            if run_flexible:
                 # Optimal
-                optimal_result = flexible_optimal(tasks, servers, optimal_time_limit)
+                optimal_result = flexible_optimal(tasks, servers, None)
                 algorithm_results[optimal_result.algorithm] = optimal_result.store(ratio=ratio)
                 pp.pprint(algorithm_results[optimal_result.algorithm])
                 reset_model(tasks, servers)
 
+            if run_fixed:
                 # Fixed optimal
-                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, fixed_optimal_time_limit)
+                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, None)
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store(ratio=ratio)
                 pp.pprint(algorithm_results[fixed_optimal_result.algorithm])
                 reset_model(fixed_tasks, servers)
-
-            # Find the relaxed solution
-            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, relaxed_time_limit)
-            algorithm_results[relaxed_result.algorithm] = relaxed_result.store(ratio=ratio)
-            pp.pprint(algorithm_results[relaxed_result.algorithm])
-            reset_model(tasks, servers)
 
             # Loop over all of the greedy policies permutations
             for value_density in value_densities:

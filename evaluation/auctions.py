@@ -19,21 +19,20 @@ from src.greedy.server_selection_policy import policies as server_selection_poli
 from src.greedy.value_density import policies as value_densities
 
 
-def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, vcg_time_limit: int = 30,
-                       fixed_vcg_time_limit: int = 30, dia_time_limit: int = 3, price_change: int = 3,
-                       initial_price: int = 25, with_vcg: bool = True):
+def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, dia_time_limit: int = 3,
+                       price_change: int = 3, initial_price: int = 25,
+                       run_flexible: bool = True, run_fixed: bool = True):
     """
     Evaluation of different auction algorithms
 
     :param model_dist: The model distribution
     :param repeat_num: The repeat number
     :param repeats: The number of repeats
-    :param vcg_time_limit: The VCG time limit
-    :param fixed_vcg_time_limit: The Fixed VCG time limit
     :param dia_time_limit: Decentralised iterative auction time limit
     :param price_change: The default price change for DIA
     :param initial_price: The default initial price for DIA
-    :param with_vcg: If to run the vcg auctions
+    :param run_flexible: If to run the flexible vcg auction
+    :param run_fixed: If to run the fixed vcg auction
     """
     print(f'Evaluates the auction algorithms (cva, dia, vcg, fixed vcg) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -52,13 +51,14 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         }}
         pp.pprint(algorithm_results)
 
-        if with_vcg:
+        if run_flexible:
             # VCG Auctions
             vcg_result = vcg_auction(tasks, servers, time_limit=None)
             algorithm_results[vcg_result.algorithm] = vcg_result.store()
             vcg_result.pretty_print()
             reset_model(tasks, servers)
 
+        if run_fixed:
             # Fixed VCG Auctions
             fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
@@ -93,7 +93,10 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == '' or args.extra == 'optimal':
+    if args.extra == '' or args.extra == 'full optimal':
         auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'fixed optimal':
+        auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, run_flexible=False)
     elif args.extra == 'time limited':
-        auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, with_vcg=False)
+        auction_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
+                           run_flexible=False, run_fixed=False)
