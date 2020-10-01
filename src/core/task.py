@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from math import ceil
-from random import gauss
+from random import gauss, randint
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -107,10 +107,10 @@ class Task:
         :param mutation_percent: The percentage to increase the max resources by
         """
         return Task(name=f'mutated {self.name}',
-                    required_storage=int(self.required_storage + abs(gauss(0, self.required_storage * mutation_percent))),
-                    required_computation=int(self.required_computation + abs(gauss(0, self.required_computation * mutation_percent))),
-                    required_results_data=int(self.required_results_data + abs(gauss(0, self.required_results_data * mutation_percent))),
-                    deadline=max(1, int(self.deadline - abs(gauss(0, self.deadline * mutation_percent)))),
+                    required_storage=randint(self.required_storage, self.required_storage * mutation_percent),
+                    required_computation=randint(self.required_computation, self.required_computation * mutation_percent),
+                    required_results_data=randint(self.required_results_data, self.required_results_data * mutation_percent),
+                    deadline=max(1, randint(self.deadline * (1 - mutation_percent), self.deadline)),
                     value=self.value)
 
     def save(self):
