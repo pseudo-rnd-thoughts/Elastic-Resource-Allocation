@@ -39,7 +39,7 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
 # noinspection DuplicatedCode
 def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, time_limit: int = 2,
                        price_change: int = 3, initial_price: int = 25,
-                       model_mutations: int = 15, mutate_percent: float = 0.1):
+                       model_mutations: int = 15, mutate_percent: float = 0.15):
     """
     Evaluates the effectiveness of a task mutations on if the mutated task is allocated and if so the difference in
         price between the mutated and normal task

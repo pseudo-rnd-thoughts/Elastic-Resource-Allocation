@@ -107,9 +107,9 @@ class Task:
         :param mutation_percent: The percentage to increase the max resources by
         """
         return Task(name=f'mutated {self.name}',
-                    required_storage=randint(self.required_storage, self.required_storage * mutation_percent),
-                    required_computation=randint(self.required_computation, self.required_computation * mutation_percent),
-                    required_results_data=randint(self.required_results_data, self.required_results_data * mutation_percent),
+                    required_storage=randint(self.required_storage, self.required_storage * (1 + mutation_percent)),
+                    required_computation=randint(self.required_computation, self.required_computation * (1 + mutation_percent)),
+                    required_results_data=randint(self.required_results_data, self.required_results_data * (1 + mutation_percent)),
                     deadline=max(1, randint(self.deadline * (1 - mutation_percent), self.deadline)),
                     value=self.value)
 
