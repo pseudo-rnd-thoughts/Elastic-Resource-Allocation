@@ -123,7 +123,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                 rect.set_width(1 / float(3 + 1))
 
     axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2. - 0.125)
-    axe.set_xticklabels(resources_df[0].index, rotation=0)
+    axe.set_xticklabels(resources_df[0].index, rotation=0, fontsize=10)
     axe.set_xlabel(r'\textbf{Servers}', fontsize=12)
 
     axe.set_ylabel(r'\textbf{Resource Usage}', fontsize=12)
