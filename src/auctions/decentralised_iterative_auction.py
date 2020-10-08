@@ -248,7 +248,10 @@ def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], tas
             debug(f'[-] Removing {task.name} Task, min price is {min_price} and task value is {task.value}',
                   debug_allocation)
 
-        task_rounds[task] += 1
+        if task in task_rounds:
+            task_rounds[task] += 1
+        else:
+            task_rounds[task] = 1
         total_rounds += 1
 
     assert all(0 < task.price for task in tasks if task.running_server)
