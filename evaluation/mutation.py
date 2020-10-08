@@ -314,5 +314,8 @@ if __name__ == "__main__":
         value_only_mutation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'dia repeat':
         dia_repeat(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    elif args.extra == 'special case':
+        dia_repeat(ModelDistribution('models/special_case_1.json'), args.repeat)
+        dia_repeat(ModelDistribution('models/special_case_2.json'), args.repeat)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

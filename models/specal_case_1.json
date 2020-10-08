@@ -1,0 +1,295 @@
+{
+    "name": "mutation 1",
+    "tasks": [
+        {
+            "name": "task 0",
+            "storage": 86,
+            "computation": 127,
+            "results data": 49,
+            "deadline": 9,
+            "value": 55
+        },
+        {
+            "name": "task 1",
+            "storage": 124,
+            "computation": 80,
+            "results data": 34,
+            "deadline": 9,
+            "value": 13
+        },
+        {
+            "name": "task 2",
+            "storage": 113,
+            "computation": 98,
+            "results data": 55,
+            "deadline": 12,
+            "value": 28
+        },
+        {
+            "name": "task 3",
+            "storage": 82,
+            "computation": 107,
+            "results data": 59,
+            "deadline": 9,
+            "value": 2
+        },
+        {
+            "name": "task 4",
+            "storage": 113,
+            "computation": 122,
+            "results data": 53,
+            "deadline": 8,
+            "value": 61
+        },
+        {
+            "name": "task 5",
+            "storage": 113,
+            "computation": 112,
+            "results data": 47,
+            "deadline": 7,
+            "value": 53
+        },
+        {
+            "name": "task 6",
+            "storage": 105,
+            "computation": 94,
+            "results data": 50,
+            "deadline": 10,
+            "value": 71
+        },
+        {
+            "name": "task 7",
+            "storage": 118,
+            "computation": 82,
+            "results data": 48,
+            "deadline": 11,
+            "value": 34
+        },
+        {
+            "name": "task 8",
+            "storage": 106,
+            "computation": 92,
+            "results data": 72,
+            "deadline": 7,
+            "value": 52
+        },
+        {
+            "name": "task 9",
+            "storage": 127,
+            "computation": 90,
+            "results data": 38,
+            "deadline": 9,
+            "value": 30
+        },
+        {
+            "name": "task 10",
+            "storage": 109,
+            "computation": 89,
+            "results data": 41,
+            "deadline": 11,
+            "value": 58
+        },
+        {
+            "name": "task 11",
+            "storage": 110,
+            "computation": 73,
+            "results data": 58,
+            "deadline": 7,
+            "value": 42
+        },
+        {
+            "name": "task 12",
+            "storage": 109,
+            "computation": 90,
+            "results data": 53,
+            "deadline": 9,
+            "value": 24
+        },
+        {
+            "name": "task 13",
+            "storage": 111,
+            "computation": 105,
+            "results data": 65,
+            "deadline": 11,
+            "value": 15
+        },
+        {
+            "name": "task 14",
+            "storage": 77,
+            "computation": 98,
+            "results data": 55,
+            "deadline": 13,
+            "value": 28
+        },
+        {
+            "name": "task 15",
+            "storage": 106,
+            "computation": 103,
+            "results data": 62,
+            "deadline": 10,
+            "value": 41
+        },
+        {
+            "name": "task 16",
+            "storage": 100,
+            "computation": 82,
+            "results data": 39,
+            "deadline": 10,
+            "value": 67
+        },
+        {
+            "name": "task 17",
+            "storage": 113,
+            "computation": 85,
+            "results data": 53,
+            "deadline": 10,
+            "value": 79
+        },
+        {
+            "name": "task 18",
+            "storage": 120,
+            "computation": 85,
+            "results data": 41,
+            "deadline": 12,
+            "value": 17
+        },
+        {
+            "name": "task 19",
+            "storage": 112,
+            "computation": 97,
+            "results data": 63,
+            "deadline": 7,
+            "value": 67
+        },
+        {
+            "name": "task 20",
+            "storage": 119,
+            "computation": 95,
+            "results data": 45,
+            "deadline": 14,
+            "value": 67
+        },
+        {
+            "name": "task 21",
+            "storage": 80,
+            "computation": 102,
+            "results data": 25,
+            "deadline": 8,
+            "value": 34
+        },
+        {
+            "name": "task 22",
+            "storage": 96,
+            "computation": 111,
+            "results data": 23,
+            "deadline": 10,
+            "value": 46
+        },
+        {
+            "name": "task 23",
+            "storage": 89,
+            "computation": 82,
+            "results data": 53,
+            "deadline": 10,
+            "value": 61
+        },
+        {
+            "name": "task 24",
+            "storage": 86,
+            "computation": 87,
+            "results data": 42,
+            "deadline": 12,
+            "value": 82
+        },
+        {
+            "name": "task 25",
+            "storage": 110,
+            "computation": 106,
+            "results data": 28,
+            "deadline": 11,
+            "value": 44
+        },
+        {
+            "name": "task 26",
+            "storage": 99,
+            "computation": 96,
+            "results data": 58,
+            "deadline": 6,
+            "value": 52
+        },
+        {
+            "name": "task 27",
+            "storage": 135,
+            "computation": 105,
+            "results data": 40,
+            "deadline": 11,
+            "value": 59
+        },
+        {
+            "name": "task 28",
+            "storage": 106,
+            "computation": 111,
+            "results data": 67,
+            "deadline": 10,
+            "value": 50
+        },
+        {
+            "name": "task 29",
+            "storage": 113,
+            "computation": 89,
+            "results data": 46,
+            "deadline": 13,
+            "value": 66
+        }
+    ],
+    "servers": [
+        {
+            "name": "server 0",
+            "storage capacity": 476,
+            "computation capacity": 77,
+            "bandwidth capacity": 317,
+            "price change": 3,
+            "initial price": 30
+        },
+        {
+            "name": "server 1",
+            "storage capacity": 389,
+            "computation capacity": 69,
+            "bandwidth capacity": 166,
+            "price change": 3,
+            "initial price": 30
+        },
+        {
+            "name": "server 2",
+            "storage capacity": 516,
+            "computation capacity": 82,
+            "bandwidth capacity": 232,
+            "price change": 3,
+            "initial price": 30
+        },
+        {
+            "name": "server 3",
+            "storage capacity": 363,
+            "computation capacity": 82,
+            "bandwidth capacity": 245,
+            "price change": 3,
+            "initial price": 30
+        },
+        {
+            "name": "server 4",
+            "storage capacity": 501,
+            "computation capacity": 99,
+            "bandwidth capacity": 374,
+            "price change": 3,
+            "initial price": 30
+        },
+        {
+            "name": "server 5",
+            "storage capacity": 441,
+            "computation capacity": 66,
+            "bandwidth capacity": 323,
+            "price change": 3,
+            "initial price": 30
+        }
+    ]
+}
