@@ -82,14 +82,14 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
 
 
 def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
-                            save_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF)):
+                            image_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF)):
     """
     Plots the allocation results
 
     :param tasks: List of tasks
     :param servers: List of servers
     :param title: The title
-    :param save_formats: The save format list
+    :param image_formats: The save image format list
     """
 
     allocated_tasks = [task for task in tasks if task.running_server]
@@ -110,7 +110,7 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
     n_col, n_ind = len(resources_df[0].columns), len(resources_df[0].index)
     hatching = '\\'
 
-    axe = plt.subplot(111)
+    fig, axe = plt.subplots(figsize=(4, 2))
     for resource_df in resources_df:  # for each data frame
         axe = resource_df.plot(kind='bar', linewidth=0, stacked=True, ax=axe, legend=False, grid=False)
 
@@ -122,14 +122,14 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
                 rect.set_hatch(hatching * int(i / n_col))
                 rect.set_width(1 / float(3 + 1))
 
-    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2. - 0.125)
-    axe.set_xticklabels(resources_df[0].index, rotation=0, fontsize=10)
     axe.set_xlabel(r'\textbf{Servers}', fontsize=12)
+    axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(3 + 1)) / 2. - 0.125)
+    axe.set_xticklabels(resources_df[0].index, rotation=0, fontsize=11)
 
     axe.set_ylabel(r'\textbf{Resource Usage}', fontsize=12)
     axe.set_ylim((0.0, 1.0))
     axe.set_yticks([0.0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'])
+    axe.set_yticklabels([r'0\%', r'20\%', r'40\%', r'60\%', r'80\%', r'100\%'], fontsize=11)
 
     # axe.set_title(title, fontsize=16)
 
@@ -142,5 +142,5 @@ def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str
 
     plt.tight_layout()
 
-    save_plot(title.lower().replace(' ', '_'), 'example_allocation', image_formats=save_formats)
+    save_plot(title.lower().replace(' ', '_'), 'example_allocation', image_formats=image_formats)
     plt.show()
