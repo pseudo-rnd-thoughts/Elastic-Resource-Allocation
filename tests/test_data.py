@@ -34,17 +34,28 @@ def test_optimal_data():
             data = json.load(file)
 
         if all('Flexible Optimal' in model for model in data):
-            solve_status = sum('Flexible Optimal' in model and 'solve status' in model['Flexible Optimal']
-                               for model in data)
-            # print(f'{filename}: {solve_status/len(data):.3f}')
             if all('solve status' in model['Flexible Optimal'] for model in data):
-                optimal_percent = sum('Flexible Optimal' in model and 'solve status' in model['Flexible Optimal'] and
-                                      model['Flexible Optimal']['solve status'] == 'Optimal' for model in data)
-                solve_types = {model['Flexible Optimal']['solve status'] for model in data}
-                print(f'{filename}: {optimal_percent/len(data):.3f}')
-                # print(solve_types)
-            else:
-                print(f'{filename} not solve status')
-        else:
-            print(f'{filename} not flexible optimal')
+                flex_opt_percent = sum('Flexible Optimal' in model and 'solve status' in model['Flexible Optimal'] and
+                                       model['Flexible Optimal']['solve status'] == 'Optimal' for model in data)
+                relax_opt_percent = sum('Server Relaxed Flexible Optimal' in model and
+                                        'solve status' in model['Server Relaxed Flexible Optimal'] and
+                                        model['Server Relaxed Flexible Optimal']['solve status'] == 'Optimal'
+                                        for model in data)
 
+                print(f'{filename} - '
+                      f'flexible: {flex_opt_percent / len(data):.3f}, '
+                      f'relaxed: {relax_opt_percent / len(data):.3f}')
+            else:
+                print(f'{filename} - no solve status')
+        else:
+            print(f'{filename} - no flexible optimal')
+
+    print()
+    for filename in os.listdir('../data/auctions'):
+        with open(f'../data/auctions/{filename}') as file:
+            data = json.load(file)
+
+        if all('Solve Status' in model for model in data):
+            print(f'{filename}: solve status')
+        else:
+            print(f'{filename}: no solve status')
