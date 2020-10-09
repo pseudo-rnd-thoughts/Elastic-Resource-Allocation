@@ -17,7 +17,7 @@ from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.value_density import policies as value_densities
+from src.greedy.value_density import policies as value_densities, Value
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
 
@@ -105,6 +105,42 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
     print('Finished running')
 
 
+def lower_bound_testing(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50):
+    print(f'Evaluates the greedy algorithm for {model_dist.name} model with '
+          f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
+    model_results = []
+    pp = pprint.PrettyPrinter()
+    filename = results_filename('lower_bound', model_dist, repeat_num)
+
+    lb_value_densities = value_densities + [Value()]
+    for repeat in range(repeats):
+        print(f'\nRepeat: {repeat}')
+        # Generate the tasks and servers
+        tasks, servers = model_dist.generate()
+        algorithm_results = {'model': {
+            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+        }}
+        pp.pprint(algorithm_results)
+
+        # Loop over all of the greedy policies permutations
+        for value_density in lb_value_densities:
+            for server_selection_policy in server_selection_policies:
+                for resource_allocation_policy in resource_allocation_policies:
+                    greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
+                                                     resource_allocation_policy)
+                    algorithm_results[greedy_result.algorithm] = greedy_result.store()
+                    greedy_result.pretty_print()
+                    reset_model(tasks, servers)
+
+        # Add the results to the data
+        model_results.append(algorithm_results)
+
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished running')
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -115,3 +151,5 @@ if __name__ == "__main__":
     elif args.extra == 'time limited':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_fixed=False)
+    elif args.extra == 'lower bound':
+        lower_bound_testing(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
