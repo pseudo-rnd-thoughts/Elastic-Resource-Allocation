@@ -117,9 +117,9 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[i
 
     global_model_solution = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
     if global_model_solution:
-        assert global_model_solution.get_objective_values()[0] == all(task.value for task in tasks if task.running_server)
         return Result('Flexible VCG', tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
-                      **{'solve status': global_model_solution.get_solve_status()})
+                      **{'solve status': global_model_solution.get_solve_status(),
+                         'cplex objective': global_model_solution.get_objective_values()[0]})
     else:
         print(f'Flexible VCG Auction error', file=sys.stderr)
         return Result('Flexible VCG', tasks, servers, 0, limited=True)
@@ -140,9 +140,9 @@ def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_
 
     global_model_solution = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
     if global_model_solution:
-        assert global_model_solution.get_objective_values()[0] == all(task.value for task in fixed_tasks if task.running_server)
         return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
-                      **{'solve status': global_model_solution.get_solve_status()})
+                      **{'solve status': global_model_solution.get_solve_status(),
+                         'cplex objective': global_model_solution.get_objective_values()[0]})
     else:
         print(f'Fixed VCG Auction error', file=sys.stderr)
         return Result('Fixed VCG', fixed_tasks, servers, 0, limited=True)

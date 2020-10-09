@@ -4,6 +4,7 @@ Fixed optimal algorithm
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
@@ -92,4 +93,8 @@ def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: Opt
     model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
         return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
-                      **{'solve status': model_solution.get_solve_status()})
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
+    else:
+        print(f'Fixed optimal error', file=sys.stderr)
+        return Result('Fixed Optimal', tasks, servers, 0, limited=True)

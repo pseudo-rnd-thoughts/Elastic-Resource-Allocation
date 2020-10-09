@@ -109,7 +109,8 @@ def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: Optio
     model_solution = flexible_optimal_solver(tasks, servers, time_limit)
     if model_solution:
         return Result('Flexible Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
-                      **{'solve status': model_solution.get_solve_status()})
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
     else:
         print(f'Flexible Optimal error', file=sys.stderr)
-        return Result('Optimal', tasks, servers, 0, limited=True)
+        return Result('Flexible Optimal', tasks, servers, 0, limited=True)

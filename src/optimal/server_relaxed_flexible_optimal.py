@@ -4,6 +4,7 @@ Relaxed model with a single super server allow a upper bound to be found, solved
 
 from __future__ import annotations
 
+import sys
 from typing import TYPE_CHECKING, Optional
 
 from optimal.flexible_optimal import flexible_optimal_solver
@@ -32,4 +33,8 @@ def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server],
     if model_solution:
         return Result('Server Relaxed Flexible Optimal', tasks, [super_server],
                       round(model_solution.get_solve_time(), 2),
-                      **{'solve status': model_solution.get_solve_status()})
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
+    else:
+        print(f'Server Relaxed Flexible Optimal error', file=sys.stderr)
+        return Result('Server Relaxed Flexible Optimal', tasks, servers, 0, limited=True)
