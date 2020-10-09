@@ -18,12 +18,12 @@ if TYPE_CHECKING:
 class ModelDistribution:
     """Model distributions"""
 
-    def __init__(self, dist_file: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
-        self.file = dist_file
+    def __init__(self, filename: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
+        self.filename = filename
         self.num_tasks = num_tasks
         self.num_servers = num_servers
 
-        with open(self.file) as file:
+        with open(self.filename) as file:
             self.model_data = json.load(file)
 
             self.name: str = self.model_data['name']
