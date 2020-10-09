@@ -8,6 +8,7 @@ the value of a task for the case of military tactical networks.
 from __future__ import annotations
 
 import json
+import os
 import pprint
 import random as rnd
 from typing import TYPE_CHECKING, Iterable
@@ -315,7 +316,8 @@ if __name__ == "__main__":
     elif args.extra == 'dia repeat':
         dia_repeat(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'special case':
-        dia_repeat(ModelDistribution('models/special_case_1.mdl'), args.repeat, repeats=1, auction_repeats=10)
-        dia_repeat(ModelDistribution('models/special_case_2.mdl'), args.repeat, repeats=1, auction_repeats=10)
+        print(os.getcwd())
+        dia_repeat(ModelDistribution('models/special_case_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
+        dia_repeat(ModelDistribution('models/special_case_2.mdl'), args.repeat, repeats=0, auction_repeats=10)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')
