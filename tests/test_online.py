@@ -13,11 +13,10 @@ from core.server import Server
 from core.task import Task
 from extra.model import ModelDistribution
 from extra.visualise import minimise_resource_allocation
-from greedy.fixed_greedy import fixed_greedy_algorithm
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
-from greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
+from greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
 from online import generate_batch_tasks, online_batch_solver
 from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
@@ -157,22 +156,22 @@ def test_minimise_resources():
     model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
 
-    def custom_solver(tasks: List[Task], servers: List[Server],
+    def custom_solver(_tasks: List[Task], _servers: List[Server],
                       solver_time_limit: int = 3, minimise_time_limit: int = 2):
         valid_servers = [server for server in servers if
                          1 <= server.available_computation and 1 <= server.available_bandwidth]
         server_availability = {server: (server.available_computation, server.available_bandwidth) for server in servers}
-        flexible_optimal_solver(tasks, valid_servers, solver_time_limit)
+        flexible_optimal_solver(_tasks, valid_servers, solver_time_limit)
 
         for server, (compute_availability, bandwidth_availability) in server_availability.items():
-            server_old_tasks = [task for task in server.allocated_tasks if task not in tasks]
+            server_old_tasks = [task for task in server.allocated_tasks if task not in _tasks]
             max_bandwidth = server.bandwidth_capacity - sum(
                 task.loading_speed + task.sending_speed for task in server_old_tasks)
             max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
             assert compute_availability == max_computation, f'Availability: {compute_availability}, actual: {max_computation}'
             assert bandwidth_availability == max_bandwidth, f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
 
-        minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
+        minimise_resource_allocation(_tasks, valid_servers, minimise_time_limit)
 
     batched_tasks = generate_batch_tasks(tasks, 1, 20)
     optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',

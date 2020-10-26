@@ -16,7 +16,7 @@ from src.extra.pprint import print_model
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
-from src.greedy.value_density import UtilityDeadlinePerResource
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource
 from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
 from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 
@@ -60,11 +60,11 @@ def test_minimise_resource_allocation():
     tasks, servers = model_dist.generate()
 
     flexible_optimal(tasks, servers, 5)
-    plot_allocation_results(tasks, servers, "Optimal Flexible Resource Allocation", save_formats=[])
+    plot_allocation_results(tasks, servers, "Optimal Flexible Resource Allocation", image_formats=[])
     plt.show()
 
     minimise_resource_allocation(tasks, servers)
-    plot_allocation_results(tasks, servers, "Minimised Optimal Flexible Resource Allocation", save_formats=[])
+    plot_allocation_results(tasks, servers, "Minimised Optimal Flexible Resource Allocation", image_formats=[])
     plt.show()
 
 

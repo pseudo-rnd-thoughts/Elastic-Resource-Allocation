@@ -16,7 +16,7 @@ from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.value_density import policies as value_densities
+from src.greedy.task_prioritisation import policies as task_priorities
 
 
 def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, dia_time_limit: int = 3,
@@ -72,10 +72,10 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         reset_model(tasks, servers)
 
         # Critical Value Auction
-        for value_density in value_densities:
+        for task_priority in task_priorities:
             for server_selection_policy in server_selection_policies:
                 for resource_allocation_policy in resource_allocation_policies:
-                    critical_value_result = critical_value_auction(tasks, servers, value_density,
+                    critical_value_result = critical_value_auction(tasks, servers, task_priority,
                                                                    server_selection_policy, resource_allocation_policy)
                     algorithm_results[critical_value_result.algorithm] = critical_value_result.store()
                     critical_value_result.pretty_print()

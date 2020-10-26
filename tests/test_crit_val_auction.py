@@ -11,7 +11,7 @@ from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
-from greedy.value_density import UtilityPerResources
+from greedy.task_prioritisation import UtilityPerResources
 
 
 def test_critical_value(error: float = 0.05):

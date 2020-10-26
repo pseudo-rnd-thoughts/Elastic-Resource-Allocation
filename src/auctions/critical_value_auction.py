@@ -25,10 +25,10 @@ if TYPE_CHECKING:
 
     from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
     from src.greedy.server_selection_policy import ServerSelectionPolicy
-    from src.greedy.value_density import ValueDensity
+    from src.greedy.task_prioritisation import TaskPriority
 
 
-def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: ValueDensity,
+def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: TaskPriority,
                            server_selection_policy: ServerSelectionPolicy,
                            resource_allocation_policy: ResourceAllocationPolicy,
                            debug_initial_allocation: bool = False, debug_critical_value: bool = False) -> Result:

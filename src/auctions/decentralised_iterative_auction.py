@@ -15,7 +15,7 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIM
 
 from src.core.core import reset_model, server_task_allocation, debug
 from src.extra.result import Result
-from src.greedy.value_density import ResourceSum
+from src.greedy.task_prioritisation import ResourceSum
 
 if TYPE_CHECKING:
     from typing import List, Tuple, Iterable, TypeVar
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
     from src.core.server import Server
     from src.core.task import Task
-    from src.greedy.value_density import ValueDensity
+    from src.greedy.task_prioritisation import TaskPriority
 
     T = TypeVar('T')
 
@@ -66,7 +66,7 @@ class PriceDensity(ABC):
 class PriceResourcePerDeadline(PriceDensity):
     """The product of utility and deadline divided by required resources"""
 
-    def __init__(self, resource_func: ValueDensity = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSum()):
         PriceDensity.__init__(self, f'Price * {resource_func.name} / deadline')
         self.resource_func = resource_func
 

@@ -16,7 +16,7 @@ from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPercentage
 from greedy.server_selection_policy import SumResources
-from greedy.value_density import UtilityDeadlinePerResource
+from greedy.task_prioritisation import UtilityDeadlinePerResource
 from optimal.fixed_optimal import fixed_optimal
 
 

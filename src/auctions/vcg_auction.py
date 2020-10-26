@@ -1,15 +1,11 @@
 """
 Implementation of an VCG auctions
-
-Todo add update for choice optimal solver
-Todo add fixed_vcg auction
 """
 
 from __future__ import annotations
 
 import functools
 import sys
-from time import time
 from typing import TYPE_CHECKING, TypeVar, Callable
 
 from docplex.cp.solution import CpoSolveResult
@@ -55,8 +51,6 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
     :param debug_running: If to debug the running algorithm
     :return: Total solve time
     """
-    start_time = time()
-
     # Price information
     task_prices: Dict[Task, float] = {}
 

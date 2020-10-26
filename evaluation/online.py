@@ -18,14 +18,13 @@ from core.task import Task
 from extra.io import results_filename, parse_args
 from extra.result import Result, resource_usage
 from extra.visualise import minimise_resource_allocation
-from greedy.fixed_greedy import fixed_greedy_algorithm
 from greedy.greedy import greedy_algorithm
 from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import SumPowPercentage
 from src.greedy.server_selection_policy import ProductResources
-from src.greedy.value_density import UtilityDeadlinePerResource, ResourceSqrt
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
 
 
 def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], batch_length: int,
@@ -129,7 +128,8 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
 
 def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
                      batch_lengths: Iterable[int] = (1, 2, 4, 6), time_steps: int = 200, mean_arrival_rate: int = 3,
-                     std_arrival_rate: float = 2, optimal_time_limit: int = 10, fixed_optimal_time_limit: int = 10):
+                     std_arrival_rate: float = 2, task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
+                     server_selection_policy=ProductResources(), resource_allocation_policy=SumPowPercentage()):
     """
     Evaluates the batch online
 
@@ -140,8 +140,9 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
     :param time_steps: Total number of time steps
     :param mean_arrival_rate: Mean arrival rate of tasks
     :param std_arrival_rate: Standard deviation arrival rate of tasks
-    :param optimal_time_limit: Optimal time limit
-    :param fixed_optimal_time_limit: Fixed optimal time limit
+    :param task_priority:
+    :param server_selection_policy:
+    :param resource_allocation_policy:
     """
     print(f'Evaluates difference in performance between batch and online algorithm for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -149,13 +150,14 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
     pp = pprint.PrettyPrinter()
     filename = results_filename('batch_online', model_dist, repeat_num)
 
+    name = f'Greedy {task_priority.name}, {server_selection_policy.name}, ' \
+           f'{resource_allocation_policy.name}'
+
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
         fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
-        # original_server_capacities = {server: (server.computation_capacity, server.bandwidth_capacity)
-        #                               for server in servers}
         batch_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -169,48 +171,28 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
             flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
 
-            # Update the server capacities
-            # for server in servers:
-            #     server.computation_capacity = original_server_capacities[server][0] * batch_length
-            #     server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
-
             algorithm_results = {}
             if batch_length == 1:
-                # optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
-                #                                      minimal_flexible_optimal_solver, solver_time_limit=optimal_time_limit)
-                # algorithm_results[optimal_result.algorithm] = optimal_result.store()
-                # optimal_result.pretty_print()
-                # reset_model(flattened_tasks, servers)
+                optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
+                                                     minimal_flexible_optimal_solver, solver_time_limit=None)
+                algorithm_results[optimal_result.algorithm] = optimal_result.store()
+                optimal_result.pretty_print()
+                reset_model(flattened_tasks, servers)
 
-                # fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
-                #                                            fixed_optimal_solver, time_limit=fixed_optimal_time_limit)
-                # algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-                # fixed_optimal_result.pretty_print()
-                # reset_model(flattened_fixed_tasks, servers)
-                pass
+                fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
+                                                           fixed_optimal_solver, time_limit=None)
+                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+                fixed_optimal_result.pretty_print()
+                reset_model(flattened_fixed_tasks, servers)
 
             # Loop over all of the greedy policies permutations
-            value_density = UtilityDeadlinePerResource(ResourceSqrt())
-            server_selection_policy = ProductResources()
-            resource_allocation_policy = SumPowPercentage()
-            name = f'Greedy {value_density.name}, {server_selection_policy.name}, ' \
-                   f'{resource_allocation_policy.name}'
             greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
-                                                greedy_algorithm, value_density=value_density,
+                                                greedy_algorithm, task_priority=task_priority,
                                                 server_selection_policy=server_selection_policy,
                                                 resource_allocation_policy=resource_allocation_policy)
             algorithm_results[greedy_result.algorithm] = greedy_result.store()
             greedy_result.pretty_print()
             reset_model(flattened_tasks, servers)
-
-            # Loop over all of the greedy policies permutations
-            name = f'Fixed Greedy {value_density.name}, {server_selection_policy.name}'
-            fixed_greedy_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, name,
-                                                      fixed_greedy_algorithm, value_density=value_density,
-                                                      server_selection_policy=server_selection_policy)
-            algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
-            fixed_greedy_result.pretty_print()
-            reset_model(flattened_fixed_tasks, servers)
 
             # Add the results to the data
             batch_results[f'batch length {batch_length}'] = algorithm_results

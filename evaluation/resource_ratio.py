@@ -8,7 +8,6 @@ import json
 import pprint
 from typing import Iterable
 
-from greedy.fixed_greedy import fixed_greedy_algorithm
 from src.core.core import reset_model
 from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
@@ -16,7 +15,7 @@ from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.value_density import policies as value_densities
+from src.greedy.task_prioritisation import policies as task_priorities
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
 
@@ -74,23 +73,14 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
                 reset_model(fixed_tasks, servers)
 
             # Loop over all of the greedy policies permutations
-            for value_density in value_densities:
+            for task_priority in task_priorities:
                 for server_selection_policy in server_selection_policies:
                     for resource_allocation_policy in resource_allocation_policies:
-                        greedy_result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
+                        greedy_result = greedy_algorithm(tasks, servers, task_priority, server_selection_policy,
                                                          resource_allocation_policy)
                         algorithm_results[greedy_result.algorithm] = greedy_result.store(ratio=ratio)
                         pp.pprint(algorithm_results[greedy_result.algorithm])
                         reset_model(tasks, servers)
-
-            # Loop over all of the fixed greedy policies permutations
-            for value_density in value_densities:
-                for server_selection_policy in server_selection_policies:
-                    fixed_greedy_result = fixed_greedy_algorithm(fixed_tasks, servers, value_density,
-                                                                 server_selection_policy)
-                    algorithm_results[fixed_greedy_result.algorithm] = fixed_greedy_result.store()
-                    fixed_greedy_result.pretty_print()
-                    reset_model(fixed_tasks, servers)
 
             ratio_results[f'ratio {ratio}'] = algorithm_results
         model_results.append(ratio_results)
