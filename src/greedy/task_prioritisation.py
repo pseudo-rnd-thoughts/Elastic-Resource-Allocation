@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import exp, sqrt
-from random import random
-from typing import TYPE_CHECKING
+from random import random, gauss
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from typing import List
@@ -198,6 +198,32 @@ class Value(TaskPriority):
     def inverse(self, task: Task, density: float) -> float:
         """Inverse evaluation function"""
         return density
+
+
+class EvolutionStrategy(TaskPriority):
+    """Covariance matrix adaption evolution strategy"""
+
+    def __init__(self, name: int, value_var: Optional[float] = None, deadline_var: Optional[float] = None,
+                 storage_var: Optional[float] = None, computational_var: Optional[float] = None,
+                 bandwidth_var: Optional[float] = None):
+        TaskPriority.__init__(self, f'CMS-ES {name}')
+
+        self.value_var = value_var if value_var else gauss(0, 1)
+        self.deadline_var = deadline_var if deadline_var else gauss(0, 1)
+        self.storage_var = storage_var if storage_var else gauss(0, 1)
+        self.comp_var = computational_var if computational_var else gauss(0, 1)
+        self.results_var = bandwidth_var if bandwidth_var else gauss(0, 1)
+
+    def evaluate(self, task: Task) -> float:
+        """task prioritisation function"""
+        # Todo normally these variables are multiplied together
+        return (self.value_var * task.value + self.deadline_var * task.deadline) / \
+               (self.storage_var * task.required_storage + self.comp_var * task.required_computation +
+                self.results_var * task.required_results_data)
+
+    def inverse(self, task: Task, density: float) -> float:
+        """Inverse evaluation function"""
+        raise NotImplemented('Evolution Strategy for task priority is not implemented yet')
 
 
 # Functions you actually want to use

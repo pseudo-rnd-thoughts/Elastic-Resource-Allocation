@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from random import gauss
+from typing import TYPE_CHECKING, Optional
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
@@ -29,14 +30,17 @@ class ResourceAllocationPolicy(ABC):
         :return: A tuple of resource speeds
         """
 
-        """        return min(((s, w, r)
-                            for s in range(1, server.available_bandwidth + 1)
-                            for w in range(1, server.available_computation + 1)
-                            for r in range(1, server.available_bandwidth - s + 1)
-                            if task.required_storage * w * r + s * task.required_computation * r +
-                            s * w * task.required_results_data <= task.deadline * s * w * r),
-                           key=lambda bid: self.resource_evaluator(task, server, bid[0], bid[1], bid[2]))"""
-        # TODO update this to cplex or KKT
+        """
+        Initial version that attempts brute force however too computationally expensive when the discretisation of the 
+            server resources is too high
+        return min(((s, w, r)
+                    for s in range(1, server.available_bandwidth + 1)
+                    for w in range(1, server.available_computation + 1)
+                    for r in range(1, server.available_bandwidth - s + 1)
+                    if task.required_storage * w * r + s * task.required_computation * r +
+                    s * w * task.required_results_data <= task.deadline * s * w * r),
+                   key=lambda bid: self.resource_evaluator(task, server, bid[0], bid[1], bid[2]))"""
+        # TODO possible to use KKT
         model = CpoModel('resource allocation')
 
         loading = model.integer_var(min=1, max=server.available_bandwidth - 1)
@@ -50,11 +54,11 @@ class ResourceAllocationPolicy(ABC):
         model.add(loading + sending <= server.available_bandwidth)
 
         model.minimize(self.resource_evaluator(task, server, loading, compute, sending))
-        model_solution = model.solve(log_output=None)
+        model_solution = model.solve(log_output=None, TimeLimit=2)
 
         if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-            print(f'Optimal algorithm failed - status: {model_solution.get_solve_status()} '
+            print(f'Resource allocation fail - status: {model_solution.get_solve_status()} '
                   f'for {str(task)} and {str(server)}')
         return model_solution.get_value(loading), model_solution.get_value(compute), model_solution.get_value(sending)
 
@@ -124,6 +128,23 @@ class DeadlinePercent(ResourceAllocationPolicy):
         return (task.required_storage / loading_speed +
                 task.required_computation / compute_speed +
                 task.required_results_data / sending_speed) / task.deadline
+
+
+class EvolutionStrategy(ResourceAllocationPolicy):
+    """Covariance matrix adaption evolution strategy"""
+
+    def __init__(self, name: int, loading_var: Optional[float] = None, compute_var: Optional[float] = None,
+                 sending_var: Optional[float] = None):
+        ResourceAllocationPolicy.__init__(self, f'CMA-ES {name}')
+
+        self.loading_var = loading_var if loading_var else gauss(0, 1)
+        self.compute_var = compute_var if compute_var else gauss(0, 1)
+        self.sending_var = sending_var if sending_var else gauss(0, 1)
+
+    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+                           sending_speed: int) -> float:
+        """Resource evaluator"""
+        return self.loading_var * loading_speed + self.compute_var * compute_speed + self.sending_var * sending_speed
 
 
 policies = (

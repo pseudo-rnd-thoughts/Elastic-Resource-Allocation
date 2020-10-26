@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from random import choice
+from random import choice, gauss
 from typing import TYPE_CHECKING
 
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -119,6 +119,23 @@ class TaskSumResources(ServerSelectionPolicy):
         return task.required_storage / server.available_storage + \
             compute / server.available_computation + \
             (loading + sending) / server.available_bandwidth
+
+
+class EvolutionStrategy(ServerSelectionPolicy):
+    """Covariance matrix adaption evolution strategy"""
+
+    def __init__(self, name: int, avail_storage_var: Optional[float] = None, avail_comp_var: Optional[float] = None,
+                 avail_bandwidth_var: Optional[float] = None, maximise: bool = True):
+        ServerSelectionPolicy.__init__(self, f'CMS-ES {name}', maximise)
+
+        self.avail_storage_var = avail_storage_var if avail_storage_var else gauss(0, 1)
+        self.avail_comp_var = avail_comp_var if avail_comp_var else gauss(0, 1)
+        self.avail_bandwidth_var = avail_bandwidth_var if avail_bandwidth_var else gauss(0, 1)
+
+    def value(self, task: Task, server: Server) -> float:
+        """Value function"""
+        return self.avail_storage_var * server.available_storage + self.avail_comp_var * server.available_computation + \
+            self.avail_bandwidth_var * server.available_bandwidth
 
 
 policies = [
