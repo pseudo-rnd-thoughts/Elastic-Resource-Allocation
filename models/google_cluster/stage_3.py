@@ -8,7 +8,7 @@ import json
 # priority, cpu, ram, disk, count
 resource_df = pd.read_csv('resource_count.csv')
 
-resource_df['count'] = resource_df['count'] // 3
+resource_df['count'] //= 3
 resource_df = resource_df[(resource_df['cpu'] > 0) & (resource_df['ram'] > 0) & (resource_df['disk'] > 0)]
 
 top_resource_df = resource_df[resource_df['count'] >= 1000]
