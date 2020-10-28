@@ -158,6 +158,15 @@ def test_minimise_resources():
 
     def custom_solver(_tasks: List[Task], _servers: List[Server],
                       solver_time_limit: int = 3, minimise_time_limit: int = 2):
+        """
+        A custom solver for the flexible optimal solver which then checks that resource allocation is valid then
+            minimises resource allocation
+
+        :param _tasks: List of tasks for the time interval
+        :param _servers: List of servers
+        :param solver_time_limit: Flexible resource allocation time limit
+        :param minimise_time_limit: Minimise resource allocation time limit
+        """
         valid_servers = [server for server in servers if
                          1 <= server.available_computation and 1 <= server.available_bandwidth]
         server_availability = {server: (server.available_computation, server.available_bandwidth) for server in servers}
@@ -218,7 +227,7 @@ def test_task_batching(model_dist=ModelDistribution('models/online_paper.mdl', n
 
     def flatten(tss):
         """
-        Faltten all of the task from time based to 1 dimensional
+        Flatten all of the task from time based (2 dimensional) to 1 dimensional
 
         :param tss: Time series of batched tasks
         :return: List  of tasks
