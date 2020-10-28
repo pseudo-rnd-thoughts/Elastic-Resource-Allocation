@@ -11,16 +11,16 @@ from math import ceil
 from time import time
 from typing import Iterable, List
 
-from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
-from core.server import Server
-from core.task import Task
-from extra.io import results_filename, parse_args
-from extra.result import Result, resource_usage
-from extra.visualise import minimise_resource_allocation
-from greedy.greedy import greedy_algorithm
-from optimal.fixed_optimal import fixed_optimal_solver
-from optimal.flexible_optimal import flexible_optimal_solver
+from src.core.core import reset_model
+from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
+from src.core.server import Server
+from src.core.task import Task
+from src.extra.io import results_filename, parse_args
+from src.extra.result import Result, resource_usage
+from src.extra.visualise import minimise_resource_allocation
+from src.greedy.greedy import greedy_algorithm
+from src.optimal.fixed_optimal import fixed_optimal_solver
+from src.optimal.flexible_optimal import flexible_optimal_solver
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import SumPowPercentage
 from src.greedy.server_selection_policy import ProductResources

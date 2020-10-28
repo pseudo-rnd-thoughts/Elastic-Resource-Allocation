@@ -7,8 +7,8 @@ from __future__ import annotations
 import json
 import pprint
 
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
+from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model, set_server_heuristics
 from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
 from src.extra.io import parse_args, results_filename
@@ -95,6 +95,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
     print('Finished running')
 
 
+# noinspection DuplicatedCode
 def lower_bound_testing(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50):
     """
     Testing is to compare the lower bound of the greedy to the best greedy algorithm

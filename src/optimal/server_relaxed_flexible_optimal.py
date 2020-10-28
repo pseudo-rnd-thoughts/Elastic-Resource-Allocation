@@ -7,7 +7,7 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Optional
 
-from optimal.flexible_optimal import flexible_optimal_solver
+from src.optimal.flexible_optimal import flexible_optimal_solver
 from src.core.super_server import SuperServer
 from src.extra.result import Result
 
