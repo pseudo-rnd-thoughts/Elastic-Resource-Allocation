@@ -10,7 +10,7 @@ import sys
 import numpy as np
 
 from core.core import reset_model
-from core.fixed_task import SumSpeedPowsFixedPolicy, FixedTask
+from core.fixed_task import SumSpeedPowFixedPolicy, FixedTask
 from extra.io import parse_args
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
@@ -43,10 +43,9 @@ def test_model_probability():
     with open('models/basic.mdl') as file:
         file_data = json.load(file)
 
-        task_probabilities = [task_distribution['probability'] for task_distribution in file_data['task distributions']]
-        print(f'Task Probabilities: [{" ".join([str(prob) for prob in task_probabilities])}]')
-        print(
-            f'Sum probabilities: [{" ".join([str(sum(task_probabilities[:p + 1])) for p in range(len(task_probabilities))])}]')
+        task_prob = [task_distribution['probability'] for task_distribution in file_data['task distributions']]
+        print(f'Task Probabilities: [{" ".join([str(prob) for prob in task_prob])}]')
+        print(f'Sum probabilities: [{" ".join([str(sum(task_prob[:p + 1])) for p in range(len(task_prob))])}]')
 
         prob = rnd.random()
         print(f'Probability: {prob}')
@@ -91,13 +90,13 @@ def test_args():
     eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], 'models/test.mdl', 10, 11, 12)
 
 
-def test_model_tasks(model_file: str = 'models/paper.mdl', num_servers=8):
+def test_model_tasks(model_file: str = 'models/synthetic.mdl', num_servers=8):
     greedy_results = []
     fixed_results = []
     for num_tasks in range(24, 60, 4):
         model = ModelDistribution(model_file, num_tasks=num_tasks, num_servers=num_servers)
         tasks, servers = model.generate()
-        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
 
         greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(),
                                                            SumResources(), SumPercentage())])

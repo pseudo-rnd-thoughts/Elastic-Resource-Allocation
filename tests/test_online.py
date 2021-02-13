@@ -8,21 +8,21 @@ from math import ceil
 from typing import Iterable, List
 
 from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
+from core.fixed_task import FixedTask, SumSpeedPowFixedPolicy
 from core.server import Server
 from core.task import Task
+from evaluation.online import generate_batch_tasks, online_batch_solver
 from extra.model import ModelDistribution
 from extra.visualise import minimise_resource_allocation
 from greedy.greedy import greedy_algorithm
 from greedy.resource_allocation_policy import SumPowPercentage
 from greedy.server_selection_policy import SumResources
 from greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
-from online import generate_batch_tasks, online_batch_solver
 from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
 
 
-def test_online_model_generation(model_dist=ModelDistribution('models/paper.mdl', num_servers=8),
+def test_online_model_generation(model_dist=ModelDistribution('models/synthetic.mdl', num_servers=8),
                                  time_steps: int = 50, batch_lengths: Iterable[int] = (1, 2, 4, 5, 10),
                                  mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
@@ -38,9 +38,9 @@ def test_online_model_generation(model_dist=ModelDistribution('models/paper.mdl'
         print(f'Batch lengths: [{", ".join([f"{len(batch_tasks)}" for batch_tasks in batched_tasks])}]')
 
 
-def test_online_server_capacities(model_dist=ModelDistribution('models/paper.mdl', num_servers=8), time_steps: int = 50,
-                                  batch_length: int = 3, mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
-                                  capacities: float = 0.3):
+def test_online_server_capacities(model_dist=ModelDistribution('models/synthetic.mdl', num_servers=8),
+                                  time_steps: int = 50, batch_length: int = 3,
+                                  mean_arrival_rate: int = 4, std_arrival_rate: float = 2, capacities: float = 0.3):
     print()
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
     for server in servers:
@@ -60,7 +60,7 @@ def test_online_server_capacities(model_dist=ModelDistribution('models/paper.mdl
 def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
 
     # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
     # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
@@ -140,7 +140,7 @@ def test_caroline_online_models(batch_length: int = 1):
 def test_online_fixed_task():
     model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
-    fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
     batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
 
     for batch_fixed_tasks in batched_fixed_tasks:
@@ -177,8 +177,10 @@ def test_minimise_resources():
             max_bandwidth = server.bandwidth_capacity - sum(
                 task.loading_speed + task.sending_speed for task in server_old_tasks)
             max_computation = server.computation_capacity - sum(task.compute_speed for task in server_old_tasks)
-            assert compute_availability == max_computation, f'Availability: {compute_availability}, actual: {max_computation}'
-            assert bandwidth_availability == max_bandwidth, f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
+            assert compute_availability == max_computation, \
+                f'Availability: {compute_availability}, actual: {max_computation}'
+            assert bandwidth_availability == max_bandwidth, \
+                f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
 
         minimise_resource_allocation(_tasks, valid_servers, minimise_time_limit)
 
