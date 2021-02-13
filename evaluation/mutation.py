@@ -175,9 +175,10 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
                     mutated_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
                     mutated_result.pretty_print()
                     mutation_results[f'Mutation {mutation_pos}'] = mutated_result.store(**{
-                        'mutated task': task.name, 'task price': mutant_task.price, 'required storage': required_storage,
-                        'required computation': required_computation, 'required results data': required_results_data,
-                        'deadline': deadline, 'allocated': mutant_task.running_server is not None
+                        'mutated task': task.name, 'task price': mutant_task.price,
+                        'required storage': required_storage, 'required computation': required_computation,
+                        'required results data': required_results_data, 'deadline': deadline,
+                        'allocated': mutant_task.running_server is not None
                     })
                     mutation_pos += 1
 
@@ -317,7 +318,7 @@ if __name__ == "__main__":
         dia_repeat(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'special case':
         print(os.getcwd())
-        dia_repeat(ModelDistribution('models/special_case_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
-        dia_repeat(ModelDistribution('models/special_case_2.mdl'), args.repeat, repeats=0, auction_repeats=10)
+        dia_repeat(ModelDistribution('models/mutation_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
+        dia_repeat(ModelDistribution('models/mutation_2.mdl'), args.repeat, repeats=0, auction_repeats=10)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')
