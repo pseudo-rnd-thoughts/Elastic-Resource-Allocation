@@ -134,7 +134,8 @@ class EvolutionStrategy(ServerSelectionPolicy):
 
     def value(self, task: Task, server: Server) -> float:
         """Value function"""
-        return self.avail_storage_var * server.available_storage + self.avail_comp_var * server.available_computation + \
+        return self.avail_storage_var * server.available_storage + \
+            self.avail_comp_var * server.available_computation + \
             self.avail_bandwidth_var * server.available_bandwidth
 
 

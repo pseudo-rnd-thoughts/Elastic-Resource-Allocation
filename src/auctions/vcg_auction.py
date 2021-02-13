@@ -134,9 +134,9 @@ def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_
 
     global_model_solution = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
     if global_model_solution:
-        return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
-                      **{'solve status': global_model_solution.get_solve_status(),
-                         'cplex objective': global_model_solution.get_objective_values()[0]})
+        return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2),
+                      is_auction=True, **{'solve status': global_model_solution.get_solve_status(),
+                                          'cplex objective': global_model_solution.get_objective_values()[0]})
     else:
         print(f'Fixed VCG Auction error', file=sys.stderr)
         return Result('Fixed VCG', fixed_tasks, servers, 0, limited=True)

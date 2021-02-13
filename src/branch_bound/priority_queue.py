@@ -201,12 +201,14 @@ class PriorityQueue(Generic[T]):
         if left < self.size:
             assert self.comparator(self.queue[pos], self.queue[left]) != Comparison.LESS, \
                 f"Assert tree in pos: {pos} ({left}) is less than left: {self.to_string(self.queue[pos])} " \
-                f"({self.to_string(self.queue[left])}), [{','.join([self.to_string(element) for element in self.queue])}]"
+                f"({self.to_string(self.queue[left])}), " \
+                f"[{','.join([self.to_string(element) for element in self.queue])}]"
             self.assert_tree(left)
 
         right = self.right(pos)
         if right < self.size:
             assert self.comparator(self.queue[pos], self.queue[right]) != Comparison.LESS, \
                 f"Assert tree in pos: {pos} ({left}) is less than right: {self.to_string(self.queue[pos])} " \
-                f"({self.to_string(self.queue[right])}), [{','.join([self.to_string(element) for element in self.queue])}]"
+                f"({self.to_string(self.queue[right])}), " \
+                f"[{','.join([self.to_string(element) for element in self.queue])}]"
             self.assert_tree(right)

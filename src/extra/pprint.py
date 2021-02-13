@@ -38,8 +38,8 @@ def print_task_allocation(tasks: List[Task]):
     for task in tasks:
         if task.running_server:
             print(
-                f"Job {task.name:<{max_task_name_len}} - Server {task.running_server.name}, loading: {task.loading_speed},"
-                f" compute: {task.compute_speed}, sending: {task.sending_speed}")
+                f"Job {task.name:<{max_task_name_len}} - Server {task.running_server.name}, "
+                f"loading: {task.loading_speed}, compute: {task.compute_speed}, sending: {task.sending_speed}")
         else:
             print(f'Job {task.name} - None')
 

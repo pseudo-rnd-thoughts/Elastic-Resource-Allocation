@@ -103,8 +103,9 @@ class Server:
             f'Server computation failure for Server {self.name} available computation {self.available_computation}, ' \
             f'task compute speed {task.compute_speed}'
         assert task.loading_speed + task.sending_speed <= self.available_bandwidth, \
-            f'Server available bandwidth failure for Server {self.name} available bandwidth {self.available_bandwidth}, ' \
-            f'task loading speed {task.loading_speed} and sending speed {task.sending_speed}'
+            f'Server available bandwidth failure for Server {self.name} with ' \
+            f'available bandwidth {self.available_bandwidth} for task with ' \
+            f'loading speed {task.loading_speed} and sending speed {task.sending_speed}'
         assert task not in self.allocated_tasks, \
             f'Job {task.name} is already allocated to the server {self.name}'
 
