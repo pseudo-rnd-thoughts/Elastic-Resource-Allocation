@@ -3,10 +3,8 @@
 from datetime import datetime
 
 import pandas as pd
-from memory_profiler import profile
 
 
-@profile
 def analysis():
     """
     Analysis the task events file
