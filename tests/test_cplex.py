@@ -27,7 +27,7 @@ def test_cplex():
 
 
 def test_cp_optimality():
-    model = ModelDistribution('models/paper.mdl', 20, 3)
+    model = ModelDistribution('models/synthetic.mdl', 20, 3)
     tasks, servers = model.generate()
 
     results = flexible_optimal_solver(tasks, servers, time_limit=10)
@@ -36,7 +36,7 @@ def test_cp_optimality():
 
 # noinspection DuplicatedCode
 def test_mip_model():
-    model = ModelDistribution('models/paper.mdl', 4, 2)
+    model = ModelDistribution('models/synthetic.mdl', 4, 2)
     tasks, servers = model.generate()
 
     model = Model('test')
@@ -85,7 +85,7 @@ def test_mip_model():
 
 
 def test_branch_bound():
-    model = ModelDistribution('models/paper.mdl', 4, 2)
+    model = ModelDistribution('models/synthetic.mdl', 4, 2)
     tasks, servers = model.generate()
 
     branch_bound_result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)

@@ -19,7 +19,7 @@ from optimal.flexible_optimal import flexible_optimal
 
 def test_greedy_task_price():
     print()
-    model = ModelDistribution('models/paper.mdl', 20, 3)
+    model = ModelDistribution('models/synthetic.mdl', 20, 3)
     tasks, servers = model.generate()
 
     server = servers[0]
@@ -73,7 +73,7 @@ def test_greedy_task_price():
 
 def test_optimal_vs_greedy_dia(repeats: int = 5):
     print()
-    model = ModelDistribution('models/paper.mdl', 20, 3)
+    model = ModelDistribution('models/synthetic.mdl', 20, 3)
 
     print(f' Optimal    | Greedy')
     print(f'Time  | SW  | Time   | SW')
