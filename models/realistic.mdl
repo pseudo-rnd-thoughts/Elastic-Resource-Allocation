@@ -1,0 +1,36 @@
+{
+    "name": "realistic",
+    "task_note": "The tasks for this model is generated  the 2018 alibaba cluster dataset with code available in models/alibaba/generate_model.ipynb",
+    "task_filename": "alibaba.csv",
+    "server_note": "This servers for this model are based on AWS EC2 small server instance sizes, inspired by Bahreini et al, 2018 'An Envy-Free Auction Mechanism for Resource Allocation in Edge Computing Systems'"
+    "server_distribution": [
+        {
+            "name": "medium",
+            "probability": 0.2,
+            "storage mean": 32, "storage std": 3,
+            "computation mean": 15, "computation std": 2,
+            "bandwidth mean": 150, "bandwidth std": 0
+        },
+        {
+            "name": "large",
+            "probability": 0.3,
+            "storage mean": 60, "storage std": 0,
+            "computation mean": 25, "computation std": 3,
+            "bandwidth mean": 180, "bandwidth std": 0
+        },
+        {
+            "name": "xlarge",
+            "probability": 0.3,
+            "storage mean": 80, "storage std": 0,
+            "computation mean": 40, "computation std": 4,
+            "bandwidth mean": 200, "bandwidth std": 0
+        },
+        {
+            "name": "2xlarge",
+            "probability": 0.2,
+            "storage mean": 160, "storage std": 0,
+            "computation mean": 80, "computation std": 5,
+            "bandwidth mean": 250, "bandwidth std": 0
+        }
+    ]
+}

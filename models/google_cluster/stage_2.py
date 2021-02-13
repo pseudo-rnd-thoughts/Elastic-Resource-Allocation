@@ -6,8 +6,10 @@ import pandas as pd
 #   resource request for RAM, resource request for local disk space, task ID
 df = pd.read_csv('unusable_tasks.csv')
 
-schedule_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 1].rename(columns={'timestamp': 'schedule time'})
-finish_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 4].rename(columns={'timestamp': 'finish time'})
+schedule_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 1]\
+    .rename(columns={'timestamp': 'schedule time'})
+finish_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 4]\
+    .rename(columns={'timestamp': 'finish time'})
 
 time_df = pd.merge(schedule_df, finish_df, on='task ID')
 time_df = time_df[['task ID', 'schedule time', 'finish time']]

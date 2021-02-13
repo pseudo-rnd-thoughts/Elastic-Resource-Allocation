@@ -3,7 +3,10 @@
 import pandas as pd
 
 # Reads the complete full data files
-df = pd.read_csv('combined_data.csv', header=None, names=['timestamp', 'missing info', 'job ID', 'task index within the job', 'machine ID', 'event type', 'user name', 'scheduling class', 'priority', 'cpu', 'ram', 'disk', 'different-machine constraint'])
+df = pd.read_csv('combined_data.csv', header=None,
+                 names=['timestamp', 'missing info', 'job ID', 'task index within the job', 'machine ID', 'event type',
+                        'user name', 'scheduling class', 'priority', 'cpu', 'ram', 'disk',
+                        'different-machine constraint'])
 
 # Reduce the df to the required columns
 df = df[['timestamp', 'job ID', 'task index within the job', 'event type', 'priority', 'cpu', 'ram', 'disk']]
@@ -34,8 +37,10 @@ usable_df.to_csv('unusable_tasks.csv', index=False)
 
 """
 
-schedule_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 1].rename(columns={'timestamp': 'schedule time'}).set_index('task ID')
-finish_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 4].rename(columns={'timestamp': 'finish time'}).set_index('task ID')
+schedule_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 1]
+    .rename(columns={'timestamp': 'schedule time'}).set_index('task ID')
+finish_df = df[['timestamp', 'event type', 'task ID']][df['event type'] == 4]
+    .rename(columns={'timestamp': 'finish time'}).set_index('task ID')
 
 df = df[['timestamp', 'task ID', 'priority', 'cpu', 'ram', 'disk']]
 compute_df = finish_df['finish time'].map(int) - schedule_df['schedule time'].map(int)

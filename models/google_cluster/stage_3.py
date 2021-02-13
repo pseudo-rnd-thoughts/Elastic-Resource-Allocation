@@ -19,7 +19,8 @@ task_time_df = pd.read_csv('task_time.csv')
 task_time_df['compute time'] = task_time_df['compute time'].map(int)
 task_time_df = task_time_df[(task_time_df['cpu'] > 0) & (task_time_df['ram'] > 0) & (task_time_df['disk'] > 0)]
 
-times_df = task_time_df[['priority', 'cpu', 'ram', 'disk', 'compute time']].groupby(by=['priority', 'cpu', 'ram', 'disk']).agg(lambda x: list(x))
+times_df = task_time_df[['priority', 'cpu', 'ram', 'disk', 'compute time']]\
+    .groupby(by=['priority', 'cpu', 'ram', 'disk']).agg(lambda x: list(x))
 
 resource_time_df = pd.merge(top_resource_df, times_df, on=['priority', 'cpu', 'ram', 'disk'])
 print(resource_time_df)
