@@ -34,7 +34,8 @@ class ModelDistribution:
 
         :return: A list of tasks and list of servers
         """
-        return self.generate_tasks(), self.generate_servers()
+        servers = self.generate_servers()
+        return self.generate_tasks(servers), servers
 
     def generate_online(self, time_steps: int, mean_arrival_rate: int,
                         std_arrival_rate: float) -> Tuple[List[Task], List[Server]]:
@@ -46,39 +47,43 @@ class ModelDistribution:
         :param std_arrival_rate: Standard deviation of the number of tasks that arrive each time steps
         :return: A list of tasks and list of servers
         """
+        servers = self.generate_servers()
+
         tasks, task_id = [], 0
         for time_step in range(time_steps):
             for _ in range(max(1, int(rnd.gauss(mean_arrival_rate, std_arrival_rate)))):
-                task = self.generate_rnd_task(task_id)
+                task = self.generate_rnd_task(task_id, servers)
                 task.auction_time, task_id = time_step, task_id + 1
                 tasks.append(task)
 
-        return tasks, self.generate_servers()
+        return tasks, servers
 
-    def generate_tasks(self) -> List[Task]:
+    def generate_tasks(self, servers: List[Server]) -> List[Task]:
         """
         Generate a list of tasks from the model data
 
+        :param servers: List of servers
         :return: A list of tasks
         """
         if 'task distributions' in self.model_data:
             assert self.num_tasks is not None
-            return [self.generate_rnd_task(task_id) for task_id in range(self.num_tasks)]
+            return [self.generate_rnd_task(task_id, servers) for task_id in range(self.num_tasks)]
         else:
             return [Task.load(task_model) for task_model in self.model_data['tasks']]
 
-    def generate_rnd_task(self, task_id) -> Task:
+    def generate_rnd_task(self, task_id: int, servers: List[Server]) -> Task:
         """
         Generate a new random task using a task id
 
         :param task_id: The task id
+        :param servers: List of servers
         :return: A new random task
         """
         probability = rnd.random()
         task_dist = next(task_dist for i, task_dist in enumerate(self.model_data['task distributions'])
                          if probability <= sum(self.model_data['task distributions'][j]['probability']
                                                for j in range(i + 1)))
-        return Task.load_dist(task_dist, task_id)
+        return Task.load_dist(task_dist, task_id, servers)
 
     def generate_servers(self) -> List[Server]:
         """

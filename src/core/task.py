@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from math import ceil
-from random import gauss, randint
-from typing import TYPE_CHECKING
+from random import gauss, randint, uniform
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from typing import Optional, Dict, Any
@@ -21,18 +21,27 @@ class Task:
     """
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 value: float, deadline: int, loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
-                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = -1):
+                 value: Optional[float], deadline: int,
+                 loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
+                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = -1,
+                 servers: List[Server] = None):
         self.name = name
 
         self.required_storage = required_storage
         self.required_computation = required_computation
         self.required_results_data = required_results_data
 
-        self.value = value  # This is the true private internal evaluation (the max price)
-        self.price = price  # This is only used for auctions
+        # This is the true private internal evaluation (the max price)
+        if value is None:
+            self.value = self.concave_value(servers)
+        else:
+            self.value = value
 
-        self.auction_time = auction_time  # This is only used for online vs batched evaluation
+        # This is only used for auctions
+        self.price = price
+
+        # This is only used for online vs batched evaluation
+        self.auction_time = auction_time
         self.deadline = max(deadline, 4)
 
         # Allocation information
@@ -65,8 +74,8 @@ class Task:
         assert time_taken <= self.deadline * loading_speed * compute_speed * sending_speed, \
             f'Deadline assertion failure Task {self.name} requirement storage {self.required_storage} ' \
             f'computation {self.required_computation} results data {self.required_results_data} with ' \
-            f'loading {loading_speed} compute {compute_speed} sending {sending_speed} speed and deadline {self.deadline} ' \
-            f'time taken {time_taken}'
+            f'loading {loading_speed} compute {compute_speed} sending {sending_speed} speed and ' \
+            f'deadline {self.deadline} time taken {time_taken}'
 
         # Check that a server is not already allocated
         assert self.running_server is None, f"Task {self.name} is already allocated to {self.running_server.name}"
@@ -162,12 +171,13 @@ class Task:
         )
 
     @staticmethod
-    def load_dist(task_dist: Dict[str, Any], task_id: int) -> Task:
+    def load_dist(task_dist: Dict[str, Any], task_id: int, servers: List[Server]) -> Task:
         """
         Loads a task from a task distribution
 
         :param task_dist: A JSON dictionary representing task distribution
         :param task_id: A task identifier value
+        :param servers: list of servers
         :return: A new task based on a task distribution
         """
 
@@ -187,7 +197,7 @@ class Task:
             required_computation=positive_gaussian(task_dist['computation mean'], task_dist['computation std']),
             required_results_data=positive_gaussian(task_dist['results data mean'], task_dist['results data std']),
             deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
-            value=positive_gaussian(task_dist['value mean'], task_dist['value std'])
+            value=None, servers=servers
         )
 
     def batch(self, time_step):
@@ -236,3 +246,21 @@ class Task:
         :return: Reasonable upper bound for the sending speed
         """
         return ceil(5 * self.required_results_data / self.deadline)
+
+    def concave_value(self, servers: List[Server]):
+        """
+        Generates a concave utility in accordance with Araldo et al, 2020
+
+        :param servers: List of servers to get the maximum resources
+        :return: value of the task
+        """
+        alpha, alpha_prime = uniform(0, 1), uniform(0, 1)
+        beta_storage, beta_computation, beta_results = uniform(1, 5), uniform(1, 5), uniform(1, 5)
+
+        storage_total = sum(server.storage_capacity for server in servers)
+        computation_total = sum(server.computation_capacity for server in servers)
+        results_total = sum(server.bandwidth_capacity for server in servers)
+
+        return alpha * pow(self.required_storage / storage_total, 1 / beta_storage) + \
+            (alpha_prime - alpha) * pow(self.required_computation / computation_total, 1 / beta_computation) + \
+            (1 - alpha_prime - alpha) * pow(self.required_results_data / results_total, 1 / beta_results)
