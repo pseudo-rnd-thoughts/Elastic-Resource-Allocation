@@ -13,7 +13,7 @@ from src.greedy.server_selection_policy import EvolutionStrategy as ServerSelect
 from src.greedy.task_prioritisation import EvolutionStrategy as TaskPriorityEvoStrategy, Value
 
 
-def evolve_greedy_policies(model_dist: ModelDistribution, repeat: int, iterations: int = 30, population_size:int = 5):
+def evolve_greedy_policies(model_dist: ModelDistribution, iterations: int = 30, population_size: int = 5):
     print(f'Evolves the greedy policies for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
 
@@ -49,4 +49,4 @@ def evolve_greedy_policies(model_dist: ModelDistribution, repeat: int, iteration
 if __name__ == '__main__':
     args = parse_args()
 
-    evolve_greedy_policies(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    evolve_greedy_policies(ModelDistribution(args.file, args.tasks, args.servers))
