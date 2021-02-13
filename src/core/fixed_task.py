@@ -129,7 +129,7 @@ class SumSpeedsFixedPolicy(FixedValuePolicy):
         return loading_speed + compute_speed + sending_speed
 
 
-class SumSpeedPowsFixedPolicy(FixedValuePolicy):
+class SumSpeedPowFixedPolicy(FixedValuePolicy):
     """Fixed Exp Sum of speeds"""
 
     def __init__(self):

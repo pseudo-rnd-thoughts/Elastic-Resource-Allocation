@@ -11,7 +11,7 @@ from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
+from src.core.fixed_task import FixedTask, SumSpeedPowFixedPolicy
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -45,7 +45,7 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
-        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}

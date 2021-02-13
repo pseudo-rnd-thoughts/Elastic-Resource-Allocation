@@ -10,7 +10,7 @@ import pprint
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import FixedTask, SumSpeedPowsFixedPolicy
+from src.core.fixed_task import FixedTask, SumSpeedPowFixedPolicy
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -44,7 +44,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
         set_server_heuristics(servers, 3, 25)
-        fixed_tasks = [FixedTask(task, SumSpeedPowsFixedPolicy()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
