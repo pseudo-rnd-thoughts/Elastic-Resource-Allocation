@@ -197,8 +197,7 @@ class Task:
             required_computation=positive_gaussian(task_dist['computation mean'], task_dist['computation std']),
             required_results_data=positive_gaussian(task_dist['results data mean'], task_dist['results data std']),
             deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
-            value=None, servers=servers
-        )
+            value=None, servers=servers)
 
     def batch(self, time_step):
         """
@@ -255,12 +254,16 @@ class Task:
         :return: value of the task
         """
         alpha, alpha_prime = uniform(0, 1), uniform(0, 1)
-        beta_storage, beta_computation, beta_results = uniform(1, 5), uniform(1, 5), uniform(1, 5)
+        if alpha_prime < alpha:
+            alpha, alpha_prime = alpha_prime, alpha
+        beta_storage, beta_comp, beta_results_data = uniform(1, 5), uniform(1, 5), uniform(1, 5)
 
         storage_total = sum(server.storage_capacity for server in servers)
-        computation_total = sum(server.computation_capacity for server in servers)
+        comp_total = sum(server.computation_capacity for server in servers)
         results_total = sum(server.bandwidth_capacity for server in servers)
 
-        return alpha * pow(self.required_storage / storage_total, 1 / beta_storage) + \
-            (alpha_prime - alpha) * pow(self.required_computation / computation_total, 1 / beta_computation) + \
-            (1 - alpha_prime - alpha) * pow(self.required_results_data / results_total, 1 / beta_results)
+        storage_value = alpha * pow(self.required_storage / storage_total, 1 / beta_storage)
+        computation_value = (alpha_prime - alpha) * pow(self.required_computation / comp_total, 1 / beta_comp)
+        results_data_value = (1 - alpha_prime) * pow(self.required_results_data / results_total, 1 / beta_results_data)
+        return round(storage_value + computation_value + results_data_value * 100, 2)
+
