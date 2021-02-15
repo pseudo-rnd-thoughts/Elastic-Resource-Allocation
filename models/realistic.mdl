@@ -1,36 +1,36 @@
 {
     "name": "realistic",
-    "task_note": "The tasks for this model is generated  the 2018 alibaba cluster dataset with code available in models/alibaba/generate_model.ipynb",
-    "task_filename": "alibaba.csv",
-    "server_note": "This servers for this model are based on AWS EC2 small server instance sizes, inspired by Bahreini et al, 2018 'An Envy-Free Auction Mechanism for Resource Allocation in Edge Computing Systems'"
-    "server_distribution": [
+    "task note": "The tasks for this model is generated  the 2018 alibaba cluster dataset with code available in models/alibaba/generate_model.ipynb",
+    "task filename": "alibaba_cluster/alibaba.csv",
+    "server note": "This servers for this model are based on AWS EC2 small server instance sizes, inspired by Bahreini et al, 2018 'An Envy-Free Auction Mechanism for Resource Allocation in Edge Computing Systems'",
+    "server distributions": [
         {
             "name": "medium",
             "probability": 0.2,
-            "storage mean": 32, "storage std": 3,
-            "computation mean": 15, "computation std": 2,
-            "bandwidth mean": 150, "bandwidth std": 0
+            "storage mean": 320, "storage std": 25,
+            "computation mean": 5000, "computation std": 75,
+            "bandwidth mean": 400, "bandwidth std": 30
         },
         {
             "name": "large",
             "probability": 0.3,
-            "storage mean": 60, "storage std": 0,
-            "computation mean": 25, "computation std": 3,
-            "bandwidth mean": 180, "bandwidth std": 0
+            "storage mean": 640, "storage std": 30,
+            "computation mean": 6000, "computation std": 100,
+            "bandwidth mean": 800, "bandwidth std": 50
         },
         {
             "name": "xlarge",
             "probability": 0.3,
-            "storage mean": 80, "storage std": 0,
-            "computation mean": 40, "computation std": 4,
-            "bandwidth mean": 200, "bandwidth std": 0
+            "storage mean": 960, "storage std": 60,
+            "computation mean": 8000, "computation std": 150,
+            "bandwidth mean": 1200, "bandwidth std": 60
         },
         {
             "name": "2xlarge",
             "probability": 0.2,
-            "storage mean": 160, "storage std": 0,
-            "computation mean": 80, "computation std": 5,
-            "bandwidth mean": 250, "bandwidth std": 0
+            "storage mean": 1400, "storage std": 100,
+            "computation mean": 10000, "computation std": 200,
+            "bandwidth mean": 2000, "bandwidth std": 100
         }
     ]
 }
