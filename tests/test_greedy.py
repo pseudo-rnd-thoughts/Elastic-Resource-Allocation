@@ -9,7 +9,7 @@ import numpy as np
 
 from core.core import reset_model
 from extra.model import ModelDistribution
-from greedy.allocation_value_policy import SumServerMaxPercentage
+from greedy.matrix_allocation_policy import SumServerMaxPercentage
 from greedy.greedy import greedy_algorithm
 from greedy.matrix_greedy import greedy_matrix_algorithm
 from greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
@@ -19,7 +19,7 @@ from greedy.task_prioritisation import UtilityDeadlinePerResource, all_policies 
 
 def test_greedy_policies():
     print()
-    model = ModelDistribution('models/synthetic.mdl', 20, 3)
+    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
     tasks, servers = model.generate()
 
     policy_results = {}
@@ -54,7 +54,7 @@ def test_optimisation(repeats: int = 10):
 
     :param repeats: Number of repeats
     """
-    model = ModelDistribution('models/synthetic.mdl', 20, 3)
+    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
 
     greedy_results, greedy_matrix_time = [], []
     print(f' Greedy     | Greedy Matrix')
@@ -73,7 +73,7 @@ def test_optimisation(repeats: int = 10):
 
 
 def test_server_can_run():
-    model = ModelDistribution('models/caroline_oneshot.mdl', num_tasks=36)
+    model = ModelDistribution('../models/caroline_oneshot.mdl', num_tasks=36)
 
     for _ in range(5):
         tasks, servers = model.generate()

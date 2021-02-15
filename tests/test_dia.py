@@ -19,7 +19,7 @@ from optimal.flexible_optimal import flexible_optimal
 
 def test_greedy_task_price():
     print()
-    model = ModelDistribution('models/synthetic.mdl', 20, 3)
+    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
     tasks, servers = model.generate()
 
     server = servers[0]
@@ -73,7 +73,7 @@ def test_greedy_task_price():
 
 def test_optimal_vs_greedy_dia(repeats: int = 5):
     print()
-    model = ModelDistribution('models/synthetic.mdl', 20, 3)
+    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
 
     print(f' Optimal    | Greedy')
     print(f'Time  | SW  | Time   | SW')
@@ -91,7 +91,7 @@ def test_optimal_vs_greedy_dia(repeats: int = 5):
               f'{greedy_result.solve_time} | {greedy_result.social_welfare}')
 
 
-def test_dia_social_welfare(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
+def dia_social_welfare_test(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
     """
     Evaluates the results using the optimality
 
@@ -124,4 +124,4 @@ def test_dia_social_welfare(model_dist: ModelDistribution, repeat: int, repeats:
 
 if __name__ == "__main__":
     args = parse_args()
-    test_dia_social_welfare(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    dia_social_welfare_test(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)

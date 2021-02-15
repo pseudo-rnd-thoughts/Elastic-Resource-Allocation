@@ -27,7 +27,7 @@ def test_critical_value(error: float = 0.05):
     """
     print()
 
-    model = ModelDistribution('models/synthetic.mdl', 20, 3)
+    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
     tasks, servers = model.generate()
 
     print(f'Critical value auction')

@@ -22,7 +22,7 @@ from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_
 
 
 def test_optimal_solution():
-    model_dist = ModelDistribution('models/synthetic.mdl', num_tasks=20, num_servers=4)
+    model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=20, num_servers=4)
     tasks, servers = model_dist.generate()
 
     greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
@@ -56,7 +56,7 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
 
 
 def test_minimise_resource_allocation():
-    model_dist = ModelDistribution('models/synthetic.mdl', num_tasks=30, num_servers=6)
+    model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=30, num_servers=6)
     tasks, servers = model_dist.generate()
 
     flexible_optimal(tasks, servers, 5)

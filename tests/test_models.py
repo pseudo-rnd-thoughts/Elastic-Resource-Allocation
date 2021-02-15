@@ -22,25 +22,27 @@ from optimal.fixed_optimal import fixed_optimal
 
 def test_model_distribution():
     print()
-    files = os.listdir('models/')
+    files = os.listdir('../models/')
     for file in files:
-        if file == "caroline.mdl":
-            model_dist = ModelDistribution('models/caroline.mdl', num_tasks=2)
+        print(file)
+        if not os.path.isdir(f'../models/{file}'):
+            if file == "caroline.mdl":
+                model_dist = ModelDistribution('../models/caroline.mdl', num_tasks=2)
 
-            tasks, servers = model_dist.generate()
-            assert len(tasks) == 2
-            assert len(servers) == 8
-        else:
-            model_dist = ModelDistribution(f'models/{file}', num_tasks=4, num_servers=3)
+                tasks, servers = model_dist.generate()
+                assert len(tasks) == 2
+                assert len(servers) == 8
+            else:
+                model_dist = ModelDistribution(f'../models/{file}', num_tasks=4, num_servers=3)
 
-            tasks, servers = model_dist.generate()
-            assert len(tasks) == 4
-            assert len(servers) == 3
+                tasks, servers = model_dist.generate()
+                assert len(tasks) == 4
+                assert len(servers) == 3
 
 
 def test_model_probability():
     print()
-    with open('models/basic.mdl') as file:
+    with open('../models/basic.mdl') as file:
         file_data = json.load(file)
 
         task_prob = [task_distribution['probability'] for task_distribution in file_data['task distributions']]
@@ -70,27 +72,27 @@ def test_args():
         assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
 
     # Files
-    eval_args(['--file', 'test'], 'models/test.mdl', None, None, 0)
-    eval_args(['-f', 'test'], 'models/test.mdl', None, None, 0)
+    eval_args(['--file', 'test'], '../models/test.mdl', None, None, 0)
+    eval_args(['-f', 'test'], '../models/test.mdl', None, None, 0)
 
     # Tasks
-    eval_args(['--file', 'test', '--tasks', '1'], 'models/test.mdl', 1, None, 0)
-    eval_args(['-f', 'test', '-t', '2'], 'models/test.mdl', 2, None, 0)
+    eval_args(['--file', 'test', '--tasks', '1'], '../models/test.mdl', 1, None, 0)
+    eval_args(['-f', 'test', '-t', '2'], '../models/test.mdl', 2, None, 0)
 
     # Servers
-    eval_args(['--file', 'test', '--servers', '3'], 'models/test.mdl', None, 3, 0)
-    eval_args(['-f', 'test', '-s', '4'], 'models/test.mdl', None, 4, 0)
+    eval_args(['--file', 'test', '--servers', '3'], '../models/test.mdl', None, 3, 0)
+    eval_args(['-f', 'test', '-s', '4'], '../models/test.mdl', None, 4, 0)
 
     # Repeat
-    eval_args(['--file', 'test', '--repeat', '5'], 'models/test.mdl', None, None, 5)
-    eval_args(['-f', 'test', '-r', '6'], 'models/test.mdl', None, None, 6)
+    eval_args(['--file', 'test', '--repeat', '5'], '../models/test.mdl', None, None, 5)
+    eval_args(['-f', 'test', '-r', '6'], '../models/test.mdl', None, None, 6)
 
     # Full
-    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], 'models/test.mdl', 7, 8, 9)
-    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], 'models/test.mdl', 10, 11, 12)
+    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/test.mdl', 7, 8, 9)
+    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/test.mdl', 10, 11, 12)
 
 
-def test_model_tasks(model_file: str = 'models/synthetic.mdl', num_servers=8):
+def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8):
     greedy_results = []
     fixed_results = []
     for num_tasks in range(24, 60, 4):
@@ -131,7 +133,7 @@ def test_model_tasks(model_file: str = 'models/synthetic.mdl', num_servers=8):
 
 def test_convert_online_oneshot():
     print()
-    model = ModelDistribution('models/caroline_online.mdl', num_tasks=0)
+    model = ModelDistribution('../models/caroline_online.mdl', num_tasks=0)
     tasks, servers = model.generate()
 
     for server in servers:

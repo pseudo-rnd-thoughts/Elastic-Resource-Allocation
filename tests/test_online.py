@@ -22,7 +22,7 @@ from optimal.fixed_optimal import fixed_optimal_solver
 from optimal.flexible_optimal import flexible_optimal_solver
 
 
-def test_online_model_generation(model_dist=ModelDistribution('models/synthetic.mdl', num_servers=8),
+def test_online_model_generation(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                                  time_steps: int = 50, batch_lengths: Iterable[int] = (1, 2, 4, 5, 10),
                                  mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
@@ -38,7 +38,7 @@ def test_online_model_generation(model_dist=ModelDistribution('models/synthetic.
         print(f'Batch lengths: [{", ".join([f"{len(batch_tasks)}" for batch_tasks in batched_tasks])}]')
 
 
-def test_online_server_capacities(model_dist=ModelDistribution('models/synthetic.mdl', num_servers=8),
+def test_online_server_capacities(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                                   time_steps: int = 50, batch_length: int = 3,
                                   mean_arrival_rate: int = 4, std_arrival_rate: float = 2, capacities: float = 0.3):
     print()
@@ -57,7 +57,7 @@ def test_online_server_capacities(model_dist=ModelDistribution('models/synthetic
     print(result.data)
 
 
-def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
+def test_optimal_solutions(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
     fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
@@ -82,7 +82,7 @@ def test_optimal_solutions(model_dist=ModelDistribution('models/online_paper.mdl
     print(f'Greedy - Social welfare: {greedy_result.social_welfare}')
 
 
-def test_batch_lengths(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
+def test_batch_lengths(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                        batch_lengths: Iterable[int] = (1, 5, 10, 15), time_steps: int = 200,
                        mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
@@ -115,30 +115,8 @@ def test_batch_lengths(model_dist=ModelDistribution('models/online_paper.mdl', n
         reset_model(flattened_tasks, servers)
 
 
-def test_caroline_online_models(batch_length: int = 1):
-    model_dist = ModelDistribution('models/online_caroline_u4.mdl')
-    tasks, servers = model_dist.generate()
-    batched_tasks = generate_batch_tasks(tasks, batch_length, 200)
-    greedy_result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy',
-                                        greedy_algorithm, value_density=UtilityDeadlinePerResource(ResourceSqrt()),
-                                        server_selection_policy=SumResources(),
-                                        resource_allocation_policy=SumPowPercentage())
-    print(f'\nMean 4 - Social welfare percentage: {greedy_result.percentage_social_welfare}, '
-          f'percent tasks allocated: {greedy_result.percentage_tasks_allocated}')
-
-    model_dist = ModelDistribution('models/online_caroline_u7.mdl')
-    model_dist.generate()
-    batched_tasks = generate_batch_tasks(tasks, batch_length, 200)
-    greedy_result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy',
-                                        greedy_algorithm, value_density=UtilityDeadlinePerResource(ResourceSqrt()),
-                                        server_selection_policy=SumResources(),
-                                        resource_allocation_policy=SumPowPercentage())
-    print(f'\nMean 7 - Social welfare percentage: {greedy_result.percentage_social_welfare}, '
-          f'percent tasks allocated: {greedy_result.percentage_tasks_allocated}')
-
-
 def test_online_fixed_task():
-    model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
+    model_dist = ModelDistribution('../models/synthetic.mdl', num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
     fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
     batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
@@ -153,7 +131,7 @@ def test_online_fixed_task():
 
 
 def test_minimise_resources():
-    model_dist = ModelDistribution('models/online_paper.mdl', num_servers=8)
+    model_dist = ModelDistribution('../models/synthetic.mdl', num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
 
     def custom_solver(_tasks: List[Task], _servers: List[Server],
@@ -191,7 +169,7 @@ def test_minimise_resources():
     reset_model([], servers)
 
 
-def test_batch_length(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8), batch_lengths=(1, 2, 3),
+def test_batch_length(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8), batch_lengths=(1, 2, 3),
                       time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print('')
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
@@ -219,7 +197,7 @@ def test_batch_length(model_dist=ModelDistribution('models/online_paper.mdl', nu
         reset_model(flattened_tasks, servers)
 
 
-def test_task_batching(model_dist=ModelDistribution('models/online_paper.mdl', num_servers=8),
+def test_task_batching(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                        time_steps: int = 10, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
 
