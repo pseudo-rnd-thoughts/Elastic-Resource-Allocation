@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from src.core.server import Server
     from src.core.task import Task
-    from src.greedy.allocation_value_policy import AllocationValuePolicy
+    from src.greedy.matrix_allocation_policy import AllocationValuePolicy
 
 
 def allocate_resources(task: Task, server: Server, value: AllocationValuePolicy) -> Tuple[float, int, int, int]:
