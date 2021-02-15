@@ -8,6 +8,8 @@ import json
 import random as rnd
 from typing import TYPE_CHECKING
 
+import pandas as pd
+
 from src.core.server import Server
 from src.core.task import Task
 
@@ -27,6 +29,11 @@ class ModelDistribution:
             self.model_data = json.load(file)
 
             self.name: str = self.model_data['name']
+            if 'task filename' in self.model_data:
+                model_path = '/'.join(filename.split('/')[:-1]) + '/' + self.model_data['task filename']
+                self.task_model = pd.read_csv(model_path)
+            else:
+                self.task_model = None
 
     def generate(self) -> Tuple[List[Task], List[Server]]:
         """
@@ -51,8 +58,14 @@ class ModelDistribution:
 
         tasks, task_id = [], 0
         for time_step in range(time_steps):
-            for _ in range(max(1, int(rnd.gauss(mean_arrival_rate, std_arrival_rate)))):
-                task = self.generate_rnd_task(task_id, servers)
+            for task in range(max(0, int(rnd.gauss(mean_arrival_rate, std_arrival_rate)))):
+                if 'task distributions' in self.model_data:
+                    task = self.generate_synthetic_task(task_id, servers)
+                elif 'task filename' in self.model_data:
+                    task = self.generate_alibaba_task(task_id, servers)
+                else:
+                    raise Exception('Unknown model type')
+
                 task.auction_time, task_id = time_step, task_id + 1
                 tasks.append(task)
 
@@ -67,13 +80,16 @@ class ModelDistribution:
         """
         if 'task distributions' in self.model_data:
             assert self.num_tasks is not None
-            return [self.generate_rnd_task(task_id, servers) for task_id in range(self.num_tasks)]
+            return [self.generate_synthetic_task(task_id, servers) for task_id in range(self.num_tasks)]
+        elif 'task filename' in self.model_data:
+            assert self.num_tasks is not None
+            return [self.generate_alibaba_task(task_id, servers) for task_id in range(self.num_tasks)]
         else:
             return [Task.load(task_model) for task_model in self.model_data['tasks']]
 
-    def generate_rnd_task(self, task_id: int, servers: List[Server]) -> Task:
+    def generate_synthetic_task(self, task_id: int, servers: List[Server]) -> Task:
         """
-        Generate a new random task using a task id
+        Generate a new synthetic task
 
         :param task_id: The task id
         :param servers: List of servers
@@ -85,6 +101,22 @@ class ModelDistribution:
                                                for j in range(i + 1)))
         return Task.load_dist(task_dist, task_id, servers)
 
+    def generate_alibaba_task(self, task_id: int, servers: List[Server]) -> Task:
+        """
+        Generate a new alibaba task
+
+        :param task_id: The task id
+        :param servers: List of servers
+        :return: A new random task
+        """
+        task_sample = self.task_model.sample()
+        for index, task_row in task_sample.iterrows():
+            return Task(f'realistic {task_id}',
+                        required_storage=int(700*task_row['mem_max']),
+                        required_computation=task_row['total_cpu'],
+                        required_results_data=int(10*rnd.randint(20, 60) * task_row['mem_max']),
+                        value=None, deadline=task_row['time_taken'], servers=servers)
+
     def generate_servers(self) -> List[Server]:
         """
         Generate a list of server from the model data
@@ -93,11 +125,11 @@ class ModelDistribution:
         """
         if 'server distributions' in self.model_data:
             assert self.num_servers is not None
-            return [self.generate_rnd_server(server_id) for server_id in range(self.num_servers)]
+            return [self.generate_synthetic_server(server_id) for server_id in range(self.num_servers)]
         else:
             return [Server.load(server_model) for server_model in self.model_data['servers']]
 
-    def generate_rnd_server(self, server_id) -> Server:
+    def generate_synthetic_server(self, server_id) -> Server:
         """
         Generate a new random serer using a server id
 
