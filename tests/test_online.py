@@ -8,7 +8,7 @@ from math import ceil
 from typing import Iterable, List
 
 from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowFixedPolicy
+from core.fixed_task import FixedTask, SumSpeedPowFixedPrioritisation
 from core.server import Server
 from core.task import Task
 from evaluation.online import generate_batch_tasks, online_batch_solver
@@ -60,7 +60,7 @@ def test_online_server_capacities(model_dist=ModelDistribution('../models/synthe
 def test_optimal_solutions(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
+    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation()) for task in tasks]
 
     # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
     # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
@@ -118,7 +118,7 @@ def test_batch_lengths(model_dist=ModelDistribution('../models/synthetic.mdl', n
 def test_online_fixed_task():
     model_dist = ModelDistribution('../models/synthetic.mdl', num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
-    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
+    fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation()) for task in tasks]
     batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
 
     for batch_fixed_tasks in batched_fixed_tasks:

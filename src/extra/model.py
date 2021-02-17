@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import random as rnd
+from math import ceil
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -19,6 +20,10 @@ if TYPE_CHECKING:
 
 class ModelDistribution:
     """Model distributions"""
+
+    storage_scaling = 700
+    computational_scaling = 1
+    results_data_scaling = 20
 
     def __init__(self, filename: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
         self.filename = filename
@@ -112,9 +117,9 @@ class ModelDistribution:
         task_sample = self.task_model.sample()
         for index, task_row in task_sample.iterrows():
             return Task(f'realistic {task_id}',
-                        required_storage=int(700*task_row['mem_max']),
-                        required_computation=task_row['total_cpu'],
-                        required_results_data=int(10*rnd.randint(20, 60) * task_row['mem_max']),
+                        required_storage=ceil(self.storage_scaling*task_row['mem_max']),
+                        required_computation=ceil(self.computational_scaling*task_row['total_cpu']),
+                        required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60) * task_row['mem_max']),
                         value=None, deadline=task_row['time_taken'], servers=servers)
 
     def generate_servers(self) -> List[Server]:

@@ -21,12 +21,14 @@ class Task:
     """
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 value: Optional[float], deadline: int,
+                 value: Optional[float], deadline: int, price: float = 0, auction_time: int = -1,
                  loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
-                 running_server: Optional[Server] = None, price: float = 0, auction_time: int = -1,
-                 servers: List[Server] = None):
+                 running_server: Optional[Server] = None, servers: List[Server] = None,
+                 planned_computation: Optional[int] = 0, planned_storage: Optional[int] = 0):
+        # Name of the task
         self.name = name
 
+        # The required resources over the task's lifetime
         self.required_storage = required_storage
         self.required_computation = required_computation
         self.required_results_data = required_results_data
@@ -49,7 +51,12 @@ class Task:
         self.compute_speed = compute_speed
         self.sending_speed = sending_speed
 
+        # Server who the task is allocated to
         self.running_server = running_server
+
+        # Planned cpu and mem for alibaba dataset
+        self.planned_computation = planned_computation
+        self.planned_storage = planned_storage
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):

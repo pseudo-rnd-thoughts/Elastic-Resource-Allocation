@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod, ABC
+from math import ceil
 from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
@@ -18,27 +19,37 @@ if TYPE_CHECKING:
 class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
-    def __init__(self, task: Task, fixed_value_policy: FixedValuePolicy, fixed_name: bool = True):
+    def __init__(self, task: Task, fixed_value_policy: AllocationFixedPrioritisation, fixed_name: bool = True,
+                 resource_foreknowledge: bool = False):
         name = f'Fixed {task.name}' if fixed_name else task.name
 
         self.fixed_value_policy = fixed_value_policy
-        loading_speed, compute_speed, sending_speed = self.calculate_fixed_speeds(task, fixed_value_policy)
-
-        Task.__init__(self, name=name, required_storage=task.required_storage,
-                      required_computation=task.required_computation, required_results_data=task.required_results_data,
-                      value=task.value, deadline=task.deadline, loading_speed=loading_speed,
-                      compute_speed=compute_speed, sending_speed=sending_speed, auction_time=task.auction_time)
+        loading_speed, compute_speed, sending_speed = self.minimum_fixed_prioritisation(task, fixed_value_policy)
+        if resource_foreknowledge is True:
+            Task.__init__(self, name=name, required_storage=task.required_storage,
+                          required_computation=task.required_computation,
+                          required_results_data=task.required_results_data,
+                          value=task.value, deadline=task.deadline, loading_speed=loading_speed,
+                          compute_speed=compute_speed, sending_speed=sending_speed, auction_time=task.auction_time)
+        else:
+            assert task.planned_storage is not None and task.planned_computation is not None
+            Task.__init__(self, name=name, required_storage=task.planned_storage,
+                          required_computation=compute_speed, required_results_data=task.required_results_data,
+                          value=task.value, deadline=task.deadline, auction_time=task.auction_time,
+                          loading_speed=ceil(task.required_storage / loading_speed) * task.planned_storage,
+                          compute_speed=ceil(task.required_computation / compute_speed) * task.planned_computation,
+                          sending_speed=sending_speed)
 
     @staticmethod
-    def calculate_fixed_speeds(task: Task, fixed_value: FixedValuePolicy) -> Tuple[int, int, int]:
+    def minimum_fixed_prioritisation(task: Task, allocation_priority: AllocationFixedPrioritisation) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
-        :param task: The task to used
-        :param fixed_value: The fixed value function to value the speeds
+        :param task: The task to use
+        :param allocation_priority: The fixed value function to value the speeds
         :return: Fixed speeds
         """
-        model = CpoModel('Speeds')
+        model = CpoModel('FixedSpeedsPrioritisation')
         loading_speed = model.integer_var(min=1)
         compute_speed = model.integer_var(min=1)
         sending_speed = model.integer_var(min=1)
@@ -47,7 +58,7 @@ class FixedTask(Task):
                   task.required_computation / compute_speed +
                   task.required_results_data / sending_speed <= task.deadline)
 
-        model.minimize(fixed_value.evaluate(loading_speed, compute_speed, sending_speed))
+        model.minimize(allocation_priority.evaluate(loading_speed, compute_speed, sending_speed))
 
         model_solution = model.solve(log_output=None)
         assert model_solution is not None
@@ -97,7 +108,7 @@ class FixedTask(Task):
         return FixedTask(batch_task, self.fixed_value_policy, False)
 
 
-class FixedValuePolicy(ABC):
+class AllocationFixedPrioritisation(ABC):
     """
     Fixed Value policy for the fixed task to select the speed
     """
@@ -118,22 +129,22 @@ class FixedValuePolicy(ABC):
         pass
 
 
-class SumSpeedsFixedPolicy(FixedValuePolicy):
+class SumSpeedsFixedPrioritisation(AllocationFixedPrioritisation):
     """Fixed sum of speeds"""
 
     def __init__(self):
-        FixedValuePolicy.__init__(self, 'Sum speeds')
+        AllocationFixedPrioritisation.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
 
 
-class SumSpeedPowFixedPolicy(FixedValuePolicy):
+class SumSpeedPowFixedPrioritisation(AllocationFixedPrioritisation):
     """Fixed Exp Sum of speeds"""
 
     def __init__(self):
-        FixedValuePolicy.__init__(self, 'Exp Sum Speeds')
+        AllocationFixedPrioritisation.__init__(self, 'Exp Sum Speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculate the value by summing the expo of speeds"""

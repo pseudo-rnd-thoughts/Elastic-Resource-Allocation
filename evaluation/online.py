@@ -12,7 +12,7 @@ from time import time
 from typing import Iterable, List
 
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedPolicy
+from src.core.fixed_task import FixedTask, SumSpeedPowFixedPrioritisation
 from src.core.server import Server
 from src.core.task import Task
 from src.extra.io import results_filename, parse_args
@@ -157,7 +157,7 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPolicy()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation()) for task in tasks]
         batch_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
