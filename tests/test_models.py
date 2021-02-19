@@ -45,20 +45,9 @@ def test_realistic_model():
     model_dist = ModelDistribution('../models/realistic.mdl', num_tasks=10, num_servers=4)
     tasks, servers = model_dist.generate()
     fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation()) for task in tasks]
+    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation(), resource_foreknowledge=True)
+                                 for task in tasks]
     tasks, servers = model_dist.generate_online(10, 2, 0)
-
-
-def test_model_probability():
-    print()
-    with open('../models/basic.mdl') as file:
-        file_data = json.load(file)
-
-        task_prob = [task_distribution['probability'] for task_distribution in file_data['task distributions']]
-        print(f'Task Probabilities: [{" ".join([str(prob) for prob in task_prob])}]')
-        print(f'Sum probabilities: [{" ".join([str(sum(task_prob[:p + 1])) for p in range(len(task_prob))])}]')
-
-        prob = rnd.random()
-        print(f'Probability: {prob}')
 
 
 def test_args():
@@ -80,24 +69,24 @@ def test_args():
         assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
 
     # Files
-    eval_args(['--file', 'test'], '../models/test.mdl', None, None, 0)
-    eval_args(['-f', 'test'], '../models/test.mdl', None, None, 0)
+    eval_args(['--file', 'test'], '../models/basic.mdl', None, None, 0)
+    eval_args(['-f', 'test'], '../models/basic.mdl', None, None, 0)
 
     # Tasks
-    eval_args(['--file', 'test', '--tasks', '1'], '../models/test.mdl', 1, None, 0)
-    eval_args(['-f', 'test', '-t', '2'], '../models/test.mdl', 2, None, 0)
+    eval_args(['--file', 'test', '--tasks', '1'], '../models/basic.mdl', 1, None, 0)
+    eval_args(['-f', 'test', '-t', '2'], '../models/basic.mdl', 2, None, 0)
 
     # Servers
-    eval_args(['--file', 'test', '--servers', '3'], '../models/test.mdl', None, 3, 0)
-    eval_args(['-f', 'test', '-s', '4'], '../models/test.mdl', None, 4, 0)
+    eval_args(['--file', 'test', '--servers', '3'], '../models/basic.mdl', None, 3, 0)
+    eval_args(['-f', 'test', '-s', '4'], '../models/basic.mdl', None, 4, 0)
 
     # Repeat
-    eval_args(['--file', 'test', '--repeat', '5'], '../models/test.mdl', None, None, 5)
-    eval_args(['-f', 'test', '-r', '6'], '../models/test.mdl', None, None, 6)
+    eval_args(['--file', 'test', '--repeat', '5'], '../models/basic.mdl', None, None, 5)
+    eval_args(['-f', 'test', '-r', '6'], '../models/basic.mdl', None, None, 6)
 
     # Full
-    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/test.mdl', 7, 8, 9)
-    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/test.mdl', 10, 11, 12)
+    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/basic.mdl', 7, 8, 9)
+    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/basic.mdl', 10, 11, 12)
 
 
 def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8):
@@ -137,18 +126,6 @@ def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8)
     for (num_tasks, greedy_result), (_, fixed_result) in zip(greedy_results, fixed_results):
         print(f' {num_tasks:11} | {fixed_result.social_welfare - greedy_result.social_welfare:10} | '
               f'{greedy_result.social_welfare:9} | {fixed_result.social_welfare:8}')
-
-
-def test_convert_online_oneshot():
-    print()
-    model = ModelDistribution('../models/caroline_online.mdl', num_tasks=0)
-    tasks, servers = model.generate()
-
-    for server in servers:
-        server.computation_capacity *= 2
-        server.bandwidth_capacity *= 2
-
-    print(f'[{", ".join([server.save() for server in servers])}]')
 
 
 if __name__ == "__main__":

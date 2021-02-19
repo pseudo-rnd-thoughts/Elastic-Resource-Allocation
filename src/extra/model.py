@@ -120,7 +120,9 @@ class ModelDistribution:
                         required_storage=ceil(self.storage_scaling*task_row['mem_max']),
                         required_computation=ceil(self.computational_scaling*task_row['total_cpu']),
                         required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60) * task_row['mem_max']),
-                        value=None, deadline=task_row['time_taken'], servers=servers)
+                        value=None, deadline=task_row['time_taken'], servers=servers,
+                        planned_storage=self.storage_scaling*task_row['plan_mem'],
+                        planned_computation=self.computational_scaling*task_row['plan_cpu'])
 
     def generate_servers(self) -> List[Server]:
         """

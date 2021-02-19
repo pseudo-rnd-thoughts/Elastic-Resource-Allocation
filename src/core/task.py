@@ -22,7 +22,8 @@ class Task:
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
                  value: Optional[float], deadline: int, price: float = 0, auction_time: int = -1,
-                 loading_speed: int = 0, compute_speed: int = 0, sending_speed: int = 0,
+                 loading_speed: Optional[int] = None, compute_speed: Optional[int] = None,
+                 sending_speed: Optional[int] = None,
                  running_server: Optional[Server] = None, servers: List[Server] = None,
                  planned_computation: Optional[int] = 0, planned_storage: Optional[int] = 0):
         # Name of the task
@@ -47,9 +48,12 @@ class Task:
         self.deadline = max(deadline, 4)
 
         # Allocation information
-        self.loading_speed = loading_speed
-        self.compute_speed = compute_speed
-        self.sending_speed = sending_speed
+        if loading_speed is None and compute_speed is None and sending_speed is None:
+            self.loading_speed, self.compute_speed, self.sending_speed = 0, 0, 0
+        else:
+            assert 0 < loading_speed and 0 < compute_speed and 0 < sending_speed, \
+                (loading_speed, compute_speed, sending_speed)
+            self.loading_speed, self.compute_speed, self.sending_speed = loading_speed, compute_speed, sending_speed
 
         # Server who the task is allocated to
         self.running_server = running_server

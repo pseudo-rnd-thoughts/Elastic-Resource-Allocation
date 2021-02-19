@@ -41,7 +41,8 @@ class FixedTask(Task):
                           sending_speed=sending_speed)
 
     @staticmethod
-    def minimum_fixed_prioritisation(task: Task, allocation_priority: AllocationFixedPrioritisation) -> Tuple[int, int, int]:
+    def minimum_fixed_prioritisation(task: Task,
+                                     allocation_priority: AllocationFixedPrioritisation) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 

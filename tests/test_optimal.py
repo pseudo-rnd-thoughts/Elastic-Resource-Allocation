@@ -8,8 +8,10 @@ from typing import Sequence
 
 import matplotlib.pyplot as plt
 
+from core.fixed_task import FixedTask, SumSpeedsFixedPrioritisation
 from extra.io import parse_args
 from extra.visualise import minimise_resource_allocation, plot_allocation_results
+from optimal.fixed_optimal import fixed_optimal
 from src.core.core import reset_model
 from src.extra.model import ModelDistribution
 from src.extra.pprint import print_model
@@ -24,6 +26,9 @@ from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_
 def test_optimal_solution():
     model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=20, num_servers=4)
     tasks, servers = model_dist.generate()
+    fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation()) for task in tasks]
+    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation(), resource_foreknowledge=True)
+                                 for task in tasks]
 
     greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
     print(f'\nGreedy - {greedy_result.social_welfare}')
@@ -36,6 +41,14 @@ def test_optimal_solution():
     server_relaxed_result = server_relaxed_flexible_optimal(tasks, servers, 5)
     print(f'Server relaxed - {server_relaxed_result.social_welfare}')
     reset_model(tasks, servers)
+
+    fixed_optimal_result = fixed_optimal(fixed_tasks, servers, 5)
+    print(f'Fixed Optimal - {fixed_optimal_result.social_welfare}')
+    reset_model(fixed_tasks, servers)
+
+    foreknowledge_fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, 5)
+    print(f'Foreknowledge Fixed Optimal - {foreknowledge_fixed_optimal_result.social_welfare}')
+    reset_model(foreknowledge_fixed_tasks, servers)
 
 
 def test_optimal_time_limit(model_dist: ModelDistribution,
