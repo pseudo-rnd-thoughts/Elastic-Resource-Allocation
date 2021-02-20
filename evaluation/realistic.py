@@ -74,7 +74,7 @@ def realistic_scaling(model_dist: ModelDistribution, repeat_num: int,
                         reset_model(tasks, servers)
 
             repeat_results.append(algorithm_results)
-        scaling_results[scaling] = repeat_results
+        scaling_results[f'{scaling[0]} {scaling[1]} {scaling[2]}'] = repeat_results
 
         # Save the results to the file
         with open(filename, 'w') as file:
