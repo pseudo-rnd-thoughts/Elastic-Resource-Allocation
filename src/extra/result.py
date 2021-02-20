@@ -108,6 +108,7 @@ class Result:
     @property
     def server_storage_used(self):
         """Dictionary of server based storage used"""
+
         return self.data['server storage used']
 
     @property
