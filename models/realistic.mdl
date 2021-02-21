@@ -8,28 +8,28 @@
             "name": "medium",
             "probability": 0.2,
             "storage mean": 50, "storage std": 0,
-            "computation mean": 500, "computation std": 0,
+            "computation mean": 150, "computation std": 0,
             "bandwidth mean": 100, "bandwidth std": 0
         },
         {
             "name": "large",
             "probability": 0.3,
             "storage mean": 75, "storage std": 0,
-            "computation mean": 750, "computation std": 0,
+            "computation mean": 250, "computation std": 0,
             "bandwidth mean": 150, "bandwidth std": 0
         },
         {
             "name": "xlarge",
             "probability": 0.3,
             "storage mean": 100, "storage std": 0,
-            "computation mean": 1000, "computation std": 0,
+            "computation mean": 450, "computation std": 0,
             "bandwidth mean": 200, "bandwidth std": 0
         },
         {
             "name": "2xlarge",
             "probability": 0.2,
             "storage mean": 125, "storage std": 0,
-            "computation mean": 1500, "computation std": 0,
+            "computation mean": 600, "computation std": 0,
             "bandwidth mean": 250, "bandwidth std": 0
         }
     ]

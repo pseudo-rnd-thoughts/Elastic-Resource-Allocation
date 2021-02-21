@@ -34,10 +34,11 @@ class FixedTask(Task):
         else:
             assert task.planned_storage is not None and task.planned_computation is not None
             Task.__init__(self, name=name, required_storage=task.planned_storage,
-                          required_computation=compute_speed, required_results_data=task.required_results_data,
+                          required_computation=ceil(task.required_computation / compute_speed)*task.planned_computation,
+                          required_results_data=task.required_results_data,
                           value=task.value, deadline=task.deadline, auction_time=task.auction_time,
-                          loading_speed=ceil(task.required_storage / loading_speed) * task.planned_storage,
-                          compute_speed=ceil(task.required_computation / compute_speed) * task.planned_computation,
+                          loading_speed=ceil(task.planned_storage / (task.required_storage / loading_speed)),
+                          compute_speed=task.planned_computation,
                           sending_speed=sending_speed)
 
     @staticmethod
