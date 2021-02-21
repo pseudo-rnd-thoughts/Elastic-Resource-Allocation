@@ -21,9 +21,9 @@ if TYPE_CHECKING:
 class ModelDistribution:
     """Model distributions"""
 
-    storage_scaling = 700
-    computational_scaling = 1
-    results_data_scaling = 20
+    storage_scaling = 150
+    computational_scaling = 0.5
+    results_data_scaling = 1
 
     def __init__(self, filename: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
         self.filename = filename
@@ -119,10 +119,10 @@ class ModelDistribution:
             return Task(f'realistic {task_id}',
                         required_storage=ceil(self.storage_scaling*task_row['mem_max']),
                         required_computation=ceil(self.computational_scaling*task_row['total_cpu']),
-                        required_results_data=ceil(self.results_data_scaling/100*rnd.randint(20, 60) * task_row['mem_max']),
+                        required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60) * task_row['mem_max']),
                         value=None, deadline=task_row['time_taken'], servers=servers,
-                        planned_storage=self.storage_scaling*task_row['plan_mem'],
-                        planned_computation=self.computational_scaling*task_row['plan_cpu'])
+                        planned_storage=ceil(self.storage_scaling*task_row['plan_mem']),
+                        planned_computation=ceil(self.computational_scaling*task_row['plan_cpu']))
 
     def generate_servers(self) -> List[Server]:
         """
