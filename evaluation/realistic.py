@@ -3,7 +3,7 @@ import pprint
 from typing import List, Tuple
 
 from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowFixedPrioritisation
+from core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
 from extra.io import parse_args, results_filename
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
@@ -30,9 +30,9 @@ def model_scaling(model_dist: ModelDistribution, repeat_num: int,
         repeat_results = []
         for _ in range(repeats):
             tasks, servers = model_dist.generate()
-            fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=False)
+            fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(), resource_foreknowledge=False)
                            for task in tasks]
-            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=True)
+            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(), resource_foreknowledge=True)
                                          for task in tasks]
             algorithm_results = {'model': {
                 'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
@@ -94,9 +94,9 @@ def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[T
         repeat_results = []
         for _ in range(repeats):
             tasks, servers = model_dist.generate()
-            fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=False)
+            fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(), resource_foreknowledge=False)
                            for task in tasks]
-            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=True)
+            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(), resource_foreknowledge=True)
                                          for task in tasks]
             algorithm_results = {'model': {
                 'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]

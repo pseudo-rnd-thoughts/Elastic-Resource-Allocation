@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
-    def __init__(self, task: Task, fixed_value_policy: AllocationFixedPrioritisation, fixed_name: bool = True,
+    def __init__(self, task: Task, fixed_value_policy: FixedAllocationPriority, fixed_name: bool = True,
                  resource_foreknowledge: bool = False):
         name = f'Fixed {task.name}' if fixed_name else task.name
 
@@ -29,8 +29,8 @@ class FixedTask(Task):
             Task.__init__(self, name=name, required_storage=task.required_storage,
                           required_computation=task.required_computation,
                           required_results_data=task.required_results_data,
-                          value=task.value, deadline=task.deadline, loading_speed=loading_speed,
-                          compute_speed=compute_speed, sending_speed=sending_speed, auction_time=task.auction_time)
+                          value=task.value, deadline=task.deadline, auction_time=task.auction_time,
+                          loading_speed=loading_speed, compute_speed=compute_speed, sending_speed=sending_speed)
         else:
             assert task.planned_storage is not None and task.planned_computation is not None
             Task.__init__(self, name=name, required_storage=task.planned_storage,
@@ -42,8 +42,7 @@ class FixedTask(Task):
                           sending_speed=sending_speed)
 
     @staticmethod
-    def minimum_fixed_prioritisation(task: Task,
-                                     allocation_priority: AllocationFixedPrioritisation) -> Tuple[int, int, int]:
+    def minimum_fixed_prioritisation(task: Task, allocation_priority: FixedAllocationPriority) -> Tuple[int, int, int]:
         """
         Find the optimal fixed speeds of the task
 
@@ -110,7 +109,7 @@ class FixedTask(Task):
         return FixedTask(batch_task, self.fixed_value_policy, False)
 
 
-class AllocationFixedPrioritisation(ABC):
+class FixedAllocationPriority(ABC):
     """
     Fixed Value policy for the fixed task to select the speed
     """
@@ -131,22 +130,22 @@ class AllocationFixedPrioritisation(ABC):
         pass
 
 
-class SumSpeedsFixedPrioritisation(AllocationFixedPrioritisation):
+class SumSpeedsFixedAllocationPriority(FixedAllocationPriority):
     """Fixed sum of speeds"""
 
     def __init__(self):
-        AllocationFixedPrioritisation.__init__(self, 'Sum speeds')
+        FixedAllocationPriority.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
 
 
-class SumSpeedPowFixedPrioritisation(AllocationFixedPrioritisation):
+class SumSpeedPowFixedAllocationPriority(FixedAllocationPriority):
     """Fixed Exp Sum of speeds"""
 
     def __init__(self):
-        AllocationFixedPrioritisation.__init__(self, 'Exp Sum Speeds')
+        FixedAllocationPriority.__init__(self, 'Exp Sum Speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculate the value by summing the expo of speeds"""
