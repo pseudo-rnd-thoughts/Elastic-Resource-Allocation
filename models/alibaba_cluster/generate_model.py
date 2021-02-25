@@ -1,3 +1,7 @@
+"""
+Generates the alibaba model
+"""
+
 import os
 
 import pandas as pd
@@ -25,7 +29,7 @@ with pd.read_csv('batch_instance.csv',
                  chunksize=chuck_size, names=batch_instance_col_names) as batch_instance_reader:
     for pos, batch_instance_chunk in enumerate(batch_instance_reader):
         print(pos)
-        batch_task_instances = pd.merge(batch_tasks, batch_instance_chunk, how='inner',
+        batch_task_instances = pd.merge(batch_tasks, batch_instance_chunk,
                                         on=['task_name', 'job_name', 'start_time', 'end_time'])
         # ['task_name', 'job_name', 'start_time', 'end_time', 'plan_cpu',
         #        'plan_mem', 'instance_name', 'task_type', 'status', 'machine_id',
