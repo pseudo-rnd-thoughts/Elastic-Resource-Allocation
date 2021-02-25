@@ -10,7 +10,7 @@ import sys
 import numpy as np
 
 from core.core import reset_model
-from core.fixed_task import SumSpeedPowFixedPrioritisation, FixedTask, SumSpeedsFixedPrioritisation
+from core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
 from extra.io import parse_args
 from extra.model import ModelDistribution
 from greedy.greedy import greedy_algorithm
@@ -44,8 +44,8 @@ def test_realistic_model():
     print()
     model_dist = ModelDistribution('../models/realistic.mdl', num_tasks=10, num_servers=4)
     tasks, servers = model_dist.generate()
-    fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation()) for task in tasks]
-    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation(), resource_foreknowledge=True)
+    fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority()) for task in tasks]
+    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority(), resource_foreknowledge=True)
                                  for task in tasks]
     tasks, servers = model_dist.generate_online(10, 2, 0)
 
@@ -95,7 +95,7 @@ def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8)
     for num_tasks in range(24, 60, 4):
         model = ModelDistribution(model_file, num_tasks=num_tasks, num_servers=num_servers)
         tasks, servers = model.generate()
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation()) for task in tasks]
+        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
 
         greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(),
                                                            SumResources(), SumPercentage())])

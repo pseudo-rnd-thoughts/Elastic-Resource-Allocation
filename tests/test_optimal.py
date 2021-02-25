@@ -8,7 +8,7 @@ from typing import Sequence
 
 import matplotlib.pyplot as plt
 
-from core.fixed_task import FixedTask, SumSpeedsFixedPrioritisation
+from core.fixed_task import FixedTask, SumSpeedsFixedAllocationPriority
 from extra.io import parse_args
 from extra.visualise import minimise_resource_allocation, plot_allocation_results
 from optimal.fixed_optimal import fixed_optimal
@@ -26,8 +26,8 @@ from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_
 def test_optimal_solution():
     model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=20, num_servers=4)
     tasks, servers = model_dist.generate()
-    fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation()) for task in tasks]
-    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedPrioritisation(), resource_foreknowledge=True)
+    fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority()) for task in tasks]
+    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority(), resource_foreknowledge=True)
                                  for task in tasks]
 
     greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
