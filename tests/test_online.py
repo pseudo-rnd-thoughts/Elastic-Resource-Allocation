@@ -7,19 +7,19 @@ from __future__ import annotations
 from math import ceil
 from typing import Iterable, List
 
-from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
-from core.server import Server
-from core.task import Task
-from evaluation.online import generate_batch_tasks, online_batch_solver
-from extra.model import ModelDistribution
-from extra.visualise import minimise_resource_allocation
-from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPowPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
-from optimal.fixed_optimal import fixed_optimal_solver
-from optimal.flexible_optimal import flexible_optimal_solver
+from src.core.core import reset_model
+from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.server import Server
+from src.core.task import Task
+from src.extra.model import ModelDistribution
+from src.extra.online import generate_batch_tasks, online_batch_solver
+from src.extra.visualise import minimise_resource_allocation
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPowPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
+from src.optimal.fixed_optimal import fixed_optimal_solver
+from src.optimal.flexible_optimal import flexible_optimal_solver
 
 
 def test_online_model_generation(model_dist=ModelDistribution('../models/synthetic.mdl', num_servers=8),

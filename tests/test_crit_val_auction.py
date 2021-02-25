@@ -5,13 +5,13 @@ Tests the critical value auction through checking that the critical value is cor
 
 from __future__ import annotations
 
-from auctions.critical_value_auction import critical_value_auction
-from core.core import reset_model
-from extra.model import ModelDistribution
-from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.task_prioritisation import UtilityPerResources
+from src.auctions.critical_value_auction import critical_value_auction
+from src.core.core import reset_model
+from src.extra.model import ModelDistribution
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.task_prioritisation import UtilityPerResources
 
 
 def test_critical_value(error: float = 0.05):

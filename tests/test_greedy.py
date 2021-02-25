@@ -7,14 +7,14 @@ from __future__ import annotations
 
 import numpy as np
 
-from core.core import reset_model
-from extra.model import ModelDistribution
-from greedy.matrix_allocation_policy import SumServerMaxPercentage
-from greedy.greedy import greedy_algorithm
-from greedy.matrix_greedy import greedy_matrix_algorithm
-from greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
-from greedy.server_selection_policy import SumResources, all_policies as server_selection_policies
-from greedy.task_prioritisation import UtilityDeadlinePerResource, all_policies as value_density_policies
+from src.core.core import reset_model
+from src.extra.model import ModelDistribution
+from src.greedy.matrix_allocation_policy import SumServerMaxPercentage
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.matrix_greedy import greedy_matrix_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
+from src.greedy.server_selection_policy import SumResources, all_policies as server_selection_policies
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource, all_policies as value_density_policies
 
 
 def test_greedy_policies():

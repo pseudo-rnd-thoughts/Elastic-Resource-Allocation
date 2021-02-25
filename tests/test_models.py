@@ -2,22 +2,20 @@
 Test the model distribution files
 """
 
-import json
 import os
-import random as rnd
 import sys
 
 import numpy as np
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource
 
-from core.core import reset_model
-from core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
-from extra.io import parse_args
-from extra.model import ModelDistribution
-from greedy.greedy import greedy_algorithm
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.task_prioritisation import UtilityDeadlinePerResource
-from optimal.fixed_optimal import fixed_optimal
+from src.core.core import reset_model
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
+from src.extra.io import parse_args
+from src.extra.model import ModelDistribution
+from src.optimal.fixed_optimal import fixed_optimal
 
 
 def test_model_distribution():
@@ -48,6 +46,10 @@ def test_realistic_model():
     foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority(), resource_foreknowledge=True)
                                  for task in tasks]
     tasks, servers = model_dist.generate_online(10, 2, 0)
+
+    print(fixed_tasks)
+    print(foreknowledge_fixed_tasks)
+    print(tasks, servers)
 
 
 def test_args():
