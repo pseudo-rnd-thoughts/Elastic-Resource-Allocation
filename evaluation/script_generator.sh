@@ -28,7 +28,7 @@ done
 
 read -p 'Extra info: ' extra
 if [ "$extra" == "" ]; then
-  $extra=' '
+  extra=' '
 fi
 
 for (( pos = 0; pos < ${#tasks[@]}; pos++ )); do
