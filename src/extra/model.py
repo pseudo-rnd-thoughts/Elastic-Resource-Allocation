@@ -21,9 +21,9 @@ if TYPE_CHECKING:
 class ModelDistribution:
     """Model distributions"""
 
-    storage_scaling = 150
-    computational_scaling = 0.5
-    results_data_scaling = 1
+    storage_scaling = 500
+    computational_scaling = 1
+    results_data_scaling = 5
 
     def __init__(self, filename: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
         self.filename = filename
@@ -117,8 +117,8 @@ class ModelDistribution:
         task_sample = self.task_model.sample()
         for index, task_row in task_sample.iterrows():
             return Task(f'realistic {task_id}',
-                        required_storage=ceil(self.storage_scaling*task_row['mem_max']),
-                        required_computation=ceil(self.computational_scaling*task_row['total_cpu']),
+                        required_storage=ceil(self.storage_scaling*min(1.2*task_row['mem_max'], task_row['plan_mem'])),
+                        required_computation=ceil(self.computational_scaling*1.2*task_row['total_cpu']),
                         required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60) * task_row['mem_max']),
                         value=None, deadline=task_row['time_taken'], servers=servers,
                         planned_storage=ceil(self.storage_scaling*task_row['plan_mem']),
