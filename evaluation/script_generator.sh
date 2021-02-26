@@ -15,10 +15,10 @@ while true; do
     break
   else
     if [ "$num_tasks" == '' ]; then
-      num_tasks=''
+      num_tasks=' '
     fi
     if [ "$num_servers" == '' ]; then
-      num_servers=''
+      num_servers=' '
     fi
 
     tasks+=("$num_tasks")
