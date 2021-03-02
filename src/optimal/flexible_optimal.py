@@ -39,14 +39,9 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
 
     # Loop over each task to allocate the variables and add the deadline constraints
     for task in tasks:
-        if time_limit is None:
-            loading_speeds[task] = model.integer_var(min=1, name=f'{task.name} loading speed')
-            compute_speeds[task] = model.integer_var(min=1, name=f'{task.name} compute speed')
-            sending_speeds[task] = model.integer_var(min=1, name=f'{task.name} sending speed')
-        else:
-            loading_speeds[task] = model.integer_var(min=1, max=task.loading_ub(), name=f'{task.name} loading speed')
-            compute_speeds[task] = model.integer_var(min=1, max=task.compute_ub(), name=f'{task.name} compute speed')
-            sending_speeds[task] = model.integer_var(min=1, max=task.sending_ub(), name=f'{task.name} sending speed')
+        loading_speeds[task] = model.integer_var(min=1, name=f'{task.name} loading speed')
+        compute_speeds[task] = model.integer_var(min=1, name=f'{task.name} compute speed')
+        sending_speeds[task] = model.integer_var(min=1, name=f'{task.name} sending speed')
 
         model.add((task.required_storage / loading_speeds[task]) +
                   (task.required_computation / compute_speeds[task]) +
@@ -75,7 +70,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print(f'Optimal solver failed')
+        print(f'Optimal solver failed', file=sys.stderr)
         print_model_solution(model_solution)
         print_model(tasks, servers)
         return None
@@ -90,10 +85,11 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(compute_speeds[task]),
                                            model_solution.get_value(sending_speeds[task]))
 
-        assert model_solution.get_objective_values()[0] == sum(task.value for task in tasks if task.running_server)
+        assert model_solution.get_objective_values()[0] == sum(task.value for task in tasks if task.running_server), \
+            model_solution.get_objective_values()
         return model_solution
     except (AssertionError, KeyError) as e:
-        print('Error: ', e)
+        print('Error: ', e, file=sys.stderr)
         print_model_solution(model_solution)
 
 
