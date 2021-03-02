@@ -1,22 +1,34 @@
+"""
+Tests the realistic settings
+"""
+
 import json
 import pprint
 from typing import List, Tuple
 
-from core.core import reset_model
-from core.fixed_task import FixedTask, SumSpeedPowFixedPrioritisation
-from extra.io import parse_args, results_filename
-from extra.model import ModelDistribution
-from greedy.greedy import greedy_algorithm
-from optimal.fixed_optimal import fixed_optimal
-from optimal.flexible_optimal import flexible_optimal
-from optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
+from src.core.core import reset_model
+from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDistribution
+from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.task_prioritisation import policies as task_priorities
+from src.optimal.fixed_optimal import fixed_optimal
+from src.optimal.flexible_optimal import flexible_optimal
+from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 
 
 def model_scaling(model_dist: ModelDistribution, repeat_num: int,
                   scalings: List[Tuple[int, int, int]], repeats: int = 10):
+    """
+    Tests a range of possible model scalings
+
+    :param model_dist: Model distributions
+    :param repeat_num: The repeat number
+    :param scalings: List of possible scalings
+    :param repeats: The number of repeats for each scaling
+    """
     scaling_results = {}
     pp = pprint.PrettyPrinter()
     filename = results_filename('model_scaling', model_dist, repeat_num)
@@ -30,10 +42,10 @@ def model_scaling(model_dist: ModelDistribution, repeat_num: int,
         repeat_results = []
         for _ in range(repeats):
             tasks, servers = model_dist.generate()
-            fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=False)
+            fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority())
                            for task in tasks]
-            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=True)
-                                         for task in tasks]
+            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(),
+                                                   resource_foreknowledge=True) for task in tasks]
             algorithm_results = {'model': {
                 'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
             }}
@@ -81,7 +93,15 @@ def model_scaling(model_dist: ModelDistribution, repeat_num: int,
             json.dump(scaling_results, file)
 
 
-def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[Tuple[int, int]],  repeats: int = 10):
+def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[Tuple[int, int]],  repeats: int = 20):
+    """
+    Tests a range of possible model sizings
+
+    :param model_dist: Model distribution
+    :param repeat_num: The repeat number
+    :param sizings: List of possible sizings
+    :param repeats: The number of repeats
+    """
     sizing_results = {}
     pp = pprint.PrettyPrinter()
     filename = results_filename('model_sizing', model_dist, repeat_num)
@@ -94,10 +114,10 @@ def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[T
         repeat_results = []
         for _ in range(repeats):
             tasks, servers = model_dist.generate()
-            fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=False)
+            fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority())
                            for task in tasks]
-            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedPrioritisation(), resource_foreknowledge=True)
-                                         for task in tasks]
+            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(),
+                                                   resource_foreknowledge=True) for task in tasks]
             algorithm_results = {'model': {
                 'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
             }}
@@ -153,4 +173,4 @@ if __name__ == "__main__":
                       [(700, 1, 20), (350, 0.5, 10), (200, 0.25, 5)])
     elif args.extra == 'model sizing':
         model_sizing(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
-                     [(40, 4), (60, 4), (100, 10), (100, 8)])
+                     [(50, 5), (60, 5), (100, 10), (100, 8)])

@@ -8,13 +8,13 @@ import json
 import random as rnd
 from copy import copy
 
-from auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
+from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction, \
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
-from core.core import reset_model, server_task_allocation, set_server_heuristics
-from extra.io import results_filename, parse_args
-from extra.model import ModelDistribution
-from greedy.resource_allocation_policy import SumPercentage
-from optimal.flexible_optimal import flexible_optimal
+from src.core.core import reset_model, server_task_allocation, set_server_heuristics
+from src.extra.io import results_filename, parse_args
+from src.extra.model import ModelDistribution
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.optimal.flexible_optimal import flexible_optimal
 
 
 def test_greedy_task_price():
