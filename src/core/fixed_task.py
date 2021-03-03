@@ -63,7 +63,8 @@ class FixedTask(Task):
 
         model_solution = model.solve(log_output=None)
         assert model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE or \
-            model_solution.get_solve_status() == SOLVE_STATUS_OPTIMAL, model_solution.get_solve_status()
+            model_solution.get_solve_status() == SOLVE_STATUS_OPTIMAL, \
+            (model_solution.get_solve_status(), task.__str__())
         assert 0 < model_solution.get_value(loading_speed) and \
             0 < model_solution.get_value(compute_speed) and \
             0 < model_solution.get_value(sending_speed), \
