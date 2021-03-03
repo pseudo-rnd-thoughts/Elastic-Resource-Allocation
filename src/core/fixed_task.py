@@ -6,7 +6,7 @@ from abc import abstractmethod, ABC
 from math import ceil
 from typing import TYPE_CHECKING
 
-from docplex.cp.model import CpoModel
+from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.task import Task
 
@@ -51,9 +51,9 @@ class FixedTask(Task):
         :return: Fixed speeds
         """
         model = CpoModel('FixedSpeedsPrioritisation')
-        loading_speed = model.integer_var(min=1)
-        compute_speed = model.integer_var(min=1)
-        sending_speed = model.integer_var(min=1)
+        loading_speed = model.integer_var(min=1, name='loading speed')
+        compute_speed = model.integer_var(min=1, name='compute speed')
+        sending_speed = model.integer_var(min=1, name='sending speed')
 
         model.add(task.required_storage / loading_speed +
                   task.required_computation / compute_speed +
@@ -62,10 +62,12 @@ class FixedTask(Task):
         model.minimize(allocation_priority.evaluate(loading_speed, compute_speed, sending_speed))
 
         model_solution = model.solve(log_output=None)
-        assert model_solution is not None
+        assert model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE or \
+            model_solution.get_solve_status() == SOLVE_STATUS_OPTIMAL, model_solution.get_solve_status()
         assert 0 < model_solution.get_value(loading_speed) and \
-            0 < model_solution.get_value(loading_speed) and \
-            0 < model_solution.get_value(loading_speed)
+            0 < model_solution.get_value(compute_speed) and \
+            0 < model_solution.get_value(sending_speed), \
+            (model_solution.get(loading_speed), model_solution.get(compute_speed), model_solution.get(sending_speed))
 
         return model_solution.get_value(loading_speed), \
             model_solution.get_value(compute_speed), \

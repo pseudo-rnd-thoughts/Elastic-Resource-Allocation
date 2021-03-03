@@ -60,7 +60,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     # Check that the model is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Fixed optimal failure')
+        print('Fixed optimal failure', file=sys.stderr)
         print_model_solution(model_solution)
         return None
 
@@ -72,7 +72,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
                     server_task_allocation(server, task, task.loading_speed, task.compute_speed, task.sending_speed)
                     break
     except (KeyError, AssertionError) as e:
-        print('Assertion error in fixed optimal algorithm: ', e)
+        print('Assertion error in fixed optimal algorithm: ', e, file=sys.stderr)
         print_model_solution(model_solution)
         return None
 
