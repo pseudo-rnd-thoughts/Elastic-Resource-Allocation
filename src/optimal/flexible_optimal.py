@@ -84,9 +84,12 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(loading_speeds[task]),
                                            model_solution.get_value(compute_speeds[task]),
                                            model_solution.get_value(sending_speeds[task]))
+                break
 
-        assert model_solution.get_objective_values()[0] == sum(task.value for task in tasks if task.running_server), \
-            model_solution.get_objective_values()
+        if model_solution.get_objective_values()[0] != sum(task.value for task in tasks if task.running_server):
+            print('Flexible optimal different objective values - '
+                  f'cplex: {model_solution.get_objective_values()[0]} and '
+                  f'running task values: {sum(task.value for task in tasks if task.running_server)}')
         return model_solution
     except (AssertionError, KeyError) as e:
         print('Error: ', e, file=sys.stderr)
