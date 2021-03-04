@@ -3,18 +3,23 @@ Test the model distribution files
 """
 
 import os
+import random as rnd
 import sys
+from math import ceil
 
 import numpy as np
-from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPercentage
-from src.greedy.server_selection_policy import SumResources
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource
+import pandas as pd
+from tqdm import tqdm
 
+from core.task import Task
 from src.core.core import reset_model
 from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
 from src.extra.io import parse_args
 from src.extra.model import ModelDistribution
+from src.greedy.greedy import greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource
 from src.optimal.fixed_optimal import fixed_optimal
 
 
@@ -50,6 +55,37 @@ def test_realistic_model():
     print(fixed_tasks)
     print(foreknowledge_fixed_tasks)
     print(tasks, servers)
+
+
+def alibaba_task_generation():
+    print()
+    model_dist = ModelDistribution('../models/realistic.mdl', num_tasks=10, num_servers=4)
+    servers = model_dist.generate_servers()
+    alibaba = pd.read_csv('../models/alibaba_cluster_tasks.csv')
+    storage_scaling, computational_scaling, results_data_scaling = 500, 1, 5
+    fixed_task_policy = SumSpeedsFixedAllocationPriority()
+    # 74, 2984, 4780, 6602, 10999 failed
+    for index, task_row in tqdm(alibaba.iterrows()):
+        task = Task(f'realistic {index}',
+                    required_storage=ceil(storage_scaling * min(1.2 * task_row['mem_max'], task_row['plan_mem'])),
+                    required_computation=ceil(computational_scaling * 1.2 * task_row['total_cpu']),
+                    required_results_data=ceil(results_data_scaling * rnd.randint(20, 60) * task_row['mem_max']),
+                    value=None, deadline=task_row['time_taken'], servers=servers,
+                    planned_storage=ceil(storage_scaling * task_row['plan_mem']),
+                    planned_computation=ceil(computational_scaling * task_row['plan_cpu']))
+        try:
+            fixed_task = FixedTask(task, fixed_task_policy)
+        except AssertionError as e:
+            print(f'Error for fixed task index {index}', e)
+            print(task.required_storage/storage_scaling, task.required_computation/computational_scaling,
+                  task.required_results_data/results_data_scaling)
+        try:
+            foreknowledge_fixed_task = FixedTask(task, fixed_task_policy, resource_foreknowledge=True)
+        except AssertionError as e:
+            print(f'Error for foreknowledge fixed task index {index}', e)
+            print(task.required_storage / storage_scaling, task.required_computation / computational_scaling,
+                  task.required_results_data / results_data_scaling,
+                  task.required_results_data / (results_data_scaling * task_row['mem_max']))
 
 
 def test_args():
@@ -130,7 +166,7 @@ def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8)
               f'{greedy_result.social_welfare:9} | {fixed_result.social_welfare:8}')
 
 
-if __name__ == "__main__":
+def test_iridis_model():
     # PYTHONPATH=./src/ python3 tests/test_models.py -f='caroline' -t='28' -s='', -r='0' -e='test message'
     loaded_args = parse_args()
     print(f'Model file: {loaded_args.file}, tasks: {loaded_args.tasks}, servers: {loaded_args.servers}, '
@@ -141,3 +177,7 @@ if __name__ == "__main__":
         print('success')
     else:
         print('failure')
+
+
+if __name__ == "__main__":
+    alibaba_task_generation()
