@@ -119,7 +119,7 @@ class ModelDistribution:
             return Task(f'realistic {task_id}',
                         required_storage=ceil(self.storage_scaling*min(1.2*task_row['mem_max'], task_row['plan_mem'])),
                         required_computation=ceil(self.computational_scaling*1.2*task_row['total_cpu']),
-                        required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60) * task_row['mem_max']),
+                        required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60)*task_row['mem_max']),
                         value=None, deadline=task_row['time_taken'], servers=servers,
                         planned_storage=ceil(self.storage_scaling*task_row['plan_mem']),
                         planned_computation=ceil(self.computational_scaling*task_row['plan_cpu']))
