@@ -7,8 +7,6 @@ from __future__ import annotations
 import json
 import pprint
 
-from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
-from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
 from src.core.core import reset_model, set_server_heuristics
 from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
 from src.extra.io import parse_args, results_filename
@@ -18,7 +16,7 @@ from src.greedy.resource_allocation_policy import policies as resource_allocatio
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.task_prioritisation import policies as task_priorities, Value
 from src.optimal.fixed_optimal import fixed_optimal
-from src.optimal.flexible_optimal import flexible_optimal
+from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
 
 
 # noinspection DuplicatedCode

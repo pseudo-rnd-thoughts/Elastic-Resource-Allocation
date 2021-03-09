@@ -19,8 +19,7 @@ from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
 from src.greedy.task_prioritisation import UtilityDeadlinePerResource
-from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal
-from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
+from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal, server_relaxed_flexible_optimal
 
 
 def test_optimal_solution():

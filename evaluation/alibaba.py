@@ -15,8 +15,7 @@ from src.greedy.resource_allocation_policy import policies as resource_allocatio
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.task_prioritisation import policies as task_priorities
 from src.optimal.fixed_optimal import fixed_optimal, foreknowledge_fixed_optimal
-from src.optimal.flexible_optimal import flexible_optimal
-from src.optimal.server_relaxed_flexible_optimal import server_relaxed_flexible_optimal
+from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
 
 
 def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[Tuple[int, int, bool, bool]],

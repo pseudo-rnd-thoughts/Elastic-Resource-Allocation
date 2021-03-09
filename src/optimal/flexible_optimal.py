@@ -1,5 +1,5 @@
 """
-Optimal algorithms
+Flexible Optimal algorithms
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
 
+from core.super_server import SuperServer
 from src.core.core import server_task_allocation
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
@@ -84,12 +85,12 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(loading_speeds[task]),
                                            model_solution.get_value(compute_speeds[task]),
                                            model_solution.get_value(sending_speeds[task]))
-                break
+                    break
 
         if model_solution.get_objective_values()[0] != sum(task.value for task in tasks if task.running_server):
             print('Flexible optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
-                  f'running task values: {sum(task.value for task in tasks if task.running_server)}')
+                  f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)
         return model_solution
     except (AssertionError, KeyError) as e:
         print('Error: ', e, file=sys.stderr)
@@ -113,3 +114,25 @@ def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: Optio
     else:
         print(f'Flexible Optimal error', file=sys.stderr)
         return Result('Flexible Optimal', tasks, servers, 0, limited=True)
+
+
+def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server],
+                                    time_limit: Optional[int] = 15) -> Optional[Result]:
+    """
+    Runs the relaxed task allocation solver
+
+    :param tasks: List of tasks
+    :param servers: List of servers
+    :param time_limit: The time limit for the solver
+    :return: Optional relaxed results
+    """
+    super_server = SuperServer(servers)
+    model_solution = flexible_optimal_solver(tasks, [super_server], time_limit)
+    if model_solution:
+        return Result('Server Relaxed Flexible Optimal', tasks, [super_server],
+                      round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
+    else:
+        print(f'Server Relaxed Flexible Optimal error', file=sys.stderr)
+        return Result('Server Relaxed Flexible Optimal', tasks, servers, 0, limited=True)

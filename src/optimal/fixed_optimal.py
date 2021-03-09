@@ -71,6 +71,11 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
                 if model_solution.get_value(allocations[(task, server)]):
                     server_task_allocation(server, task, task.loading_speed, task.compute_speed, task.sending_speed)
                     break
+
+        if model_solution.get_objective_values()[0] != sum(task.value for task in tasks if task.running_server):
+            print('Fixed optimal different objective values - '
+                  f'cplex: {model_solution.get_objective_values()[0]} and '
+                  f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)
     except (KeyError, AssertionError) as e:
         print('Assertion error in fixed optimal algorithm: ', e, file=sys.stderr)
         print_model_solution(model_solution)
