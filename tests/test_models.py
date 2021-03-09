@@ -58,6 +58,9 @@ def test_realistic_model():
 
 
 def alibaba_task_generation():
+    """
+    Tests if the task generation for the alibaba dataset is valid
+    """
     print()
     model_dist = ModelDistribution('../models/alibaba.mdl', num_tasks=10, num_servers=4)
     servers = model_dist.generate_servers()
@@ -74,13 +77,13 @@ def alibaba_task_generation():
                     planned_storage=ceil(storage_scaling * task_row['plan_mem']),
                     planned_computation=ceil(computational_scaling * task_row['plan_cpu']))
         try:
-            fixed_task = FixedTask(task, fixed_task_policy)
+            FixedTask(task, fixed_task_policy)
         except AssertionError as e:
             print(f'Error for fixed task index {index}', e)
             print(task.required_storage/storage_scaling, task.required_computation/computational_scaling,
                   task.required_results_data/results_data_scaling)
         try:
-            foreknowledge_fixed_task = FixedTask(task, fixed_task_policy, resource_foreknowledge=True)
+            FixedTask(task, fixed_task_policy, resource_foreknowledge=True)
         except AssertionError as e:
             print(f'Error for foreknowledge fixed task index {index}', e)
             print(task.required_storage / storage_scaling, task.required_computation / computational_scaling,
@@ -172,7 +175,7 @@ def test_iridis_model():
     print(f'Model file: {loaded_args.file}, tasks: {loaded_args.tasks}, servers: {loaded_args.servers}, '
           f'repeat: {loaded_args.repeat}, extra: "{loaded_args.extra}"')
 
-    loaded_model_dist = ModelDistribution(loaded_args.file, loaded_args.tasks, loaded_args.servers)
+    ModelDistribution(loaded_args.file, loaded_args.tasks, loaded_args.servers)
     if loaded_args.extra == 'test message':
         print('success')
     else:
