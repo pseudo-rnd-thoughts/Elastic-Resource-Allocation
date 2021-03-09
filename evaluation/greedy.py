@@ -23,7 +23,7 @@ from src.optimal.flexible_optimal import flexible_optimal
 
 # noinspection DuplicatedCode
 def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50,
-                      run_flexible: bool = True, run_fixed: bool = True):
+                      run_flexible: bool = True, run_fixed: bool = True, run_relaxed: bool = True):
     """
     Evaluation of different greedy algorithms
 
@@ -32,6 +32,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
     :param repeats: Number of model runs
     :param run_flexible: If to run the optimal flexible solver
     :param run_fixed: If to run the optimal fixed solver
+    :param run_relaxed: If to run the relaxed flexible solver
     """
     print(f'Evaluates the greedy algorithms (plus optimal, fixed and relaxed) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -44,7 +45,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
         set_server_heuristics(servers, 3, 25)
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -59,22 +60,24 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         if run_fixed:
             # Find the fixed solution
+            fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
             fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
-        # Find the relaxed solution
-        relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
-        algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
-        relaxed_result.pretty_print()
-        reset_model(tasks, servers)
+            foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+            fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, time_limit=None)
+            algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+            fixed_optimal_result.pretty_print()
+            reset_model(fixed_tasks, servers)
 
-        # Runs the DIA as an alternative method of getting a optimal social welfare
-        dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=3)
-        algorithm_results[dia_result.algorithm] = dia_result.store()
-        dia_result.pretty_print()
-        reset_model(tasks, servers)
+        if run_relaxed:
+            # Find the relaxed solution
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
+            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
+            relaxed_result.pretty_print()
+            reset_model(tasks, servers)
 
         # Loop over all of the greedy policies permutations
         for task_priority in task_priorities:
@@ -145,9 +148,13 @@ if __name__ == "__main__":
     if args.extra == '' or args.extra == 'full optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'fixed optimal':
-        greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat, run_flexible=False)
-    elif args.extra == 'time limited':
+        greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
+                          run_flexible=False)
+    elif args.extra == 'relaxed optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_fixed=False)
+    elif args.extra == 'time limited':
+        greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
+                          run_flexible=False, run_fixed=False, run_relaxed=False)
     elif args.extra == 'lower bound':
         lower_bound_testing(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)

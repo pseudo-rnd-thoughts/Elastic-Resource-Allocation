@@ -96,3 +96,23 @@ def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: Opt
     else:
         print(f'Fixed optimal error', file=sys.stderr)
         return Result('Fixed Optimal', tasks, servers, 0, limited=True)
+
+
+def foreknowledge_fixed_optimal(tasks: List[FixedTask], servers: List[Server],
+                                time_limit: Optional[int] = 15) -> Optional[Result]:
+    """
+    Runs the foreknowledge fixed optimal cplex algorithm solver with a time limit
+
+    :param tasks: List of fixed tasks
+    :param servers: List of servers
+    :param time_limit: Cplex time limit
+    :return: Optional results
+    """
+    model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
+    if model_solution:
+        return Result('Foreknowledge Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
+    else:
+        print(f'Foreknowledge Fixed optimal error', file=sys.stderr)
+        return Result('Foreknowledge Fixed Optimal', tasks, servers, 0, limited=True)

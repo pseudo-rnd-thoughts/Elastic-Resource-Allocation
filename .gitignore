@@ -8,6 +8,8 @@ __pycache__/
 analysis/figs/
 data/
 models/old_models/
-evaluation/run_bash_cmds.sh
+
+evaluation/synthetic_cmds.sh
+evaluation/alibaba_cmds.sh
 
 related_papers

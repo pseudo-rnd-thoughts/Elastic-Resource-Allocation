@@ -45,7 +45,7 @@ def test_model_distribution():
 
 def test_realistic_model():
     print()
-    model_dist = ModelDistribution('../models/realistic.mdl', num_tasks=10, num_servers=4)
+    model_dist = ModelDistribution('../models/alibaba.mdl', num_tasks=10, num_servers=4)
     tasks, servers = model_dist.generate()
     fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority()) for task in tasks]
     foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority(), resource_foreknowledge=True)
@@ -59,7 +59,7 @@ def test_realistic_model():
 
 def alibaba_task_generation():
     print()
-    model_dist = ModelDistribution('../models/realistic.mdl', num_tasks=10, num_servers=4)
+    model_dist = ModelDistribution('../models/alibaba.mdl', num_tasks=10, num_servers=4)
     servers = model_dist.generate_servers()
     alibaba = pd.read_csv('../models/alibaba_cluster_tasks.csv')
     storage_scaling, computational_scaling, results_data_scaling = 500, 1, 5
@@ -107,24 +107,24 @@ def test_args():
         assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
 
     # Files
-    eval_args(['--file', 'test'], '../models/basic.mdl', None, None, 0)
-    eval_args(['-f', 'test'], '../models/basic.mdl', None, None, 0)
+    eval_args(['--file', 'test'], '../models/synthetic.mdl', None, None, 0)
+    eval_args(['-f', 'test'], '../models/synthetic.mdl', None, None, 0)
 
     # Tasks
-    eval_args(['--file', 'test', '--tasks', '1'], '../models/basic.mdl', 1, None, 0)
-    eval_args(['-f', 'test', '-t', '2'], '../models/basic.mdl', 2, None, 0)
+    eval_args(['--file', 'test', '--tasks', '1'], '../models/synthetic.mdl', 1, None, 0)
+    eval_args(['-f', 'test', '-t', '2'], '../models/synthetic.mdl', 2, None, 0)
 
     # Servers
-    eval_args(['--file', 'test', '--servers', '3'], '../models/basic.mdl', None, 3, 0)
-    eval_args(['-f', 'test', '-s', '4'], '../models/basic.mdl', None, 4, 0)
+    eval_args(['--file', 'test', '--servers', '3'], '../models/synthetic.mdl', None, 3, 0)
+    eval_args(['-f', 'test', '-s', '4'], '../models/synthetic.mdl', None, 4, 0)
 
     # Repeat
-    eval_args(['--file', 'test', '--repeat', '5'], '../models/basic.mdl', None, None, 5)
-    eval_args(['-f', 'test', '-r', '6'], '../models/basic.mdl', None, None, 6)
+    eval_args(['--file', 'test', '--repeat', '5'], '../models/synthetic.mdl', None, None, 5)
+    eval_args(['-f', 'test', '-r', '6'], '../models/synthetic.mdl', None, None, 6)
 
     # Full
-    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/basic.mdl', 7, 8, 9)
-    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/basic.mdl', 10, 11, 12)
+    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/synthetic.mdl', 7, 8, 9)
+    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/synthetic.mdl', 10, 11, 12)
 
 
 def test_model_tasks(model_file: str = '../models/synthetic.mdl', num_servers=8):
