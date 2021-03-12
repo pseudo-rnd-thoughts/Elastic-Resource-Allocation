@@ -11,7 +11,7 @@ from typing import Iterable
 
 from extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
 from src.extra.io import results_filename, parse_args
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -52,7 +52,6 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
         batch_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -61,6 +60,7 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         # Batch greedy algorithm
         for batch_length in batch_lengths:
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
             batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
 
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]

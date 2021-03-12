@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import sys
+import time
 from abc import abstractmethod, ABC
 from math import ceil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
@@ -155,3 +157,32 @@ class SumSpeedPowFixedAllocationPriority(FixedAllocationPriority):
         return loading_speed ** 3 + compute_speed ** 3 + sending_speed ** 3
 
 # TODO add more fixed value classes
+
+
+def generate_fixed_tasks(tasks: List[Task], fixed_allocation_priority: FixedAllocationPriority,
+                         resource_foreknowledge: bool = False, max_tries: int = 5) -> List[FixedTask]:
+    """
+    Generates a list of fixed tasks catching if the generation of the task fails for some reasons
+
+    :param tasks: List of tasks
+    :param fixed_allocation_priority: Fixed allocation priority class
+    :param resource_foreknowledge: If resource foreknowledge is enabled
+    :param max_tries: The max tries for generated the fixed task
+    :return:
+    """
+    fixed_tasks = []
+    for task in tasks:
+        tries = 0
+        while tries < max_tries:
+            try:
+                fixed_task = FixedTask(task, fixed_allocation_priority, resource_foreknowledge=resource_foreknowledge)
+                fixed_tasks.append(fixed_task)
+                break
+            except Exception as e:
+                print(e, file=sys.stderr)
+                tries += 1
+                time.sleep(0.5)
+        if tries == max_tries:
+            raise Exception(f'Unable to create the fixed task (foreknowledge: {resource_foreknowledge}: '
+                            f'{task.__str__()}')
+    return fixed_tasks

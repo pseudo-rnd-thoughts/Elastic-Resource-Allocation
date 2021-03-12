@@ -7,7 +7,7 @@ import pprint
 from typing import List, Tuple
 
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -60,17 +60,15 @@ def model_sizing(model_dist: ModelDistribution, repeat_num: int, sizings: List[T
 
             if run_fixed:
                 # Find the fixed solution
-                fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+                fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
                 fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=10)
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
                 fixed_optimal_result.pretty_print()
                 reset_model(fixed_tasks, servers)
 
                 # Find the foreknowledge fixed solution
-                foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority(),
-                                                       resource_foreknowledge=True) for task in tasks]
-                foreknowledge_fixed_result = foreknowledge_fixed_optimal(foreknowledge_fixed_tasks, servers,
-                                                                         time_limit=10)
+                foreknowledge_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+                foreknowledge_fixed_result = foreknowledge_fixed_optimal(foreknowledge_tasks, servers, time_limit=10)
                 algorithm_results[foreknowledge_fixed_result.algorithm] = foreknowledge_fixed_result.store()
                 foreknowledge_fixed_result.pretty_print()
                 reset_model(fixed_tasks, servers)

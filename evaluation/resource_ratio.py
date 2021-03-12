@@ -9,7 +9,7 @@ import pprint
 from typing import Iterable
 
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
@@ -43,7 +43,6 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
         ratio_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -66,10 +65,18 @@ def server_resource_ratio(model_dist: ModelDistribution, repeat_num: int, repeat
                 reset_model(tasks, servers)
 
             if run_fixed:
-                # Fixed optimal
-                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, None)
-                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store(ratio=ratio)
-                pp.pprint(algorithm_results[fixed_optimal_result.algorithm])
+                # Find the fixed solution
+                fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
+                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
+                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+                fixed_optimal_result.pretty_print()
+                reset_model(fixed_tasks, servers)
+
+                # Find the fixed solution with resource knowledge
+                foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+                fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, time_limit=None)
+                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+                fixed_optimal_result.pretty_print()
                 reset_model(fixed_tasks, servers)
 
             # Loop over all of the greedy policies permutations

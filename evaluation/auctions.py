@@ -11,7 +11,7 @@ from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -45,7 +45,6 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
         # Generate the tasks and servers
         tasks, servers = model_dist.generate()
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -59,11 +58,19 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
             reset_model(tasks, servers)
 
         if run_fixed:
-            # Fixed VCG Auctions
+            # Find the fixed VCG auction
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
             fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
             fixed_vcg_result.pretty_print()
             reset_model(fixed_tasks, servers)
+
+            # Find the fixed VCG auction with resource knowledge
+            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+            fixed_vcg_result = fixed_vcg_auction(foreknowledge_fixed_tasks, servers, time_limit=None)
+            algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
+            fixed_vcg_result.pretty_print()
+            reset_model(foreknowledge_fixed_tasks, servers)
 
         # Decentralised Iterative auction
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=dia_time_limit)
