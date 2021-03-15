@@ -87,7 +87,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(sending_speeds[task]))
                     break
 
-        if abs(model_solution.get_objective_values()[0] - sum(task.value for task in tasks if task.running_server)) < 0.1:
+        if abs(model_solution.get_objective_values()[0] - sum(task.value for task in tasks if task.running_server)) > 0.1:
             print('Flexible optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
                   f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)
