@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
 
-from core.super_server import SuperServer
+from src.core.super_server import SuperServer
 from src.core.core import server_task_allocation
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
