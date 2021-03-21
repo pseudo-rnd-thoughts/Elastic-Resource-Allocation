@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import pprint
+import sys
 
 from src.core.core import reset_model, set_server_heuristics
 from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
@@ -17,6 +18,21 @@ from src.greedy.server_selection_policy import policies as server_selection_poli
 from src.greedy.task_prioritisation import policies as task_priorities, Value
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
+
+
+def generate_all_tasks_servers(model_dist: ModelDistribution, attempts: int = 10):
+    for _ in range(attempts):
+        try:
+            tasks, servers = model_dist.generate()
+            set_server_heuristics(servers, 3, 25)
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
+            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+
+            return tasks, servers, fixed_tasks, foreknowledge_fixed_tasks
+        except Exception as e:
+            print('Failed to generate all tasks and servers', file=sys.stderr)
+            print(e, file=sys.stderr)
+    raise Exception('After 10 attempts, failed to generate all of the tasks and servers')
 
 
 # noinspection DuplicatedCode
@@ -41,9 +57,7 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
-        tasks, servers = model_dist.generate()
-        set_server_heuristics(servers, 3, 25)
-
+        tasks, servers, fixed_tasks, foreknowledge_fixed_tasks = generate_all_tasks_servers(model_dist)
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -65,14 +79,13 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         if run_fixed:
             # Find the fixed solution
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
+
             fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
             # Find the fixed solution with resource knowledge
-            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
             fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()

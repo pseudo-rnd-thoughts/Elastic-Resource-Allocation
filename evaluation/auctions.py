@@ -7,11 +7,11 @@ from __future__ import annotations
 import json
 import pprint
 
+from greedy import generate_all_tasks_servers
 from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
-from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
+from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDistribution
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
@@ -20,7 +20,6 @@ from src.greedy.task_prioritisation import policies as task_priorities
 
 
 def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, dia_time_limit: int = 3,
-                       price_change: int = 3, initial_price: int = 25,
                        run_flexible: bool = True, run_fixed: bool = True):
     """
     Evaluation of different auction algorithms
@@ -29,8 +28,6 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param dia_time_limit: Decentralised iterative auction time limit
-    :param price_change: The default price change for DIA
-    :param initial_price: The default initial price for DIA
     :param run_flexible: If to run the flexible vcg auction
     :param run_fixed: If to run the fixed vcg auction
     """
@@ -43,8 +40,7 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
-        tasks, servers = model_dist.generate()
-        set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
+        tasks, servers, fixed_tasks, foreknowledge_fixed_tasks = generate_all_tasks_servers(model_dist)
         algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
@@ -59,14 +55,12 @@ def auction_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: 
 
         if run_fixed:
             # Find the fixed VCG auction
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
             fixed_vcg_result = fixed_vcg_auction(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
             fixed_vcg_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
             # Find the fixed VCG auction with resource knowledge
-            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
             fixed_vcg_result = fixed_vcg_auction(foreknowledge_fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_vcg_result.algorithm] = fixed_vcg_result.store()
             fixed_vcg_result.pretty_print()

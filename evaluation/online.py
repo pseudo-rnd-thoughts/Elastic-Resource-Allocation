@@ -35,9 +35,9 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
     :param time_steps: Total number of time steps
     :param mean_arrival_rate: Mean arrival rate of tasks
     :param std_arrival_rate: Standard deviation arrival rate of tasks
-    :param task_priority:
-    :param server_selection_policy:
-    :param resource_allocation_policy:
+    :param task_priority: The task prioritisation function
+    :param server_selection_policy: Server selection policy
+    :param resource_allocation_policy: Resource allocation policy
     """
     print(f'Evaluates difference in performance between batch and online algorithm for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -60,7 +60,7 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         # Batch greedy algorithm
         for batch_length in batch_lengths:
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
             batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
 
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
