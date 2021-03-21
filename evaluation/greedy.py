@@ -56,9 +56,16 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
             optimal_result.pretty_print()
             reset_model(tasks, servers)
 
+        if run_relaxed:
+            # Find the relaxed solution
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
+            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
+            relaxed_result.pretty_print()
+            reset_model(tasks, servers)
+
         if run_fixed:
             # Find the fixed solution
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), False)
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
             fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
@@ -70,13 +77,6 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
-
-        if run_relaxed:
-            # Find the relaxed solution
-            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
-            algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
-            relaxed_result.pretty_print()
-            reset_model(tasks, servers)
 
         # Loop over all of the greedy policies permutations
         for task_priority in task_priorities:
