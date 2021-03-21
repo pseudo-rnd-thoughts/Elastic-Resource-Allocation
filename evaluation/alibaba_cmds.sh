@@ -14,6 +14,7 @@ qsub -v file='auctions',model_file='alibaba',num_tasks='30',num_servers='6',extr
 qsub -v file='auctions',model_file='alibaba',num_tasks='50',num_servers='10',extra='time limited' run_script.sh
 qsub -v file='auctions',model_file='alibaba',num_tasks='75',num_servers='15',extra='time limited' run_script.sh
 
+qsub -v file='resource_ratio',model_file='alibaba',num_tasks='25',num_servers='5',extra='full optimal' run_script.sh
 qsub -v file='resource_ratio',model_file='alibaba',num_tasks='25',num_servers='5',extra='fixed optimal' run_script.sh
 
 qsub -v file='dia_heuristics',model_file='alibaba',num_tasks='25',num_servers='5' run_script.sh
