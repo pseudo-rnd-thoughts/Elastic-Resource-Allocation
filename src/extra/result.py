@@ -43,9 +43,19 @@ class Result:
         if not limited:
             # Server properties
             self.data.update({
-                'task resource usage': {task.name: (task.loading_speed, task.compute_speed,
-                                                    task.sending_speed, task.running_server.name)
-                                        for task in tasks if task.running_server}
+                'task resource usage': {
+                    task.name: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server.name)
+                    for task in tasks if task.running_server
+                },
+                'server storage usage': {
+                    server.name: 1 - server.available_storage / server.storage_capacity for server in servers
+                },
+                'server computational usage': {
+                    server.name: 1 - server.available_computation / server.computation_capacity for server in servers
+                },
+                'server bandwidth usage': {
+                    server.name: 1 - server.available_bandwidth / server.bandwidth_capacity for server in servers
+                }
             })
 
         if is_auction:
