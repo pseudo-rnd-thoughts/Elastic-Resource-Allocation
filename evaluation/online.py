@@ -22,8 +22,9 @@ from src.optimal.fixed_optimal import fixed_optimal_solver
 
 
 def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 2, 4, 6), time_steps: int = 200, mean_arrival_rate: int = 3,
-                     std_arrival_rate: float = 2, task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
+                     batch_lengths: Iterable[int] = (1, 5, 10, 30), time_steps: int = 1000,
+                     mean_arrival_rate: int = 0.5, std_arrival_rate: float = 0.5,
+                     task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
                      server_selection_policy=ProductResources(), resource_allocation_policy=SumPowPercentage()):
     """
     Evaluates the batch online
@@ -60,14 +61,22 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
         # Batch greedy algorithm
         for batch_length in batch_lengths:
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
+
+            # Generate fixed tasks
             fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
             batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
 
+            # Generate the foreknowledge fixed tasks
+            foreknowledge_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+            batched_foreknowledge_tasks = generate_batch_tasks(foreknowledge_tasks, batch_length, time_steps)
+
+            # Flatten the tasks
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
             flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
+            flattened_foreknowledge_fixed_tasks = [t for ts in batched_foreknowledge_tasks for t in ts]
 
             algorithm_results = {}
-            if batch_length == 1:
+            if batch_length <= 10:
                 optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
                                                      minimal_flexible_optimal_solver, solver_time_limit=None)
                 algorithm_results[optimal_result.algorithm] = optimal_result.store()
@@ -79,6 +88,13 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
                 fixed_optimal_result.pretty_print()
                 reset_model(flattened_fixed_tasks, servers)
+
+                foreknowledge_optimal_result = online_batch_solver(batched_foreknowledge_tasks, servers, batch_length,
+                                                                   'Foreknowledge Fixed Optimal',
+                                                                   fixed_optimal_solver, time_limit=None)
+                algorithm_results[foreknowledge_optimal_result.algorithm] = foreknowledge_optimal_result.store()
+                foreknowledge_optimal_result.pretty_print()
+                reset_model(flattened_foreknowledge_fixed_tasks, servers)
 
             # Loop over all of the greedy policies permutations
             greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,

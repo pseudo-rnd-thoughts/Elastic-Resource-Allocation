@@ -8,10 +8,9 @@ import json
 import pprint
 from typing import Iterable
 
-from greedy import generate_all_tasks_servers
 from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
-from src.extra.model import ModelDistribution
+from src.extra.model import ModelDistribution, generate_all_tasks_servers
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies

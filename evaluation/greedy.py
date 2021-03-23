@@ -6,33 +6,16 @@ from __future__ import annotations
 
 import json
 import pprint
-import sys
 
-from src.core.core import reset_model, set_server_heuristics
-from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
+from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
-from src.extra.model import ModelDistribution
+from src.extra.model import ModelDistribution, generate_all_tasks_servers
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.task_prioritisation import policies as task_priorities, Value
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
-
-
-def generate_all_tasks_servers(model_dist: ModelDistribution, attempts: int = 10):
-    for _ in range(attempts):
-        try:
-            tasks, servers = model_dist.generate()
-            set_server_heuristics(servers, 3, 25)
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
-            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
-
-            return tasks, servers, fixed_tasks, foreknowledge_fixed_tasks
-        except Exception as e:
-            print('Failed to generate all tasks and servers', file=sys.stderr)
-            print(e, file=sys.stderr)
-    raise Exception('After 10 attempts, failed to generate all of the tasks and servers')
 
 
 # noinspection DuplicatedCode

@@ -6,11 +6,14 @@ from __future__ import annotations
 
 import json
 import random as rnd
+import sys
 from math import ceil
 from typing import TYPE_CHECKING
 
 import pandas as pd
 
+from src.core.core import set_server_heuristics
+from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
 from src.core.server import Server
 from src.core.task import Task
 
@@ -148,3 +151,19 @@ class ModelDistribution:
                            if probability <= sum(self.model_data['server distributions'][j]['probability']
                                                  for j in range(i + 1)))
         return Server.load_dist(server_dist, server_id)
+
+
+def generate_all_tasks_servers(model_dist: ModelDistribution, attempts: int = 10, initial_price: int = 25,
+                               price_increment: int = 3):
+    for _ in range(attempts):
+        try:
+            tasks, servers = model_dist.generate()
+            set_server_heuristics(servers, price_increment, initial_price)
+            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
+            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+
+            return tasks, servers, fixed_tasks, foreknowledge_fixed_tasks
+        except Exception as e:
+            print('Failed to generate all tasks and servers', file=sys.stderr)
+            print(e, file=sys.stderr)
+    raise Exception('After 10 attempts, failed to generate all of the tasks and servers')
