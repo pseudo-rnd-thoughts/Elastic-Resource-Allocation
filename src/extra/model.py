@@ -164,6 +164,6 @@ def generate_all_tasks_servers(model_dist: ModelDistribution, attempts: int = 10
 
             return tasks, servers, fixed_tasks, foreknowledge_fixed_tasks
         except Exception as e:
-            print('Failed to generate all tasks and servers', file=sys.stderr)
+            print('Failed attempt to generate all tasks and servers', file=sys.stderr)
             print(e, file=sys.stderr)
     raise Exception('After 10 attempts, failed to generate all of the tasks and servers')
