@@ -62,7 +62,6 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         if run_fixed:
             # Find the fixed solution
-
             fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
