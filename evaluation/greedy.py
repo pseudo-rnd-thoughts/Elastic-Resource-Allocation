@@ -17,10 +17,12 @@ from src.greedy.task_prioritisation import policies as task_priorities, Value
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
 
+max_time = 24 * 60 * 60
+
 
 # noinspection DuplicatedCode
 def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50,
-                      run_flexible: bool = True, run_fixed: bool = True, run_relaxed: bool = True):
+                      run_flexible: bool = True, run_fixed: bool = True, run_relaxed: bool = True, ):
     """
     Evaluation of different greedy algorithms
 
@@ -48,29 +50,30 @@ def greedy_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: i
 
         if run_flexible:
             # Find the optimal solution
-            optimal_result = flexible_optimal(tasks, servers, time_limit=None)
+            optimal_result = flexible_optimal(tasks, servers, time_limit=max_time)
             algorithm_results[optimal_result.algorithm] = optimal_result.store()
             optimal_result.pretty_print()
             reset_model(tasks, servers)
 
         if run_relaxed:
             # Find the relaxed solution
-            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
+            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=max_time)
             algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
             relaxed_result.pretty_print()
             reset_model(tasks, servers)
 
         if run_fixed:
             # Find the fixed solution
-            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
+            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=max_time)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
             # Find the fixed solution with resource knowledge
-            fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, time_limit=None)
-            algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-            fixed_optimal_result.pretty_print()
+            foreknowledge_fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, time_limit=None)
+            foreknowledge_name = f'Foreknowledge {foreknowledge_fixed_optimal_result.algorithm}'
+            algorithm_results[foreknowledge_name] = foreknowledge_fixed_optimal_result.store()
+            foreknowledge_fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
 
         # Loop over all of the greedy policies permutations
@@ -143,7 +146,7 @@ if __name__ == "__main__":
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'fixed optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
-                          run_flexible=False)
+                          run_flexible=False, run_relaxed=False)
     elif args.extra == 'relaxed optimal':
         greedy_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_fixed=False)
