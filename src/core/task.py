@@ -21,11 +21,10 @@ class Task:
     """
 
     def __init__(self, name: str, required_storage: int, required_computation: int, required_results_data: int,
-                 value: Optional[float], deadline: int, price: float = 0, auction_time: int = -1,
+                 deadline: int, value: Optional[float] = None, price: float = 0, auction_time: int = -1,
                  loading_speed: Optional[int] = None, compute_speed: Optional[int] = None,
                  sending_speed: Optional[int] = None,
-                 running_server: Optional[Server] = None, servers: List[Server] = None,
-                 planned_computation: Optional[int] = 0, planned_storage: Optional[int] = 0):
+                 running_server: Optional[Server] = None, servers: List[Server] = None):
         # Name of the task
         self.name = name
 
@@ -34,18 +33,16 @@ class Task:
         self.required_computation = required_computation
         self.required_results_data = required_results_data
 
-        # This is the true private internal evaluation (the max price)
-        if value is None:
-            self.value = self.concave_value(servers)
-        else:
-            self.value = value
-
-        # This is only used for auctions
+        # This is the true private internal evaluation (the max price) and the price that the task runs for
+        self.value = self.concave_value(servers) if value is None else value
         self.price = price
 
         # This is only used for online vs batched evaluation
         self.auction_time = auction_time
-        self.deadline = max(deadline, 4)
+        self.deadline = deadline
+
+        # Server who the task is allocated to
+        self.running_server = running_server
 
         # Allocation information
         if loading_speed is None and compute_speed is None and sending_speed is None:
@@ -54,13 +51,6 @@ class Task:
             assert 0 < loading_speed and 0 < compute_speed and 0 < sending_speed, \
                 (loading_speed, compute_speed, sending_speed)
             self.loading_speed, self.compute_speed, self.sending_speed = loading_speed, compute_speed, sending_speed
-
-        # Server who the task is allocated to
-        self.running_server = running_server
-
-        # Planned cpu and mem for alibaba dataset
-        self.planned_computation = planned_computation
-        self.planned_storage = planned_storage
 
     def allocate(self, loading_speed: int, compute_speed: int, sending_speed: int, running_server: Server,
                  price: float = None):
@@ -222,9 +212,6 @@ class Task:
             required_storage=self.required_storage,
             required_computation=self.required_computation,
             required_results_data=self.required_results_data,
-            loading_speed=self.loading_speed,
-            compute_speed=self.compute_speed,
-            sending_speed=self.sending_speed,
             value=self.value,
             auction_time=self.auction_time,
             deadline=self.deadline - (time_step - self.auction_time)
@@ -277,4 +264,3 @@ class Task:
         computation_value = (alpha_prime - alpha) * pow(self.required_computation / comp_total, 1 / beta_comp)
         results_data_value = (1 - alpha_prime) * pow(self.required_results_data / results_total, 1 / beta_results_data)
         return round(storage_value + computation_value + results_data_value * 100, 2)
-

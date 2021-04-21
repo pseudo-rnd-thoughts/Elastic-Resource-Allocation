@@ -8,12 +8,12 @@ from typing import Sequence
 
 import matplotlib.pyplot as plt
 
-from core.fixed_task import FixedTask, SumSpeedsFixedAllocationPriority
+from core.fixed_task import generate_fixed_tasks
 from extra.io import parse_args
 from extra.visualise import minimise_resource_allocation, plot_allocation_results
 from optimal.fixed_optimal import fixed_optimal
 from src.core.core import reset_model
-from src.extra.model import ModelDistribution
+from src.extra.model import ModelDist, SyntheticModelDist
 from src.extra.pprint import print_model
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
@@ -23,11 +23,9 @@ from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optim
 
 
 def test_optimal_solution():
-    model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=20, num_servers=4)
-    tasks, servers = model_dist.generate()
-    fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority()) for task in tasks]
-    foreknowledge_fixed_tasks = [FixedTask(task, SumSpeedsFixedAllocationPriority(), resource_foreknowledge=True)
-                                 for task in tasks]
+    model_dist = SyntheticModelDist(num_tasks=20, num_servers=4)
+    tasks, servers = model_dist.generate_oneshot()
+    fixed_tasks = generate_fixed_tasks(tasks)
 
     greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
     print(f'\nGreedy - {greedy_result.social_welfare}')
@@ -45,14 +43,10 @@ def test_optimal_solution():
     print(f'Fixed Optimal - {fixed_optimal_result.social_welfare}')
     reset_model(fixed_tasks, servers)
 
-    foreknowledge_fixed_optimal_result = fixed_optimal(foreknowledge_fixed_tasks, servers, 5)
-    print(f'Foreknowledge Fixed Optimal - {foreknowledge_fixed_optimal_result.social_welfare}')
-    reset_model(foreknowledge_fixed_tasks, servers)
 
-
-def test_optimal_time_limit(model_dist: ModelDistribution,
+def test_optimal_time_limit(model_dist: ModelDist,
                             time_limits: Sequence[int] = (10, 30, 60, 5 * 60, 15 * 60, 60 * 60, 24 * 60 * 60)):
-    tasks, servers = model_dist.generate()
+    tasks, servers = model_dist.generate_oneshot()
 
     print("Models")
     print_model(tasks, servers)
@@ -68,8 +62,8 @@ def test_optimal_time_limit(model_dist: ModelDistribution,
 
 
 def test_minimise_resource_allocation():
-    model_dist = ModelDistribution('../models/synthetic.mdl', num_tasks=30, num_servers=6)
-    tasks, servers = model_dist.generate()
+    model_dist = SyntheticModelDist(num_tasks=30, num_servers=6)
+    tasks, servers = model_dist.generate_oneshot()
 
     flexible_optimal(tasks, servers, 5)
     plot_allocation_results(tasks, servers, "Optimal Flexible Resource Allocation", image_formats=[])
@@ -82,4 +76,4 @@ def test_minimise_resource_allocation():
 
 if __name__ == "__main__":
     args = parse_args()
-    test_optimal_time_limit(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+    test_optimal_time_limit(ModelDist(args.file, args.tasks, args.servers), args.repeat)

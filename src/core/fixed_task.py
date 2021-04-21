@@ -5,7 +5,6 @@ from __future__ import annotations
 import sys
 import time
 from abc import abstractmethod, ABC
-from math import ceil
 from typing import TYPE_CHECKING, List
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
@@ -21,27 +20,17 @@ if TYPE_CHECKING:
 class FixedTask(Task):
     """Task with a fixing resource usage speed"""
 
-    def __init__(self, task: Task, fixed_value_policy: FixedAllocationPriority, fixed_name: bool = True,
-                 resource_foreknowledge: bool = False):
+    def __init__(self, task: Task, fixed_value_policy: FixedAllocationPriority, fixed_name: bool = True):
         name = f'Fixed {task.name}' if fixed_name else task.name
 
         self.fixed_value_policy = fixed_value_policy
         loading_speed, compute_speed, sending_speed = self.minimum_fixed_prioritisation(task, fixed_value_policy)
-        if resource_foreknowledge is True:
-            Task.__init__(self, name=name, required_storage=task.required_storage,
-                          required_computation=task.required_computation,
-                          required_results_data=task.required_results_data,
-                          value=task.value, deadline=task.deadline, auction_time=task.auction_time,
-                          loading_speed=loading_speed, compute_speed=compute_speed, sending_speed=sending_speed)
-        else:
-            assert task.planned_storage is not None and task.planned_computation is not None
-            Task.__init__(self, name=name, required_storage=task.planned_storage,
-                          required_computation=ceil(task.required_computation / compute_speed)*task.planned_computation,
-                          required_results_data=task.required_results_data,
-                          value=task.value, deadline=task.deadline, auction_time=task.auction_time,
-                          loading_speed=ceil(task.planned_storage / (task.required_storage / loading_speed)),
-                          compute_speed=task.planned_computation,
-                          sending_speed=sending_speed)
+
+        Task.__init__(self, name=name, required_storage=task.required_storage,
+                      required_computation=task.required_computation,
+                      required_results_data=task.required_results_data,
+                      value=task.value, deadline=task.deadline, auction_time=task.auction_time,
+                      loading_speed=loading_speed, compute_speed=compute_speed, sending_speed=sending_speed)
 
     @staticmethod
     def minimum_fixed_prioritisation(task: Task, allocation_priority: FixedAllocationPriority) -> Tuple[int, int, int]:
@@ -156,17 +145,17 @@ class SumSpeedPowFixedAllocationPriority(FixedAllocationPriority):
         """Calculate the value by summing the expo of speeds"""
         return loading_speed ** 3 + compute_speed ** 3 + sending_speed ** 3
 
+
 # TODO add more fixed value classes
 
 
-def generate_fixed_tasks(tasks: List[Task], fixed_allocation_priority: FixedAllocationPriority,
-                         resource_foreknowledge: bool = False, max_tries: int = 5) -> List[FixedTask]:
+def generate_fixed_tasks(tasks: List[Task], max_tries: int = 5,
+                         priority: FixedAllocationPriority = SumSpeedsFixedAllocationPriority()) -> List[FixedTask]:
     """
     Generates a list of fixed tasks catching if the generation of the task fails for some reasons
 
     :param tasks: List of tasks
-    :param fixed_allocation_priority: Fixed allocation priority class
-    :param resource_foreknowledge: If resource foreknowledge is enabled
+    :param priority: Fixed allocation priority class
     :param max_tries: The max tries for generated the fixed task
     :return:
     """
@@ -175,7 +164,7 @@ def generate_fixed_tasks(tasks: List[Task], fixed_allocation_priority: FixedAllo
         tries = 0
         while tries < max_tries:
             try:
-                fixed_task = FixedTask(task, fixed_allocation_priority, resource_foreknowledge=resource_foreknowledge)
+                fixed_task = FixedTask(task, priority)
                 fixed_tasks.append(fixed_task)
                 break
             except Exception as e:
@@ -183,6 +172,5 @@ def generate_fixed_tasks(tasks: List[Task], fixed_allocation_priority: FixedAllo
                 tries += 1
                 time.sleep(0.5)
         if tries == max_tries:
-            raise Exception(f'Unable to create the fixed task (foreknowledge: {resource_foreknowledge}: '
-                            f'{task.__str__()}')
+            raise Exception(f'Unable to create the fixed task {task.__str__()}')
     return fixed_tasks

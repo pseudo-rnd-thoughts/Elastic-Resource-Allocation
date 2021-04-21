@@ -9,7 +9,7 @@ from typing import Iterable
 
 import matplotlib.pyplot as plt
 
-from src.extra.model import ModelDistribution
+from extra.model import ModelDist
 
 
 class ImageFormat(Enum):
@@ -51,7 +51,7 @@ def save_plot(name: str, test_name: str, additional: str = '', lgd=None, dpi=100
             plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
 
-def results_filename(test_name: str, model_dist: ModelDistribution, repeat: int, save_date: bool = True) -> str:
+def results_filename(test_name: str, model_dist: ModelDist, repeat: int, save_date: bool = True) -> str:
     """
     Generates the save filename for testing results
 
@@ -82,7 +82,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--extra', '-e', help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()
-    args.file = f'models/{args.file}.mdl'
 
     args.tasks = None if args.tasks == ' ' or args.tasks == '' or args.tasks is None else int(args.tasks)
     args.servers = None if args.servers == ' ' or args.servers == '' or args.servers is None else int(args.servers)

@@ -11,9 +11,9 @@ from typing import Iterable
 
 from extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
 from src.core.core import reset_model
-from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
+from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import results_filename, parse_args
-from src.extra.model import ModelDistribution
+from src.extra.model import ModelDist, get_model
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPowPercentage
 from src.greedy.server_selection_policy import ProductResources
@@ -21,7 +21,7 @@ from src.greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceS
 from src.optimal.fixed_optimal import fixed_optimal_solver
 
 
-def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
+def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
                      batch_lengths: Iterable[int] = (1, 5, 10, 30), time_steps: int = 1000,
                      mean_arrival_rate: int = 0.5, std_arrival_rate: float = 0.5,
                      task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
@@ -63,11 +63,11 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
 
             # Generate fixed tasks
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
+            fixed_tasks = generate_fixed_tasks(tasks)
             batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
 
             # Generate the foreknowledge fixed tasks
-            foreknowledge_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
+            foreknowledge_tasks = generate_fixed_tasks(tasks)
             batched_foreknowledge_tasks = generate_batch_tasks(foreknowledge_tasks, batch_length, time_steps)
 
             # Flatten the tasks
@@ -117,4 +117,5 @@ def batch_evaluation(model_dist: ModelDistribution, repeat_num: int, repeats: in
 
 if __name__ == "__main__":
     args = parse_args()
-    batch_evaluation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+
+    batch_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat)

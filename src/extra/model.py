@@ -5,15 +5,14 @@ Model distribution
 from __future__ import annotations
 
 import json
+import os
 import random as rnd
-import sys
-from math import ceil
+from pprint import PrettyPrinter
 from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from src.core.core import set_server_heuristics
-from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, generate_fixed_tasks
+from core.fixed_task import generate_fixed_tasks
 from src.core.server import Server
 from src.core.task import Task
 
@@ -21,36 +20,25 @@ if TYPE_CHECKING:
     from typing import Tuple, List, Optional
 
 
-class ModelDistribution:
-    """Model distributions"""
-
-    storage_scaling = 500
-    computational_scaling = 1
-    results_data_scaling = 5
-
-    def __init__(self, filename: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None):
-        self.filename = filename
+class ModelDist:
+    def __init__(self, model_filename: Optional[str] = None, num_tasks: Optional[int] = None,
+                 num_servers: Optional[int] = None):
         self.num_tasks = num_tasks
         self.num_servers = num_servers
 
-        with open(self.filename) as file:
-            self.model_data = json.load(file)
+        with open(model_filename) as file:
+            self.model = json.load(file)
 
-            self.name: str = self.model_data['name']
-            if 'task filename' in self.model_data:
-                model_path = '/'.join(filename.split('/')[:-1]) + '/' + self.model_data['task filename']
-                self.task_model = pd.read_csv(model_path)
-            else:
-                self.task_model = None
+            self.name = self.model['name']
 
-    def generate(self) -> Tuple[List[Task], List[Server]]:
+    def generate_oneshot(self) -> Tuple[List[Task], List[Server]]:
         """
         Creates a list of tasks and servers from a task and server distribution
 
         :return: A list of tasks and list of servers
         """
-        servers = self.generate_servers()
-        return self.generate_tasks(servers), servers
+        servers = [self.generate_server(server_id) for server_id in range(self.num_servers)]
+        return [self.generate_task(servers, task_id) for task_id in range(self.num_tasks)], servers
 
     def generate_online(self, time_steps: int, mean_arrival_rate: int,
                         std_arrival_rate: float) -> Tuple[List[Task], List[Server]]:
@@ -62,108 +50,97 @@ class ModelDistribution:
         :param std_arrival_rate: Standard deviation of the number of tasks that arrive each time steps
         :return: A list of tasks and list of servers
         """
-        servers = self.generate_servers()
+        servers = [self.generate_server(server_id) for server_id in range(self.num_servers)]
 
         tasks, task_id = [], 0
         for time_step in range(time_steps):
             for task in range(max(0, int(rnd.gauss(mean_arrival_rate, std_arrival_rate)))):
-                if 'task distributions' in self.model_data:
-                    task = self.generate_synthetic_task(task_id, servers)
-                elif 'task filename' in self.model_data:
-                    task = self.generate_alibaba_task(task_id, servers)
-                else:
-                    raise Exception('Unknown model type')
+                task = self.generate_task(servers, task_id)
 
                 task.auction_time, task_id = time_step, task_id + 1
                 tasks.append(task)
 
         return tasks, servers
 
-    def generate_tasks(self, servers: List[Server]) -> List[Task]:
-        """
-        Generate a list of tasks from the model data
+    def generate_server(self, server_id: int) -> Server:
+        return Server.load(self.model['servers'][server_id])
 
-        :param servers: List of servers
-        :return: A list of tasks
-        """
-        if 'task distributions' in self.model_data:
-            assert self.num_tasks is not None
-            return [self.generate_synthetic_task(task_id, servers) for task_id in range(self.num_tasks)]
-        elif 'task filename' in self.model_data:
-            assert self.num_tasks is not None
-            return [self.generate_alibaba_task(task_id, servers) for task_id in range(self.num_tasks)]
-        else:
-            return [Task.load(task_model) for task_model in self.model_data['tasks']]
+    def generate_task(self, servers: List[Server], task_id: int) -> Task:
+        return Task.load(self.model['tasks'][task_id])
 
-    def generate_synthetic_task(self, task_id: int, servers: List[Server]) -> Task:
-        """
-        Generate a new synthetic task
 
-        :param task_id: The task id
-        :param servers: List of servers
-        :return: A new random task
-        """
+class SyntheticModelDist(ModelDist):
+    def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None,
+                 filename: str = '../models/synthetic.mdl'):
+        ModelDist.__init__(self, filename, num_tasks, num_servers)
+
+    def generate_server(self, server_id: int) -> Server:
         probability = rnd.random()
-        task_dist = next(task_dist for i, task_dist in enumerate(self.model_data['task distributions'])
-                         if probability <= sum(self.model_data['task distributions'][j]['probability']
-                                               for j in range(i + 1)))
-        return Task.load_dist(task_dist, task_id, servers)
-
-    def generate_alibaba_task(self, task_id: int, servers: List[Server]) -> Task:
-        """
-        Generate a new alibaba task
-
-        :param task_id: The task id
-        :param servers: List of servers
-        :return: A new random task
-        """
-        task_sample = self.task_model.sample()
-        for index, task_row in task_sample.iterrows():
-            return Task(f'realistic {task_id}',
-                        required_storage=ceil(self.storage_scaling*min(1.2*task_row['mem_max'], task_row['plan_mem'])),
-                        required_computation=ceil(self.computational_scaling*1.2*task_row['total_cpu']),
-                        required_results_data=ceil(self.results_data_scaling*rnd.randint(20, 60)*task_row['mem_max']),
-                        value=None, deadline=task_row['time_taken'], servers=servers,
-                        planned_storage=ceil(self.storage_scaling*task_row['plan_mem']),
-                        planned_computation=ceil(self.computational_scaling*task_row['plan_cpu']))
-
-    def generate_servers(self) -> List[Server]:
-        """
-        Generate a list of server from the model data
-
-        :return: A list of servers
-        """
-        if 'server distributions' in self.model_data:
-            assert self.num_servers is not None
-            return [self.generate_synthetic_server(server_id) for server_id in range(self.num_servers)]
-        else:
-            return [Server.load(server_model) for server_model in self.model_data['servers']]
-
-    def generate_synthetic_server(self, server_id) -> Server:
-        """
-        Generate a new random serer using a server id
-
-        :param server_id: The server id
-        :return: A new random server
-        """
-        probability = rnd.random()
-        server_dist = next(server_dist for i, server_dist in enumerate(self.model_data['server distributions'])
-                           if probability <= sum(self.model_data['server distributions'][j]['probability']
+        server_dist = next(server_dist for i, server_dist in enumerate(self.model['server distributions'])
+                           if probability <= sum(self.model['server distributions'][j]['probability']
                                                  for j in range(i + 1)))
         return Server.load_dist(server_dist, server_id)
 
+    def generate_task(self, servers: List[Server], task_id: int) -> Task:
+        probability = rnd.random()
+        task_dist = next(task_dist for i, task_dist in enumerate(self.model['task distributions'])
+                         if probability <= sum(self.model['task distributions'][j]['probability']
+                                               for j in range(i + 1)))
+        return Task.load_dist(task_dist, task_id, servers)
 
-def generate_all_tasks_servers(model_dist: ModelDistribution, attempts: int = 10, initial_price: int = 25,
-                               price_increment: int = 3):
-    for _ in range(attempts):
-        try:
-            tasks, servers = model_dist.generate()
-            set_server_heuristics(servers, price_increment, initial_price)
-            fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority())
-            foreknowledge_fixed_tasks = generate_fixed_tasks(tasks, SumSpeedPowFixedAllocationPriority(), True)
 
-            return tasks, servers, fixed_tasks, foreknowledge_fixed_tasks
-        except Exception as e:
-            print('Failed attempt to generate all tasks and servers', file=sys.stderr)
-            print(e, file=sys.stderr)
-    raise Exception('After 10 attempts, failed to generate all of the tasks and servers')
+class AlibabaModelDist(SyntheticModelDist):
+    def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None, foreknowledge: bool = True,
+                 filename: str = '../models/alibaba.mdl', storage_scaling: int = 500, computational_scaling: int = 1,
+                 results_data_scaling: int = 5):
+        SyntheticModelDist.__init__(self, num_tasks, num_servers, filename)
+
+        self.foreknowledge = foreknowledge
+
+        self.storage_scaling = storage_scaling
+        self.computational_scaling = computational_scaling
+        self.results_data_scaling = results_data_scaling
+
+        task_model_path = '/'.join(filename.split('/')[:-1]) + '/' + self.model['task filename']
+        self.task_model = pd.read_csv(task_model_path)
+
+    def generate_task(self, servers: List[Server], task_id: int) -> Task:
+        for index, task_row in self.task_model.sample().iterrows():
+            if self.foreknowledge:
+                return Task(
+                    f'Foreknowledge Task {task_id}',
+                    required_storage=self.storage_scaling * task_row['mem-max'],
+                    required_computation=self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken'],
+                    required_results_data=self.results_data_scaling * rnd.uniform(20, 60) * task_row['mem-max'],
+                    deadline=task_row['time-taken'], servers=servers)
+            else:
+                return Task(
+                    f'Requested Task {task_id}',
+                    required_storage=self.storage_scaling * task_row['request-mem'],
+                    required_computation=self.computational_scaling * task_row['request-cpu'] * task_row['time-taken'],
+                    required_results_data=self.results_data_scaling * rnd.uniform(20, 60) * task_row['request-mem'],
+                    deadline=task_row['time-taken'], servers=servers)
+
+
+def get_model(model_name: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None) -> ModelDist:
+    if model_name == 'alibaba':
+        return AlibabaModelDist(num_tasks, num_servers)
+    elif model_name == 'synthetic':
+        return SyntheticModelDist(num_tasks, num_servers)
+    else:
+        if os.path.exists(model_name):
+            return ModelDist(model_filename=model_name)
+        else:
+            raise Exception(f'Unknown model distribution ({model_name})')
+
+
+def generate_evaluation_model(model_dist: ModelDist, pp: PrettyPrinter):
+    # Generate the tasks and servers
+    tasks, servers = model_dist.generate_oneshot()
+    fixed_tasks = generate_fixed_tasks(tasks)
+    algorithm_results = {'model': {
+        'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
+    }}
+    pp.pprint(algorithm_results)
+
+    return tasks, servers, fixed_tasks, algorithm_results

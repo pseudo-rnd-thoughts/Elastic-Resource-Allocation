@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
 
-from src.core.super_server import SuperServer
 from src.core.core import server_task_allocation
+from src.core.super_server import SuperServer
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
 
@@ -44,9 +44,9 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     for task in tasks:
         # Check if the task can be run on any server even if empty
         if any(server.can_run_empty(task) for server in servers):
-            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth-1, name=f'{task.name} loading speed')
+            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} loading speed')
             compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
-            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth-1, name=f'{task.name} sending speed')
+            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} sending speed')
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +

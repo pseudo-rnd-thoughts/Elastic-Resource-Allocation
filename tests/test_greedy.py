@@ -8,19 +8,19 @@ from __future__ import annotations
 import numpy as np
 
 from src.core.core import reset_model
-from src.extra.model import ModelDistribution
-from src.greedy.matrix_allocation_policy import SumServerMaxPercentage
+from src.extra.model import SyntheticModelDist
 from src.greedy.greedy import greedy_algorithm
+from src.greedy.matrix_allocation_policy import SumServerMaxPercentage
 from src.greedy.matrix_greedy import greedy_matrix_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
-from src.greedy.server_selection_policy import SumResources, all_policies as server_selection_policies
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource, all_policies as value_density_policies
+from src.greedy.server_selection_policy import SumResources, policies as server_selection_policies
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource, policies as value_density_policies
 
 
 def test_greedy_policies():
     print()
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
-    tasks, servers = model.generate()
+    model = SyntheticModelDist(20, 3)
+    tasks, servers = model.generate_oneshot()
 
     policy_results = {}
 
@@ -44,7 +44,7 @@ def test_greedy_policies():
                                      float(np.mean([r.social_welfare for r in results])),
                                      float(np.mean([r.solve_time for r in results])))
     print(f'Algorithm | Avg SW | Avg Time | Social Welfare')
-    for algorithm, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1]):
+    for algorithm, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1][1]):
         print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
 
 
@@ -54,13 +54,13 @@ def test_optimisation(repeats: int = 10):
 
     :param repeats: Number of repeats
     """
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
+    model = SyntheticModelDist(20, 3)
 
     greedy_results, greedy_matrix_time = [], []
     print(f' Greedy     | Greedy Matrix')
     print(f' Time | Sum | Time   | Sum')
     for repeat in range(repeats):
-        tasks, servers = model.generate()
+        tasks, servers = model.generate_oneshot()
 
         greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
         greedy_results.append(greedy_result)
