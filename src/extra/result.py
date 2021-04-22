@@ -23,7 +23,7 @@ class Result:
     """
 
     def __init__(self, algorithm_name: str, tasks: List[Task], servers: List[Server], solve_time: float,
-                 limited: bool = True, is_auction: bool = False, **kwargs):
+                 limited: bool = False, is_auction: bool = False, **kwargs):
         self.data = {
             # General properties
             'algorithm': algorithm_name,
@@ -50,7 +50,7 @@ class Result:
                 'server storage usage': {
                     server.name: 1 - server.available_storage / server.storage_capacity for server in servers
                 },
-                'server computational usage': {
+                'server compute usage': {
                     server.name: 1 - server.available_computation / server.computation_capacity for server in servers
                 },
                 'server bandwidth usage': {
@@ -123,7 +123,7 @@ class Result:
     @property
     def server_computation_used(self):
         """Dictionary of server based computational used"""
-        return self.data['server computation usage']
+        return self.data['server compute usage']
 
     @property
     def server_bandwidth_used(self):

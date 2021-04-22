@@ -75,16 +75,17 @@ def parse_args() -> argparse.Namespace:
     :return: Return the parsed arguments
     """
     parser = argparse.ArgumentParser(description='Process model arguments')
-    parser.add_argument('--file', '-f', help='Location of the model file')
-    parser.add_argument('--tasks', '-t', help='Number of tasks', default=None)
-    parser.add_argument('--servers', '-s', help='Number of servers', default=None)
-    parser.add_argument('--repeat', '-r', help='Number of repeats', default=0)
-    parser.add_argument('--extra', '-e', help='Extra information to pass to the script', default='')
+    parser.add_argument('-m', '--model',   help='Location of the model file', default='synthetic')
+    parser.add_argument('-t', '--tasks',   help='Number of tasks', default=None)
+    parser.add_argument('-s', '--servers', help='Number of servers', default=None)
+    parser.add_argument('-r', '--repeat',  help='Number of repeats', default=0)
+    parser.add_argument('-e', '--extra',   help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()
 
     args.tasks = None if args.tasks == ' ' or args.tasks == '' or args.tasks is None else int(args.tasks)
     args.servers = None if args.servers == ' ' or args.servers == '' or args.servers is None else int(args.servers)
+    args.repeat = int(args.repeat)
 
     if args.extra == ' ':
         args.extra = ''
