@@ -54,10 +54,10 @@ def alibaba_task_generation():
 
     for index, task_row in tqdm(alibaba.iterrows()):
         task = Task(f'realistic {index}',
-                    required_storage=ceil(storage_scaling * min(1.2 * task_row['mem_max'], task_row['plan_mem'])),
-                    required_computation=ceil(computational_scaling * 1.2 * task_row['total_cpu']),
+                    required_storage=ceil(storage_scaling * min(task_row['mem_max'], task_row['plan_mem'])),
+                    required_computation=ceil(computational_scaling * task_row['total_cpu']),
                     required_results_data=ceil(results_data_scaling * rnd.randint(20, 60) * task_row['mem_max']),
-                    value=None, deadline=task_row['time_taken'], servers=servers)
+                    deadline=task_row['time_taken'], servers=servers)
         try:
             FixedTask(task, fixed_task_policy)
         except AssertionError as e:
@@ -82,28 +82,29 @@ def test_args():
         """
         sys.argv = ['location'] + updated_args
         args = parse_args()
-        print(args)
-        assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat
+        assert args.model == model and args.tasks == tasks and args.servers == servers and args.repeat == repeat, \
+            f'Expects: {args.model}, {args.tasks}, {args.servers}, {args.repeat}, ' \
+            f'actual: {model}, {tasks}, {servers}, {repeat}'
 
     # Files
-    eval_args(['--file', 'test'], '../models/synthetic.mdl', None, None, 0)
-    eval_args(['-f', 'test'], '../models/synthetic.mdl', None, None, 0)
+    eval_args(['--model', 'test'], 'test', None, None, 0)
+    eval_args(['-m', 'test'], 'test', None, None, 0)
 
     # Tasks
-    eval_args(['--file', 'test', '--tasks', '1'], '../models/synthetic.mdl', 1, None, 0)
-    eval_args(['-f', 'test', '-t', '2'], '../models/synthetic.mdl', 2, None, 0)
+    eval_args(['--model', 'test', '--tasks', '1'], 'test', 1, None, 0)
+    eval_args(['-m', 'test', '-t', '2'], 'test', 2, None, 0)
 
     # Servers
-    eval_args(['--file', 'test', '--servers', '3'], '../models/synthetic.mdl', None, 3, 0)
-    eval_args(['-f', 'test', '-s', '4'], '../models/synthetic.mdl', None, 4, 0)
+    eval_args(['--model', 'test', '--servers', '3'], 'test', None, 3, 0)
+    eval_args(['-m', 'test', '-s', '4'], 'test', None, 4, 0)
 
     # Repeat
-    eval_args(['--file', 'test', '--repeat', '5'], '../models/synthetic.mdl', None, None, 5)
-    eval_args(['-f', 'test', '-r', '6'], '../models/synthetic.mdl', None, None, 6)
+    eval_args(['--model', 'test', '--repeat', '5'], 'test', None, None, 5)
+    eval_args(['-m', 'test', '-r', '6'], 'test', None, None, 6)
 
-    # Full
-    eval_args(['--file', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], '../models/synthetic.mdl', 7, 8, 9)
-    eval_args(['-f', 'test', '-t', '10', '-s', '11', '-r', '12'], '../models/synthetic.mdl', 10, 11, 12)
+    # full
+    eval_args(['--model', 'test', '--tasks', '7', '--servers', '8', '--repeat', '9'], 'test', 7, 8, 9)
+    eval_args(['-m', 'test', '-t', '10', '-s', '11', '-r', '12'], 'test', 10, 11, 12)
 
 
 def test_model_tasks(num_servers: int = 8):
@@ -125,7 +126,7 @@ def test_model_tasks(num_servers: int = 8):
 
         :param results: List of results
         """
-        print(f'Num of Tasks | Percent Tasks | Percent Social Welfare | Storage usage | Comp usage | Bandwidth usage')
+        print(f'Num of Tasks | Percent Tasks | Social Welfare % | Storage usage | Comp usage | Bandwidth usage')
         for task_num, result in results:
             # noinspection PyTypeChecker
             print(f' {task_num:11} | {result.percentage_tasks_allocated:^13} | '
@@ -141,8 +142,8 @@ def test_model_tasks(num_servers: int = 8):
 
     print(f'\nNum of Tasks | Difference | Greedy SW | Fixed SW')
     for (num_tasks, greedy_result), (_, fixed_result) in zip(greedy_results, fixed_results):
-        print(f' {num_tasks:11} | {fixed_result.social_welfare - greedy_result.social_welfare:10} | '
-              f'{greedy_result.social_welfare:9} | {fixed_result.social_welfare:8}')
+        print(f' {num_tasks:11} | {fixed_result.social_welfare - greedy_result.social_welfare:10.3f} | '
+              f'{greedy_result.social_welfare:9.3f} | {fixed_result.social_welfare:8.3f}')
 
 
 if __name__ == "__main__":

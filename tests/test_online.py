@@ -50,7 +50,7 @@ def test_online_server_capacities(model_dist=SyntheticModelDist(num_servers=8),
     batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
     print(f'Tasks per batch time step: [{", ".join([str(len(batch_tasks)) for batch_tasks in batched_tasks])}]')
     result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy', greedy_algorithm,
-                                 value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                 task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
                                  server_selection_policy=SumResources(),
                                  resource_allocation_policy=SumPowPercentage())
     print(f'Social welfare percentage: {result.percentage_social_welfare}')
@@ -76,14 +76,14 @@ def test_optimal_solutions(model_dist=SyntheticModelDist(num_servers=8),
 
     batched_tasks = generate_batch_tasks(tasks, 4, time_steps)
     greedy_result = online_batch_solver(batched_tasks, servers, 4, 'Greedy', greedy_algorithm,
-                                        value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                        task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
                                         server_selection_policy=SumResources(),
                                         resource_allocation_policy=SumPowPercentage())
     print(f'Greedy - Social welfare: {greedy_result.social_welfare}')
 
 
 def test_batch_lengths(model_dist=SyntheticModelDist(num_servers=8),
-                       batch_lengths: Iterable[int] = (1, 5, 10, 15), time_steps: int = 200,
+                       batch_lengths: Iterable[int] = (1, 5, 10, 15), time_steps: int = 100,
                        mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
@@ -100,13 +100,13 @@ def test_batch_lengths(model_dist=SyntheticModelDist(num_servers=8),
             server.computation_capacity = original_server_capacities[server][0] * batch_length
             server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
-        value_density = UtilityDeadlinePerResource(ResourceSqrt())
+        task_priority = UtilityDeadlinePerResource(ResourceSqrt())
         server_selection_policy = SumResources()
         resource_allocation_policy = SumPowPercentage()
-        name = f'Greedy {value_density.name}, {server_selection_policy.name}, ' \
+        name = f'Greedy {task_priority.name}, {server_selection_policy.name}, ' \
                f'{resource_allocation_policy.name}'
         greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
-                                            greedy_algorithm, value_density=value_density,
+                                            greedy_algorithm, task_priority=task_priority,
                                             server_selection_policy=server_selection_policy,
                                             resource_allocation_policy=resource_allocation_policy)
         results.append(greedy_result)
@@ -187,7 +187,7 @@ def test_batch_length(model_dist=SyntheticModelDist(num_servers=8), batch_length
             server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
         greedy_result = online_batch_solver(batched_tasks, servers, batch_length, '', greedy_algorithm,
-                                            value_density=UtilityDeadlinePerResource(ResourceSqrt()),
+                                            task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
                                             server_selection_policy=SumResources(),
                                             resource_allocation_policy=SumPowPercentage())
         print(f'Batch length: {batch_length} - social welfare: {greedy_result.social_welfare}, '

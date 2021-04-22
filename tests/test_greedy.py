@@ -45,7 +45,7 @@ def test_greedy_policies():
                                      float(np.mean([r.solve_time for r in results])))
     print(f'Algorithm | Avg SW | Avg Time | Social Welfare')
     for algorithm, (results, avg_sw, avg_time) in sorted(policy_results.items(), key=lambda r: r[1][1]):
-        print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([result.sum_value for result in results])}]')
+        print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([str(result.social_welfare) for result in results])}]')
 
 
 def test_optimisation(repeats: int = 10):
