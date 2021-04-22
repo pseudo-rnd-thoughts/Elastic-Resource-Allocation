@@ -116,8 +116,10 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == 'foreknowledge':
-        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat)
+    if args.extra == 'foreknowledge flexible':
+        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=True)
+    elif args.extra == 'foreknowledge fixed':
+        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=False)
     elif args.extra == 'model sizing':
         model_sizing(AlibabaModelDist(args.tasks, args.servers), args.repeat,
                      [(10, 2, True, True), (15, 3, True, True), (20, 4, True, True), (30, 6, False, True),
