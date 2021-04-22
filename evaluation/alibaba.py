@@ -70,12 +70,55 @@ def model_sizing(model_dist: AlibabaModelDist, repeat_num: int, sizings: List[Tu
             json.dump(sizing_results, file)
 
 
-# TODO add foreknowledge and requested performance evaluation
+def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repeats: int = 50,
+                             run_flexible: bool = False):
+    filename = results_filename('foreknowledge', model_dist, repeat_num)
+    model_results = []
+    for _ in range(repeats):
+        servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
+        foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers,
+                                                                                                 model_dist.num_tasks)
+        fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
+        fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
+        algorithm_results = {
+            'model': {'foreknowledge tasks': [foreknowledge_task.save() for foreknowledge_task in foreknowledge_tasks],
+                      'requested_tasks': [requested_task.save() for requested_task in requested_tasks],
+                      'servers': [server.save() for server in servers]}}
+
+        if run_flexible:
+            results = flexible_optimal(foreknowledge_tasks, servers, time_limit=None)
+            algorithm_results['foreknowledge flexible optimal'] = results.store()
+            reset_model(foreknowledge_tasks, servers)
+
+            results = flexible_optimal(requested_tasks, servers, time_limit=None)
+            algorithm_results['requested flexible optimal'] = results.store()
+            reset_model(requested_tasks, servers)
+
+        results = fixed_optimal(fixed_foreknowledge_tasks, servers, time_limit=None)
+        algorithm_results['foreknowledge fixed optimal'] = results.store()
+        reset_model(fixed_foreknowledge_tasks, servers)
+
+        results = fixed_optimal(fixed_requested_tasks, servers, time_limit=None)
+        algorithm_results['requested fixed optimal'] = results.store()
+        reset_model(fixed_requested_tasks, servers)
+
+        greedy_permutations(foreknowledge_tasks, servers, algorithm_results, 'foreknowledge')
+        greedy_permutations(requested_tasks, servers, algorithm_results, 'requested')
+
+        model_results.append(algorithm_results)
+
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+    print('Finished')
+
 
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == 'model sizing' or args.extra == '':
+    if args.extra == 'foreknowledge':
+        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat)
+    elif args.extra == 'model sizing':
         model_sizing(AlibabaModelDist(args.tasks, args.servers), args.repeat,
                      [(10, 2, True, True), (15, 3, True, True), (20, 4, True, True), (30, 6, False, True),
                       (50, 10, False, True), (75, 15, False, False)])

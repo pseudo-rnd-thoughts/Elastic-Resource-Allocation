@@ -84,12 +84,10 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], task_priority: Ta
                      'resource allocation policy': resource_allocation_policy.name})
 
 
-def greedy_permutations(tasks: List[Task], servers: List[Server], results: Dict[str, Result],
-                        foreknowledge: bool = False):
+def greedy_permutations(tasks: List[Task], servers: List[Server], results: Dict[str, Result], prefix: str = ''):
     for task_priority in task_priorities:
         for server_selection_policy in server_selection_policies:
             for allocation_policy in resource_allocation_policies:
                 result = greedy_algorithm(tasks, servers, task_priority, server_selection_policy, allocation_policy)
-                results['foreknowledge ' if foreknowledge else '' + result.algorithm] = result.store()
-                result.pretty_print()
+                results[f'{prefix} {result.algorithm}'] = result.store()
                 reset_model(tasks, servers)

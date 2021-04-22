@@ -121,6 +121,28 @@ class AlibabaModelDist(SyntheticModelDist):
                     required_results_data=self.results_data_scaling * rnd.uniform(20, 60) * task_row['request-mem'],
                     deadline=task_row['time-taken'], servers=servers)
 
+    def generate_foreknowledge_requested_tasks(self, servers: List[Server],
+                                               num_tasks: int) -> Tuple[List[Task], List[Task]]:
+        foreknowledge_tasks, requested_tasks = [], []
+        for task_id, (_, task_row) in enumerate(self.task_model.sample(num_tasks).iterrows()):
+            results_data_size = rnd.uniform(20, 60)
+            foreknowledge_task = Task(
+                f'Foreknowledge Task {task_id}',
+                required_storage=self.storage_scaling * task_row['mem-max'],
+                required_computation=self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken'],
+                required_results_data=self.results_data_scaling * results_data_size * task_row['mem-max'],
+                deadline=task_row['time-taken'], servers=servers)
+            requested_task = Task(
+                f'Requested Task {task_id}',
+                required_storage=self.storage_scaling * task_row['request-mem'],
+                required_computation=self.computational_scaling * task_row['request-cpu'] * task_row['time-taken'],
+                required_results_data=self.results_data_scaling * results_data_size * task_row['request-mem'],
+                deadline=task_row['time-taken'], value=foreknowledge_task.value)
+
+            foreknowledge_tasks.append(foreknowledge_task)
+            requested_tasks.append(requested_task)
+        return foreknowledge_tasks, requested_tasks
+
 
 def get_model(model_name: str, num_tasks: Optional[int] = None, num_servers: Optional[int] = None) -> ModelDist:
     if model_name == 'alibaba':

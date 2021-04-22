@@ -157,7 +157,7 @@ def generate_fixed_tasks(tasks: List[Task], max_tries: int = 5,
     :param tasks: List of tasks
     :param priority: Fixed allocation priority class
     :param max_tries: The max tries for generated the fixed task
-    :return:
+    :return: A list of fixed tasks
     """
     fixed_tasks = []
     for task in tasks:
