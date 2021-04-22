@@ -72,7 +72,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
                     server_task_allocation(server, task, task.loading_speed, task.compute_speed, task.sending_speed)
                     break
 
-        if abs(model_solution.get_objective_values()[0] - sum(task.value for task in tasks if task.running_server)) > 0.1:
+        if abs(model_solution.get_objective_values()[0] - sum(t.value for t in tasks if t.running_server)) > 0.1:
             print('Fixed optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
                   f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)

@@ -8,7 +8,7 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
 from branch_bound.branch_bound import branch_bound_algorithm
 from core.core import reset_model
-from extra.model import ModelDistribution
+from extra.model import SyntheticModelDist
 from optimal.flexible_optimal import flexible_optimal
 
 
@@ -22,16 +22,16 @@ def test_cplex():
 
 
 def test_cp_optimality():
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
-    tasks, servers = model.generate()
+    model = SyntheticModelDist(20, 3)
+    tasks, servers = model.generate_oneshot()
 
     results = flexible_optimal(tasks, servers, time_limit=10)
     print(results.store())
 
 
 def test_branch_bound():
-    model = ModelDistribution('../models/synthetic.mdl', 4, 2)
-    tasks, servers = model.generate()
+    model = SyntheticModelDist(4, 2)
+    tasks, servers = model.generate_oneshot()
 
     branch_bound_result = branch_bound_algorithm(tasks, servers, debug_update_lower_bound=True)
     branch_bound_result.pretty_print()

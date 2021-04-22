@@ -7,14 +7,14 @@ from __future__ import annotations
 
 from src.auctions.critical_value_auction import critical_value_auction
 from src.core.core import reset_model
-from src.extra.model import ModelDistribution
+from src.extra.model import SyntheticModelDist
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
 from src.greedy.task_prioritisation import UtilityPerResources
 
 
-def test_critical_value(error: float = 0.05):
+def test_critical_value(error: float = 0.001):
     """
     To test the critical value action actually returns the critical values
 
@@ -27,8 +27,8 @@ def test_critical_value(error: float = 0.05):
     """
     print()
 
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
-    tasks, servers = model.generate()
+    model = SyntheticModelDist(20, 3)
+    tasks, servers = model.generate_oneshot()
 
     print(f'Critical value auction')
     auction_result = critical_value_auction(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())

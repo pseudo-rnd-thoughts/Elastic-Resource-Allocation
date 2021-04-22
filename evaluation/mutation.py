@@ -9,15 +9,16 @@ from __future__ import annotations
 
 import json
 import os
-import pprint
+from pprint import PrettyPrinter
 import random as rnd
 from typing import TYPE_CHECKING, Iterable
 
+from extra.model import ModelDist, get_model, generate_evaluation_model
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import reset_model, set_server_heuristics
 from src.core.task import Task
 from src.extra.io import parse_args, results_filename
-from src.extra.model import ModelDistribution
+
 
 if TYPE_CHECKING:
     from typing import TypeVar, List
@@ -38,7 +39,7 @@ def list_item_replacement(lists: List[T], old_item: T, new_item: T):
 
 
 # noinspection DuplicatedCode
-def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, time_limit: int = 2,
+def full_task_mutation(model_dist: ModelDist, repeat_num: int, repeats: int = 25, time_limit: int = 2,
                        price_change: int = 3, initial_price: int = 25,
                        model_mutations: int = 15, mutate_percent: float = 0.15):
     """
@@ -55,19 +56,18 @@ def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     :param mutate_percent: The percentage of the model that it can be mutated by
     """
     print(f'Evaluates the possibility of tasks mutating resulting in a lower price')
-    model_results = []
-    pp = pprint.PrettyPrinter()
+    pretty_printer, model_results = PrettyPrinter(), []
     filename = results_filename('task_mutation', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers = model_dist.generate()
+        tasks, servers = model_dist.generate_oneshot()
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
         mutation_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
-        pp.pprint(mutation_results)
+        pretty_printer.pprint(mutation_results)
 
         # Calculate the results without any mutation
         no_mutation_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
@@ -101,7 +101,7 @@ def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: 
                 'mutant task computation': mutant_task.required_computation,
                 'mutant task results data': mutant_task.required_results_data,
             })
-            pp.pprint(mutation_results[f'mutation {model_mutation}'])
+            pretty_printer.pprint(mutation_results[f'mutation {model_mutation}'])
 
             # Replace the mutant task with the task in the task list
             list_item_replacement(tasks, mutant_task, task)
@@ -117,7 +117,7 @@ def full_task_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: 
     print('Finished running')
 
 
-def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent: float = 0.10,
+def mutation_grid_search(model_dist: ModelDist, repeat_num: int, percent: float = 0.10,
                          time_limit: int = 3, price_change: int = 3, initial_price: int = 30):
     """
     Attempts a grid search version of the mutation testing above where a single task is mutated in every possible way
@@ -135,7 +135,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
     positive_percent, negative_percent = 1 + percent, 1 - percent
 
     # Generate the tasks and servers
-    tasks, servers = model_dist.generate()
+    tasks, servers = model_dist.generate_oneshot()
     set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
     # The mutation results
@@ -193,7 +193,7 @@ def mutation_grid_search(model_dist: ModelDistribution, repeat_num: int, percent
 
 
 # noinspection DuplicatedCode
-def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, time_limit: int = 2,
+def value_only_mutation(model_dist: ModelDist, repeat_num: int, repeats: int = 25, time_limit: int = 2,
                         price_change: int = 3, initial_price: int = 25, model_mutations: int = 15,
                         value_mutations: Iterable[int] = (1, 2, 3, 4)):
     """
@@ -209,19 +209,19 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
     :param value_mutations: The value difference to do testing with
     """
     print(f'Evaluates the value mutation of tasks')
-    model_results = []
-    pp = pprint.PrettyPrinter()
+    pretty_printer, model_results = PrettyPrinter(), []
+
     filename = results_filename('value_mutation', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers = model_dist.generate()
+        tasks, servers = model_dist.generate_oneshot()
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
         mutation_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
-        pp.pprint(mutation_results)
+        pretty_printer.pprint(mutation_results)
 
         # Calculate the results without any mutation
         no_mutation_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=time_limit)
@@ -247,7 +247,7 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
                 task_mutation_results[f'value {value}'] = mutant_result.store(**{
                     'price': task.price, 'allocated': task.running_server is not None, 'value': task.value
                 })
-                pp.pprint(task_mutation_results[f'value {value}'])
+                pretty_printer.pprint(task_mutation_results[f'value {value}'])
                 reset_model(tasks, servers)
 
             task.value = task_value
@@ -263,7 +263,7 @@ def value_only_mutation(model_dist: ModelDistribution, repeat_num: int, repeats:
 
 
 # noinspection DuplicatedCode
-def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25, auction_repeats: int = 5,
+def dia_repeat(model_dist: ModelDist, repeat_num: int, repeats: int = 25, auction_repeats: int = 5,
                time_limit: int = 2, price_change: int = 3, initial_price: int = 25):
     """
     Tests the Decentralised iterative auction by repeating the auction to see if the same local / global maxima is
@@ -278,19 +278,13 @@ def dia_repeat(model_dist: ModelDistribution, repeat_num: int, repeats: int = 25
     :param initial_price: The initial price
     """
     print(f'Evaluation of DIA by repeating the auction')
-    model_results = []
-    pp = pprint.PrettyPrinter()
+    pretty_printer, model_results = PrettyPrinter(), []
     filename = results_filename('repeat_dia', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers = model_dist.generate()
+        tasks, servers, fixed_tasks, repeat_results = generate_evaluation_model(model_dist, pretty_printer)
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
-
-        repeat_results = {'model': {
-            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
-        }}
-        pp.pprint(repeat_results)
 
         for auction_repeat in range(auction_repeats):
             reset_model(tasks, servers)
@@ -309,16 +303,16 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'task mutation':
-        full_task_mutation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        full_task_mutation(get_model(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'mutation grid search':
-        mutation_grid_search(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        mutation_grid_search(get_model(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'value only':
-        value_only_mutation(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        value_only_mutation(get_model(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'dia repeat':
-        dia_repeat(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        dia_repeat(get_model(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'special case':
         print(os.getcwd())
-        dia_repeat(ModelDistribution('models/mutation_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
-        dia_repeat(ModelDistribution('models/mutation_2.mdl'), args.repeat, repeats=0, auction_repeats=10)
+        dia_repeat(get_model('models/mutation_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
+        dia_repeat(get_model('models/mutation_2.mdl'), args.repeat, repeats=0, auction_repeats=10)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

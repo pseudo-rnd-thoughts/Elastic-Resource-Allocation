@@ -8,17 +8,17 @@ Evaluates the price change and initial price for the decentralised iterative auc
 from __future__ import annotations
 
 import json
-import pprint
+from pprint import PrettyPrinter
 from random import gauss
 from typing import Iterable
 
+from extra.model import ModelDist, get_model, generate_evaluation_model
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import reset_model, set_server_heuristics
 from src.extra.io import parse_args, results_filename
-from src.extra.model import ModelDistribution
 
 
-def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, repeats: int = 50, time_limit: int = 4,
+def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: int = 50, time_limit: int = 4,
                               initial_prices: Iterable[int] = (0, 5, 10, 15, 20),
                               price_changes: Iterable[int] = (1, 3, 5, 7, 10)):
     """
@@ -34,17 +34,12 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
     """
     print(f'DIA Heuristic grid search with initial prices: {initial_prices}, price changes: {price_changes}'
           f'for {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
-    model_results = []
-    pp = pprint.PrettyPrinter()
+    pretty_printer, model_results = PrettyPrinter(), []
     filename = results_filename('dia_heuristic_grid_search', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers = model_dist.generate()
-        algorithm_results = {'model': {
-            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
-        }}
-        pp.pprint(algorithm_results)
+        tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         for initial_price in initial_prices:
             for price_change in price_changes:
@@ -65,7 +60,7 @@ def dia_heuristic_grid_search(model_dist: ModelDistribution, repeat_num: int, re
     print('Finished running')
 
 
-def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int, repeats: int = 20,
+def non_uniform_server_heuristics(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
                                   time_limit: int = 2, random_repeats: int = 10,
                                   price_change_mean: int = 4, price_change_std: int = 2,
                                   initial_price_mean: int = 25, initial_price_std: int = 4):
@@ -85,17 +80,12 @@ def non_uniform_server_heuristics(model_dist: ModelDistribution, repeat_num: int
     print(f'DIA non-uniform heuristic investigation with initial price mean: {initial_price_mean} and '
           f'std: {initial_price_std}, price change mean: {price_change_mean} and price change std: {price_change_std}, '
           f'using {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
-    model_results = []
-    pp = pprint.PrettyPrinter()
+    pretty_printer, model_results = PrettyPrinter(), []
     filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers = model_dist.generate()
-        algorithm_results = {'model': {
-            'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
-        }}
-        pp.pprint(algorithm_results)
+        tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         set_server_heuristics(servers, price_change=price_change_mean, initial_price=initial_price_mean)
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
@@ -124,8 +114,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'heuristic grid search':
-        dia_heuristic_grid_search(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        dia_heuristic_grid_search(get_model(args.file, args.tasks, args.servers), args.repeat)
     elif args.extra == 'non uniform heuristics':
-        non_uniform_server_heuristics(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+        non_uniform_server_heuristics(get_model(args.file, args.tasks, args.servers), args.repeat)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

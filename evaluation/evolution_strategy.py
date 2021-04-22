@@ -4,16 +4,16 @@ import pprint
 
 from cma import CMAEvolutionStrategy
 
+from extra.model import ModelDist, get_model
 from src.core.core import reset_model
 from src.extra.io import parse_args
-from src.extra.model import ModelDistribution
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import EvolutionStrategy as ResourceAllocationEvoStrategy, SumSpeed
 from src.greedy.server_selection_policy import EvolutionStrategy as ServerSelectionEvoStrategy, ProductResources
 from src.greedy.task_prioritisation import EvolutionStrategy as TaskPriorityEvoStrategy, Value
 
 
-def evolve_greedy_policies(model_dist: ModelDistribution, iterations: int = 30, population_size: int = 5):
+def evolve_greedy_policies(model_dist: ModelDist, iterations: int = 30, population_size: int = 5):
     """
     Evolves the greedy policy to find the best policies
 
@@ -24,7 +24,7 @@ def evolve_greedy_policies(model_dist: ModelDistribution, iterations: int = 30, 
     print(f'Evolves the greedy policies for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
 
-    eval_tasks, eval_servers = model_dist.generate()
+    eval_tasks, eval_servers = model_dist.generate_oneshot()
     lower_bound = greedy_algorithm(eval_tasks, eval_servers, Value(), ProductResources(), SumSpeed()).social_welfare
     print(f'Lower bound is {lower_bound}')
     reset_model(eval_tasks, eval_servers)
@@ -32,7 +32,7 @@ def evolve_greedy_policies(model_dist: ModelDistribution, iterations: int = 30, 
     evolution_strategy = CMAEvolutionStrategy(11 * [1], 0.2, {'population size': population_size})
     for iteration in range(iterations):
         suggestions = evolution_strategy.ask()
-        tasks, servers = model_dist.generate()
+        tasks, servers = model_dist.generate_oneshot()
 
         solutions = []
         for i, suggestion in enumerate(suggestions):
@@ -56,4 +56,4 @@ def evolve_greedy_policies(model_dist: ModelDistribution, iterations: int = 30, 
 if __name__ == '__main__':
     args = parse_args()
 
-    evolve_greedy_policies(ModelDistribution(args.file, args.tasks, args.servers))
+    evolve_greedy_policies(get_model(args.file, args.tasks, args.servers))

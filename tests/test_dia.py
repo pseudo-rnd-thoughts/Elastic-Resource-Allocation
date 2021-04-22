@@ -12,15 +12,15 @@ from src.auctions.decentralised_iterative_auction import optimal_decentralised_i
     greedy_decentralised_iterative_auction, PriceResourcePerDeadline, greedy_task_price, allocate_task
 from src.core.core import reset_model, server_task_allocation, set_server_heuristics
 from src.extra.io import results_filename, parse_args
-from src.extra.model import ModelDistribution
+from src.extra.model import ModelDist, SyntheticModelDist
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.optimal.flexible_optimal import flexible_optimal
 
 
 def test_greedy_task_price():
     print()
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
-    tasks, servers = model.generate()
+    model = SyntheticModelDist(20, 3)
+    tasks, servers = model.generate_oneshot()
 
     server = servers[0]
 
@@ -73,12 +73,12 @@ def test_greedy_task_price():
 
 def test_optimal_vs_greedy_dia(repeats: int = 5):
     print()
-    model = ModelDistribution('../models/synthetic.mdl', 20, 3)
+    model = SyntheticModelDist(7, 1)
 
     print(f' Optimal    | Greedy')
     print(f'Time  | SW  | Time   | SW')
     for repeat in range(repeats):
-        tasks, servers = model.generate()
+        tasks, servers = model.generate_oneshot()
         set_server_heuristics(servers, price_change=5)
 
         optimal_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=1)
@@ -91,7 +91,7 @@ def test_optimal_vs_greedy_dia(repeats: int = 5):
               f'{greedy_result.solve_time} | {greedy_result.social_welfare}')
 
 
-def dia_social_welfare_test(model_dist: ModelDistribution, repeat: int, repeats: int = 20):
+def dia_social_welfare_test(model_dist: ModelDist, repeat: int, repeats: int = 20):
     """
     Evaluates the results using the optimality
 
@@ -102,7 +102,7 @@ def dia_social_welfare_test(model_dist: ModelDistribution, repeat: int, repeats:
     data = []
     filename = results_filename('testing', model_dist, repeat)
     for _ in range(repeats):
-        tasks, servers = model_dist.generate()
+        tasks, servers = model_dist.generate_oneshot()
         model_results = {}
 
         optimal_result = flexible_optimal(tasks, servers, 30)
@@ -124,4 +124,5 @@ def dia_social_welfare_test(model_dist: ModelDistribution, repeat: int, repeats:
 
 if __name__ == "__main__":
     args = parse_args()
-    dia_social_welfare_test(ModelDistribution(args.file, args.tasks, args.servers), args.repeat)
+
+    dia_social_welfare_test(ModelDist(args.file, args.tasks, args.servers), args.repeat)

@@ -29,8 +29,8 @@ def test_data_repeats():
 
 def test_optimal_data():
     print()
-    for filename in os.listdir('../data/greedy'):
-        with open(f'../data/greedy/{filename}') as file:
+    for filename in os.listdir('../data/alibaba/greedy'):
+        with open(f'../data/alibaba/greedy/{filename}') as file:
             data = json.load(file)
 
         if all('Flexible Optimal' in model for model in data):
@@ -51,8 +51,8 @@ def test_optimal_data():
             print(f'{filename} - no flexible optimal')
 
     print()
-    for filename in os.listdir('../data/auctions'):
-        with open(f'../data/auctions/{filename}') as file:
+    for filename in os.listdir('../data/alibaba/auctions'):
+        with open(f'../data/alibaba/auctions/{filename}') as file:
             data = json.load(file)
 
         if all('Solve Status' in model for model in data):

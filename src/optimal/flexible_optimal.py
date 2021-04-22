@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
 
-from src.core.super_server import SuperServer
 from src.core.core import server_task_allocation
+from src.core.super_server import SuperServer
 from src.extra.pprint import print_model_solution, print_model
 from src.extra.result import Result
 
@@ -39,19 +39,25 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     loading_speeds, compute_speeds, sending_speeds, task_allocation = {}, {}, {}, {}
 
     # Loop over each task to allocate the variables and add the deadline constraints
+    max_bandwidth = max(server.bandwidth_capacity for server in servers)
+    max_computation = max(server.computation_capacity for server in servers)
     for task in tasks:
-        loading_speeds[task] = model.integer_var(min=1, name=f'{task.name} loading speed')
-        compute_speeds[task] = model.integer_var(min=1, name=f'{task.name} compute speed')
-        sending_speeds[task] = model.integer_var(min=1, name=f'{task.name} sending speed')
+        # Check if the task can be run on any server even if empty
+        if any(server.can_run_empty(task) for server in servers):
+            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} loading speed')
+            compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
+            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} sending speed')
 
-        model.add((task.required_storage / loading_speeds[task]) +
-                  (task.required_computation / compute_speeds[task]) +
-                  (task.required_results_data / sending_speeds[task]) <= task.deadline)
+            model.add((task.required_storage / loading_speeds[task]) +
+                      (task.required_computation / compute_speeds[task]) +
+                      (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
-        # The task allocation variables and add the allocation constraint
-        for server in servers:
-            task_allocation[(task, server)] = model.binary_var(name=f'{task.name} Task - {server.name} Server')
-        model.add(sum(task_allocation[(task, server)] for server in servers) <= 1)
+            # The task allocation variables and add the allocation constraint
+            for server in servers:
+                task_allocation[(task, server)] = model.binary_var(name=f'{task.name} Task - {server.name} Server')
+            model.add(sum(task_allocation[(task, server)] for server in servers) <= 1)
+        else:
+            print(f'Task {task.name} cannot be run even if the server is empty, therefore excluded')
 
     # For each server, add the resource constraint
     for server in servers:
@@ -87,7 +93,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                                            model_solution.get_value(sending_speeds[task]))
                     break
 
-        if abs(model_solution.get_objective_values()[0] - sum(task.value for task in tasks if task.running_server)) > 0.1:
+        if abs(model_solution.get_objective_values()[0] - sum(t.value for t in tasks if t.running_server)) > 0.1:
             print('Flexible optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
                   f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)

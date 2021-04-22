@@ -1,6 +1,6 @@
 {
     "name": "alibaba",
-    "task note": "The tasks for this model is generated  the 2018 alibaba cluster dataset with code available in models/alibaba/generate_model.ipynb",
+    "task note": "The tasks for this model is generated the 2018 alibaba cluster dataset with code available in models/alibaba/generate_model.ipynb",
     "task filename": "alibaba_cluster_tasks.csv",
     "server note": "This servers for this model are based on AWS EC2 small server instance sizes, inspired by Bahreini et al, 2018 'An Envy-Free Auction Mechanism for Resource Allocation in Edge Computing Systems'",
     "server distributions": [
