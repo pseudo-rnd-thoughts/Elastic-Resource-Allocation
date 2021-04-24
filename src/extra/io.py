@@ -85,7 +85,6 @@ def parse_args() -> argparse.Namespace:
 
     args.tasks = None if args.tasks == ' ' or args.tasks == '' or args.tasks is None else int(args.tasks)
     args.servers = None if args.servers == ' ' or args.servers == '' or args.servers is None else int(args.servers)
-    args.repeat = int(args.repeat)
 
     if args.extra == ' ':
         args.extra = ''
