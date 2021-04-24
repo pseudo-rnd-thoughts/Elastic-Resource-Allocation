@@ -71,7 +71,7 @@ class ModelDist:
 
 class SyntheticModelDist(ModelDist):
     def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None,
-                 filename: str = '../models/synthetic.mdl'):
+                 filename: str = 'models/synthetic.mdl'):
         ModelDist.__init__(self, filename, num_tasks, num_servers)
 
     def generate_server(self, server_id: int) -> Server:
@@ -91,7 +91,7 @@ class SyntheticModelDist(ModelDist):
 
 class AlibabaModelDist(SyntheticModelDist):
     def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None, foreknowledge: bool = True,
-                 filename: str = '../models/alibaba.mdl', storage_scaling: int = 500, computational_scaling: int = 1,
+                 filename: str = 'models/alibaba.mdl', storage_scaling: int = 500, computational_scaling: int = 1,
                  results_data_scaling: int = 5):
         SyntheticModelDist.__init__(self, num_tasks, num_servers, filename)
 
