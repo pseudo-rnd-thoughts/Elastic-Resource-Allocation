@@ -41,35 +41,33 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     # Loop over each task to allocate the variables and add the deadline constraints
     max_bandwidth = max(server.bandwidth_capacity for server in servers)
     max_computation = max(server.computation_capacity for server in servers)
-    for task in tasks:
+    runnable_tasks = [task for task in tasks if any(server.can_run_empty(task) for server in servers)]
+    for task in runnable_tasks:
         # Check if the task can be run on any server even if empty
-        if any(server.can_run_empty(task) for server in servers):
-            loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} loading speed')
-            compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
-            sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} sending speed')
+        loading_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} loading speed')
+        compute_speeds[task] = model.integer_var(min=1, max=max_computation, name=f'{task.name} compute speed')
+        sending_speeds[task] = model.integer_var(min=1, max=max_bandwidth - 1, name=f'{task.name} sending speed')
 
-            model.add((task.required_storage / loading_speeds[task]) +
-                      (task.required_computation / compute_speeds[task]) +
-                      (task.required_results_data / sending_speeds[task]) <= task.deadline)
+        model.add((task.required_storage / loading_speeds[task]) +
+                  (task.required_computation / compute_speeds[task]) +
+                  (task.required_results_data / sending_speeds[task]) <= task.deadline)
 
-            # The task allocation variables and add the allocation constraint
-            for server in servers:
-                task_allocation[(task, server)] = model.binary_var(name=f'{task.name} Task - {server.name} Server')
-            model.add(sum(task_allocation[(task, server)] for server in servers) <= 1)
-        else:
-            print(f'Task {task.name} cannot be run even if the server is empty, therefore excluded')
+        # The task allocation variables and add the allocation constraint
+        for server in servers:
+            task_allocation[(task, server)] = model.binary_var(name=f'{task.name} Task - {server.name} Server')
+        model.add(sum(task_allocation[(task, server)] for server in servers) <= 1)
 
     # For each server, add the resource constraint
     for server in servers:
         model.add(sum(task.required_storage * task_allocation[(task, server)]
-                      for task in tasks) <= server.available_storage)
+                      for task in runnable_tasks) <= server.available_storage)
         model.add(sum(compute_speeds[task] * task_allocation[(task, server)]
-                      for task in tasks) <= server.available_computation)
+                      for task in runnable_tasks) <= server.available_computation)
         model.add(sum((loading_speeds[task] + sending_speeds[task]) * task_allocation[(task, server)]
-                      for task in tasks) <= server.available_bandwidth)
+                      for task in runnable_tasks) <= server.available_bandwidth)
 
     # The optimisation statement
-    model.maximize(sum(task.value * task_allocation[(task, server)] for task in tasks for server in servers))
+    model.maximize(sum(task.value * task_allocation[(task, server)] for task in runnable_tasks for server in servers))
 
     # Solve the cplex model with time limit
     model_solution: CpoSolveResult = model.solve(log_output=None, TimeLimit=time_limit)
@@ -84,7 +82,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
 
     # Generate the allocation of the tasks and servers
     try:
-        for task in tasks:
+        for task in runnable_tasks:
             for server in servers:
                 if model_solution.get_value(task_allocation[(task, server)]):
                     server_task_allocation(server, task,
