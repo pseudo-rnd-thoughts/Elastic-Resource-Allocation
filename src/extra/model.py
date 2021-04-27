@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import os
 import random as rnd
+from math import ceil
 from pprint import PrettyPrinter
 from typing import TYPE_CHECKING
 
@@ -92,14 +93,16 @@ class SyntheticModelDist(ModelDist):
 class AlibabaModelDist(SyntheticModelDist):
     def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None, foreknowledge: bool = True,
                  filename: str = 'models/alibaba.mdl', storage_scaling: int = 500, computational_scaling: int = 1,
-                 results_data_scaling: int = 5):
+                 results_data_scaling: int = 5, results_range: Tuple[int, int] = (20, 60)):
         SyntheticModelDist.__init__(self, num_tasks, num_servers, filename)
 
         self.foreknowledge = foreknowledge
 
         self.storage_scaling = storage_scaling
         self.computational_scaling = computational_scaling
-        self.results_data_scaling = results_data_scaling
+        self.results_scaling = results_data_scaling
+
+        self.results_range = results_range
 
         task_model_path = '/'.join(filename.split('/')[:-1]) + '/' + self.model['task filename']
         self.task_model = pd.read_csv(task_model_path)
@@ -111,14 +114,16 @@ class AlibabaModelDist(SyntheticModelDist):
                     f'Foreknowledge Task {task_id}',
                     required_storage=self.storage_scaling * task_row['mem-max'],
                     required_computation=self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken'],
-                    required_results_data=self.results_data_scaling * rnd.uniform(20, 60) * task_row['mem-max'],
+                    required_results_data=ceil(self.results_scaling * rnd.uniform(*self.results_range) *
+                                               task_row['mem-max']),
                     deadline=task_row['time-taken'], servers=servers)
             else:
                 return Task(
                     f'Requested Task {task_id}',
                     required_storage=self.storage_scaling * task_row['request-mem'],
                     required_computation=self.computational_scaling * task_row['request-cpu'] * task_row['time-taken'],
-                    required_results_data=self.results_data_scaling * rnd.uniform(20, 60) * task_row['request-mem'],
+                    required_results_data=ceil(self.results_scaling * rnd.uniform(*self.results_range) *
+                                               task_row['request-mem']),
                     deadline=task_row['time-taken'], servers=servers)
 
     def generate_foreknowledge_requested_tasks(self, servers: List[Server],
@@ -130,13 +135,13 @@ class AlibabaModelDist(SyntheticModelDist):
                 f'Foreknowledge Task {task_id}',
                 required_storage=self.storage_scaling * task_row['mem-max'],
                 required_computation=self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken'],
-                required_results_data=self.results_data_scaling * results_data_size * task_row['mem-max'],
+                required_results_data=self.results_scaling * results_data_size * task_row['mem-max'],
                 deadline=task_row['time-taken'], servers=servers)
             requested_task = Task(
                 f'Requested Task {task_id}',
                 required_storage=self.storage_scaling * task_row['request-mem'],
                 required_computation=self.computational_scaling * task_row['request-cpu'] * task_row['time-taken'],
-                required_results_data=self.results_data_scaling * results_data_size * task_row['request-mem'],
+                required_results_data=self.results_scaling * results_data_size * task_row['request-mem'],
                 deadline=task_row['time-taken'], value=foreknowledge_task.value)
 
             foreknowledge_tasks.append(foreknowledge_task)
