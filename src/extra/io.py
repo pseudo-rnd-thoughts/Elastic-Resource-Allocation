@@ -9,7 +9,7 @@ from typing import Iterable
 
 import matplotlib.pyplot as plt
 
-from extra.model import ModelDist
+from src.extra.model import ModelDist
 
 
 class ImageFormat(Enum):
@@ -21,13 +21,13 @@ class ImageFormat(Enum):
     PDF = auto()
 
 
-def save_plot(name: str, test_name: str, additional: str = '', lgd=None, dpi=1000,
+def save_plot(name: str, folder: str = 'figs', additional: str = '', lgd=None, dpi=1000,
               image_formats: Iterable[ImageFormat] = (ImageFormat.EPS, ImageFormat.PNG, ImageFormat.PDF)):
     """
     Saves the plot to a file of the particular image format
 
     :param name: The plot name
-    :param test_name: The test name
+    :param folder: The save folder name
     :param additional: Additional information to add to the filename
     :param image_formats: The image format list
     :param lgd: The legend to be added to the plot when saved
@@ -38,15 +38,15 @@ def save_plot(name: str, test_name: str, additional: str = '', lgd=None, dpi=100
 
     for image_format in image_formats:
         if image_format == ImageFormat.EPS:
-            filename = f'figs/{test_name}/eps/{name}{additional}.eps'
+            filename = f'{folder}/eps/{name}{additional}.eps'
             print(f"Save file location: {filename}")
             plt.savefig(filename, format='eps', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PNG:
-            filename = f'figs/{test_name}/png/{name}{additional}.png'
+            filename = f'{folder}/png/{name}{additional}.png'
             print(f'Save file location: {filename}')
             plt.savefig(filename, format='png', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
         elif image_format == ImageFormat.PDF:
-            filename = f'figs/{test_name}/pdf/{name}{additional}.pdf'
+            filename = f'{folder}/pdf/{name}{additional}.pdf'
             print(f'Save file location: {filename}')
             plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
