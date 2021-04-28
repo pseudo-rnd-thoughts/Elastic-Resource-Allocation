@@ -141,8 +141,7 @@ class EvolutionStrategy(ServerSelectionPolicy):
 
 policies = [
     SumResources(),
-    ProductResources(),
-    Random()
+    ProductResources()
 ]
 
 all_policies = [
