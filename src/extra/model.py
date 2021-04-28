@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from core.fixed_task import generate_fixed_tasks
+from src.core.fixed_task import generate_fixed_tasks
 from src.core.server import Server
 from src.core.task import Task
 
