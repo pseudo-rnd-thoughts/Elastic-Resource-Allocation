@@ -228,7 +228,7 @@ class EvolutionStrategy(TaskPriority):
 
 # Functions you actually want to use
 policies = [
-    UtilityPerResources(ResourceSqrt()),
+    Value(),
     UtilityDeadlinePerResource(),
     UtilityDeadlinePerResource(ResourceSqrt())
 ]
