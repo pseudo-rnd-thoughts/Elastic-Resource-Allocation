@@ -118,4 +118,4 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
 if __name__ == "__main__":
     args = parse_args()
 
-    batch_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat)
+    batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)

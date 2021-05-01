@@ -77,9 +77,9 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
 if __name__ == "__main__":
     args = parse_args()
     if args.extra == '' or args.extra == 'full optimal':
-        server_resource_ratio(get_model(args.file, args.tasks, args.servers), args.repeat)
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'fixed optimal':
-        server_resource_ratio(get_model(args.file, args.tasks, args.servers), args.repeat, run_flexible=False)
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat, run_flexible=False)
     elif args.extra == 'time limited':
-        server_resource_ratio(get_model(args.file, args.tasks, args.servers), args.repeat,
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat,
                               run_flexible=False, run_fixed=False)

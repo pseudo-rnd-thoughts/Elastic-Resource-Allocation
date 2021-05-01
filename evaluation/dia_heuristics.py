@@ -114,8 +114,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'heuristic grid search':
-        dia_heuristic_grid_search(get_model(args.file, args.tasks, args.servers), args.repeat)
+        dia_heuristic_grid_search(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'non uniform heuristics':
-        non_uniform_server_heuristics(get_model(args.file, args.tasks, args.servers), args.repeat)
+        non_uniform_server_heuristics(get_model(args.model, args.tasks, args.servers), args.repeat)
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

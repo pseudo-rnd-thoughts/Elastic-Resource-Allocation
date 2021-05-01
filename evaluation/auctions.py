@@ -82,9 +82,9 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'full optimal':
-        auction_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat)
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'fixed optimal':
-        auction_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat, run_flexible=False)
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat, run_flexible=False)
     elif args.extra == 'time limited':
-        auction_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat,
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                            run_flexible=False, run_fixed=False)

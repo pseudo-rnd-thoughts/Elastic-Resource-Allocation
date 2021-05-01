@@ -115,15 +115,15 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'full optimal':
-        greedy_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat)
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'fixed optimal':
-        greedy_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_relaxed=False)
     elif args.extra == 'relaxed optimal':
-        greedy_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_fixed=False)
     elif args.extra == 'time limited':
-        greedy_evaluation(get_model(args.file, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                           run_flexible=False, run_fixed=False, run_relaxed=False)
     elif args.extra == 'lower bound':
-        lower_bound_testing(get_model(args.file, args.tasks, args.servers), args.repeat)
+        lower_bound_testing(get_model(args.model, args.tasks, args.servers), args.repeat)

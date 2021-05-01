@@ -56,4 +56,4 @@ def evolve_greedy_policies(model_dist: ModelDist, iterations: int = 30, populati
 if __name__ == '__main__':
     args = parse_args()
 
-    evolve_greedy_policies(get_model(args.file, args.tasks, args.servers))
+    evolve_greedy_policies(get_model(args.model, args.tasks, args.servers))

@@ -303,13 +303,13 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'task mutation':
-        full_task_mutation(get_model(args.file, args.tasks, args.servers), args.repeat)
+        full_task_mutation(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'mutation grid search':
-        mutation_grid_search(get_model(args.file, args.tasks, args.servers), args.repeat)
+        mutation_grid_search(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'value only':
-        value_only_mutation(get_model(args.file, args.tasks, args.servers), args.repeat)
+        value_only_mutation(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'dia repeat':
-        dia_repeat(get_model(args.file, args.tasks, args.servers), args.repeat)
+        dia_repeat(get_model(args.model, args.tasks, args.servers), args.repeat)
     elif args.extra == 'special case':
         print(os.getcwd())
         dia_repeat(get_model('models/mutation_1.mdl'), args.repeat, repeats=0, auction_repeats=10)
