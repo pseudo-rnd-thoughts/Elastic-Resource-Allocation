@@ -130,7 +130,7 @@ class AlibabaModelDist(SyntheticModelDist):
                                                num_tasks: int) -> Tuple[List[Task], List[Task]]:
         foreknowledge_tasks, requested_tasks = [], []
         for task_id, (_, task_row) in enumerate(self.task_model.sample(num_tasks).iterrows()):
-            results_data_size = rnd.uniform(20, 60)
+            results_data_size = rnd.uniform(*self.results_range)
             foreknowledge_task = Task(
                 f'Foreknowledge Task {task_id}',
                 required_storage=self.storage_scaling * task_row['mem-max'],
