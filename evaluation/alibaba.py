@@ -117,7 +117,7 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
 
 
 def task_sizing(model_dist: AlibabaModelDist, repeat_num: int, repeats: int = 50):
-    filename = results_filename('foreknowledge', model_dist, repeat_num)
+    filename = results_filename('task_sizing', model_dist, repeat_num)
     results = []
     for _ in range(repeats):
         servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
@@ -126,15 +126,9 @@ def task_sizing(model_dist: AlibabaModelDist, repeat_num: int, repeats: int = 50
         fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
         fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
 
-        greedy_algorithm(foreknowledge_tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-        reset_model([], servers)
-        greedy_algorithm(requested_tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-
         model_results = {'server': [server.save() for server in servers],
-                         'requested-tasks': [task.save() for task in requested_tasks],
-                         'fixed-requested-tasks': [task.save() for task in fixed_requested_tasks],
-                         'foreknowledge-tasks': [task.save() for task in foreknowledge_tasks],
-                         'fixed-foreknowledge-tasks': [task.save() for task in fixed_foreknowledge_tasks]}
+                         'requested-tasks': [task.save(more=True) for task in fixed_requested_tasks],
+                         'foreknowledge-tasks': [task.save(more=True) for task in fixed_foreknowledge_tasks]}
         results.append(model_results)
 
         # Save the results to the file
