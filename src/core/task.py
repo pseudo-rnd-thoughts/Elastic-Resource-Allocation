@@ -142,6 +142,9 @@ class Task:
         }
         if 0 <= self.auction_time:
             save_spec.update({'auction time': self.auction_time})
+        if self.loading_speed is None and self.compute_speed is None and self.sending_speed is None:
+            save_spec.update({'loading speed': self.loading_speed, 'compute speed': self.compute_speed,
+                              'sending speed': self.sending_speed})
 
         return save_spec
 

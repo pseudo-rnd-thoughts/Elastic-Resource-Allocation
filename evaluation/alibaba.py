@@ -7,10 +7,13 @@ from pprint import PrettyPrinter
 from typing import List, Tuple
 
 from extra.model import AlibabaModelDist, generate_evaluation_model
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.task_prioritisation import UtilityDeadlinePerResource
 from src.core.core import reset_model
 from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
-from src.greedy.greedy import greedy_permutations
+from src.greedy.greedy import greedy_permutations, greedy_algorithm
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
 
@@ -113,6 +116,33 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
     print('Finished')
 
 
+def task_sizing(model_dist: AlibabaModelDist, repeat_num: int, repeats: int = 50):
+    filename = results_filename('foreknowledge', model_dist, repeat_num)
+    results = []
+    for _ in range(repeats):
+        servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
+
+        foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers, model_dist.num_tasks)
+        fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
+        fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
+
+        greedy_algorithm(foreknowledge_tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+        reset_model([], servers)
+        greedy_algorithm(requested_tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+
+        model_results = {'server': [server.save() for server in servers],
+                         'requested-tasks': [task.save() for task in requested_tasks],
+                         'fixed-requested-tasks': [task.save() for task in fixed_requested_tasks],
+                         'foreknowledge-tasks': [task.save() for task in foreknowledge_tasks],
+                         'fixed-foreknowledge-tasks': [task.save() for task in fixed_foreknowledge_tasks]}
+        results.append(model_results)
+
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(results, file)
+    print('Finished')
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -124,3 +154,5 @@ if __name__ == "__main__":
         model_sizing(AlibabaModelDist(args.tasks, args.servers), args.repeat,
                      [(10, 2, True, True), (15, 3, True, True), (20, 4, True, True), (30, 6, False, True),
                       (50, 10, False, True), (75, 15, False, False)])
+    elif args.extra == 'task sizing':
+        task_sizing(AlibabaModelDist(args.tasks, args.servers), args.repeat)
