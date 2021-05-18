@@ -6,6 +6,7 @@ from random import gauss
 from typing import Dict, Any
 from typing import List
 
+from core.fixed_task import FixedTask
 from src.core.task import Task
 
 
@@ -43,21 +44,27 @@ class Server:
         :return: If it can run
         """
 
-        if not (task.required_storage <= self.available_storage and
-                2 <= self.bandwidth_capacity and 1 <= self.computation_capacity):
+        if self.available_storage < task.required_storage:
+            return False
+        elif self.bandwidth_capacity < 2:
+            return False
+        elif self.computation_capacity < 1:
             return False
 
-        # Case of fixed task (the required storage is checked above)
-        if (0 < task.compute_speed and 0 < task.loading_speed and 0 < task.sending_speed) \
-                and (self.available_bandwidth < task.loading_speed + task.sending_speed
-                     or self.available_computation < task.compute_speed):
-            return False
+        # Case of fixed tasks
+        if isinstance(task, FixedTask):
+            if self.available_bandwidth < task.loading_speed + task.sending_speed:
+                return False
+            elif self.available_computation < task.compute_speed:
+                return False
 
-        for s in range(1, self.available_bandwidth):
-            if task.required_storage * self.available_computation * (self.available_bandwidth - s) + \
-                    s * task.required_computation * (self.available_bandwidth - s) + \
-                    s * self.available_computation * task.required_results_data <= \
-                    task.deadline * s * self.available_computation * (self.available_bandwidth - s):
+        # Check if their is a possible loading and sending speed
+        for loading_speed in range(1, self.available_bandwidth):
+            sending_speed = (self.available_bandwidth - loading_speed)
+            if task.required_storage * self.available_computation * sending_speed + \
+                loading_speed * task.required_computation * sending_speed + \
+                loading_speed * self.available_computation * task.required_results_data <= \
+                    task.deadline * loading_speed * self.available_computation * sending_speed:
                 return True
         return False
 

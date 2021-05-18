@@ -5,7 +5,7 @@ Tests the realistic settings
 import json
 from typing import List, Tuple
 
-from extra.model import AlibabaModelDist
+from src.extra.model import AlibabaModelDist
 from src.core.core import reset_model
 from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import parse_args, results_filename

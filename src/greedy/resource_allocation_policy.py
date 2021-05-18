@@ -54,7 +54,7 @@ class ResourceAllocationPolicy(ABC):
         model.add(loading + sending <= server.available_bandwidth)
 
         model.minimize(self.resource_evaluator(task, server, loading, compute, sending))
-        model_solution = model.solve(log_output=None, TimeLimit=2)
+        model_solution = model.solve(log_output=None)
 
         if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:

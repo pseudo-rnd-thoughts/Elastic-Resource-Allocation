@@ -112,16 +112,17 @@ class AlibabaModelDist(SyntheticModelDist):
             if self.foreknowledge:
                 return Task(
                     f'Foreknowledge Task {task_id}',
-                    required_storage=self.storage_scaling * task_row['mem-max'],
-                    required_computation=self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken'],
+                    required_storage=int(self.storage_scaling * task_row['mem-max']),
+                    required_computation=int(self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken']),
                     required_results_data=ceil(self.results_scaling * rnd.uniform(*self.results_range) *
                                                task_row['mem-max']),
                     deadline=task_row['time-taken'], servers=servers)
             else:
                 return Task(
                     f'Requested Task {task_id}',
-                    required_storage=self.storage_scaling * task_row['request-mem'],
-                    required_computation=self.computational_scaling * task_row['request-cpu'] * task_row['time-taken'],
+                    required_storage=int(self.storage_scaling * task_row['request-mem']),
+                    required_computation=int(self.computational_scaling * task_row['request-cpu'] *
+                                             task_row['time-taken']),
                     required_results_data=ceil(self.results_scaling * rnd.uniform(*self.results_range) *
                                                task_row['request-mem']),
                     deadline=task_row['time-taken'], servers=servers)
