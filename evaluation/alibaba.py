@@ -5,17 +5,20 @@ Tests the realistic settings
 import json
 from typing import List, Tuple
 
+from greedy.resource_allocation_policy import SumPercentage
+from greedy.server_selection_policy import SumResources
+from greedy.task_prioritisation import UtilityDeadlinePerResource
 from src.extra.model import AlibabaModelDist
 from src.core.core import reset_model
 from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
-from src.greedy.greedy import greedy_permutations
+from src.greedy.greedy import greedy_permutations, greedy_algorithm
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
 
 
 def model_scaling(model_dist: AlibabaModelDist, repeat_num: int, scaling: List[Tuple[int, int, int]],
-                  repeats: int = 10):
+                  repeats: int = 50):
     """
     Tests a range of possible model scaling
 
@@ -50,12 +53,19 @@ def model_scaling(model_dist: AlibabaModelDist, repeat_num: int, scaling: List[T
             algorithm_results['foreknowledge fixed optimal'] = results.store()
             reset_model(fixed_foreknowledge_tasks, servers)
 
+            result = greedy_algorithm(foreknowledge_tasks, servers,
+                                      UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+            algorithm_results['foreknowledge greedy'] = result.store()
+            reset_model(foreknowledge_tasks, servers)
+
             results = fixed_optimal(fixed_requested_tasks, servers, time_limit=60)
             algorithm_results['requested fixed optimal'] = results.store()
             reset_model(fixed_requested_tasks, servers)
 
-            greedy_permutations(foreknowledge_tasks, servers, algorithm_results, 'foreknowledge')
-            greedy_permutations(requested_tasks, servers, algorithm_results, 'requested')
+            result = greedy_algorithm(requested_tasks, servers,
+                                      UtilityDeadlinePerResource(), SumResources(), SumPercentage())
+            algorithm_results['requested greedy'] = result.store()
+            reset_model(requested_tasks, servers)
 
             model_results.append(algorithm_results)
 
@@ -133,7 +143,7 @@ if __name__ == "__main__":
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=True)
     elif args.extra == 'foreknowledge fixed':
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=False)
-    elif args.extra == 'model sizing':
+    elif args.extra == 'model scaling':
         model_scaling(AlibabaModelDist(args.tasks, args.servers), args.repeat,
                       [(500, 1, 5), (250, 1, 2.5), (300, 0.6, 5)])
     elif args.extra == 'task sizing':
