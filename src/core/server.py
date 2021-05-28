@@ -6,7 +6,7 @@ from random import gauss
 from typing import Dict, Any
 from typing import List
 
-from core.fixed_task import FixedTask
+from src.core.fixed_task import FixedTask
 from src.core.task import Task
 
 

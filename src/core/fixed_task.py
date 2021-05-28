@@ -102,6 +102,9 @@ class FixedTask(Task):
         batch_task = super().batch(time_step)
         return FixedTask(batch_task, self.fixed_value_policy, False)
 
+    def save(self, resource_speeds=True):
+        return super().save(resource_speeds=resource_speeds)
+
 
 class FixedAllocationPriority(ABC):
     """

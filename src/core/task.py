@@ -126,7 +126,7 @@ class Task:
                     deadline=max(1, randint(ceil(self.deadline * (1 - mutation_percent)), self.deadline)),
                     value=self.value)
 
-    def save(self, more=False):
+    def save(self, resource_speeds=False):
         """
         Saves the task attributes to a dictionary
 
@@ -142,7 +142,7 @@ class Task:
         }
         if 0 <= self.auction_time:
             save_spec.update({'auction time': self.auction_time})
-        if more:
+        if resource_speeds:
             save_spec.update({'loading speed': self.loading_speed, 'compute speed': self.compute_speed,
                               'sending speed': self.sending_speed})
 
