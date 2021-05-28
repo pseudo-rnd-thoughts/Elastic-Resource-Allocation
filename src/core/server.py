@@ -62,8 +62,8 @@ class Server:
         for loading_speed in range(1, self.available_bandwidth):
             sending_speed = (self.available_bandwidth - loading_speed)
             if task.required_storage * self.available_computation * sending_speed + \
-                loading_speed * task.required_computation * sending_speed + \
-                loading_speed * self.available_computation * task.required_results_data <= \
+                    loading_speed * task.required_computation * sending_speed + \
+                    loading_speed * self.available_computation * task.required_results_data <= \
                     task.deadline * loading_speed * self.available_computation * sending_speed:
                 return True
         return False

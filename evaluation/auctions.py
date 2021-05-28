@@ -7,12 +7,12 @@ from __future__ import annotations
 import json
 from pprint import PrettyPrinter
 
-from extra.model import ModelDist, get_model, generate_evaluation_model
 from src.auctions.critical_value_auction import critical_value_auction
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.auctions.vcg_auction import vcg_auction, fixed_vcg_auction
 from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDist, get_model, generate_evaluation_model
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies
 from src.greedy.task_prioritisation import policies as task_priorities

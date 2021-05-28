@@ -7,9 +7,9 @@ from __future__ import annotations
 import json
 from pprint import PrettyPrinter
 
-from extra.model import ModelDist, get_model, generate_evaluation_model
 from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
+from src.extra.model import ModelDist, get_model, generate_evaluation_model
 from src.greedy.greedy import greedy_algorithm, greedy_permutations
 from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
 from src.greedy.server_selection_policy import policies as server_selection_policies

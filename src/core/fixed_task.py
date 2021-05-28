@@ -54,12 +54,12 @@ class FixedTask(Task):
 
         model_solution = model.solve(log_output=None)
         assert model_solution.get_solve_status() == SOLVE_STATUS_FEASIBLE or \
-            model_solution.get_solve_status() == SOLVE_STATUS_OPTIMAL, \
-            (model_solution.get_solve_status(), task.__str__())
+               model_solution.get_solve_status() == SOLVE_STATUS_OPTIMAL, \
+               (model_solution.get_solve_status(), task.__str__())
         assert 0 < model_solution.get_value(loading_speed) and \
-            0 < model_solution.get_value(compute_speed) and \
-            0 < model_solution.get_value(sending_speed), \
-            (model_solution.get(loading_speed), model_solution.get(compute_speed), model_solution.get(sending_speed))
+               0 < model_solution.get_value(compute_speed) and \
+               0 < model_solution.get_value(sending_speed), \
+               (model_solution.get(loading_speed), model_solution.get(compute_speed), model_solution.get(sending_speed))
 
         return model_solution.get_value(loading_speed), \
             model_solution.get_value(compute_speed), \

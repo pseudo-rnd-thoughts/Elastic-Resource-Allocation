@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 
-from branch_bound.branch_bound import branch_bound_algorithm
-from core.core import reset_model
-from extra.model import SyntheticModelDist
-from optimal.flexible_optimal import flexible_optimal
+from src.branch_bound.branch_bound import branch_bound_algorithm
+from src.core.core import reset_model
+from src.extra.model import SyntheticModelDist
+from src.optimal.flexible_optimal import flexible_optimal
 
 
 def test_cplex():

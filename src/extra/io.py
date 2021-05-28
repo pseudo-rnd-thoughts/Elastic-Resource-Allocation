@@ -75,11 +75,11 @@ def parse_args() -> argparse.Namespace:
     :return: Return the parsed arguments
     """
     parser = argparse.ArgumentParser(description='Process model arguments')
-    parser.add_argument('-m', '--model',   help='Location of the model file', default='synthetic')
-    parser.add_argument('-t', '--tasks',   help='Number of tasks', default=None)
+    parser.add_argument('-m', '--model', help='Location of the model file', default='synthetic')
+    parser.add_argument('-t', '--tasks', help='Number of tasks', default=None)
     parser.add_argument('-s', '--servers', help='Number of servers', default=None)
-    parser.add_argument('-r', '--repeat',  help='Number of repeats', default=0)
-    parser.add_argument('-e', '--extra',   help='Extra information to pass to the script', default='')
+    parser.add_argument('-r', '--repeat', help='Number of repeats', default=0)
+    parser.add_argument('-e', '--extra', help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()
 

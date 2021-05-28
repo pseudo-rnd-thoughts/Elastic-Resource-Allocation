@@ -11,11 +11,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from core.task import Task
-from extra.model import AlibabaModelDist, SyntheticModelDist, ModelDist
 from src.core.core import reset_model
 from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
+from src.core.task import Task
 from src.extra.io import parse_args
+from src.extra.model import AlibabaModelDist, SyntheticModelDist, ModelDist
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
@@ -62,8 +62,8 @@ def alibaba_task_generation():
             FixedTask(task, fixed_task_policy)
         except AssertionError as e:
             print(f'Error for fixed task index {index}', e)
-            print(task.required_storage/storage_scaling, task.required_computation/computational_scaling,
-                  task.required_results_data/results_data_scaling)
+            print(task.required_storage / storage_scaling, task.required_computation / computational_scaling,
+                  task.required_results_data / results_data_scaling)
 
 
 def test_args():

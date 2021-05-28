@@ -9,16 +9,15 @@ from __future__ import annotations
 
 import json
 import os
-from pprint import PrettyPrinter
 import random as rnd
+from pprint import PrettyPrinter
 from typing import TYPE_CHECKING, Iterable
 
-from extra.model import ModelDist, get_model, generate_evaluation_model
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import reset_model, set_server_heuristics
 from src.core.task import Task
 from src.extra.io import parse_args, results_filename
-
+from src.extra.model import ModelDist, get_model, generate_evaluation_model
 
 if TYPE_CHECKING:
     from typing import TypeVar, List

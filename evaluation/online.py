@@ -9,11 +9,11 @@ import json
 import pprint
 from typing import Iterable
 
-from extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
 from src.core.core import reset_model
 from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import results_filename, parse_args
 from src.extra.model import ModelDist, get_model
+from src.extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPowPercentage
 from src.greedy.server_selection_policy import ProductResources

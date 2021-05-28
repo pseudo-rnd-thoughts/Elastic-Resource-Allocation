@@ -49,8 +49,8 @@ def test_greedy_task_price():
         for copy_task, task in zip(copy_tasks, server.allocated_tasks)
     ]
     assert server.revenue == copy_server.revenue and server.available_storage == copy_server.available_storage and \
-        server.available_computation == copy_server.available_computation and \
-        server.available_bandwidth == copy_server.available_bandwidth
+           server.available_computation == copy_server.available_computation and \
+           server.available_bandwidth == copy_server.available_bandwidth
 
     unallocated_tasks = []
     allocate_task(new_task, task_price, server, unallocated_tasks, speeds)

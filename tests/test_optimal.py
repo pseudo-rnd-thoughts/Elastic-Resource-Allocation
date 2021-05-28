@@ -8,17 +8,17 @@ from typing import Sequence
 
 import matplotlib.pyplot as plt
 
-from core.fixed_task import generate_fixed_tasks
-from extra.io import parse_args
-from extra.visualise import minimise_resource_allocation, plot_allocation_results
-from optimal.fixed_optimal import fixed_optimal
 from src.core.core import reset_model
+from src.core.fixed_task import generate_fixed_tasks
+from src.extra.io import parse_args
 from src.extra.model import ModelDist, SyntheticModelDist
 from src.extra.pprint import print_model
+from src.extra.visualise import minimise_resource_allocation, plot_allocation_results
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import SumPercentage
 from src.greedy.server_selection_policy import SumResources
 from src.greedy.task_prioritisation import UtilityDeadlinePerResource
+from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal_solver, flexible_optimal, server_relaxed_flexible_optimal
 
 

@@ -5,14 +5,14 @@ Tests the realistic settings
 import json
 from typing import List, Tuple
 
-from greedy.resource_allocation_policy import SumPercentage
-from greedy.server_selection_policy import SumResources
-from greedy.task_prioritisation import UtilityDeadlinePerResource
-from src.extra.model import AlibabaModelDist
 from src.core.core import reset_model
 from src.core.fixed_task import generate_fixed_tasks
 from src.extra.io import parse_args, results_filename
+from src.extra.model import AlibabaModelDist
 from src.greedy.greedy import greedy_permutations, greedy_algorithm
+from src.greedy.resource_allocation_policy import SumPercentage
+from src.greedy.server_selection_policy import SumResources
+from src.greedy.task_prioritisation import UtilityDeadlinePerResource
 from src.optimal.fixed_optimal import fixed_optimal
 from src.optimal.flexible_optimal import flexible_optimal
 
@@ -42,7 +42,8 @@ def model_scaling(model_dist: AlibabaModelDist, repeat_num: int, scaling: List[T
         for _ in range(repeats):
             # Generate the tasks
             servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
-            foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers, model_dist.num_tasks)
+            foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(
+                servers, model_dist.num_tasks)
             fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
             fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
             algorithm_results = {
@@ -86,7 +87,8 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
     model_results = []
     for _ in range(repeats):
         servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
-        foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers, model_dist.num_tasks)
+        foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers,
+                                                                                                 model_dist.num_tasks)
         fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
         fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
         algorithm_results = {
@@ -126,7 +128,8 @@ def task_sizing(model_dist: AlibabaModelDist, repeat_num: int):
     filename = results_filename('task_sizing', model_dist, repeat_num)
     servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
 
-    foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers, model_dist.num_tasks)
+    foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers,
+                                                                                             model_dist.num_tasks)
     fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
     fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
 

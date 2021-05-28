@@ -4,9 +4,9 @@ import pprint
 
 from cma import CMAEvolutionStrategy
 
-from extra.model import ModelDist, get_model
 from src.core.core import reset_model
 from src.extra.io import parse_args
+from src.extra.model import ModelDist, get_model
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation_policy import EvolutionStrategy as ResourceAllocationEvoStrategy, SumSpeed
 from src.greedy.server_selection_policy import EvolutionStrategy as ServerSelectionEvoStrategy, ProductResources

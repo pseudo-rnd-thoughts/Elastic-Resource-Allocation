@@ -65,8 +65,7 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
             assert 0 <= server.available_computation <= server.computation_capacity, server.available_computation
 
             server.available_bandwidth = server.bandwidth_capacity - \
-                ceil(sum((task.loading_speed + task.sending_speed)
-                         for task in server.allocated_tasks))
+                ceil(sum((task.loading_speed + task.sending_speed) for task in server.allocated_tasks))
             assert 0 <= server.available_bandwidth <= server.bandwidth_capacity, server.available_bandwidth
 
     flatten_tasks = [task for tasks in batched_tasks for task in tasks]
