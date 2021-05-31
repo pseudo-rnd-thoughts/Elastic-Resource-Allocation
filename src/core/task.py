@@ -64,6 +64,9 @@ class Task:
         :param price: The price of the task
         """
         # Check that the allocation information is correct
+        assert isinstance(loading_speed, int) and isinstance(compute_speed, int) and isinstance(sending_speed, int), \
+            f'Allocation speed types - loading speed: {isinstance(loading_speed, int)}, ' \
+            f'compute speed: {isinstance(compute_speed, int)} and sending speed: {isinstance(sending_speed, int)}'
         assert 0 < loading_speed and 0 < compute_speed and 0 < sending_speed, \
             f'Allocation information is incorrect for Task {self.name} with loading {loading_speed} ' \
             f'compute {compute_speed} sending {sending_speed}'
@@ -78,8 +81,9 @@ class Task:
             f'loading {loading_speed} compute {compute_speed} sending {sending_speed} speed and ' \
             f'deadline {self.deadline} time taken {time_taken}'
 
-        # Check that a server is not already allocated
-        assert self.running_server is None, f"Task {self.name} is already allocated to {self.running_server.name}"
+        # Check that a server is not already allocated and the server to be allocated to is not none
+        assert self.running_server is None, f'Task {self.name} is already allocated to {self.running_server.name}'
+        assert running_server is not None, f'The running server is none'
 
         self.loading_speed = loading_speed
         self.compute_speed = compute_speed

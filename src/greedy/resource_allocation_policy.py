@@ -60,6 +60,12 @@ class ResourceAllocationPolicy(ABC):
                 model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
             print(f'Resource allocation fail - status: {model_solution.get_solve_status()} '
                   f'for {str(task)} and {str(server)}')
+            raise Exception(f'Resource allocation for a task is infeasible, '
+                            f'model solution is {model_solution.get_solve_status()}. '
+                            f'The task setting is {task.save()} and '
+                            f'the server setting has available bandwidth of {server.available_bandwidth} and '
+                            f'available computation of {server.available_computation} '
+                            f'(storage: {server.available_storage})')
         return model_solution.get_value(loading), model_solution.get_value(compute), model_solution.get_value(sending)
 
     @abstractmethod
