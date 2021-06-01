@@ -91,6 +91,7 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
             servers, model_dist.num_tasks)
         fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
         fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
+
         algorithm_results = {
             'model': {'foreknowledge tasks': [foreknowledge_task.save() for foreknowledge_task in foreknowledge_tasks],
                       'requested_tasks': [requested_task.save() for requested_task in requested_tasks],
@@ -124,23 +125,38 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
     print('Finished')
 
 
-def task_sizing(model_dist: AlibabaModelDist, repeat_num: int):
-    filename = results_filename('task_sizing', model_dist, repeat_num)
-    servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
+def task_sizing():
+    model_dist = AlibabaModelDist(1000, 6)
+    model_scales = {}
+    for storage_scaling, computation_scaling, results_data_scaling in [
+        (500, 1, 5), (500, 0.2, 5)
+    ]:
+        name = f'Storage: {storage_scaling}, computation: {computation_scaling}, results data: {results_data_scaling}'
+        model_dist.storage_scaling = storage_scaling
+        model_dist.computational_scaling = computation_scaling
+        model_dist.results_scaling = results_data_scaling
+        print(name)
 
-    foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(servers,
-                                                                                             model_dist.num_tasks)
-    fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
-    fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
+        servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
 
-    model_results = {'server': [server.save() for server in servers],
-                     'requested-tasks': [task.save(resource_speeds=True) for task in fixed_requested_tasks],
-                     'foreknowledge-tasks': [task.save(resource_speeds=True) for task in fixed_foreknowledge_tasks]}
+        foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(
+            servers, model_dist.num_tasks)
 
-    # Save the results to the file
-    with open(filename, 'w') as file:
-        json.dump(model_results, file)
-    print('Finished')
+        fixed_foreknowledge_tasks = generate_fixed_tasks(foreknowledge_tasks)
+        fixed_requested_tasks = generate_fixed_tasks(requested_tasks)
+
+        model_scales[name] = {
+            'servers': [server.save() for server in servers],
+
+            'foreknowledge tasks': [task.save() for task in foreknowledge_tasks],
+            'fixed foreknowledge tasks': [task.save() for task in fixed_foreknowledge_tasks],
+
+            'requested tasks': [task.save() for task in requested_tasks],
+            'fixed requested tasks': [task.save() for task in fixed_requested_tasks]
+        }
+
+    with open('model_scaling.json', 'w') as file:
+        json.dump(model_scales, file)
 
 
 if __name__ == "__main__":
@@ -150,8 +166,5 @@ if __name__ == "__main__":
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=True)
     elif args.extra == 'foreknowledge fixed':
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_flexible=False)
-    elif args.extra == 'model scaling':
-        model_scaling(AlibabaModelDist(args.tasks, args.servers), args.repeat,
-                      [(500, 1, 5), (250, 1, 2.5), (300, 0.6, 5)])
     elif args.extra == 'task sizing':
-        task_sizing(AlibabaModelDist(args.tasks, args.servers), args.repeat)
+        task_sizing()
