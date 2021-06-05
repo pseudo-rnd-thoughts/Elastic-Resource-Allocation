@@ -106,8 +106,8 @@ class SumPowPercentage(ResourceAllocationPolicy):
     def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
-        return (compute_speed / server.available_computation) ** 3 + \
-               ((loading_speed + sending_speed) / server.available_bandwidth) ** 3
+        return (compute_speed / server.available_computation) ** 2 + \
+               ((loading_speed + sending_speed) / server.available_bandwidth) ** 2
 
 
 class SumSpeed(ResourceAllocationPolicy):
