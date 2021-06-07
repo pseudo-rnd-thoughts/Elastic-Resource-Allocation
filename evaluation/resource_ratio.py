@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 from pprint import PrettyPrinter
-from typing import Iterable
+from typing import Iterable, Optional
 
 from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
@@ -18,7 +18,7 @@ from src.optimal.flexible_optimal import flexible_optimal
 
 # noinspection DuplicatedCode
 def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int = 25,
-                          run_flexible: bool = True, run_fixed: bool = True,
+                          run_flexible: bool = True, run_fixed: bool = True, fixed_time_limit: Optional[int] = None,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
     """
     Evaluates the difference in social welfare when the ratio of computational to bandwidth capacity is changed between
@@ -29,6 +29,7 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
     :param repeats: The number of repeats
     :param run_flexible: If to run the optimal flexible solver
     :param run_fixed: If to run the optimal fixed solver
+    :param fixed_time_limit: The fixed optimal time limit
     :param ratios: List of ratios to test
     """
     pretty_printer, model_results = PrettyPrinter(), []
@@ -50,14 +51,14 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
 
             if run_flexible:
                 # Optimal
-                optimal_result = flexible_optimal(tasks, servers, None)
+                optimal_result = flexible_optimal(tasks, servers, time_limit=None)
                 algorithm_results[optimal_result.algorithm] = optimal_result.store(ratio=ratio)
                 pretty_printer.pprint(algorithm_results[optimal_result.algorithm])
                 reset_model(tasks, servers)
 
             if run_fixed:
                 # Find the fixed solution
-                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
+                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=fixed_time_limit)
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
                 fixed_optimal_result.pretty_print()
                 reset_model(fixed_tasks, servers)
@@ -82,4 +83,4 @@ if __name__ == "__main__":
         server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat, run_flexible=False)
     elif args.extra == 'time limited':
         server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat,
-                              run_flexible=False, run_fixed=False)
+                              run_flexible=False, run_fixed=True, fixed_time_limit=60)
