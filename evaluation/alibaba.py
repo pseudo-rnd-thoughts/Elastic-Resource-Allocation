@@ -114,8 +114,8 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
         algorithm_results['requested fixed optimal'] = results.store()
         reset_model(fixed_requested_tasks, servers)
 
-        greedy_permutations(foreknowledge_tasks, servers, algorithm_results, 'foreknowledge')
-        greedy_permutations(requested_tasks, servers, algorithm_results, 'requested')
+        greedy_permutations(foreknowledge_tasks, servers, algorithm_results, 'foreknowledge ')
+        greedy_permutations(requested_tasks, servers, algorithm_results, 'requested ')
 
         model_results.append(algorithm_results)
 
