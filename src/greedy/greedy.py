@@ -89,5 +89,5 @@ def greedy_permutations(tasks: List[Task], servers: List[Server], results: Dict[
         for server_selection_policy in server_selection_policies:
             for allocation_policy in resource_allocation_policies:
                 result = greedy_algorithm(tasks, servers, task_priority, server_selection_policy, allocation_policy)
-                results[f'{prefix} {result.algorithm}'] = result.store()
+                results[f'{prefix}{result.algorithm}'] = result.store()
                 reset_model(tasks, servers)
