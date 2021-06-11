@@ -19,8 +19,8 @@ from src.extra.model import ModelDist, get_model, generate_evaluation_model
 
 
 def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: int = 50, time_limit: int = 4,
-                              initial_prices: Iterable[int] = (0, 5, 10, 15, 20),
-                              price_changes: Iterable[int] = (1, 3, 5, 7, 10)):
+                              initial_prices: Iterable[int] = (0, 4, 8, 12),
+                              price_changes: Iterable[int] = (1, 2, 4, 6)):
     """
     Evaluates the difference in results with the decentralised iterative auction uses different price changes and
         initial price variables
