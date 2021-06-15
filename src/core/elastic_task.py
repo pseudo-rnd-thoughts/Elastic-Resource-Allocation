@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from src.core.server import Server
 
 
-class Task:
+class ElasticTask:
     """
     Task object with name and required resources to use (storage, computation and models data)
     When the task is allocated to a server then the resources speed and server are set
@@ -114,21 +114,21 @@ class Task:
         """
         return self.value - self.price
 
-    def mutate(self, mutation_percent) -> Task:
+    def mutate(self, mutation_percent) -> ElasticTask:
         """
         Mutate the server by a percentage
         
         :param mutation_percent: The percentage to increase the max resources by
         """
-        return Task(name=f'mutated {self.name}',
-                    required_storage=randint(self.required_storage,
-                                             ceil(self.required_storage * (1 + mutation_percent))),
-                    required_computation=randint(self.required_computation,
-                                                 ceil(self.required_computation * (1 + mutation_percent))),
-                    required_results_data=randint(self.required_results_data,
-                                                  ceil(self.required_results_data * (1 + mutation_percent))),
-                    deadline=max(1, randint(ceil(self.deadline * (1 - mutation_percent)), self.deadline)),
-                    value=self.value)
+        return ElasticTask(name=f'mutated {self.name}',
+                           required_storage=randint(self.required_storage,
+                                                    ceil(self.required_storage * (1 + mutation_percent))),
+                           required_computation=randint(self.required_computation,
+                                                        ceil(self.required_computation * (1 + mutation_percent))),
+                           required_results_data=randint(self.required_results_data,
+                                                         ceil(self.required_results_data * (1 + mutation_percent))),
+                           deadline=max(1, randint(ceil(self.deadline * (1 - mutation_percent)), self.deadline)),
+                           value=self.value)
 
     def save(self, resource_speeds=False):
         """
@@ -164,14 +164,14 @@ class Task:
                    f'deadline: {self.deadline}, value: {self.value}'
 
     @staticmethod
-    def load(task_spec: Dict[str, Any]) -> Task:
+    def load(task_spec: Dict[str, Any]) -> ElasticTask:
         """
         Loads task's specifications
 
         :param task_spec: Task specifications
         :return: A new task from the specifications
         """
-        return Task(
+        return ElasticTask(
             name=task_spec['name'], required_storage=task_spec['storage'],
             required_computation=task_spec['computation'], required_results_data=task_spec['results data'],
             deadline=task_spec['deadline'], value=task_spec['value'],
@@ -179,7 +179,7 @@ class Task:
         )
 
     @staticmethod
-    def load_dist(task_dist: Dict[str, Any], task_id: int, servers: List[Server]) -> Task:
+    def load_dist(task_dist: Dict[str, Any], task_id: int, servers: List[Server]) -> ElasticTask:
         """
         Loads a task from a task distribution
 
@@ -199,7 +199,7 @@ class Task:
             """
             return max(1, int(gauss(mean, std)))
 
-        return Task(
+        return ElasticTask(
             name=f'{task_dist["name"]} {task_id}',
             required_storage=positive_gaussian(task_dist['storage mean'], task_dist['storage std']),
             required_computation=positive_gaussian(task_dist['computation mean'], task_dist['computation std']),
@@ -214,7 +214,7 @@ class Task:
         :param time_step: The time step where a batch starts
         :return: A new task
         """
-        return Task(
+        return ElasticTask(
             name=self.name,
             required_storage=self.required_storage,
             required_computation=self.required_computation,

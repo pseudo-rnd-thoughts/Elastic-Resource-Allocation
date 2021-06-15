@@ -12,15 +12,15 @@ from docplex.cp.solution import CpoSolveResult
 
 from src.core.core import reset_model, server_task_allocation, debug
 from src.extra.result import Result
-from src.optimal.fixed_optimal import fixed_optimal_solver
-from src.optimal.flexible_optimal import flexible_optimal_solver
+from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
+from src.optimal.elastic_optimal import elastic_optimal_solver
 
 if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
 
     from src.core.server import Server
-    from src.core.task import Task
-    from src.core.fixed_task import FixedTask
+    from src.core.elastic_task import ElasticTask
+    from src.core.non_elastic_task import NonElasticTask
 
     T = TypeVar('T')
 
@@ -40,7 +40,7 @@ def list_copy_remove(lists: List[T], item: T) -> List[T]:
     return list_copy
 
 
-def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
+def vcg_solver(tasks: List[ElasticTask], servers: List[Server], solver: Callable,
                debug_running: bool = False) -> Optional[CpoSolveResult]:
     """
     VCG auction solver
@@ -52,7 +52,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
     :return: Total solve time
     """
     # Price information
-    task_prices: Dict[Task, float] = {}
+    task_prices: Dict[ElasticTask, float] = {}
 
     # Find the optimal solution
     debug('Running optimal solution', debug_running)
@@ -65,7 +65,7 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
 
     # Save the task and server information from the optimal solution
     allocated_tasks = [task for task in tasks if task.running_server]
-    task_allocation: Dict[Task, Tuple[int, int, int, Server]] = {
+    task_allocation: Dict[ElasticTask, Tuple[int, int, int, Server]] = {
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server)
         for task in allocated_tasks
     }
@@ -96,8 +96,8 @@ def vcg_solver(tasks: List[Task], servers: List[Server], solver: Callable,
     return optimal_results
 
 
-def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[int] = 5,
-                debug_results: bool = False) -> Optional[Result]:
+def elastic_vcg_auction(tasks: List[ElasticTask], servers: List[Server], time_limit: Optional[int] = 5,
+                        debug_results: bool = False) -> Optional[Result]:
     """
     VCG auction algorithm
 
@@ -107,36 +107,37 @@ def vcg_auction(tasks: List[Task], servers: List[Server], time_limit: Optional[i
     :param debug_results: If to debug results
     :return: The results of the VCG auction
     """
-    optimal_solver_fn = functools.partial(flexible_optimal_solver, time_limit=time_limit)
+    optimal_solver_fn = functools.partial(elastic_optimal_solver, time_limit=time_limit)
 
     global_model_solution = vcg_solver(tasks, servers, optimal_solver_fn, debug_results)
     if global_model_solution:
-        return Result('Flexible VCG', tasks, servers, round(global_model_solution.get_solve_time(), 2), is_auction=True,
-                      **{'solve status': global_model_solution.get_solve_status(),
-                         'cplex objective': global_model_solution.get_objective_values()[0]})
-    else:
-        print(f'Flexible VCG Auction error', file=sys.stderr)
-        return Result('Flexible VCG', tasks, servers, 0, limited=True)
-
-
-def fixed_vcg_auction(fixed_tasks: List[FixedTask], servers: List[Server], time_limit: Optional[int] = 5,
-                      debug_results: bool = False) -> Optional[Result]:
-    """
-    Fixed VCG auction algorithm
-
-    :param fixed_tasks: List of the fixed tasks
-    :param servers: List of servers
-    :param time_limit: The limit of the fixed optimal solver
-    :param debug_results: If to debug results
-    :return: The results of the fixed VCG auction
-    """
-    fixed_solver_fn = functools.partial(fixed_optimal_solver, time_limit=time_limit)
-
-    global_model_solution = vcg_solver(fixed_tasks, servers, fixed_solver_fn, debug_results)
-    if global_model_solution:
-        return Result('Fixed VCG', fixed_tasks, servers, round(global_model_solution.get_solve_time(), 2),
+        return Result('Elastic VCG Auction', tasks, servers, round(global_model_solution.get_solve_time(), 2),
                       is_auction=True, **{'solve status': global_model_solution.get_solve_status(),
                                           'cplex objective': global_model_solution.get_objective_values()[0]})
     else:
-        print(f'Fixed VCG Auction error', file=sys.stderr)
-        return Result('Fixed VCG', fixed_tasks, servers, 0, limited=True)
+        print(f'Elastic VCG Auction error', file=sys.stderr)
+        return Result('Elastic VCG Auction', tasks, servers, 0, limited=True)
+
+
+def non_elastic_vcg_auction(tasks: List[NonElasticTask], servers: List[Server],
+                            time_limit: Optional[int] = 5, debug_results: bool = False) -> Optional[Result]:
+    """
+    Non-elastic VCG auction algorithm
+
+    :param tasks: List of the Non-elastic tasks
+    :param servers: List of servers
+    :param time_limit: The limit of the Non-elastic optimal solver
+    :param debug_results: If to debug results
+    :return: The results of the Non-elastic VCG auction
+    """
+    non_elastic_solver_fn = functools.partial(non_elastic_optimal_solver, time_limit=time_limit)
+
+    global_model_solution = vcg_solver(tasks, servers, non_elastic_solver_fn, debug_results)
+    if global_model_solution:
+        return Result('Non-elastic VCG Auction', tasks, servers,
+                      round(global_model_solution.get_solve_time(), 2), is_auction=True,
+                      **{'solve status': global_model_solution.get_solve_status(),
+                         'cplex objective': global_model_solution.get_objective_values()[0]})
+    else:
+        print(f'Non-elastic VCG Auction error', file=sys.stderr)
+        return Result('Non-elastic VCG Auction', tasks, servers, 0, limited=True)

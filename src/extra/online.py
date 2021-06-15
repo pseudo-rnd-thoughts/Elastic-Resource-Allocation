@@ -6,13 +6,13 @@ from time import time
 from typing import List
 
 from core.server import Server
-from core.task import Task
+from core.elastic_task import ElasticTask
 from extra.result import Result, resource_usage
 from extra.visualise import minimise_resource_allocation
-from optimal.flexible_optimal import flexible_optimal_solver
+from optimal.elastic_optimal import elastic_optimal_solver
 
 
-def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], batch_length: int,
+def online_batch_solver(batched_tasks: List[List[ElasticTask]], servers: List[Server], batch_length: int,
                         solver_name: str, solver, **solver_args) -> Result:
     """
     Generic online batch solver
@@ -78,7 +78,7 @@ def online_batch_solver(batched_tasks: List[List[Task]], servers: List[Server], 
     })
 
 
-def generate_batch_tasks(tasks: List[Task], batch_length: int, time_steps: int) -> List[List[Task]]:
+def generate_batch_tasks(tasks: List[ElasticTask], batch_length: int, time_steps: int) -> List[List[ElasticTask]]:
     """
     Generate batch tasks with updated task deadlines
 
@@ -94,7 +94,7 @@ def generate_batch_tasks(tasks: List[Task], batch_length: int, time_steps: int) 
     ]
 
 
-def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
+def minimal_flexible_optimal_solver(tasks: List[ElasticTask], servers: List[Server],
                                     solver_time_limit: int = 3, minimise_time_limit: int = 2):
     """
     Minimise the resources used by flexible optimal solver
@@ -106,5 +106,5 @@ def minimal_flexible_optimal_solver(tasks: List[Task], servers: List[Server],
     """
     valid_servers = [server for server in servers
                      if 1 <= server.available_computation and 1 <= server.available_bandwidth]
-    flexible_optimal_solver(tasks, valid_servers, solver_time_limit)
+    elastic_optimal_solver(tasks, valid_servers, solver_time_limit)
     minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)

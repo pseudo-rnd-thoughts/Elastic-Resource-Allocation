@@ -11,17 +11,17 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIM
 if TYPE_CHECKING:
     from typing import Tuple
 
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
     from src.core.server import Server
 
 
-class ResourceAllocationPolicy(ABC):
-    """Resource Allocation Policy class that is inherited with each option"""
+class ResourceAllocation(ABC):
+    """Resource Allocation class that is inherited with each option"""
 
     def __init__(self, name):
         self.name = name
 
-    def allocate(self, task: Task, server: Server) -> Tuple[int, int, int]:
+    def allocate(self, task: ElasticTask, server: Server) -> Tuple[int, int, int]:
         """
         Determines the resource speed for the task on the server but finding the smallest
 
@@ -69,7 +69,7 @@ class ResourceAllocationPolicy(ABC):
         return model_solution.get_value(loading), model_solution.get_value(compute), model_solution.get_value(sending)
 
     @abstractmethod
-    def resource_evaluator(self, task: Task, server: Server,
+    def resource_evaluator(self, task: ElasticTask, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """
         A resource evaluator that measures how good a choice of loading, compute and sending speed
@@ -84,51 +84,51 @@ class ResourceAllocationPolicy(ABC):
         pass
 
 
-class SumPercentage(ResourceAllocationPolicy):
+class SumPercentage(ResourceAllocation):
     """The sum of percentage"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, 'Percent Sum')
+        ResourceAllocation.__init__(self, 'Percent Sum')
 
-    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: ElasticTask, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return compute_speed / server.available_computation + \
             (loading_speed + sending_speed) / server.available_bandwidth
 
 
-class SumPowPercentage(ResourceAllocationPolicy):
+class SumPowPercentage(ResourceAllocation):
     """The sum of exponential percentages"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, "Pow percent sum")
+        ResourceAllocation.__init__(self, "Pow percent sum")
 
-    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: ElasticTask, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return (compute_speed / server.available_computation) ** 2 + \
                ((loading_speed + sending_speed) / server.available_bandwidth) ** 2
 
 
-class SumSpeed(ResourceAllocationPolicy):
+class SumSpeed(ResourceAllocation):
     """The sum of resource speeds"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, 'Sum of speeds')
+        ResourceAllocation.__init__(self, 'Sum of speeds')
 
-    def resource_evaluator(self, task: Task, server: Server,
+    def resource_evaluator(self, task: ElasticTask, server: Server,
                            loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Resource evaluator"""
         return loading_speed + compute_speed + sending_speed
 
 
-class DeadlinePercent(ResourceAllocationPolicy):
+class DeadlinePercent(ResourceAllocation):
     """Ratio of speeds divided by deadline"""
 
     def __init__(self):
-        ResourceAllocationPolicy.__init__(self, 'Deadline Percent')
+        ResourceAllocation.__init__(self, 'Deadline Percent')
 
-    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: ElasticTask, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return (task.required_storage / loading_speed +
@@ -136,26 +136,26 @@ class DeadlinePercent(ResourceAllocationPolicy):
                 task.required_results_data / sending_speed) / task.deadline
 
 
-class EvolutionStrategy(ResourceAllocationPolicy):
+class EvolutionStrategy(ResourceAllocation):
     """Covariance matrix adaption evolution strategy"""
 
     def __init__(self, name: int, loading_var: Optional[float] = None, compute_var: Optional[float] = None,
                  sending_var: Optional[float] = None):
-        ResourceAllocationPolicy.__init__(self, f'CMA-ES {name}')
+        ResourceAllocation.__init__(self, f'CMA-ES {name}')
 
         self.loading_var = loading_var if loading_var else gauss(0, 1)
         self.compute_var = compute_var if compute_var else gauss(0, 1)
         self.sending_var = sending_var if sending_var else gauss(0, 1)
 
-    def resource_evaluator(self, task: Task, server: Server, loading_speed: int, compute_speed: int,
+    def resource_evaluator(self, task: ElasticTask, server: Server, loading_speed: int, compute_speed: int,
                            sending_speed: int) -> float:
         """Resource evaluator"""
         return self.loading_var * loading_speed + self.compute_var * compute_speed + self.sending_var * sending_speed
 
 
-policies = (
+resource_allocation_functions = (
     SumPercentage(),
     SumPowPercentage()
 )
 
-max_name_length = max(len(policy.name) for policy in policies)
+max_name_length = max(len(func.name) for func in resource_allocation_functions)

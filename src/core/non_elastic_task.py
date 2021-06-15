@@ -1,4 +1,4 @@
-"""Fixed Task class"""
+"""Non elastic task class"""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, List
 
 from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
-from src.core.task import Task
+from src.core.elastic_task import ElasticTask
 
 if TYPE_CHECKING:
     from typing import Tuple
@@ -17,31 +17,32 @@ if TYPE_CHECKING:
     from src.core.server import Server
 
 
-class FixedTask(Task):
-    """Task with a fixing resource usage speed"""
+class NonElasticTask(ElasticTask):
+    """Task with a non-elastic resource usage speed"""
 
-    def __init__(self, task: Task, fixed_value_policy: FixedAllocationPriority, fixed_name: bool = True):
-        name = f'Fixed {task.name}' if fixed_name else task.name
+    def __init__(self, task: ElasticTask, non_elastic_value_policy: NonElasticResourcePriority,
+                 non_elastic_name: bool = True):
+        name = f'Non Elastic {task.name}' if non_elastic_name else task.name
 
-        self.fixed_value_policy = fixed_value_policy
-        loading_speed, compute_speed, sending_speed = self.minimum_fixed_prioritisation(task, fixed_value_policy)
+        self.non_elastic_value_policy = non_elastic_value_policy
+        loading_speed, compute_speed, sending_speed = self.minimum_resources(task, non_elastic_value_policy)
 
-        Task.__init__(self, name=name, required_storage=task.required_storage,
-                      required_computation=task.required_computation,
-                      required_results_data=task.required_results_data,
-                      value=task.value, deadline=task.deadline, auction_time=task.auction_time,
-                      loading_speed=loading_speed, compute_speed=compute_speed, sending_speed=sending_speed)
+        ElasticTask.__init__(self, name=name, required_storage=task.required_storage,
+                             required_computation=task.required_computation,
+                             required_results_data=task.required_results_data,
+                             value=task.value, deadline=task.deadline, auction_time=task.auction_time,
+                             loading_speed=loading_speed, compute_speed=compute_speed, sending_speed=sending_speed)
 
     @staticmethod
-    def minimum_fixed_prioritisation(task: Task, allocation_priority: FixedAllocationPriority) -> Tuple[int, int, int]:
+    def minimum_resources(task: ElasticTask, allocation_priority: NonElasticResourcePriority) -> Tuple[int, int, int]:
         """
-        Find the optimal fixed speeds of the task
+        Find the optimal non_elastic speeds of the task
 
         :param task: The task to use
-        :param allocation_priority: The fixed value function to value the speeds
-        :return: Fixed speeds
+        :param allocation_priority: The non-elastic value function to value the speeds
+        :return: non_elastic speeds
         """
-        model = CpoModel('FixedSpeedsPrioritisation')
+        model = CpoModel('non_elasticSpeedsPrioritisation')
         loading_speed = model.integer_var(min=1, name='loading speed')
         compute_speed = model.integer_var(min=1, name='compute speed')
         sending_speed = model.integer_var(min=1, name='sending speed')
@@ -100,15 +101,15 @@ class FixedTask(Task):
         """
         # noinspection PyUnresolvedReferences
         batch_task = super().batch(time_step)
-        return FixedTask(batch_task, self.fixed_value_policy, False)
+        return NonElasticTask(batch_task, self.non_elastic_value_policy, False)
 
     def save(self, resource_speeds=True):
         return super().save(resource_speeds=resource_speeds)
 
 
-class FixedAllocationPriority(ABC):
+class NonElasticResourcePriority(ABC):
     """
-    Fixed Value policy for the fixed task to select the speed
+    non_elastic Value policy for the non_elastic task to select the speed
     """
 
     def __init__(self, name: str):
@@ -127,53 +128,54 @@ class FixedAllocationPriority(ABC):
         pass
 
 
-class SumSpeedsFixedAllocationPriority(FixedAllocationPriority):
-    """Fixed sum of speeds"""
+class SumSpeedsResourcePriority(NonElasticResourcePriority):
+    """sum of speeds"""
 
     def __init__(self):
-        FixedAllocationPriority.__init__(self, 'Sum speeds')
+        NonElasticResourcePriority.__init__(self, 'Sum speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculates the value by summing speeds"""
         return loading_speed + compute_speed + sending_speed
 
 
-class SumSpeedPowFixedAllocationPriority(FixedAllocationPriority):
-    """Fixed Exp Sum of speeds"""
+class SumSpeedPowResourcePriority(NonElasticResourcePriority):
+    """non_elastic Exp Sum of speeds"""
 
     def __init__(self):
-        FixedAllocationPriority.__init__(self, 'Exp Sum Speeds')
+        NonElasticResourcePriority.__init__(self, 'Exp Sum Speeds')
 
     def evaluate(self, loading_speed: int, compute_speed: int, sending_speed: int) -> float:
         """Calculate the value by summing the expo of speeds"""
-        return loading_speed ** 3 + compute_speed ** 3 + sending_speed ** 3
+        return loading_speed ** 2 + compute_speed ** 2 + sending_speed ** 2
 
 
-# TODO add more fixed value classes
+# TODO add more non_elastic value classes
 
 
-def generate_fixed_tasks(tasks: List[Task], max_tries: int = 5,
-                         priority: FixedAllocationPriority = SumSpeedsFixedAllocationPriority()) -> List[FixedTask]:
+def generate_non_elastic_tasks(
+        tasks: List[ElasticTask], max_tries: int = 5,
+        priority: NonElasticResourcePriority = SumSpeedPowResourcePriority()) -> List[NonElasticTask]:
     """
-    Generates a list of fixed tasks catching if the generation of the task fails for some reasons
+    Generates a list of non_elastic tasks catching if the generation of the task fails for some reasons
 
     :param tasks: List of tasks
-    :param priority: Fixed allocation priority class
-    :param max_tries: The max tries for generated the fixed task
-    :return: A list of fixed tasks
+    :param priority: non_elastic allocation priority class
+    :param max_tries: The max tries for generated the non_elastic task
+    :return: A list of non-elastic tasks
     """
-    fixed_tasks = []
+    non_elastic_tasks = []
     for task in tasks:
         tries = 0
         while tries < max_tries:
             try:
-                fixed_task = FixedTask(task, priority)
-                fixed_tasks.append(fixed_task)
+                non_elastic_task = NonElasticTask(task, priority)
+                non_elastic_tasks.append(non_elastic_task)
                 break
             except Exception as e:
                 print(e, file=sys.stderr)
                 tries += 1
                 time.sleep(0.5)
         if tries == max_tries:
-            raise Exception(f'Unable to create the fixed task {task.__str__()}')
-    return fixed_tasks
+            raise Exception(f'Unable to create the non-elastic task {task.__str__()}')
+    return non_elastic_tasks

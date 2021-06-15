@@ -13,8 +13,8 @@ from src.auctions.decentralised_iterative_auction import optimal_decentralised_i
 from src.core.core import reset_model, server_task_allocation, set_server_heuristics
 from src.extra.io import results_filename, parse_args
 from src.extra.model import ModelDist, SyntheticModelDist
-from src.greedy.resource_allocation_policy import SumPercentage
-from src.optimal.flexible_optimal import flexible_optimal
+from src.greedy.resource_allocation import SumPercentage
+from src.optimal.elastic_optimal import elastic_optimal
 
 
 def test_greedy_task_price():
@@ -105,7 +105,7 @@ def dia_social_welfare_test(model_dist: ModelDist, repeat: int, repeats: int = 2
         tasks, servers = model_dist.generate_oneshot()
         model_results = {}
 
-        optimal_result = flexible_optimal(tasks, servers, 30)
+        optimal_result = elastic_optimal(tasks, servers, 30)
         model_results[optimal_result.algorithm] = optimal_result.store()
         reset_model(tasks, servers)
 

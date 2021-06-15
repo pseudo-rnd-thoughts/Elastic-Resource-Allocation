@@ -11,11 +11,11 @@ from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDist, get_model, generate_evaluation_model
 from src.greedy.greedy import greedy_algorithm, greedy_permutations
-from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
-from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.task_prioritisation import policies as task_priorities, Value
-from src.optimal.fixed_optimal import fixed_optimal
-from src.optimal.flexible_optimal import flexible_optimal, server_relaxed_flexible_optimal
+from src.greedy.resource_allocation import resource_allocation_functions
+from src.greedy.server_selection import server_selection_functions
+from src.greedy.task_priority import task_priority_functions, ValuePriority
+from src.optimal.non_elastic_optimal import non_elastic_optimal
+from src.optimal.elastic_optimal import elastic_optimal, server_relaxed_elastic_optimal
 
 
 # noinspection DuplicatedCode
@@ -42,21 +42,21 @@ def greedy_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50,
 
         if run_flexible:
             # Find the optimal solution
-            optimal_result = flexible_optimal(tasks, servers, time_limit=None)
+            optimal_result = elastic_optimal(tasks, servers, time_limit=None)
             algorithm_results[optimal_result.algorithm] = optimal_result.store()
             optimal_result.pretty_print()
             reset_model(tasks, servers)
 
         if run_relaxed:
             # Find the relaxed solution
-            relaxed_result = server_relaxed_flexible_optimal(tasks, servers, time_limit=None)
+            relaxed_result = server_relaxed_elastic_optimal(tasks, servers, time_limit=None)
             algorithm_results[relaxed_result.algorithm] = relaxed_result.store()
             relaxed_result.pretty_print()
             reset_model(tasks, servers)
 
         if run_fixed:
             # Find the fixed solution
-            fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=None)
+            fixed_optimal_result = non_elastic_optimal(fixed_tasks, servers, time_limit=None)
             algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
             fixed_optimal_result.pretty_print()
             reset_model(fixed_tasks, servers)
@@ -87,17 +87,17 @@ def lower_bound_testing(model_dist: ModelDist, repeat_num: int, repeats: int = 5
     pretty_printer, model_results = PrettyPrinter(), []
     filename = results_filename('lower_bound', model_dist, repeat_num)
 
-    lb_task_priorities = task_priorities + [Value()]
+    lb_task_functions = task_priority_functions + [ValuePriority()]
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         # Loop over all of the greedy policies permutations
-        for task_priority in lb_task_priorities:
-            for server_selection_policy in server_selection_policies:
-                for resource_allocation_policy in resource_allocation_policies:
-                    greedy_result = greedy_algorithm(tasks, servers, task_priority, server_selection_policy,
-                                                     resource_allocation_policy)
+        for task_priority in lb_task_functions:
+            for server_selection in server_selection_functions:
+                for resource_allocation in resource_allocation_functions:
+                    greedy_result = greedy_algorithm(tasks, servers, task_priority, server_selection,
+                                                     resource_allocation)
                     algorithm_results[greedy_result.algorithm] = greedy_result.store()
                     greedy_result.pretty_print()
                     reset_model(tasks, servers)

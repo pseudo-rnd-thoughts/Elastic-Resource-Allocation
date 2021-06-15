@@ -8,9 +8,9 @@ from src.core.core import reset_model
 from src.extra.io import parse_args
 from src.extra.model import ModelDist, get_model
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import EvolutionStrategy as ResourceAllocationEvoStrategy, SumSpeed
-from src.greedy.server_selection_policy import EvolutionStrategy as ServerSelectionEvoStrategy, ProductResources
-from src.greedy.task_prioritisation import EvolutionStrategy as TaskPriorityEvoStrategy, Value
+from src.greedy.resource_allocation import EvolutionStrategy as ResourceAllocationEvoStrategy, SumSpeed
+from src.greedy.server_selection import EvolutionStrategy as ServerSelectionEvoStrategy, ProductResources
+from src.greedy.task_priority import EvolutionStrategyPriority as TaskPriorityEvoStrategy, ValuePriority
 
 
 def evolve_greedy_policies(model_dist: ModelDist, iterations: int = 30, population_size: int = 5):
@@ -25,7 +25,8 @@ def evolve_greedy_policies(model_dist: ModelDist, iterations: int = 30, populati
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
 
     eval_tasks, eval_servers = model_dist.generate_oneshot()
-    lower_bound = greedy_algorithm(eval_tasks, eval_servers, Value(), ProductResources(), SumSpeed()).social_welfare
+    lower_bound = greedy_algorithm(eval_tasks, eval_servers,
+                                   ValuePriority(), ProductResources(), SumSpeed()).social_welfare
     print(f'Lower bound is {lower_bound}')
     reset_model(eval_tasks, eval_servers)
 

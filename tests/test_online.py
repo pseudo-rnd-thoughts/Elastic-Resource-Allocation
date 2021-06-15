@@ -8,18 +8,18 @@ from math import ceil
 from typing import Iterable, List
 
 from src.core.core import reset_model
-from src.core.fixed_task import FixedTask, SumSpeedPowFixedAllocationPriority
+from src.core.non_elastic_task import NonElasticTask, SumSpeedPowResourcePriority
 from src.core.server import Server
-from src.core.task import Task
+from src.core.elastic_task import ElasticTask
 from src.extra.model import SyntheticModelDist
 from src.extra.online import generate_batch_tasks, online_batch_solver
 from src.extra.visualise import minimise_resource_allocation
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPowPercentage
-from src.greedy.server_selection_policy import SumResources
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
-from src.optimal.fixed_optimal import fixed_optimal_solver
-from src.optimal.flexible_optimal import flexible_optimal_solver
+from src.greedy.resource_allocation import SumPowPercentage
+from src.greedy.server_selection import SumResources
+from src.greedy.task_priority import UtilityDeadlinePerResourcePriority, SqrtResourcesPriority
+from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
+from src.optimal.elastic_optimal import elastic_optimal_solver
 
 
 def test_online_model_generation(model_dist=SyntheticModelDist(num_servers=8),
@@ -50,7 +50,7 @@ def test_online_server_capacities(model_dist=SyntheticModelDist(num_servers=8),
     batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
     print(f'Tasks per batch time step: [{", ".join([str(len(batch_tasks)) for batch_tasks in batched_tasks])}]')
     result = online_batch_solver(batched_tasks, servers, batch_length, 'Greedy', greedy_algorithm,
-                                 task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
+                                 task_priority=UtilityDeadlinePerResourcePriority(SqrtResourcesPriority()),
                                  server_selection_policy=SumResources(),
                                  resource_allocation_policy=SumPowPercentage())
     print(f'Social welfare percentage: {result.percentage_social_welfare}')
@@ -60,7 +60,7 @@ def test_online_server_capacities(model_dist=SyntheticModelDist(num_servers=8),
 def test_optimal_solutions(model_dist=SyntheticModelDist(num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+    fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
 
     # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
     # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
@@ -70,13 +70,13 @@ def test_optimal_solutions(model_dist=SyntheticModelDist(num_servers=8),
 
     fixed_batched_tasks = generate_batch_tasks(fixed_tasks, 1, time_steps)
     fixed_optimal_result = online_batch_solver(fixed_batched_tasks, servers, 1, 'Fixed Optimal',
-                                               fixed_optimal_solver, time_limit=2)
+                                               non_elastic_optimal_solver, time_limit=2)
     print(f'\nFixed Optimal - Social welfare: {fixed_optimal_result.social_welfare}')
     reset_model([], servers)
 
     batched_tasks = generate_batch_tasks(tasks, 4, time_steps)
     greedy_result = online_batch_solver(batched_tasks, servers, 4, 'Greedy', greedy_algorithm,
-                                        task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
+                                        task_priority=UtilityDeadlinePerResourcePriority(SqrtResourcesPriority()),
                                         server_selection_policy=SumResources(),
                                         resource_allocation_policy=SumPowPercentage())
     print(f'Greedy - Social welfare: {greedy_result.social_welfare}')
@@ -100,7 +100,7 @@ def test_batch_lengths(model_dist=SyntheticModelDist(num_servers=8),
             server.computation_capacity = original_server_capacities[server][0] * batch_length
             server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
-        task_priority = UtilityDeadlinePerResource(ResourceSqrt())
+        task_priority = UtilityDeadlinePerResourcePriority(SqrtResourcesPriority())
         server_selection_policy = SumResources()
         resource_allocation_policy = SumPowPercentage()
         name = f'Greedy {task_priority.name}, {server_selection_policy.name}, ' \
@@ -118,7 +118,7 @@ def test_batch_lengths(model_dist=SyntheticModelDist(num_servers=8),
 def test_online_fixed_task():
     model_dist = SyntheticModelDist(num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
-    fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+    fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
     batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
 
     for batch_fixed_tasks in batched_fixed_tasks:
@@ -134,7 +134,7 @@ def test_minimise_resources():
     model_dist = SyntheticModelDist(num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
 
-    def custom_solver(_tasks: List[Task], _servers: List[Server],
+    def custom_solver(_tasks: List[ElasticTask], _servers: List[Server],
                       solver_time_limit: int = 3, minimise_time_limit: int = 2):
         """
         A custom solver for the flexible optimal solver which then checks that resource allocation is valid then
@@ -148,7 +148,7 @@ def test_minimise_resources():
         valid_servers = [server for server in servers if
                          1 <= server.available_computation and 1 <= server.available_bandwidth]
         server_availability = {server: (server.available_computation, server.available_bandwidth) for server in servers}
-        flexible_optimal_solver(_tasks, valid_servers, solver_time_limit)
+        elastic_optimal_solver(_tasks, valid_servers, solver_time_limit)
 
         for server, (compute_availability, bandwidth_availability) in server_availability.items():
             server_old_tasks = [task for task in server.allocated_tasks if task not in _tasks]
@@ -187,7 +187,7 @@ def test_batch_length(model_dist=SyntheticModelDist(num_servers=8), batch_length
             server.bandwidth_capacity = original_server_capacities[server][1] * batch_length
 
         greedy_result = online_batch_solver(batched_tasks, servers, batch_length, '', greedy_algorithm,
-                                            task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
+                                            task_priority=UtilityDeadlinePerResourcePriority(SqrtResourcesPriority()),
                                             server_selection_policy=SumResources(),
                                             resource_allocation_policy=SumPowPercentage())
         print(f'Batch length: {batch_length} - social welfare: {greedy_result.social_welfare}, '

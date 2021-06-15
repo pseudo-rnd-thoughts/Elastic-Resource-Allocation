@@ -9,9 +9,9 @@ from src.auctions.critical_value_auction import critical_value_auction
 from src.core.core import reset_model
 from src.extra.model import SyntheticModelDist
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPercentage
-from src.greedy.server_selection_policy import SumResources
-from src.greedy.task_prioritisation import UtilityPerResources
+from src.greedy.resource_allocation import SumPercentage
+from src.greedy.server_selection import SumResources
+from src.greedy.task_priority import UtilityPerResourcesPriority
 
 
 def test_critical_value(error: float = 0.001):
@@ -31,7 +31,8 @@ def test_critical_value(error: float = 0.001):
     tasks, servers = model.generate_oneshot()
 
     print(f'Critical value auction')
-    auction_result = critical_value_auction(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+    auction_result = critical_value_auction(tasks, servers,
+                                            UtilityPerResourcesPriority(), SumResources(), SumPercentage())
     run_tasks = [task for task in tasks if task.running_server]
 
     for task in run_tasks:
@@ -40,13 +41,15 @@ def test_critical_value(error: float = 0.001):
 
         reset_model(tasks, servers, forget_prices=False)
         task.value = task.price + error
-        greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+        greedy_result = greedy_algorithm(tasks, servers,
+                                         UtilityPerResourcesPriority(), SumResources(), SumPercentage())
         assert auction_result.social_welfare == greedy_result.social_welfare and task.running_server is not None
 
         if 0 < task.price:
             reset_model(tasks, servers, forget_prices=False)
             task.value = task.price - error
-            greedy_result = greedy_algorithm(tasks, servers, UtilityPerResources(), SumResources(), SumPercentage())
+            greedy_result = greedy_algorithm(tasks, servers,
+                                             UtilityPerResourcesPriority(), SumResources(), SumPercentage())
             assert greedy_result.social_welfare < auction_result.social_welfare and task.running_server is None
 
         task.value = original_value

@@ -17,13 +17,13 @@ if TYPE_CHECKING:
     from typing import List, Iterable, Dict
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 matplotlib.rcParams['font.family'] = 'monospace'
 matplotlib.rc('text', usetex=True)
 
 
-def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_limit: int = 1):
+def minimise_resource_allocation(tasks: List[ElasticTask], servers: List[Server], time_limit: int = 1):
     """
     Minimise resource allocation of a list of servers
 
@@ -35,9 +35,9 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
         server_new_tasks = [task for task in server.allocated_tasks if task in tasks]
         model = CpoModel('MinimumAllocation')
 
-        loading_speeds: Dict[Task, CpoVariable] = {}
-        compute_speeds: Dict[Task, CpoVariable] = {}
-        sending_speeds: Dict[Task, CpoVariable] = {}
+        loading_speeds: Dict[ElasticTask, CpoVariable] = {}
+        compute_speeds: Dict[ElasticTask, CpoVariable] = {}
+        sending_speeds: Dict[ElasticTask, CpoVariable] = {}
 
         # The maximum bandwidth and the computation that the speed can be
         max_bandwidth = sum(task.loading_speed + task.sending_speed for task in server_new_tasks)
@@ -81,7 +81,7 @@ def minimise_resource_allocation(tasks: List[Task], servers: List[Server], time_
                 server.allocate_task(task)
 
 
-def plot_allocation_results(tasks: List[Task], servers: List[Server], title: str,
+def plot_allocation_results(tasks: List[ElasticTask], servers: List[Server], title: str,
                             image_formats: Iterable[ImageFormat] = (ImageFormat.PNG, ImageFormat.EPS, ImageFormat.PDF)):
     """
     Plots the allocation results

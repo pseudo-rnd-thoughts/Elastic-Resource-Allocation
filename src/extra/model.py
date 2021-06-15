@@ -13,9 +13,9 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from src.core.fixed_task import generate_fixed_tasks
+from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.core.server import Server
-from src.core.task import Task
+from src.core.elastic_task import ElasticTask
 
 if TYPE_CHECKING:
     from typing import Tuple, List, Optional
@@ -32,7 +32,7 @@ class ModelDist:
 
             self.name = self.model['name']
 
-    def generate_oneshot(self) -> Tuple[List[Task], List[Server]]:
+    def generate_oneshot(self) -> Tuple[List[ElasticTask], List[Server]]:
         """
         Creates a list of tasks and servers from a task and server distribution
 
@@ -42,7 +42,7 @@ class ModelDist:
         return [self.generate_task(servers, task_id) for task_id in range(self.num_tasks)], servers
 
     def generate_online(self, time_steps: int, mean_arrival_rate: int,
-                        std_arrival_rate: float) -> Tuple[List[Task], List[Server]]:
+                        std_arrival_rate: float) -> Tuple[List[ElasticTask], List[Server]]:
         """
         Create a list of tasks and servers from a task and server distribution with online distribution
 
@@ -66,8 +66,8 @@ class ModelDist:
     def generate_server(self, server_id: int) -> Server:
         return Server.load(self.model['servers'][server_id])
 
-    def generate_task(self, servers: List[Server], task_id: int) -> Task:
-        return Task.load(self.model['tasks'][task_id])
+    def generate_task(self, servers: List[Server], task_id: int) -> ElasticTask:
+        return ElasticTask.load(self.model['tasks'][task_id])
 
 
 class SyntheticModelDist(ModelDist):
@@ -82,12 +82,12 @@ class SyntheticModelDist(ModelDist):
                                                  for j in range(i + 1)))
         return Server.load_dist(server_dist, server_id)
 
-    def generate_task(self, servers: List[Server], task_id: int) -> Task:
+    def generate_task(self, servers: List[Server], task_id: int) -> ElasticTask:
         probability = rnd.random()
         task_dist = next(task_dist for i, task_dist in enumerate(self.model['task distributions'])
                          if probability <= sum(self.model['task distributions'][j]['probability']
                                                for j in range(i + 1)))
-        return Task.load_dist(task_dist, task_id, servers)
+        return ElasticTask.load_dist(task_dist, task_id, servers)
 
 
 class AlibabaModelDist(SyntheticModelDist):
@@ -107,10 +107,10 @@ class AlibabaModelDist(SyntheticModelDist):
         task_model_path = '/'.join(filename.split('/')[:-1]) + '/' + self.model['task filename']
         self.task_model = pd.read_csv(task_model_path)
 
-    def generate_task(self, servers: List[Server], task_id: int) -> Task:
+    def generate_task(self, servers: List[Server], task_id: int) -> ElasticTask:
         for index, task_row in self.task_model.sample().iterrows():
             if self.foreknowledge:
-                return Task(
+                return ElasticTask(
                     f'Foreknowledge Task {task_id}',
                     required_storage=int(self.storage_scaling * task_row['mem-max']),
                     required_computation=int(self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken']),
@@ -118,7 +118,7 @@ class AlibabaModelDist(SyntheticModelDist):
                                                task_row['mem-max']),
                     deadline=task_row['time-taken'], servers=servers)
             else:
-                return Task(
+                return ElasticTask(
                     f'Requested Task {task_id}',
                     required_storage=int(self.storage_scaling * task_row['request-mem']),
                     required_computation=int(self.computational_scaling * task_row['request-cpu'] *
@@ -128,17 +128,17 @@ class AlibabaModelDist(SyntheticModelDist):
                     deadline=task_row['time-taken'], servers=servers)
 
     def generate_foreknowledge_requested_tasks(self, servers: List[Server],
-                                               num_tasks: int) -> Tuple[List[Task], List[Task]]:
+                                               num_tasks: int) -> Tuple[List[ElasticTask], List[ElasticTask]]:
         foreknowledge_tasks, requested_tasks = [], []
         for task_id, (_, task_row) in enumerate(self.task_model.sample(num_tasks).iterrows()):
             results_data_size = self.results_scaling * rnd.uniform(*self.results_range)
-            foreknowledge_task = Task(
+            foreknowledge_task = ElasticTask(
                 f'Foreknowledge Task {task_id}',
                 required_storage=int(self.storage_scaling * task_row['mem-max']),
                 required_computation=int(self.computational_scaling * task_row['cpu-avg'] * task_row['time-taken']),
                 required_results_data=ceil(results_data_size * task_row['mem-max']),
                 deadline=task_row['time-taken'], servers=servers)
-            requested_task = Task(
+            requested_task = ElasticTask(
                 f'Requested Task {task_id}',
                 required_storage=int(self.storage_scaling * task_row['request-mem']),
                 required_computation=int(self.computational_scaling * task_row['request-cpu'] * task_row['time-taken']),
@@ -165,7 +165,7 @@ def get_model(model_name: str, num_tasks: Optional[int] = None, num_servers: Opt
 def generate_evaluation_model(model_dist: ModelDist, pp: PrettyPrinter):
     # Generate the tasks and servers
     tasks, servers = model_dist.generate_oneshot()
-    fixed_tasks = generate_fixed_tasks(tasks)
+    fixed_tasks = generate_non_elastic_tasks(tasks)
     algorithm_results = {'model': {
         'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
     }}

@@ -7,10 +7,10 @@ from typing import List, Tuple, Dict
 from docplex.cp.solution import CpoSolveResult
 
 from src.core.server import Server
-from src.core.task import Task
+from src.core.elastic_task import ElasticTask
 
 
-def print_task_values(task_values: List[Tuple[Task, float]]):
+def print_task_values(task_values: List[Tuple[ElasticTask, float]]):
     """
     Print the task utility values
 
@@ -27,7 +27,7 @@ def print_task_values(task_values: List[Tuple[Task, float]]):
     print()
 
 
-def print_task_allocation(tasks: List[Task]):
+def print_task_allocation(tasks: List[ElasticTask]):
     """
     Prints the task allocation resource speeds
 
@@ -55,7 +55,7 @@ def print_model_solution(model_solution: CpoSolveResult):
           f'Solve Time: {round(model_solution.get_solve_time(), 2)} secs')
 
 
-def print_model(tasks: List[Task], servers: List[Server]):
+def print_model(tasks: List[ElasticTask], servers: List[Server]):
     """
     Print the model
 
@@ -74,7 +74,7 @@ def print_model(tasks: List[Task], servers: List[Server]):
               f"{server.bandwidth_capacity:^11d}| {', '.join([task.name for task in server.allocated_tasks])}")
 
 
-def print_allocation(task_server_allocations: Dict[Server, List[Task]]):
+def print_allocation(task_server_allocations: Dict[Server, List[ElasticTask]]):
     """
     Prints the task server allocation
 

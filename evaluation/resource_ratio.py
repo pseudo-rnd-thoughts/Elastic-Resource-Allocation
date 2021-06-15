@@ -12,8 +12,8 @@ from src.core.core import reset_model
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDist, get_model, generate_evaluation_model
 from src.greedy.greedy import greedy_permutations
-from src.optimal.fixed_optimal import fixed_optimal
-from src.optimal.flexible_optimal import flexible_optimal
+from src.optimal.non_elastic_optimal import non_elastic_optimal
+from src.optimal.elastic_optimal import elastic_optimal
 
 
 # noinspection DuplicatedCode
@@ -51,14 +51,14 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
 
             if run_flexible:
                 # Optimal
-                optimal_result = flexible_optimal(tasks, servers, time_limit=None)
+                optimal_result = elastic_optimal(tasks, servers, time_limit=None)
                 algorithm_results[optimal_result.algorithm] = optimal_result.store(ratio=ratio)
                 pretty_printer.pprint(algorithm_results[optimal_result.algorithm])
                 reset_model(tasks, servers)
 
             if run_fixed:
                 # Find the fixed solution
-                fixed_optimal_result = fixed_optimal(fixed_tasks, servers, time_limit=fixed_time_limit)
+                fixed_optimal_result = non_elastic_optimal(fixed_tasks, servers, time_limit=fixed_time_limit)
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
                 fixed_optimal_result.pretty_print()
                 reset_model(fixed_tasks, servers)

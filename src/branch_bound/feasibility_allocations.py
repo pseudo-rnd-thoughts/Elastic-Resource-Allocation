@@ -10,13 +10,13 @@ from docplex.cp.solution import SOLVE_STATUS_FEASIBLE
 if TYPE_CHECKING:
     from typing import Dict, List, Tuple, Optional
 
-    from src.core.fixed_task import FixedTask
+    from src.core.non_elastic_task import NonElasticTask
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
-def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task]],
-                                 time_limit: int = 60) -> Optional[Dict[Task, Tuple[int, int, int]]]:
+def elastic_feasible_allocation(task_server_allocations: Dict[Server, List[ElasticTask]],
+                                time_limit: int = 60) -> Optional[Dict[ElasticTask, Tuple[int, int, int]]]:
     """
     Checks whether a task to server allocation is a feasible solution to the problem
 
@@ -26,18 +26,18 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
     """
     model = CpoModel("Allocation Feasibility")
 
-    loading_speeds: Dict[Task, CpoVariable] = {}
-    compute_speeds: Dict[Task, CpoVariable] = {}
-    sending_speeds: Dict[Task, CpoVariable] = {}
+    loading_speeds: Dict[ElasticTask, CpoVariable] = {}
+    compute_speeds: Dict[ElasticTask, CpoVariable] = {}
+    sending_speeds: Dict[ElasticTask, CpoVariable] = {}
 
     for server, tasks in task_server_allocations.items():
         for task in tasks:
             loading_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name=f'Job {task.name} loading speed')
+                                                     name=f'Task {task.name} loading speed')
             compute_speeds[task] = model.integer_var(min=1, max=server.computation_capacity,
-                                                     name=f'Job {task.name} compute speed')
+                                                     name=f'Task {task.name} compute speed')
             sending_speeds[task] = model.integer_var(min=1, max=server.bandwidth_capacity,
-                                                     name=f'Job {task.name} sending speed')
+                                                     name=f'Task {task.name} sending speed')
 
             model.add((task.required_storage / loading_speeds[task]) +
                       (task.required_computation / compute_speeds[task]) +
@@ -57,8 +57,8 @@ def flexible_feasible_allocation(task_server_allocations: Dict[Server, List[Task
         return None
 
 
-def fixed_feasible_allocation(task_server_allocations: Dict[Server, List[FixedTask]]) \
-        -> Optional[Dict[FixedTask, Tuple[int, int, int]]]:
+def non_elastic_feasible_allocation(task_server_allocations: Dict[Server, List[NonElasticTask]]) \
+        -> Optional[Dict[NonElasticTask, Tuple[int, int, int]]]:
     """
     Checks whether a task to server allocation is a feasible solution to the problem
 

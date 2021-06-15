@@ -21,16 +21,16 @@ if TYPE_CHECKING:
     from typing import List, Dict, Tuple
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
-    from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
-    from src.greedy.server_selection_policy import ServerSelectionPolicy
-    from src.greedy.task_prioritisation import TaskPriority
+    from src.greedy.resource_allocation import ResourceAllocation
+    from src.greedy.server_selection import ServerSelection
+    from src.greedy.task_priority import TaskPriority
 
 
-def critical_value_auction(tasks: List[Task], servers: List[Server], value_density: TaskPriority,
-                           server_selection_policy: ServerSelectionPolicy,
-                           resource_allocation_policy: ResourceAllocationPolicy,
+def critical_value_auction(tasks: List[ElasticTask], servers: List[Server], value_density: TaskPriority,
+                           server_selection_policy: ServerSelection,
+                           resource_allocation_policy: ResourceAllocation,
                            debug_initial_allocation: bool = False, debug_critical_value: bool = False) -> Result:
     """
     Run the Critical value auction
@@ -46,12 +46,12 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
     """
     start_time = time()
 
-    valued_tasks: Dict[Task, float] = {task: value_density.evaluate(task) for task in tasks}
-    ranked_tasks: List[Task] = sorted(valued_tasks, key=lambda j: valued_tasks[j], reverse=True)
+    valued_tasks: Dict[ElasticTask, float] = {task: value_density.evaluate(task) for task in tasks}
+    ranked_tasks: List[ElasticTask] = sorted(valued_tasks, key=lambda j: valued_tasks[j], reverse=True)
 
     # Runs the greedy algorithm
     allocate_tasks(ranked_tasks, servers, server_selection_policy, resource_allocation_policy)
-    allocation_data: Dict[Task, Tuple[int, int, int, Server]] = {
+    allocation_data: Dict[ElasticTask, Tuple[int, int, int, Server]] = {
         task: (task.loading_speed, task.compute_speed, task.sending_speed, task.running_server)
         for task in ranked_tasks if task.running_server
     }
@@ -100,5 +100,5 @@ def critical_value_auction(tasks: List[Task], servers: List[Server], value_densi
     algorithm_name = f'Critical Value Auction {value_density.name}, ' \
                      f'{server_selection_policy.name}, {resource_allocation_policy.name}'
     return Result(algorithm_name, tasks, servers, time() - start_time, is_auction=True,
-                  **{'value density': value_density.name, 'server selection policy': server_selection_policy.name,
-                     'resource allocation policy': resource_allocation_policy.name})
+                  **{'value density': value_density.name, 'server selection': server_selection_policy.name,
+                     'resource allocation': resource_allocation_policy.name})

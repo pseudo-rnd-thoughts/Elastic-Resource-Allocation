@@ -1,5 +1,5 @@
 """
-Fixed optimal algorithm
+Non-elastic optimal algorithm
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL
 
 from src.core.core import server_task_allocation
-from src.core.fixed_task import FixedTask
+from src.core.non_elastic_task import NonElasticTask
 from src.extra.pprint import print_model_solution
 from src.extra.result import Result
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from src.core.server import Server
 
 
-def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_limit: Optional[int]):
+def non_elastic_optimal_solver(tasks: List[NonElasticTask], servers: List[Server], time_limit: Optional[int]):
     """
     Finds the optimal solution
 
@@ -60,7 +60,7 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
     # Check that the model is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
             model_solution.get_solve_status() != SOLVE_STATUS_OPTIMAL:
-        print('Fixed optimal failure', file=sys.stderr)
+        print('Non-elastic optimal failure', file=sys.stderr)
         print_model_solution(model_solution)
         return None
 
@@ -73,51 +73,52 @@ def fixed_optimal_solver(tasks: List[FixedTask], servers: List[Server], time_lim
                     break
 
         if abs(model_solution.get_objective_values()[0] - sum(t.value for t in tasks if t.running_server)) > 0.1:
-            print('Fixed optimal different objective values - '
+            print('Non-elastic optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
                   f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)
     except (KeyError, AssertionError) as e:
-        print('Assertion error in fixed optimal algorithm: ', e, file=sys.stderr)
+        print('Assertion error in non-elastic optimal algorithm: ', e, file=sys.stderr)
         print_model_solution(model_solution)
         return None
 
     return model_solution
 
 
-def fixed_optimal(tasks: List[FixedTask], servers: List[Server], time_limit: Optional[int] = 15) -> Optional[Result]:
+def non_elastic_optimal(tasks: List[NonElasticTask], servers: List[Server],
+                        time_limit: Optional[int] = 15) -> Optional[Result]:
     """
-    Runs the fixed optimal cplex algorithm solver with a time limit
+    Runs the non-elastic optimal cplex algorithm solver with a time limit
 
-    :param tasks: List of fixed tasks
+    :param tasks: List of non-elastic tasks
     :param servers: List of servers
     :param time_limit: Cplex time limit
     :return: Optional results
     """
-    model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
+    model_solution = non_elastic_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
-        return Result('Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+        return Result('Non-elastic Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status(),
                          'cplex objective': model_solution.get_objective_values()[0]})
     else:
-        print(f'Fixed optimal error', file=sys.stderr)
-        return Result('Fixed Optimal', tasks, servers, 0, limited=True)
+        print(f'Non-elastic optimal error', file=sys.stderr)
+        return Result('Non-elastic Optimal', tasks, servers, 0, limited=True)
 
 
-def foreknowledge_fixed_optimal(tasks: List[FixedTask], servers: List[Server],
-                                time_limit: Optional[int] = 15) -> Optional[Result]:
+def foreknowledge_non_elastic_optimal(tasks: List[NonElasticTask], servers: List[Server],
+                                      time_limit: Optional[int] = 15) -> Optional[Result]:
     """
-    Runs the foreknowledge fixed optimal cplex algorithm solver with a time limit
+    Runs the foreknowledge Non-elastic optimal cplex algorithm solver with a time limit
 
-    :param tasks: List of fixed tasks
+    :param tasks: List of Non-elastic tasks
     :param servers: List of servers
     :param time_limit: Cplex time limit
     :return: Optional results
     """
-    model_solution = fixed_optimal_solver(tasks, servers, time_limit=time_limit)
+    model_solution = non_elastic_optimal_solver(tasks, servers, time_limit=time_limit)
     if model_solution:
-        return Result('Foreknowledge Fixed Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+        return Result('Foreknowledge Non-elastic Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status(),
                          'cplex objective': model_solution.get_objective_values()[0]})
     else:
-        print(f'Foreknowledge Fixed optimal error', file=sys.stderr)
-        return Result('Foreknowledge Fixed Optimal', tasks, servers, 0, limited=True)
+        print(f'Foreknowledge Non-elastic optimal error', file=sys.stderr)
+        return Result('Foreknowledge Non-elastic Optimal', tasks, servers, 0, limited=True)

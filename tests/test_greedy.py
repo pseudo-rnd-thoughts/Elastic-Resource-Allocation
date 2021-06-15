@@ -7,14 +7,14 @@ from __future__ import annotations
 
 import numpy as np
 
+from core.elastic_task import ElasticTask
+from core.server import Server
 from src.core.core import reset_model
 from src.extra.model import SyntheticModelDist
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.matrix_allocation_policy import SumServerMaxPercentage
-from src.greedy.matrix_greedy import greedy_matrix_algorithm
-from src.greedy.resource_allocation_policy import SumPercentage, policies as resource_allocation_policies
-from src.greedy.server_selection_policy import SumResources, policies as server_selection_policies
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource, policies as value_density_policies
+from src.greedy.resource_allocation import SumPercentage, resource_allocation_functions
+from src.greedy.server_selection import server_selection_functions
+from src.greedy.task_priority import task_priority_functions
 
 
 def test_greedy_policies():
@@ -25,9 +25,9 @@ def test_greedy_policies():
     policy_results = {}
 
     print('Policies')
-    for value_density in value_density_policies:
-        for server_selection_policy in server_selection_policies:
-            for resource_allocation_policy in resource_allocation_policies:
+    for value_density in task_priority_functions:
+        for server_selection_policy in server_selection_functions:
+            for resource_allocation_policy in resource_allocation_functions:
                 reset_model(tasks, servers)
 
                 result = greedy_algorithm(tasks, servers, value_density, server_selection_policy,
@@ -48,28 +48,23 @@ def test_greedy_policies():
         print(f'{algorithm} | {avg_sw} | {avg_time} | [{" ".join([str(result.social_welfare) for result in results])}]')
 
 
-def test_optimisation(repeats: int = 10):
-    """
-    Compare the greedy and greedy matrix algorithm, particular in terms of solve time and social welfare#
+def test_failed_greedy_resource_allocation():
+    # Exception: Resource allocation for a task is infeasible, model solution is Infeasible.
+    # The task setting is {'name': 'Foreknowledge Task 10',
+    # 'storage': 30, 'computation': 20, 'results data': 9, 'deadline': 17.0, 'value': 17.62}
+    # and the server setting has available bandwidth of 34 and available computation of 16 (storage: 40)
 
-    :param repeats: Number of repeats
-    """
-    model = SyntheticModelDist(20, 3)
+    task = ElasticTask('test task', required_storage=30, required_computation=20, required_results_data=9,
+                       deadline=17, value=17.62)
+    server = Server('test server', storage_capacity=50, computation_capacity=50, bandwidth_capacity=50)
+    server.available_storage = 40
+    server.available_computation = 16
+    server.available_bandwidth = 34
 
-    greedy_results, greedy_matrix_time = [], []
-    print(f' Greedy     | Greedy Matrix')
-    print(f' Time | Sum | Time   | Sum')
-    for repeat in range(repeats):
-        tasks, servers = model.generate_oneshot()
+    print(server.can_run(task))
 
-        greedy_result = greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(), SumResources(), SumPercentage())
-        greedy_results.append(greedy_result)
-
-        reset_model(tasks, servers)
-        greedy_matrix_results = greedy_matrix_algorithm(tasks, servers, SumServerMaxPercentage())
-
-        print(f'{str(greedy_result.data["solve time"]):5} | {greedy_result.social_welfare:3} | '
-              f'{str(greedy_matrix_results.data["solve time"]):5} | {greedy_matrix_results.social_welfare:3}')
+    resource_allocation = SumPercentage()
+    _, _, _ = resource_allocation.allocate(task, server)
 
 
 if __name__ == "__main__":

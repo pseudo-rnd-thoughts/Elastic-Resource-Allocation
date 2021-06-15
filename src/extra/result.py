@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from typing import List
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
 def resource_usage(server, resource):
@@ -22,7 +22,7 @@ class Result:
     Results class that holds information about the results of an algorithm
     """
 
-    def __init__(self, algorithm_name: str, tasks: List[Task], servers: List[Server], solve_time: float,
+    def __init__(self, algorithm_name: str, tasks: List[ElasticTask], servers: List[Server], solve_time: float,
                  limited: bool = False, is_auction: bool = False, **kwargs):
         self.data = {
             # General properties

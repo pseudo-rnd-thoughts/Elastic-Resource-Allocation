@@ -9,7 +9,7 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_OPTIMAL
 from src.branch_bound.branch_bound import branch_bound_algorithm
 from src.core.core import reset_model
 from src.extra.model import SyntheticModelDist
-from src.optimal.flexible_optimal import flexible_optimal
+from src.optimal.elastic_optimal import elastic_optimal
 
 
 def test_cplex():
@@ -25,7 +25,7 @@ def test_cp_optimality():
     model = SyntheticModelDist(20, 3)
     tasks, servers = model.generate_oneshot()
 
-    results = flexible_optimal(tasks, servers, time_limit=10)
+    results = elastic_optimal(tasks, servers, time_limit=10)
     print(results.store())
 
 
@@ -38,5 +38,5 @@ def test_branch_bound():
 
     reset_model(tasks, servers)
 
-    optimal_result = flexible_optimal(tasks, servers, time_limit=200)
+    optimal_result = elastic_optimal(tasks, servers, time_limit=200)
     optimal_result.pretty_print()

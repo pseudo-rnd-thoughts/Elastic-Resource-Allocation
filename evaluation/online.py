@@ -10,22 +10,22 @@ import pprint
 from typing import Iterable
 
 from src.core.core import reset_model
-from src.core.fixed_task import generate_fixed_tasks
+from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import results_filename, parse_args
 from src.extra.model import ModelDist, get_model
 from src.extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPowPercentage
-from src.greedy.server_selection_policy import ProductResources
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource, ResourceSqrt
-from src.optimal.fixed_optimal import fixed_optimal_solver
+from src.greedy.resource_allocation import SumPowPercentage
+from src.greedy.server_selection import ProductResources
+from src.greedy.task_priority import UtilityDeadlinePerResourcePriority, ResourceSumPriority
+from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
 def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 5, 10, 30), time_steps: int = 1000,
+                     batch_lengths: Iterable[int] = (1, 5, 10), time_steps: int = 1000,
                      mean_arrival_rate: int = 0.5, std_arrival_rate: float = 0.5,
-                     task_priority=UtilityDeadlinePerResource(ResourceSqrt()),
-                     server_selection_policy=ProductResources(), resource_allocation_policy=SumPowPercentage()):
+                     task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
+                     server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
     """
     Evaluates the batch online
 
@@ -37,8 +37,8 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     :param mean_arrival_rate: Mean arrival rate of tasks
     :param std_arrival_rate: Standard deviation arrival rate of tasks
     :param task_priority: The task prioritisation function
-    :param server_selection_policy: Server selection policy
-    :param resource_allocation_policy: Resource allocation policy
+    :param server_selection: Server selection policy
+    :param resource_allocation: Resource allocation policy
     """
     print(f'Evaluates difference in performance between batch and online algorithm for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -46,8 +46,8 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     pp = pprint.PrettyPrinter()
     filename = results_filename('batch_online', model_dist, repeat_num)
 
-    name = f'Greedy {task_priority.name}, {server_selection_policy.name}, ' \
-           f'{resource_allocation_policy.name}'
+    name = f'Greedy {task_priority.name}, {server_selection.name}, ' \
+           f'{resource_allocation.name}'
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -63,17 +63,12 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
 
             # Generate fixed tasks
-            fixed_tasks = generate_fixed_tasks(tasks)
+            fixed_tasks = generate_non_elastic_tasks(tasks)
             batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
-
-            # Generate the foreknowledge fixed tasks
-            foreknowledge_tasks = generate_fixed_tasks(tasks)
-            batched_foreknowledge_tasks = generate_batch_tasks(foreknowledge_tasks, batch_length, time_steps)
 
             # Flatten the tasks
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
             flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
-            flattened_foreknowledge_fixed_tasks = [t for ts in batched_foreknowledge_tasks for t in ts]
 
             algorithm_results = {}
             if batch_length <= 10:
@@ -84,23 +79,16 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
                 reset_model(flattened_tasks, servers)
 
                 fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
-                                                           fixed_optimal_solver, time_limit=None)
+                                                           non_elastic_optimal_solver, time_limit=None)
                 algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
                 fixed_optimal_result.pretty_print()
                 reset_model(flattened_fixed_tasks, servers)
 
-                foreknowledge_optimal_result = online_batch_solver(batched_foreknowledge_tasks, servers, batch_length,
-                                                                   'Foreknowledge Fixed Optimal',
-                                                                   fixed_optimal_solver, time_limit=None)
-                algorithm_results[foreknowledge_optimal_result.algorithm] = foreknowledge_optimal_result.store()
-                foreknowledge_optimal_result.pretty_print()
-                reset_model(flattened_foreknowledge_fixed_tasks, servers)
-
             # Loop over all of the greedy policies permutations
             greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
                                                 greedy_algorithm, task_priority=task_priority,
-                                                server_selection_policy=server_selection_policy,
-                                                resource_allocation_policy=resource_allocation_policy)
+                                                server_selection=server_selection,
+                                                resource_allocation=resource_allocation)
             algorithm_results[greedy_result.algorithm] = greedy_result.store()
             greedy_result.pretty_print()
             reset_model(flattened_tasks, servers)

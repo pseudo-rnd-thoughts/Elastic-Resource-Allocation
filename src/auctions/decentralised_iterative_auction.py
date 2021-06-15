@@ -15,15 +15,15 @@ from docplex.cp.model import CpoModel, SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIM
 
 from src.core.core import reset_model, server_task_allocation, debug
 from src.extra.result import Result
-from src.greedy.task_prioritisation import ResourceSum
+from src.greedy.task_priority import ResourceSumPriority
 
 if TYPE_CHECKING:
     from typing import List, Tuple, Iterable, TypeVar
 
-    from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
+    from src.greedy.resource_allocation import ResourceAllocation
     from src.core.server import Server
-    from src.core.task import Task
-    from src.greedy.task_prioritisation import TaskPriority
+    from src.core.elastic_task import ElasticTask
+    from src.greedy.task_priority import TaskPriority
 
     T = TypeVar('T')
 
@@ -58,7 +58,7 @@ class PriceDensity(ABC):
         self.name = name
 
     @abstractmethod
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """Price density function"""
         pass
 
@@ -66,11 +66,11 @@ class PriceDensity(ABC):
 class PriceResourcePerDeadline(PriceDensity):
     """The product of utility and deadline divided by required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         PriceDensity.__init__(self, f'Price * {resource_func.name} / deadline')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """Value density function"""
         return task.price * task.deadline / self.resource_func.evaluate(task)
 
@@ -98,8 +98,8 @@ def allocate_task(new_task, task_price, server, unallocated_tasks, task_speeds):
             unallocated_tasks.append(task)
 
 
-def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensity,
-                      resource_allocation_policy: ResourceAllocationPolicy, debug_revenue: bool = False):
+def greedy_task_price(new_task: ElasticTask, server: Server, price_density: PriceDensity,
+                      resource_allocation_policy: ResourceAllocation, debug_revenue: bool = False):
     """
     Calculates the task price using greedy algorithm
 
@@ -141,7 +141,7 @@ def greedy_task_price(new_task: Task, server: Server, price_density: PriceDensit
     return task_price, possible_speeds
 
 
-def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_results: bool = False):
+def optimal_task_price(new_task: ElasticTask, server: Server, time_limit: int, debug_results: bool = False):
     """
     Calculates the task price
 
@@ -212,8 +212,8 @@ def optimal_task_price(new_task: Task, server: Server, time_limit: int, debug_re
     return task_price, speeds
 
 
-def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], task_price_solver,
-                                   debug_allocation: bool = False) -> Tuple[int, Dict[Task, int], float]:
+def decentralised_iterative_solver(tasks: List[ElasticTask], servers: List[Server], task_price_solver,
+                                   debug_allocation: bool = False) -> Tuple[int, Dict[ElasticTask, int], float]:
     """
     Decentralised iterative auction solver
 
@@ -226,9 +226,9 @@ def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], tas
     start_time = time()
 
     total_rounds, task_rounds = 0, {task: 0 for task in tasks}
-    unallocated_tasks: List[Task] = tasks[:]
+    unallocated_tasks: List[ElasticTask] = tasks[:]
     while unallocated_tasks:
-        task: Task = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
+        task: ElasticTask = unallocated_tasks.pop(rnd.randint(0, len(unallocated_tasks) - 1))
 
         min_price, min_speeds, min_server = -1, None, None
         for server in servers:
@@ -258,7 +258,7 @@ def decentralised_iterative_solver(tasks: List[Task], servers: List[Server], tas
     return total_rounds, task_rounds, time() - start_time
 
 
-def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], time_limit: int = 5,
+def optimal_decentralised_iterative_auction(tasks: List[ElasticTask], servers: List[Server], time_limit: int = 5,
                                             debug_allocation: bool = False) -> Result:
     """
     Runs the optimal decentralised iterative auction
@@ -278,8 +278,8 @@ def optimal_decentralised_iterative_auction(tasks: List[Task], servers: List[Ser
                      'rounds': rounds, 'task rounds': {task.name: rounds for task, rounds in task_rounds.items()}})
 
 
-def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Server], price_density: PriceDensity,
-                                           resource_allocation_policy: ResourceAllocationPolicy,
+def greedy_decentralised_iterative_auction(tasks: List[ElasticTask], servers: List[Server], price_density: PriceDensity,
+                                           resource_allocation: ResourceAllocation,
                                            debug_allocation: bool = False) -> Result:
     """
     Runs the greedy decentralised iterative auction
@@ -287,16 +287,16 @@ def greedy_decentralised_iterative_auction(tasks: List[Task], servers: List[Serv
     :param tasks: List of tasks
     :param servers: List of servers
     :param price_density: Price density policy
-    :param resource_allocation_policy: Resource allocation policy
+    :param resource_allocation: Resource allocation policy
     :param debug_allocation: If to debug allocation
     :return: The results of the auction
     """
     solver = functools.partial(greedy_task_price, price_density=price_density,
-                               resource_allocation_policy=resource_allocation_policy)
+                               resource_allocation_policy=resource_allocation)
     rounds, task_rounds, solve_time = decentralised_iterative_solver(tasks, servers, solver, debug_allocation)
 
     return Result('Greedy DIA', tasks, servers, solve_time, is_auction=True,
                   **{'server price change': {server.name: server.price_change for server in servers},
                      'server initial price': {server.name: server.initial_price for server in servers},
-                     'price density': price_density.name, 'resource allocation policy': resource_allocation_policy.name,
+                     'price density': price_density.name, 'resource allocation': resource_allocation.name,
                      'rounds': rounds, 'task rounds': {task.name: rounds for task, rounds in task_rounds.items()}})

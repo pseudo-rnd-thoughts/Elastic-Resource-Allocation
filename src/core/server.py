@@ -6,8 +6,8 @@ from random import gauss
 from typing import Dict, Any
 from typing import List
 
-from src.core.fixed_task import FixedTask
-from src.core.task import Task
+from src.core.non_elastic_task import NonElasticTask
+from src.core.elastic_task import ElasticTask
 
 
 class Server:
@@ -30,13 +30,13 @@ class Server:
         self.initial_price: int = initial_price
 
         # Allocation information
-        self.allocated_tasks: List[Task] = []
+        self.allocated_tasks: List[ElasticTask] = []
         self.available_storage: int = storage_capacity
         self.available_computation: int = computation_capacity
         self.available_bandwidth: int = bandwidth_capacity
 
     # noinspection DuplicatedCode
-    def can_run(self, task: Task) -> bool:
+    def can_run(self, task: ElasticTask) -> bool:
         """
         Checks if a task can be run on a server if it dedicates all of it's available resources to the task
 
@@ -52,7 +52,7 @@ class Server:
             return False
 
         # Case of fixed tasks
-        if isinstance(task, FixedTask):
+        if isinstance(task, NonElasticTask):
             if self.available_bandwidth < task.loading_speed + task.sending_speed:
                 return False
             elif self.available_computation < task.compute_speed:
@@ -69,7 +69,7 @@ class Server:
         return False
 
     # noinspection DuplicatedCode
-    def can_run_empty(self, task: Task) -> bool:
+    def can_run_empty(self, task: ElasticTask) -> bool:
         """
         Checks if a task can be run on a server if it dedicates all of it's possible resources to the task
 
@@ -94,7 +94,7 @@ class Server:
                 return True
         return False
 
-    def allocate_task(self, task: Task):
+    def allocate_task(self, task: ElasticTask):
         """
         Updates the server attributes for when it is allocated within tasks
 

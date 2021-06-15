@@ -1,5 +1,5 @@
 """
-Flexible Optimal algorithms
+Elastic Optimal algorithms
 """
 
 from __future__ import annotations
@@ -19,12 +19,12 @@ if TYPE_CHECKING:
     from typing import List, Optional
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
-def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit: Optional[int]):
+def elastic_optimal_solver(tasks: List[ElasticTask], servers: List[Server], time_limit: Optional[int]):
     """
-    Flexible Optimal algorithm solver using cplex
+    Elastic Optimal algorithm solver using cplex
 
     :param tasks: List of tasks
     :param servers: List of servers
@@ -33,7 +33,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
     """
     assert time_limit is None or 0 < time_limit, f'Time limit: {time_limit}'
 
-    model = CpoModel('Flexible Optimal')
+    model = CpoModel('Elastic Optimal')
 
     # The resource speed variables and the allocation variables
     loading_speeds, compute_speeds, sending_speeds, task_allocation = {}, {}, {}, {}
@@ -92,7 +92,7 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
                     break
 
         if abs(model_solution.get_objective_values()[0] - sum(t.value for t in tasks if t.running_server)) > 0.1:
-            print('Flexible optimal different objective values - '
+            print('Elastic optimal different objective values - '
                   f'cplex: {model_solution.get_objective_values()[0]} and '
                   f'running task values: {sum(task.value for task in tasks if task.running_server)}', file=sys.stderr)
         return model_solution
@@ -101,7 +101,8 @@ def flexible_optimal_solver(tasks: List[Task], servers: List[Server], time_limit
         print_model_solution(model_solution)
 
 
-def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: Optional[int] = 15) -> Optional[Result]:
+def elastic_optimal(tasks: List[ElasticTask], servers: List[Server],
+                    time_limit: Optional[int] = 15) -> Optional[Result]:
     """
     Runs the optimal task allocation algorithm solver for the time limit given the list of tasks and servers
 
@@ -110,18 +111,18 @@ def flexible_optimal(tasks: List[Task], servers: List[Server], time_limit: Optio
     :param time_limit: The time limit for the cplex solver
     :return: Optimal results find setting is valid
     """
-    model_solution = flexible_optimal_solver(tasks, servers, time_limit)
+    model_solution = elastic_optimal_solver(tasks, servers, time_limit)
     if model_solution:
-        return Result('Flexible Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+        return Result('Elastic Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status(),
                          'cplex objective': model_solution.get_objective_values()[0]})
     else:
-        print(f'Flexible Optimal error', file=sys.stderr)
-        return Result('Flexible Optimal', tasks, servers, 0, limited=True)
+        print(f'Elastic Optimal error', file=sys.stderr)
+        return Result('Elastic Optimal', tasks, servers, 0, limited=True)
 
 
-def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server],
-                                    time_limit: Optional[int] = 15) -> Optional[Result]:
+def server_relaxed_elastic_optimal(tasks: List[ElasticTask], servers: List[Server],
+                                   time_limit: Optional[int] = 15) -> Optional[Result]:
     """
     Runs the relaxed task allocation solver
 
@@ -131,12 +132,12 @@ def server_relaxed_flexible_optimal(tasks: List[Task], servers: List[Server],
     :return: Optional relaxed results
     """
     super_server = SuperServer(servers)
-    model_solution = flexible_optimal_solver(tasks, [super_server], time_limit)
+    model_solution = elastic_optimal_solver(tasks, [super_server], time_limit)
     if model_solution:
-        return Result('Server Relaxed Flexible Optimal', tasks, [super_server],
+        return Result('Server Relaxed Elastic Optimal', tasks, [super_server],
                       round(model_solution.get_solve_time(), 2),
                       **{'solve status': model_solution.get_solve_status(),
                          'cplex objective': model_solution.get_objective_values()[0]})
     else:
-        print(f'Server Relaxed Flexible Optimal error', file=sys.stderr)
-        return Result('Server Relaxed Flexible Optimal', tasks, servers, 0, limited=True)
+        print(f'Server Relaxed Elastic Optimal error', file=sys.stderr)
+        return Result('Server Relaxed Elastic Optimal', tasks, servers, 0, limited=True)

@@ -8,23 +8,23 @@ from typing import TYPE_CHECKING, Dict
 from src.core.core import server_task_allocation, reset_model
 from src.extra.pprint import print_task_values, print_task_allocation
 from src.extra.result import Result
-from src.greedy.resource_allocation_policy import policies as resource_allocation_policies
-from src.greedy.server_selection_policy import policies as server_selection_policies
-from src.greedy.task_prioritisation import policies as task_priorities
+from src.greedy.resource_allocation import resource_allocation_functions
+from src.greedy.server_selection import server_selection_functions
+from src.greedy.task_priority import task_priority_functions
 
 if TYPE_CHECKING:
     from typing import List
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
-    from src.greedy.resource_allocation_policy import ResourceAllocationPolicy
-    from src.greedy.server_selection_policy import ServerSelectionPolicy
-    from src.greedy.task_prioritisation import TaskPriority
+    from src.greedy.resource_allocation import ResourceAllocation
+    from src.greedy.server_selection import ServerSelection
+    from src.greedy.task_priority import TaskPriority
 
 
-def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_policy: ServerSelectionPolicy,
-                   resource_allocation_policy: ResourceAllocationPolicy, debug_allocation: bool = False):
+def allocate_tasks(tasks: List[ElasticTask], servers: List[Server], server_selection_policy: ServerSelection,
+                   resource_allocation_policy: ResourceAllocation, debug_allocation: bool = False):
     """
     Allocate the tasks to the servers based on the server selection policy and resource allocation policies
 
@@ -49,10 +49,9 @@ def allocate_tasks(tasks: List[Task], servers: List[Server], server_selection_po
         print_task_allocation(tasks)
 
 
-def greedy_algorithm(tasks: List[Task], servers: List[Server], task_priority: TaskPriority,
-                     server_selection_policy: ServerSelectionPolicy,
-                     resource_allocation_policy: ResourceAllocationPolicy, debug_task_values: bool = False,
-                     debug_task_allocation: bool = False) -> Result:
+def greedy_algorithm(tasks: List[ElasticTask], servers: List[Server], task_priority: TaskPriority,
+                     server_selection: ServerSelection, resource_allocation: ResourceAllocation,
+                     debug_task_values: bool = False, debug_task_allocation: bool = False) -> Result:
     """
     A greedy algorithm to allocate tasks to servers aiming to maximise the total utility,
         the models is stored with the servers and tasks so no return is required
@@ -60,8 +59,8 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], task_priority: Ta
     :param tasks: List of tasks
     :param servers: List of servers
     :param task_priority: The task priority function
-    :param server_selection_policy: The selection policy function
-    :param resource_allocation_policy: The bid policy function
+    :param server_selection: The selection policy function
+    :param resource_allocation: The bid policy function
     :param debug_task_values: The task values debug
     :param debug_task_allocation: The task allocation debug
     """
@@ -74,20 +73,19 @@ def greedy_algorithm(tasks: List[Task], servers: List[Server], task_priority: Ta
                                  key=lambda jv: jv[1], reverse=True))
 
     # Run the allocation of the task with the sorted task by value
-    allocate_tasks(task_values, servers, server_selection_policy, resource_allocation_policy,
-                   debug_allocation=debug_task_allocation)
+    allocate_tasks(task_values, servers, server_selection, resource_allocation, debug_allocation=debug_task_allocation)
 
     # The algorithm name
-    algorithm_name = f'Greedy {task_priority.name}, {server_selection_policy.name}, {resource_allocation_policy.name}'
+    algorithm_name = f'Greedy {task_priority.name}, {server_selection.name}, {resource_allocation.name}'
     return Result(algorithm_name, tasks, servers, time() - start_time,
-                  **{'task priority': task_priority.name, 'server selection policy': server_selection_policy.name,
-                     'resource allocation policy': resource_allocation_policy.name})
+                  **{'task priority': task_priority.name, 'server selection': server_selection.name,
+                     'resource allocation': resource_allocation.name})
 
 
-def greedy_permutations(tasks: List[Task], servers: List[Server], results: Dict[str, Result], prefix: str = ''):
-    for task_priority in task_priorities:
-        for server_selection_policy in server_selection_policies:
-            for allocation_policy in resource_allocation_policies:
-                result = greedy_algorithm(tasks, servers, task_priority, server_selection_policy, allocation_policy)
+def greedy_permutations(tasks: List[ElasticTask], servers: List[Server], results: Dict[str, Result], prefix: str = ''):
+    for task_priority in task_priority_functions:
+        for server_selection in server_selection_functions:
+            for resource_allocation in resource_allocation_functions:
+                result = greedy_algorithm(tasks, servers, task_priority, server_selection, resource_allocation)
                 results[f'{prefix}{result.algorithm}'] = result.store()
                 reset_model(tasks, servers)

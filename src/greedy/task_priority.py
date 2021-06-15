@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from typing import List
 
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
 class TaskPriority(ABC):
@@ -20,187 +20,187 @@ class TaskPriority(ABC):
         self.name = name
 
     @abstractmethod
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         pass
 
     @abstractmethod
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse of the task prioritisation function for the task value"""
         pass
 
 
-class ResourceSum(TaskPriority):
+class ResourceSumPriority(TaskPriority):
     """The sum of a task's required resources"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Sum')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.required_storage + task.required_computation + task.required_results_data
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class ResourceProduct(TaskPriority):
+class ResourceProductPriority(TaskPriority):
     """The product of a task's required resources"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Product')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.required_storage * task.required_computation * task.required_results_data
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class ResourceExpSum(TaskPriority):
+class ExpSumResourcesPriority(TaskPriority):
     """The sum of exponential of a task's required resources"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Exponential Sum')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return exp(task.required_storage) + exp(task.required_computation) + exp(task.required_results_data)
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class ResourceSqrt(TaskPriority):
+class SqrtResourcesPriority(TaskPriority):
     """The sum of square root of a task's required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         TaskPriority.__init__(self, f'Sqrt {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation"""
         return sqrt(self.resource_func.evaluate(task))
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class UtilityPerResources(TaskPriority):
+class UtilityPerResourcesPriority(TaskPriority):
     """The utility divided by required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         TaskPriority.__init__(self, f'Utility / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.value / self.resource_func.evaluate(task)
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         return density * self.resource_func.evaluate(task)
 
 
-class DeadlinePerResources(TaskPriority):
+class DeadlinePerResourcesPriority(TaskPriority):
     """The deadline divided by required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         TaskPriority.__init__(self, f'Deadline / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.deadline / self.resource_func.evaluate(task)
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class UtilityDeadlinePerResource(TaskPriority):
+class UtilityDeadlinePerResourcePriority(TaskPriority):
     """The product of utility and deadline divided by required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         TaskPriority.__init__(self, f'Utility * deadline / {resource_func.name}')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.value * task.deadline / self.resource_func.evaluate(task)
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         return density * self.resource_func.evaluate(task) / task.deadline
 
 
-class UtilityResourcePerDeadline(TaskPriority):
+class UtilityResourcePerDeadlinePriority(TaskPriority):
     """The product of utility and deadline divided by required resources"""
 
-    def __init__(self, resource_func: TaskPriority = ResourceSum()):
+    def __init__(self, resource_func: TaskPriority = ResourceSumPriority()):
         TaskPriority.__init__(self, f'Utility * {resource_func.name} / deadline')
         self.resource_func = resource_func
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.value * self.resource_func.evaluate(task) / task.deadline
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         return density * task.deadline / self.resource_func.evaluate(task)
 
 
-class Random(TaskPriority):
+class RandomPriority(TaskPriority):
     """Random number generator"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Random')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return random()
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise Exception('Not supported function of inverse')
 
 
-class Storage(TaskPriority):
+class StoragePriority(TaskPriority):
     """Sorted by Storage resource requirement"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Storage Requirement')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.value / task.required_storage
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         return density * task.required_storage
 
 
-class Value(TaskPriority):
+class ValuePriority(TaskPriority):
     """Ordered by the value of the tasks alone"""
 
     def __init__(self):
         TaskPriority.__init__(self, 'Value')
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         return task.value
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         return density
 
 
-class EvolutionStrategy(TaskPriority):
+class EvolutionStrategyPriority(TaskPriority):
     """Covariance matrix adaption evolution strategy"""
 
     def __init__(self, name: int, value_var: Optional[float] = None, deadline_var: Optional[float] = None,
@@ -214,33 +214,34 @@ class EvolutionStrategy(TaskPriority):
         self.comp_var = computational_var if computational_var else gauss(0, 1)
         self.results_var = bandwidth_var if bandwidth_var else gauss(0, 1)
 
-    def evaluate(self, task: Task) -> float:
+    def evaluate(self, task: ElasticTask) -> float:
         """task prioritisation function"""
         # Todo normally these variables are multiplied together
         return (self.value_var * task.value + self.deadline_var * task.deadline) / \
                (self.storage_var * task.required_storage + self.comp_var * task.required_computation +
                 self.results_var * task.required_results_data)
 
-    def inverse(self, task: Task, density: float) -> float:
+    def inverse(self, task: ElasticTask, density: float) -> float:
         """Inverse evaluation function"""
         raise NotImplemented('Evolution Strategy for task priority is not implemented yet')
 
 
 # Functions you actually want to use
-policies = [
-    Value(),
-    UtilityDeadlinePerResource(),
-    UtilityDeadlinePerResource(ResourceSqrt())
+task_priority_functions = [
+    ValuePriority(),
+    UtilityDeadlinePerResourcePriority(),
+    UtilityDeadlinePerResourcePriority(SqrtResourcesPriority())
 ]
 
-all_policies: List[TaskPriority] = [
-    value_density for value_density in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
+all_task_priority_functions: List[TaskPriority] = [
+    value_density for value_density in [ResourceSumPriority(), ResourceProductPriority(),
+                                        ExpSumResourcesPriority(), SqrtResourcesPriority()]
 ]
-all_policies += [
+all_task_priority_functions += [
     value_density(resource_function)
-    for value_density in [UtilityPerResources, UtilityResourcePerDeadline, UtilityDeadlinePerResource]
-    for resource_function in [ResourceSum(), ResourceProduct(), ResourceExpSum(), ResourceSqrt()]
+    for value_density in [UtilityPerResourcesPriority, UtilityResourcePerDeadlinePriority,
+                          UtilityDeadlinePerResourcePriority]
+    for resource_function in [ResourceSumPriority(), ResourceProductPriority(),
+                              ExpSumResourcesPriority(), SqrtResourcesPriority()]
 ]
-all_policies += [Storage(), Random(), Value()]
-
-max_name_length = max(len(policy.name) for policy in policies)
+all_task_priority_functions += [StoragePriority(), RandomPriority(), ValuePriority()]

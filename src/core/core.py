@@ -8,10 +8,11 @@ if TYPE_CHECKING:
     from typing import Iterable, List
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
-def server_task_allocation(server: Server, task: Task, loading: int, compute: int, sending: int, price: float = None):
+def server_task_allocation(server: Server, task: ElasticTask, loading: int, compute: int, sending: int,
+                           price: float = None):
     """
     Allocate a task to a server
 
@@ -26,7 +27,7 @@ def server_task_allocation(server: Server, task: Task, loading: int, compute: in
     server.allocate_task(task)
 
 
-def reset_model(tasks: Iterable[Task], servers: Iterable[Server], forget_prices: bool = True):
+def reset_model(tasks: Iterable[ElasticTask], servers: Iterable[Server], forget_prices: bool = True):
     """
     Resets all of the tasks and servers back after an allocation
 

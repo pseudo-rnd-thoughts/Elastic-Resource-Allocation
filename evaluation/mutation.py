@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from src.auctions.decentralised_iterative_auction import optimal_decentralised_iterative_auction
 from src.core.core import reset_model, set_server_heuristics
-from src.core.task import Task
+from src.core.elastic_task import ElasticTask
 from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDist, get_model, generate_evaluation_model
 
@@ -82,7 +82,7 @@ def full_task_mutation(model_dist: ModelDist, repeat_num: int, repeats: int = 25
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
         for model_mutation in range(min(model_mutations, len(to_mutate_tasks))):
             # Choice a random task and mutate it
-            task: Task = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
+            task: ElasticTask = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
             mutant_task = task.mutate(mutate_percent)
 
             # Replace the task with the mutant task in the task list
@@ -165,9 +165,10 @@ def mutation_grid_search(model_dist: ModelDist, repeat_num: int, percent: float 
                                                int(task.required_results_data * positive_percent) + 1):
                 for deadline in range(int(task.deadline * negative_percent), task.deadline + 1):
                     # Create the new mutated task and create new tasks list with the mutant task replacing the task
-                    mutant_task = Task(f'mutated {task.name}', required_storage=required_storage,
-                                       required_computation=required_computation,
-                                       required_results_data=required_results_data, deadline=deadline, value=task.value)
+                    mutant_task = ElasticTask(f'mutated {task.name}', required_storage=required_storage,
+                                              required_computation=required_computation,
+                                              required_results_data=required_results_data,
+                                              deadline=deadline, value=task.value)
                     tasks.append(mutant_task)
 
                     # Calculate the task price with the mutated task
@@ -234,7 +235,7 @@ def value_only_mutation(model_dist: ModelDist, repeat_num: int, repeats: int = 2
         # Loop each time mutating a task or server and find the auction results and compare to the unmutated result
         for model_mutation in range(min(model_mutations, len(to_mutate_tasks))):
             # Choice a random task and mutate it
-            task: Task = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
+            task: ElasticTask = to_mutate_tasks.pop(rnd.randint(0, len(to_mutate_tasks) - 1))
             task_value = task.value
 
             task_mutation_results = {}

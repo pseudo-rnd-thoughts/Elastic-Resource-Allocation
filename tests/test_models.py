@@ -12,15 +12,15 @@ import pandas as pd
 from tqdm import tqdm
 
 from src.core.core import reset_model
-from src.core.fixed_task import SumSpeedPowFixedAllocationPriority, FixedTask, SumSpeedsFixedAllocationPriority
-from src.core.task import Task
+from src.core.non_elastic_task import NonElasticTask, SumSpeedPowResourcePriority
+from src.core.elastic_task import ElasticTask
 from src.extra.io import parse_args
 from src.extra.model import AlibabaModelDist, SyntheticModelDist, ModelDist
 from src.greedy.greedy import greedy_algorithm
-from src.greedy.resource_allocation_policy import SumPercentage
-from src.greedy.server_selection_policy import SumResources
-from src.greedy.task_prioritisation import UtilityDeadlinePerResource
-from src.optimal.fixed_optimal import fixed_optimal
+from src.greedy.resource_allocation import SumPercentage
+from src.greedy.server_selection import SumResources
+from src.greedy.task_priority import UtilityDeadlinePerResourcePriority
+from src.optimal.non_elastic_optimal import non_elastic_optimal
 
 
 def test_models():
@@ -50,16 +50,16 @@ def alibaba_task_generation():
     servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
     alibaba = pd.read_csv('../models/alibaba_cluster_tasks.csv')
     storage_scaling, computational_scaling, results_data_scaling = 500, 1, 5
-    fixed_task_policy = SumSpeedsFixedAllocationPriority()
+    non_elastic_task_policy = SumSpeedPowResourcePriority()
 
     for index, task_row in tqdm(alibaba.iterrows()):
-        task = Task(f'realistic {index}',
-                    required_storage=ceil(storage_scaling * min(task_row['mem_max'], task_row['plan_mem'])),
-                    required_computation=ceil(computational_scaling * task_row['total_cpu']),
-                    required_results_data=ceil(results_data_scaling * rnd.randint(20, 60) * task_row['mem_max']),
-                    deadline=task_row['time_taken'], servers=servers)
+        task = ElasticTask(f'realistic {index}',
+                           required_storage=ceil(storage_scaling * min(task_row['mem_max'], task_row['plan_mem'])),
+                           required_computation=ceil(computational_scaling * task_row['total_cpu']),
+                           required_results_data=ceil(results_data_scaling * rnd.randint(20, 60) * task_row['mem_max']),
+                           deadline=task_row['time_taken'], servers=servers)
         try:
-            FixedTask(task, fixed_task_policy)
+            NonElasticTask(task, non_elastic_task_policy)
         except AssertionError as e:
             print(f'Error for fixed task index {index}', e)
             print(task.required_storage / storage_scaling, task.required_computation / computational_scaling,
@@ -113,12 +113,12 @@ def test_model_tasks(num_servers: int = 8):
     for num_tasks in range(24, 60, 4):
         model = SyntheticModelDist(num_tasks, num_servers)
         tasks, servers = model.generate_oneshot()
-        fixed_tasks = [FixedTask(task, SumSpeedPowFixedAllocationPriority()) for task in tasks]
+        fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
 
-        greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResource(),
+        greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResourcePriority(),
                                                            SumResources(), SumPercentage())])
         reset_model(tasks, servers)
-        fixed_results.append([num_tasks, fixed_optimal(fixed_tasks, servers, 3)])
+        fixed_results.append([num_tasks, non_elastic_optimal(fixed_tasks, servers, 3)])
 
     def print_results(results):
         """

@@ -9,7 +9,7 @@ from __future__ import annotations
 from time import time
 from typing import TYPE_CHECKING
 
-from src.branch_bound.feasibility_allocations import flexible_feasible_allocation
+from src.branch_bound.feasibility_allocations import elastic_feasible_allocation
 from src.branch_bound.priority_queue import Comparison, PriorityQueue
 from src.extra.pprint import print_allocation
 from src.extra.result import Result
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import List, Dict, Tuple, Optional
 
     from src.core.server import Server
-    from src.core.task import Task
+    from src.core.elastic_task import ElasticTask
 
 
 def copy(allocation):
@@ -31,9 +31,9 @@ def copy(allocation):
     return {server: [task for task in tasks] for server, tasks in allocation.items()}
 
 
-def generate_candidates(allocation: Dict[Server, List[Task]], tasks: List[Task], servers: List[Server], pos: int,
-                        lower_bound: float, upper_bound: float,
-                        debug_new_candidates: bool = False) -> List[Tuple[float, float, Dict[Server, List[Task]], int]]:
+def generate_candidates(allocation: Dict[Server, List[ElasticTask]], tasks: List[ElasticTask], servers: List[Server],
+                        pos: int, lower_bound: float, upper_bound: float, debug_new_candidates: bool = False) \
+        -> List[Tuple[float, float, Dict[Server, List[ElasticTask]], int]]:
     """
     Generates new candidates of all of the allocations that the task can run on any of the servers
 
@@ -70,7 +70,7 @@ def generate_candidates(allocation: Dict[Server, List[Task]], tasks: List[Task],
     return new_candidates
 
 
-def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility=flexible_feasible_allocation,
+def branch_bound_algorithm(tasks: List[ElasticTask], servers: List[Server], feasibility=elastic_feasible_allocation,
                            debug_new_candidate: bool = False, debug_checking_allocation: bool = False,
                            debug_update_lower_bound: bool = False, debug_feasibility: bool = False) -> Result:
     """
@@ -89,8 +89,8 @@ def branch_bound_algorithm(tasks: List[Task], servers: List[Server], feasibility
 
     # The best values for the lower bound, allocation and speeds
     best_lower_bound: float = 0
-    best_allocation: Optional[Dict[Server, List[Task]]] = None
-    best_speeds: Optional[Dict[Task, Tuple[int, int, int]]] = None
+    best_allocation: Optional[Dict[Server, List[ElasticTask]]] = None
+    best_speeds: Optional[Dict[ElasticTask, Tuple[int, int, int]]] = None
 
     # Generates the initial candidates
     def compare(candidate_1, candidate_2):
