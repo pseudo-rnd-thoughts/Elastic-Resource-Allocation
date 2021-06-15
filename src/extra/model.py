@@ -92,8 +92,8 @@ class SyntheticModelDist(ModelDist):
 
 class AlibabaModelDist(SyntheticModelDist):
     def __init__(self, num_tasks: Optional[int] = None, num_servers: Optional[int] = None, foreknowledge: bool = True,
-                 filename: str = 'models/alibaba.mdl', storage_scaling: int = 500, computational_scaling: int = 0.2,
-                 results_data_scaling: int = 5, results_range: Tuple[int, int] = (20, 60)):
+                 filename: str = 'models/alibaba.mdl', storage_scaling: int = 1000, computational_scaling: int = 0.5,
+                 results_data_scaling: int = 100, results_range: Tuple[int, int] = (20, 60)):
         SyntheticModelDist.__init__(self, num_tasks, num_servers, filename)
 
         self.foreknowledge = foreknowledge

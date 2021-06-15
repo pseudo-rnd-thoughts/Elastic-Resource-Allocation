@@ -129,7 +129,7 @@ def task_sizing():
     model_dist = AlibabaModelDist(1000, 6)
     model_scales = {}
     for storage_scaling, computation_scaling, results_data_scaling in [
-        (500, 1, 5), (500, 0.2, 5)
+        (500, 1, 5), (500, 0.2, 5), (1000, 0.4, 10)
     ]:
         name = f'Storage: {storage_scaling}, computation: {computation_scaling}, results data: {results_data_scaling}'
         model_dist.storage_scaling = storage_scaling
