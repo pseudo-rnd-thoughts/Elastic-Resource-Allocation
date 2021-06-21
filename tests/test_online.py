@@ -13,7 +13,7 @@ from src.core.server import Server
 from src.core.elastic_task import ElasticTask
 from src.extra.model import SyntheticModelDist
 from src.extra.online import generate_batch_tasks, online_batch_solver
-from src.extra.visualise import minimise_resource_allocation
+from src.extra.visualise import minimal_allocated_resources_solver
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation import SumPowPercentage
 from src.greedy.server_selection import SumResources
@@ -160,7 +160,7 @@ def test_minimise_resources():
             assert bandwidth_availability == max_bandwidth, \
                 f'Availability: {bandwidth_availability}, actual: {max_bandwidth}'
 
-        minimise_resource_allocation(_tasks, valid_servers, minimise_time_limit)
+        minimal_allocated_resources_solver(_tasks, valid_servers, minimise_time_limit)
 
     batched_tasks = generate_batch_tasks(tasks, 1, 20)
     optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',

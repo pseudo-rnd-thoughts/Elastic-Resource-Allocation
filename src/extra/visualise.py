@@ -23,7 +23,7 @@ matplotlib.rcParams['font.family'] = 'monospace'
 matplotlib.rc('text', usetex=True)
 
 
-def minimise_resource_allocation(tasks: List[ElasticTask], servers: List[Server], time_limit: int = 1):
+def minimal_allocated_resources_solver(tasks: List[ElasticTask], servers: List[Server], time_limit: int = 1):
     """
     Minimise resource allocation of a list of servers
 

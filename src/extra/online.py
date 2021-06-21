@@ -1,6 +1,7 @@
 """
 For online resource allocation using any resource allocation mechanism (optimal, greedy, fixed, etc)
 """
+import sys
 from math import ceil
 from time import time
 from typing import List
@@ -8,7 +9,7 @@ from typing import List
 from core.server import Server
 from core.elastic_task import ElasticTask
 from extra.result import Result, resource_usage
-from extra.visualise import minimise_resource_allocation
+from extra.visualise import minimal_allocated_resources_solver
 from optimal.elastic_optimal import elastic_optimal_solver
 
 
@@ -94,10 +95,10 @@ def generate_batch_tasks(tasks: List[ElasticTask], batch_length: int, time_steps
     ]
 
 
-def minimal_flexible_optimal_solver(tasks: List[ElasticTask], servers: List[Server],
-                                    solver_time_limit: int = 3, minimise_time_limit: int = 2):
+def minimal_resources_elastic_optimal_solver(tasks: List[ElasticTask], servers: List[Server],
+                                             solver_time_limit: int = 3, minimise_time_limit: int = 2):
     """
-    Minimise the resources used by flexible optimal solver
+    Minimise the resources used by elastic optimal solver
 
     :param tasks: List of tasks
     :param servers: List of servers
@@ -106,5 +107,13 @@ def minimal_flexible_optimal_solver(tasks: List[ElasticTask], servers: List[Serv
     """
     valid_servers = [server for server in servers
                      if 1 <= server.available_computation and 1 <= server.available_bandwidth]
-    elastic_optimal_solver(tasks, valid_servers, solver_time_limit)
-    minimise_resource_allocation(tasks, valid_servers, minimise_time_limit)
+    model_solution = elastic_optimal_solver(tasks, valid_servers, solver_time_limit)
+    if model_solution:
+        # Find the minimum resource that could be allocation
+        minimal_allocated_resources_solver(tasks, valid_servers, minimise_time_limit)
+        return Result('Elastic Optimal', tasks, servers, round(model_solution.get_solve_time(), 2),
+                      **{'solve status': model_solution.get_solve_status(),
+                         'cplex objective': model_solution.get_objective_values()[0]})
+    else:
+        print(f'Elastic Optimal error', file=sys.stderr)
+        return Result('Elastic Optimal', tasks, servers, 0, limited=True)

@@ -13,7 +13,7 @@ from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import parse_args
 from src.extra.model import ModelDist, SyntheticModelDist
 from src.extra.pprint import print_model
-from src.extra.visualise import minimise_resource_allocation, plot_allocation_results
+from src.extra.visualise import minimal_allocated_resources_solver, plot_allocation_results
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation import SumPercentage
 from src.greedy.server_selection import SumResources
@@ -70,7 +70,7 @@ def test_minimise_resource_allocation():
     plot_allocation_results(tasks, servers, "Optimal Flexible Resource Allocation", image_formats=[])
     plt.show()
 
-    minimise_resource_allocation(tasks, servers)
+    minimal_allocated_resources_solver(tasks, servers)
     plot_allocation_results(tasks, servers, "Minimised Optimal Flexible Resource Allocation", image_formats=[])
     plt.show()
 
