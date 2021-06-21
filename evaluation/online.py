@@ -13,7 +13,7 @@ from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import results_filename, parse_args
 from src.extra.model import ModelDist, get_model
-from src.extra.online import online_batch_solver, minimal_flexible_optimal_solver, generate_batch_tasks
+from src.extra.online import online_batch_solver, generate_batch_tasks
 from src.greedy.greedy import greedy_algorithm
 from src.greedy.resource_allocation import SumPowPercentage
 from src.greedy.server_selection import ProductResources
@@ -22,7 +22,7 @@ from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
 def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 5, 10), time_steps: int = 1000,
+                     batch_lengths: Iterable[int] = (1, 4, 8), time_steps: int = 250,
                      mean_arrival_rate: int = 0.5, std_arrival_rate: float = 0.5,
                      task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
                      server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
@@ -57,37 +57,28 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
         pp.pprint(batch_results)
+        non_elastic_tasks = generate_non_elastic_tasks(tasks)
 
         # Batch greedy algorithm
         for batch_length in batch_lengths:
             batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
-
-            # Generate fixed tasks
-            fixed_tasks = generate_non_elastic_tasks(tasks)
-            batched_fixed_tasks = generate_batch_tasks(fixed_tasks, batch_length, time_steps)
+            batched_non_elastic_tasks = generate_batch_tasks(non_elastic_tasks, batch_length, time_steps)
 
             # Flatten the tasks
             flattened_tasks = [task for tasks in batched_tasks for task in tasks]
-            flattened_fixed_tasks = [fixed_task for fixed_tasks in batched_fixed_tasks for fixed_task in fixed_tasks]
+            flattened_fixed_tasks = [task for tasks in batched_non_elastic_tasks for task in tasks]
 
             algorithm_results = {}
-            if batch_length <= 10:
-                optimal_result = online_batch_solver(batched_tasks, servers, batch_length, 'Flexible Optimal',
-                                                     minimal_flexible_optimal_solver, solver_time_limit=None)
-                algorithm_results[optimal_result.algorithm] = optimal_result.store()
-                optimal_result.pretty_print()
-                reset_model(flattened_tasks, servers)
-
-                fixed_optimal_result = online_batch_solver(batched_fixed_tasks, servers, batch_length, 'Fixed Optimal',
-                                                           non_elastic_optimal_solver, time_limit=None)
-                algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
-                fixed_optimal_result.pretty_print()
-                reset_model(flattened_fixed_tasks, servers)
+            fixed_optimal_result = online_batch_solver(batched_non_elastic_tasks, servers, batch_length,
+                                                       'Non-elastic Optimal', non_elastic_optimal_solver,
+                                                       time_limit=None)
+            algorithm_results[fixed_optimal_result.algorithm] = fixed_optimal_result.store()
+            fixed_optimal_result.pretty_print()
+            reset_model(flattened_fixed_tasks, servers)
 
             # Loop over all of the greedy policies permutations
-            greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name,
-                                                greedy_algorithm, task_priority=task_priority,
-                                                server_selection=server_selection,
+            greedy_result = online_batch_solver(batched_tasks, servers, batch_length, name, greedy_algorithm,
+                                                task_priority=task_priority, server_selection=server_selection,
                                                 resource_allocation=resource_allocation)
             algorithm_results[greedy_result.algorithm] = greedy_result.store()
             greedy_result.pretty_print()
