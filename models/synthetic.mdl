@@ -10,6 +10,8 @@
       "computation std": 15,
       "results data mean": 50,
       "results data std": 10,
+      "value mean": 50,
+      "value std": 20,
       "deadline mean": 10,
       "deadline std": 2
     }

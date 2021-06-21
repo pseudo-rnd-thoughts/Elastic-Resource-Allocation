@@ -205,7 +205,7 @@ class ElasticTask:
             required_computation=positive_gaussian(task_dist['computation mean'], task_dist['computation std']),
             required_results_data=positive_gaussian(task_dist['results data mean'], task_dist['results data std']),
             deadline=positive_gaussian(task_dist['deadline mean'], task_dist['deadline std']),
-            value=None, servers=servers)
+            value=positive_gaussian(task_dist['value mean'], task_dist['value std']))
 
     def batch(self, time_step):
         """
