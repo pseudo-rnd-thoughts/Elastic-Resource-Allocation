@@ -81,7 +81,8 @@ def online_batch_solver(batched_tasks: List[List[ElasticTask]], servers: List[Se
 
 def generate_batch_tasks(tasks: List[ElasticTask], batch_length: int, time_steps: int) -> List[List[ElasticTask]]:
     """
-    Generate batch tasks with updated task deadlines
+    Generate batch tasks with updated task deadlines that has the first batch at batch_length, the second at
+        batch_length * 2, ..., to time_steps
 
     :param tasks: List of tasks
     :param batch_length: The batch length integer
@@ -89,9 +90,8 @@ def generate_batch_tasks(tasks: List[ElasticTask], batch_length: int, time_steps
     :return: List of batched tasks
     """
     return [
-        [task.batch(time_step)
-         for task in tasks if time_step - batch_length < task.auction_time <= time_step]
-        for time_step in range(0, time_steps + time_steps % batch_length + 1, batch_length)
+        [task.batch(time_step) for task in tasks if time_step - batch_length <= task.auction_time < time_step]
+        for time_step in range(batch_length, time_steps + time_steps % batch_length + 1, batch_length)
     ]
 
 

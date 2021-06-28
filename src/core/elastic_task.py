@@ -153,15 +153,16 @@ class ElasticTask:
         return save_spec
 
     def __str__(self) -> str:
+        auction_time = f'auction time: {self.auction_time}, ' if 0 <= self.auction_time else ''
         if self.loading_speed > 0 and self.compute_speed > 0 and self.sending_speed > 0:
             return f'{self.name} Task - Required storage: {self.required_storage}, ' \
                    f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
-                   f'deadline: {self.deadline}, value: {self.value}, allocated loading: {self.loading_speed}, ' \
-                   f'compute: {self.compute_speed}, sending: {self.sending_speed} speeds'
+                   f'deadline: {self.deadline}, {auction_time}value: {self.value}, allocated ' \
+                   f'loading: {self.loading_speed}, compute: {self.compute_speed}, sending: {self.sending_speed} speeds'
         else:
             return f'{self.name} Task - Required storage: {self.required_storage}, ' \
                    f'computation: {self.required_computation}, results data: {self.required_results_data}, ' \
-                   f'deadline: {self.deadline}, value: {self.value}'
+                   f'deadline: {self.deadline}, {auction_time}value: {self.value}'
 
     @staticmethod
     def load(task_spec: Dict[str, Any]) -> ElasticTask:
@@ -179,13 +180,12 @@ class ElasticTask:
         )
 
     @staticmethod
-    def load_dist(task_dist: Dict[str, Any], task_id: int, servers: List[Server]) -> ElasticTask:
+    def load_dist(task_dist: Dict[str, Any], task_id: int) -> ElasticTask:
         """
         Loads a task from a task distribution
 
         :param task_dist: A JSON dictionary representing task distribution
         :param task_id: A task identifier value
-        :param servers: list of servers
         :return: A new task based on a task distribution
         """
 

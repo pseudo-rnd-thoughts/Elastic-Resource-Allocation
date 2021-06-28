@@ -87,7 +87,7 @@ class SyntheticModelDist(ModelDist):
         task_dist = next(task_dist for i, task_dist in enumerate(self.model['task distributions'])
                          if probability <= sum(self.model['task distributions'][j]['probability']
                                                for j in range(i + 1)))
-        return ElasticTask.load_dist(task_dist, task_id, servers)
+        return ElasticTask.load_dist(task_dist, task_id)
 
 
 class AlibabaModelDist(SyntheticModelDist):

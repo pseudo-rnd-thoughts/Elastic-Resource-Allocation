@@ -23,19 +23,26 @@ from src.optimal.elastic_optimal import elastic_optimal_solver
 
 
 def test_online_model_generation(model_dist=SyntheticModelDist(num_servers=8),
-                                 time_steps: int = 50, batch_lengths: Iterable[int] = (1, 2, 4, 5, 10),
+                                 time_steps: int = 250, batch_lengths: Iterable[int] = (1, 2, 4, 5),
                                  mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     print()
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
+    print(f'Number of tasks per time step: '
+          f'{[len([task for task in tasks if task.auction_time == time_step]) for time_step in range(time_steps)]}')
 
     for batch_length in batch_lengths:
-        batched_tasks = generate_batch_tasks(tasks, batch_length, time_steps)
+        valid_tasks = [task for task in tasks if batch_length < task.deadline]
+        batched_tasks = generate_batch_tasks(valid_tasks, batch_length, time_steps)
+        print(f'Number of time steps: {time_steps}, batch length: {batch_length}, '
+              f'number of batches: {len(batched_tasks)}')
+
         assert len(batched_tasks) == ceil(time_steps / batch_length)
-        assert sum(len(batch_tasks) for batch_tasks in batched_tasks) == len(tasks)
-        assert all(0 < task.value for tasks in batched_tasks for task in tasks)
-        assert all(task.auction_time <= (batch_num + 1) * batch_length
-                   for batch_num, tasks in enumerate(batched_tasks) for task in tasks)
-        print(f'Batch lengths: [{", ".join([f"{len(batch_tasks)}" for batch_tasks in batched_tasks])}]')
+        assert sum(len(batch_tasks) for batch_tasks in batched_tasks) == len(valid_tasks)
+        assert all(0 < task.value for _tasks in batched_tasks for task in _tasks)
+        assert all(0 < task.deadline for _tasks in batched_tasks for task in _tasks), \
+            [str(task) for _tasks in batched_tasks for task in _tasks if task.deadline < 0]
+        assert all(batch_num * batch_length <= task.auction_time < (batch_num + 1) * batch_length
+                   for batch_num, _tasks in enumerate(batched_tasks) for task in _tasks)
 
 
 def test_online_server_capacities(model_dist=SyntheticModelDist(num_servers=8),
