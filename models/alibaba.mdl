@@ -5,32 +5,11 @@
     "server note": "This servers for this model are based on AWS EC2 small server instance sizes, inspired by Bahreini et al, 2018 'An Envy-Free Auction Mechanism for Resource Allocation in Edge Computing Systems'",
     "server distributions": [
         {
-            "name": "medium",
-            "probability": 0.2,
-            "storage mean": 200, "storage std": 0,
-            "computation mean": 40, "computation std": 0,
-            "bandwidth mean": 50, "bandwidth std": 0
-        },
-        {
             "name": "large",
             "probability": 0.3,
             "storage mean": 300, "storage std": 0,
             "computation mean": 60, "computation std": 0,
             "bandwidth mean": 60, "bandwidth std": 0
-        },
-        {
-            "name": "xlarge",
-            "probability": 0.3,
-            "storage mean": 400, "storage std": 0,
-            "computation mean": 80, "computation std": 0,
-            "bandwidth mean": 80, "bandwidth std": 0
-        },
-        {
-            "name": "2xlarge",
-            "probability": 0.2,
-            "storage mean": 600, "storage std": 0,
-            "computation mean": 100, "computation std": 0,
-            "bandwidth mean": 100, "bandwidth std": 0
         }
     ]
 }
