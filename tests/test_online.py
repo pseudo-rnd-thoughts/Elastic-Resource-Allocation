@@ -67,18 +67,18 @@ def test_online_server_capacities(model_dist=SyntheticModelDist(num_servers=8),
 def test_optimal_solutions(model_dist=SyntheticModelDist(num_servers=8),
                            time_steps: int = 20, mean_arrival_rate: int = 4, std_arrival_rate: float = 2):
     tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-    fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
+    non_elastic_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
 
     # batched_tasks = generate_batch_tasks(tasks, 1, time_steps)
-    # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
-    #                                      minimal_flexible_optimal_solver, solver_time_limit=2)
+    # optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Elastic Optimal',
+    #                                      minimal_allocated_resources_solver, solver_time_limit=2)
     # print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
     # reset_model([], servers)
 
-    fixed_batched_tasks = generate_batch_tasks(fixed_tasks, 1, time_steps)
-    fixed_optimal_result = online_batch_solver(fixed_batched_tasks, servers, 1, 'Fixed Optimal',
-                                               non_elastic_optimal_solver, time_limit=2)
-    print(f'\nFixed Optimal - Social welfare: {fixed_optimal_result.social_welfare}')
+    non_elastic_batched_tasks = generate_batch_tasks(non_elastic_tasks, 1, time_steps)
+    non_elastic_optimal_result = online_batch_solver(non_elastic_batched_tasks, servers, 1, 'Non-elastic Optimal',
+                                                     non_elastic_optimal_solver, time_limit=2)
+    print(f'\nNon-elastic Optimal - Social welfare: {non_elastic_optimal_result.social_welfare}')
     reset_model([], servers)
 
     batched_tasks = generate_batch_tasks(tasks, 4, time_steps)
@@ -122,19 +122,19 @@ def test_batch_lengths(model_dist=SyntheticModelDist(num_servers=8),
         reset_model(flattened_tasks, servers)
 
 
-def test_online_fixed_task():
+def test_online_non_elastic_task():
     model_dist = SyntheticModelDist(num_servers=8)
     tasks, servers = model_dist.generate_online(20, 4, 2)
-    fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
-    batched_fixed_tasks = generate_batch_tasks(fixed_tasks, 5, 20)
+    non_elastic_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
+    batched_non_elastic_tasks = generate_batch_tasks(non_elastic_tasks, 5, 20)
 
-    for batch_fixed_tasks in batched_fixed_tasks:
-        for fixed_task in batch_fixed_tasks:
-            time_taken = fixed_task.required_storage * fixed_task.compute_speed * fixed_task.sending_speed + \
-                         fixed_task.loading_speed * fixed_task.required_computation * fixed_task.sending_speed + \
-                         fixed_task.loading_speed * fixed_task.compute_speed * fixed_task.required_results_data
-            assert time_taken <= fixed_task.deadline * fixed_task.loading_speed * \
-                   fixed_task.compute_speed * fixed_task.sending_speed
+    for batch_non_elastic_tasks in batched_non_elastic_tasks:
+        for non_elastic_task in batch_non_elastic_tasks:
+            time_taken = non_elastic_task.required_storage * non_elastic_task.compute_speed * non_elastic_task.sending_speed + \
+                         non_elastic_task.loading_speed * non_elastic_task.required_computation * non_elastic_task.sending_speed + \
+                         non_elastic_task.loading_speed * non_elastic_task.compute_speed * non_elastic_task.required_results_data
+            assert time_taken <= non_elastic_task.deadline * non_elastic_task.loading_speed * \
+                   non_elastic_task.compute_speed * non_elastic_task.sending_speed
 
 
 def test_minimise_resources():
@@ -144,12 +144,12 @@ def test_minimise_resources():
     def custom_solver(_tasks: List[ElasticTask], _servers: List[Server],
                       solver_time_limit: int = 3, minimise_time_limit: int = 2):
         """
-        A custom solver for the flexible optimal solver which then checks that resource allocation is valid then
+        A custom solver for the elastic optimal solver which then checks that resource allocation is valid then
             minimises resource allocation
 
         :param _tasks: List of tasks for the time interval
         :param _servers: List of servers
-        :param solver_time_limit: Flexible resource allocation time limit
+        :param solver_time_limit: elastic resource allocation time limit
         :param minimise_time_limit: Minimise resource allocation time limit
         """
         valid_servers = [server for server in servers if
@@ -170,7 +170,7 @@ def test_minimise_resources():
         minimal_allocated_resources_solver(_tasks, valid_servers, minimise_time_limit)
 
     batched_tasks = generate_batch_tasks(tasks, 1, 20)
-    optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Flexible Optimal',
+    optimal_result = online_batch_solver(batched_tasks, servers, 1, 'Online Elastic Optimal',
                                          custom_solver, solver_time_limit=2)
     print(f'Optimal - Social welfare: {optimal_result.social_welfare}')
     reset_model([], servers)

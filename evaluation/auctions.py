@@ -27,8 +27,8 @@ def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50
     :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param dia_time_limit: Decentralised iterative auction time limit
-    :param run_elastic: If to run the flexible vcg auction
-    :param run_non_elastic: If to run the fixed vcg auction
+    :param run_elastic: If to run the elastic vcg auction
+    :param run_non_elastic: If to run the non-elastic vcg auction
     """
     print(f'Evaluates the auction algorithms (cva, dia, elastic vcg, non-elastic vcg) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
@@ -37,7 +37,7 @@ def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
+        tasks, servers, non_elastic_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         if run_elastic:
             # Elastic VCG Auctions
@@ -48,10 +48,10 @@ def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50
 
         if run_non_elastic:
             # Elastic VCG auction
-            vcg_result = non_elastic_vcg_auction(fixed_tasks, servers, time_limit=None)
+            vcg_result = non_elastic_vcg_auction(non_elastic_tasks, servers, time_limit=None)
             algorithm_results[vcg_result.algorithm] = vcg_result.store()
             vcg_result.pretty_print()
-            reset_model(fixed_tasks, servers)
+            reset_model(non_elastic_tasks, servers)
 
         # Decentralised Iterative auction
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit=dia_time_limit)
@@ -81,12 +81,12 @@ def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == '' or args.extra == 'full optimal':
+    if args.extra == '' or args.extra == 'elastic optimal':
         auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                            run_elastic=True, run_non_elastic=True)
-    elif args.extra == 'fixed optimal':
+    elif args.extra == 'non-elastic optimal':
         auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                            run_elastic=False, run_non_elastic=True)
-    elif args.extra == 'time limited':
+    elif args.extra == 'greedy':
         auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                            run_elastic=False, run_non_elastic=False)

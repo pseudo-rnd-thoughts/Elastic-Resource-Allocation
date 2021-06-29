@@ -25,7 +25,7 @@ from src.optimal.elastic_optimal import elastic_optimal_solver, elastic_optimal,
 def test_optimal_solution():
     model_dist = SyntheticModelDist(num_tasks=20, num_servers=4)
     tasks, servers = model_dist.generate_oneshot()
-    fixed_tasks = generate_non_elastic_tasks(tasks)
+    non_elastic_tasks = generate_non_elastic_tasks(tasks)
 
     greedy_result = greedy_algorithm(tasks, servers,
                                      UtilityDeadlinePerResourcePriority(), SumResources(), SumPercentage())
@@ -40,16 +40,16 @@ def test_optimal_solution():
     print(f'Server relaxed - {server_relaxed_result.social_welfare}')
     reset_model(tasks, servers)
 
-    fixed_optimal_result = non_elastic_optimal(fixed_tasks, servers, 5)
-    print(f'Fixed Optimal - {fixed_optimal_result.social_welfare}')
-    reset_model(fixed_tasks, servers)
+    non_elastic_optimal_result = non_elastic_optimal(non_elastic_tasks, servers, 5)
+    print(f'Non-elastic Optimal - {non_elastic_optimal_result.social_welfare}')
+    reset_model(non_elastic_tasks, servers)
 
 
 def test_optimal_time_limit(model_dist: ModelDist,
                             time_limits: Sequence[int] = (10, 30, 60, 5 * 60, 15 * 60, 60 * 60, 24 * 60 * 60)):
     tasks, servers = model_dist.generate_oneshot()
 
-    print("Models")
+    print('Models')
     print_model(tasks, servers)
 
     for time_limit in time_limits:
@@ -67,11 +67,11 @@ def test_minimise_resource_allocation():
     tasks, servers = model_dist.generate_oneshot()
 
     elastic_optimal(tasks, servers, 5)
-    plot_allocation_results(tasks, servers, "Optimal Flexible Resource Allocation", image_formats=[])
+    plot_allocation_results(tasks, servers, 'Optimal Elastic Resource Allocation', image_formats=[])
     plt.show()
 
     minimal_allocated_resources_solver(tasks, servers)
-    plot_allocation_results(tasks, servers, "Minimised Optimal Flexible Resource Allocation", image_formats=[])
+    plot_allocation_results(tasks, servers, 'Minimised Optimal Elastic Resource Allocation', image_formats=[])
     plt.show()
 
 

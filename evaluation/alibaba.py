@@ -21,30 +21,30 @@ def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repe
         servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
         foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(
             servers, model_dist.num_tasks)
-        fixed_foreknowledge_tasks = generate_non_elastic_tasks(foreknowledge_tasks)
-        fixed_requested_tasks = generate_non_elastic_tasks(requested_tasks)
+        non_elastic_foreknowledge_tasks = generate_non_elastic_tasks(foreknowledge_tasks)
+        non_elastic_requested_tasks = generate_non_elastic_tasks(requested_tasks)
 
         algorithm_results = {
             'model': {'foreknowledge tasks': [foreknowledge_task.save() for foreknowledge_task in foreknowledge_tasks],
-                      'requested_tasks': [requested_task.save() for requested_task in requested_tasks],
+                      'requested tasks': [requested_task.save() for requested_task in requested_tasks],
                       'servers': [server.save() for server in servers]}}
 
         if run_elastic:
             results = elastic_optimal(foreknowledge_tasks, servers, time_limit=None)
-            algorithm_results['foreknowledge flexible optimal'] = results.store()
+            algorithm_results['foreknowledge elastic optimal'] = results.store()
             reset_model(foreknowledge_tasks, servers)
 
             results = elastic_optimal(requested_tasks, servers, time_limit=None)
-            algorithm_results['requested flexible optimal'] = results.store()
+            algorithm_results['requested elastic optimal'] = results.store()
             reset_model(requested_tasks, servers)
 
-        results = non_elastic_optimal(fixed_foreknowledge_tasks, servers, time_limit=None)
-        algorithm_results['foreknowledge fixed optimal'] = results.store()
-        reset_model(fixed_foreknowledge_tasks, servers)
+        results = non_elastic_optimal(non_elastic_foreknowledge_tasks, servers, time_limit=None)
+        algorithm_results['foreknowledge non-elastic optimal'] = results.store()
+        reset_model(non_elastic_foreknowledge_tasks, servers)
 
-        results = non_elastic_optimal(fixed_requested_tasks, servers, time_limit=None)
-        algorithm_results['requested fixed optimal'] = results.store()
-        reset_model(fixed_requested_tasks, servers)
+        results = non_elastic_optimal(non_elastic_requested_tasks, servers, time_limit=None)
+        algorithm_results['requested non-elastic optimal'] = results.store()
+        reset_model(non_elastic_requested_tasks, servers)
 
         greedy_permutations(foreknowledge_tasks, servers, algorithm_results, 'foreknowledge ')
         greedy_permutations(requested_tasks, servers, algorithm_results, 'requested ')
@@ -74,17 +74,17 @@ def task_sizing():
         foreknowledge_tasks, requested_tasks = model_dist.generate_foreknowledge_requested_tasks(
             servers, model_dist.num_tasks)
 
-        fixed_foreknowledge_tasks = generate_non_elastic_tasks(foreknowledge_tasks)
-        fixed_requested_tasks = generate_non_elastic_tasks(requested_tasks)
+        non_elastic_foreknowledge_tasks = generate_non_elastic_tasks(foreknowledge_tasks)
+        non_elastic_requested_tasks = generate_non_elastic_tasks(requested_tasks)
 
         model_scales[name] = {
             'servers': [server.save() for server in servers],
 
-            'foreknowledge tasks': [task.save() for task in foreknowledge_tasks],
-            'fixed foreknowledge tasks': [task.save() for task in fixed_foreknowledge_tasks],
+            'elastic foreknowledge tasks': [task.save() for task in foreknowledge_tasks],
+            'non-elastic foreknowledge tasks': [task.save() for task in non_elastic_foreknowledge_tasks],
 
-            'requested tasks': [task.save() for task in requested_tasks],
-            'fixed requested tasks': [task.save() for task in fixed_requested_tasks]
+            'elastic requested tasks': [task.save() for task in requested_tasks],
+            'non-elastic requested tasks': [task.save() for task in non_elastic_requested_tasks]
         }
 
     with open('model_scaling.json', 'w') as file:
@@ -94,9 +94,9 @@ def task_sizing():
 if __name__ == "__main__":
     args = parse_args()
 
-    if args.extra == 'foreknowledge flexible':
+    if args.extra == 'foreknowledge elastic':
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_elastic=True)
-    elif args.extra == 'foreknowledge fixed':
+    elif args.extra == 'foreknowledge non-elastic':
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_elastic=False)
     elif args.extra == 'task sizing':
         task_sizing()

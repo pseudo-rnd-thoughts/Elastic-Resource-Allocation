@@ -283,7 +283,7 @@ def dia_repeat(model_dist: ModelDist, repeat_num: int, repeats: int = 25, auctio
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers, fixed_tasks, repeat_results = generate_evaluation_model(model_dist, pretty_printer)
+        tasks, servers, non_elastic_tasks, repeat_results = generate_evaluation_model(model_dist, pretty_printer)
         set_server_heuristics(servers, price_change=price_change, initial_price=initial_price)
 
         for auction_repeat in range(auction_repeats):

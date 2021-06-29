@@ -61,7 +61,7 @@ def alibaba_task_generation():
         try:
             NonElasticTask(task, non_elastic_task_policy)
         except AssertionError as e:
-            print(f'Error for fixed task index {index}', e)
+            print(f'Error for non-elastic task index {index}', e)
             print(task.required_storage / storage_scaling, task.required_computation / computational_scaling,
                   task.required_results_data / results_data_scaling)
 
@@ -108,17 +108,16 @@ def test_args():
 
 
 def test_model_tasks(num_servers: int = 8):
-    greedy_results = []
-    fixed_results = []
+    greedy_results, non_elastic_results = [], []
     for num_tasks in range(24, 60, 4):
         model = SyntheticModelDist(num_tasks, num_servers)
         tasks, servers = model.generate_oneshot()
-        fixed_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
+        non_elastic_tasks = [NonElasticTask(task, SumSpeedPowResourcePriority()) for task in tasks]
 
         greedy_results.append([num_tasks, greedy_algorithm(tasks, servers, UtilityDeadlinePerResourcePriority(),
                                                            SumResources(), SumPercentage())])
         reset_model(tasks, servers)
-        fixed_results.append([num_tasks, non_elastic_optimal(fixed_tasks, servers, 3)])
+        non_elastic_results.append([num_tasks, non_elastic_optimal(non_elastic_tasks, servers, 3)])
 
     def print_results(results):
         """
@@ -137,13 +136,13 @@ def test_model_tasks(num_servers: int = 8):
 
     print('\n\n\tGreedy algorithm')
     print_results(greedy_results)
-    print('\n\tFixed Tasks')
-    print_results(fixed_results)
+    print('\n\tNon-elastic optimal results')
+    print_results(non_elastic_results)
 
-    print(f'\nNum of Tasks | Difference | Greedy SW | Fixed SW')
-    for (num_tasks, greedy_result), (_, fixed_result) in zip(greedy_results, fixed_results):
-        print(f' {num_tasks:11} | {fixed_result.social_welfare - greedy_result.social_welfare:10.3f} | '
-              f'{greedy_result.social_welfare:9.3f} | {fixed_result.social_welfare:8.3f}')
+    print(f'\nNum of Tasks | Difference | Greedy SW | Non-elastic SW')
+    for (num_tasks, greedy_result), (_, non_elastic_result) in zip(greedy_results, non_elastic_results):
+        print(f' {num_tasks:11} | {non_elastic_result.social_welfare - greedy_result.social_welfare:10.3f} | '
+              f'{greedy_result.social_welfare:9.3f} | {non_elastic_result.social_welfare:8.3f}')
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 """
 All of the other evaluation scripts test the algorithm within a static / one-shot case, this script tests the greedy
-    algorithms using batched time steps compared to an optimal fixed speed online case
+    algorithms using batched time steps compared to an optimal non-elastic speed online case
 """
 
 from __future__ import annotations

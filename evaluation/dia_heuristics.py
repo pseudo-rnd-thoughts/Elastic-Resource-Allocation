@@ -39,7 +39,7 @@ def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: i
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
+        tasks, servers, non_elastic_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         for initial_price in initial_prices:
             for price_change in price_changes:
@@ -85,7 +85,7 @@ def non_uniform_server_heuristics(model_dist: ModelDist, repeat_num: int, repeat
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
-        tasks, servers, fixed_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
+        tasks, servers, non_elastic_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
 
         set_server_heuristics(servers, price_change=price_change_mean, initial_price=initial_price_mean)
         dia_result = optimal_decentralised_iterative_auction(tasks, servers, time_limit)
