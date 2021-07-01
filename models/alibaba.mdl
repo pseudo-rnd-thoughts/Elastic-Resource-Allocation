@@ -6,7 +6,7 @@
     "server distributions": [
         {
             "name": "large",
-            "probability": 0.3,
+            "probability": 1,
             "storage mean": 300, "storage std": 0,
             "computation mean": 60, "computation std": 0,
             "bandwidth mean": 60, "bandwidth std": 0
