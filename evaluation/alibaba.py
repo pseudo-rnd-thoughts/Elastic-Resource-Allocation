@@ -62,13 +62,12 @@ def task_sizing():
     model_dist = AlibabaModelDist(1000, 6)
     model_scales = {}
     for storage_scaling, computation_scaling, results_data_scaling in [
-        (500, 1, 5), (500, 0.2, 5), (1000, 0.4, 10)
+        (500, 1, 5), (500, 0.2, 5), (1000, 0.5, 10)
     ]:
         name = f'Storage: {storage_scaling}, computation: {computation_scaling}, results data: {results_data_scaling}'
         model_dist.storage_scaling = storage_scaling
         model_dist.computational_scaling = computation_scaling
         model_dist.results_scaling = results_data_scaling
-        print(name)
 
         servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
 
@@ -119,7 +118,7 @@ def server_sizing(repeats: int = 20):
 
         server_scales[f'{mean_storage}, {mean_computation}, {mean_bandwidth}'] = model_results
 
-        with open('server_scaling.json') as file:
+        with open('server_scaling.json', 'w') as file:
             json.dump(server_scales, file)
 
 
