@@ -2,6 +2,8 @@ qsub -v file='greedy',model_file='synthetic',num_tasks='10',num_servers='2',extr
 qsub -v file='greedy',model_file='synthetic',num_tasks='15',num_servers='3',extra='elastic optimal' run_script.sh
 qsub -v file='greedy',model_file='synthetic',num_tasks='15',num_servers='3',extra='relaxed optimal' run_script.sh
 qsub -v file='greedy',model_file='synthetic',num_tasks='15',num_servers='3',extra='non-elastic optimal' run_script.sh
+qsub -v file='greedy',model_file='synthetic',num_tasks='20',num_servers='4',extra='relaxed optimal' run_script.sh
+qsub -v file='greedy',model_file='synthetic',num_tasks='20',num_servers='4',extra='non-elastic optimal' run_script.sh
 qsub -v file='greedy',model_file='synthetic',num_tasks='30',num_servers='6',extra='non-elastic optimal' run_script.sh
 qsub -v file='greedy',model_file='synthetic',num_tasks='30',num_servers='6',extra='relaxed optimal' run_script.sh
 qsub -v file='greedy',model_file='synthetic',num_tasks='40',num_servers='8',extra='greedy' run_script.sh
@@ -20,6 +22,7 @@ qsub -v file='auctions',model_file='synthetic',num_tasks='40',num_servers='8',ex
 
 qsub -v file='resource_ratio',model_file='synthetic',num_tasks='15',num_servers='3' run_script.sh
 qsub -v file='resource_ratio',model_file='synthetic',num_tasks='15',num_servers='3',extra='non-elastic optimal' run_script.sh
+qsub -v file='resource_ratio',model_file='synthetic',num_tasks='20',num_servers='4',extra='non-elastic optimal' run_script.sh
 qsub -v file='resource_ratio',model_file='synthetic',num_tasks='30',num_servers='6',extra='non-elastic optimal' run_script.sh
 qsub -v file='resource_ratio',model_file='synthetic',num_tasks='40',num_servers='8' run_script.sh
 
