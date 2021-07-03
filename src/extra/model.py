@@ -165,10 +165,10 @@ def get_model(model_name: str, num_tasks: Optional[int] = None, num_servers: Opt
 def generate_evaluation_model(model_dist: ModelDist, pp: PrettyPrinter):
     # Generate the tasks and servers
     tasks, servers = model_dist.generate_oneshot()
-    fixed_tasks = generate_non_elastic_tasks(tasks)
+    non_elastic_tasks = generate_non_elastic_tasks(tasks)
     algorithm_results = {'model': {
         'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
     }}
     pp.pprint(algorithm_results)
 
-    return tasks, servers, fixed_tasks, algorithm_results
+    return tasks, servers, non_elastic_tasks, algorithm_results
