@@ -3,11 +3,12 @@ Tests the realistic settings
 """
 
 import json
+from pprint import PrettyPrinter
 
 from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import parse_args, results_filename
-from src.extra.model import AlibabaModelDist
+from src.extra.model import AlibabaModelDist, generate_evaluation_model
 from src.greedy.greedy import greedy_permutations
 from src.optimal.elastic_optimal import elastic_optimal
 from src.optimal.non_elastic_optimal import non_elastic_optimal
@@ -91,6 +92,37 @@ def task_sizing():
         json.dump(model_scales, file)
 
 
+def server_sizing(repeats: int = 20):
+    model_dist = AlibabaModelDist(20, 4)
+    pretty_printer, server_scales = PrettyPrinter(), {}
+
+    for mean_storage, mean_computation, mean_bandwidth in ((300, 60, 60), (340, 90, 190),
+                                                           (300, 70, 160), (300, 80, 170)):
+        model_dist.model['server distributions'] = [{
+            "name": "custom",
+            "probability": 1,
+            "storage mean": mean_storage, "storage std": 30,
+            "computation mean": mean_computation, "computation std": 8,
+            "bandwidth mean": mean_bandwidth, "bandwidth std": 15
+        }]
+        model_results = []
+        for _ in range(repeats):
+            tasks, servers, non_elastic_tasks, algorithm_results = generate_evaluation_model(model_dist, pretty_printer)
+
+            non_elastic_results = non_elastic_optimal(non_elastic_tasks, servers, time_limit=60)
+            algorithm_results[non_elastic_results.algorithm] = non_elastic_results.store()
+            reset_model(non_elastic_tasks, servers)
+
+            greedy_permutations(tasks, servers, algorithm_results)
+
+            model_results.append(algorithm_results)
+
+        server_scales[f'{mean_storage}, {mean_computation}, {mean_bandwidth}'] = model_results
+
+        with open('server_scaling.json') as file:
+            json.dump(server_scales, file)
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -100,3 +132,5 @@ if __name__ == "__main__":
         foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_elastic=False)
     elif args.extra == 'task sizing':
         task_sizing()
+    if args.extra == 'server sizing':
+        server_sizing()
