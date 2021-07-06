@@ -95,7 +95,7 @@ def server_sizing(repeats: int = 20):
     model_dist = AlibabaModelDist(20, 4)
     pretty_printer, server_scales = PrettyPrinter(), {}
 
-    for mean_storage, mean_computation, mean_bandwidth in ((400, 60, 150), (400, 50, 150), (350, 50, 160)):
+    for mean_storage, mean_computation, mean_bandwidth in ((400, 50, 120), (400, 60, 150), (400, 70, 160)):
         model_dist.model['server distributions'] = [{
             "name": "custom",
             "probability": 1,
