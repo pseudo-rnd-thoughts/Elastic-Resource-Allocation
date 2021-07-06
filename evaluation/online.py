@@ -22,7 +22,7 @@ from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
 def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 3, 6), time_steps: int = 250,
+                     batch_lengths: Iterable[int] = (1, 3, 6), time_steps: int = 1000,
                      mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
                      task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
                      server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
