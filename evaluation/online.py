@@ -22,8 +22,8 @@ from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
 def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 3, 6), time_steps: int = 1000,
-                     mean_arrival_rate: int = 4, std_arrival_rate: float = 2,
+                     batch_lengths: Iterable[int] = (1, 3, 6), time_steps: int = 200,
+                     mean_arrival_rate: int = 1, std_arrival_rate: float = 2,
                      task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
                      server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
     """
@@ -42,6 +42,7 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     """
     print(f'Evaluates difference in performance between batch and online algorithm for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
+    print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate} with std: {std_arrival_rate}')
     model_results = []
     pp = pprint.PrettyPrinter()
 
@@ -99,4 +100,11 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
 if __name__ == "__main__":
     args = parse_args()
 
-    batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
+    if args.model == 'alibaba':
+        batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                         time_steps=1000, mean_arrival_rate=2, std_arrival_rate=1, batch_lengths=(1, 5, 10))
+    elif args.model == 'synthetic':
+        batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                         time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
+    else:
+        batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
