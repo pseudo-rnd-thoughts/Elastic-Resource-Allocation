@@ -74,7 +74,7 @@ class Result:
         """
         Pretty prints the results
         """
-        pp.pprint(self.data)
+        self.pp.pprint(self.data)
 
     def store(self, **kwargs):
         """
