@@ -22,6 +22,8 @@ class Result:
     Results class that holds information about the results of an algorithm
     """
 
+    pp = pprint.PrettyPrinter()
+
     def __init__(self, algorithm_name: str, tasks: List[ElasticTask], servers: List[Server], solve_time: float,
                  limited: bool = False, is_auction: bool = False, **kwargs):
         self.data = {
@@ -72,7 +74,6 @@ class Result:
         """
         Pretty prints the results
         """
-        pp = pprint.PrettyPrinter()
         pp.pprint(self.data)
 
     def store(self, **kwargs):
