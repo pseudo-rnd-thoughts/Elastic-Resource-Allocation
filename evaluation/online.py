@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     if args.model == 'alibaba':
         batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                         time_steps=1000, mean_arrival_rate=2, std_arrival_rate=1, batch_lengths=(1, 5, 10))
+                         time_steps=1000, mean_arrival_rate=2, std_arrival_rate=1, batch_lengths=(1, 10, 20))
     elif args.model == 'synthetic':
         batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                          time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         if args.extra == 'greedy':
             if args.model == 'alibaba':
                 greedy_permutations(get_model(args.model, args.tasks, args.servers), args.repeat, std_arrival_rate=1,
-                                    batch_lengths=(1, 5, 10, 15, 20))
+                                    batch_lengths=(1, 7, 15))
             elif args.model == 'synthetic':
                 batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                                  time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
