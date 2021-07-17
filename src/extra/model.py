@@ -41,7 +41,7 @@ class ModelDist:
         servers = [self.generate_server(server_id) for server_id in range(self.num_servers)]
         return [self.generate_task(servers, task_id) for task_id in range(self.num_tasks)], servers
 
-    def generate_online(self, time_steps: int, mean_arrival_rate: int,
+    def generate_online(self, time_steps: int, mean_arrival_rate: float,
                         std_arrival_rate: float) -> Tuple[List[ElasticTask], List[Server]]:
         """
         Create a list of tasks and servers from a task and server distribution with online distribution
