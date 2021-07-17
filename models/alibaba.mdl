@@ -7,9 +7,9 @@
         {
             "name": "large",
             "probability": 1,
-            "storage mean": 600, "storage std": 20,
+            "storage mean": 750, "storage std": 30,
             "computation mean": 80, "computation std": 10,
-            "bandwidth mean": 160, "bandwidth std": 15
+            "bandwidth mean": 140, "bandwidth std": 15
         }
     ]
 }
