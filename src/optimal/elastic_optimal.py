@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from docplex.cp.model import CpoModel
 from docplex.cp.solution import SOLVE_STATUS_FEASIBLE, SOLVE_STATUS_OPTIMAL, CpoSolveResult
+from docplex.cp.solver.solver import CpoSolverException
 
 from src.core.core import server_task_allocation
 from src.core.super_server import SuperServer
@@ -70,7 +71,11 @@ def elastic_optimal_solver(tasks: List[ElasticTask], servers: List[Server], time
     model.maximize(sum(task.value * task_allocation[(task, server)] for task in runnable_tasks for server in servers))
 
     # Solve the cplex model with time limit
-    model_solution: CpoSolveResult = model.solve(log_output=None, TimeLimit=time_limit)
+    try:
+        model_solution: CpoSolveResult = model.solve(log_output=None, TimeLimit=time_limit)
+    except CpoSolverException as e:
+        print(f'Solver Exception: ', e)
+        return None
 
     # Check that it is solved
     if model_solution.get_solve_status() != SOLVE_STATUS_FEASIBLE and \
