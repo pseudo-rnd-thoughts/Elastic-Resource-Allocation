@@ -100,12 +100,12 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
 
 def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
                         batch_lengths: Iterable[int] = (1, 5, 10, 15, 20), time_steps: int = 1000,
-                        mean_arrival_rate: int = 2, std_arrival_rate: float = 2):
+                        mean_arrival_rate: float = 2, std_arrival_rate: float = 2):
     print(f'Evaluates difference in performance between different greedy permutations and batch lengths')
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate}, std: {std_arrival_rate}')
     model_results = []
 
-    filename = results_filename('greedy_online', model_dist, repeat_num)
+    filename = results_filename('online_greedy_permutations', model_dist, repeat_num)
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
@@ -167,9 +167,10 @@ if __name__ == "__main__":
                          time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
     else:
         if args.extra == 'greedy':
+            print(f'Running greedy permutations for {args.model}')
             if args.model == 'alibaba':
-                greedy_permutations(get_model(args.model, args.tasks, args.servers), args.repeat, std_arrival_rate=1,
-                                    batch_lengths=(1, 10, 20))
+                greedy_permutations(get_model(args.model, args.tasks, args.servers), args.repeat, time_steps=500,
+                                    mean_arrival_rate=1.5, std_arrival_rate=1, batch_lengths=(1, 10, 20))
             elif args.model == 'synthetic':
                 batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
                                  time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
