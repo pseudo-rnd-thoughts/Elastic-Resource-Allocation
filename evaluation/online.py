@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import pprint
-from typing import Iterable
 
 from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
@@ -22,18 +21,16 @@ from src.greedy.task_priority import UtilityDeadlinePerResourcePriority, Resourc
 from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
-def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                     batch_lengths: Iterable[int] = (1, 3, 6), time_steps: int = 200,
-                     mean_arrival_rate: float = 1, std_arrival_rate: float = 2,
-                     task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
-                     server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
+def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20, time_steps: int = 200,
+                      mean_arrival_rate: float = 1, std_arrival_rate: float = 2,
+                      task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
+                      server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
     """
     Evaluates the batch online
 
     :param model_dist: The model distribution
     :param repeat_num: The repeat number
     :param repeats: The number of repeats
-    :param batch_lengths: List of batch lengths
     :param time_steps: Total number of time steps
     :param mean_arrival_rate: Mean arrival rate of tasks
     :param std_arrival_rate: Standard deviation arrival rate of tasks
@@ -49,48 +46,42 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
 
     filename = results_filename('batch_online', model_dist, repeat_num)
     greedy_name = f'Greedy {task_priority.name}, {server_selection.name}, {resource_allocation.name}'
+    batch_length = 1
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-        batch_results = {'model': {
+        algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
-        pp.pprint(batch_results)
         non_elastic_tasks = generate_non_elastic_tasks(tasks)
 
-        # Batch greedy algorithm
-        for batch_length in batch_lengths:
-            valid_elastic_tasks = [task for task in tasks if batch_length < task.deadline]
-            batched_elastic_tasks = generate_batch_tasks(valid_elastic_tasks, batch_length, time_steps)
+        valid_elastic_tasks = [task for task in tasks if batch_length < task.deadline]
+        batched_elastic_tasks = generate_batch_tasks(valid_elastic_tasks, batch_length, time_steps)
 
-            valid_non_elastic_tasks = [task for task in non_elastic_tasks if batch_length < task.deadline]
-            batched_non_elastic_tasks = generate_batch_tasks(valid_non_elastic_tasks, batch_length, time_steps)
+        valid_non_elastic_tasks = [task for task in non_elastic_tasks if batch_length < task.deadline]
+        batched_non_elastic_tasks = generate_batch_tasks(valid_non_elastic_tasks, batch_length, time_steps)
 
-            # Flatten the tasks
-            flattened_elastic_tasks = [task for tasks in batched_elastic_tasks for task in tasks]
-            flattened_non_elastic_tasks = [task for tasks in batched_non_elastic_tasks for task in tasks]
+        # Flatten the tasks
+        flattened_elastic_tasks = [task for tasks in batched_elastic_tasks for task in tasks]
+        flattened_non_elastic_tasks = [task for tasks in batched_non_elastic_tasks for task in tasks]
 
-            algorithm_results = {}
-            non_elastic_optimal_result = online_batch_solver(
-                batched_non_elastic_tasks, servers, batch_length, 'Non-elastic Optimal', non_elastic_optimal_solver,
-                time_limit=None)
-            algorithm_results[non_elastic_optimal_result.algorithm] = non_elastic_optimal_result.store()
-            non_elastic_optimal_result.pretty_print()
-            reset_model(flattened_non_elastic_tasks, servers)
+        non_elastic_optimal_result = online_batch_solver(
+            batched_non_elastic_tasks, servers, batch_length, 'Non-elastic Optimal', non_elastic_optimal_solver,
+            time_limit=None)
+        algorithm_results[non_elastic_optimal_result.algorithm] = non_elastic_optimal_result.store()
+        reset_model(flattened_non_elastic_tasks, servers)
 
-            # Loop over all of the greedy policies permutations
-            greedy_result = online_batch_solver(
-                batched_elastic_tasks, servers, batch_length, greedy_name, greedy_algorithm,
-                task_priority=task_priority, server_selection=server_selection, resource_allocation=resource_allocation)
-            algorithm_results[greedy_result.algorithm] = greedy_result.store()
-            greedy_result.pretty_print()
-            reset_model(flattened_elastic_tasks, servers)
+        # Loop over all of the greedy policies permutations
+        greedy_result = online_batch_solver(
+            batched_elastic_tasks, servers, batch_length, greedy_name, greedy_algorithm,
+            task_priority=task_priority, server_selection=server_selection, resource_allocation=resource_allocation)
+        algorithm_results[greedy_result.algorithm] = greedy_result.store()
+        reset_model(flattened_elastic_tasks, servers)
 
-            # Add the results to the data
-            batch_results[f'batch length {batch_length}'] = algorithm_results
-        model_results.append(batch_results)
+        # Add the results to the data
+        model_results.append(algorithm_results)
 
         # Save the results to the file
         with open(filename, 'w') as file:
@@ -98,57 +89,50 @@ def batch_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     print('Finished running')
 
 
-def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
-                        batch_lengths: Iterable[int] = (1, 5, 10, 15, 20), time_steps: int = 1000,
+def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 20, time_steps: int = 1000,
                         mean_arrival_rate: float = 2, std_arrival_rate: float = 2):
     print(f'Evaluates difference in performance between different greedy permutations and batch lengths')
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate}, std: {std_arrival_rate}')
     model_results = []
+    batch_length = 1
 
     filename = results_filename('online_greedy_permutations', model_dist, repeat_num)
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
         tasks, servers = model_dist.generate_online(time_steps, mean_arrival_rate, std_arrival_rate)
-        batch_results = {'model': {
+        algorithm_results = {'model': {
             'tasks': [task.save() for task in tasks], 'servers': [server.save() for server in servers]
         }}
 
-        # Batch lengths
-        for batch_length in batch_lengths:
-            print(batch_length)
-            valid_tasks = [task for task in tasks if batch_length < task.deadline]
-            batched_tasks = generate_batch_tasks(valid_tasks, batch_length, time_steps)
-            flattened_tasks = [task for tasks in batched_tasks for task in tasks]
+        valid_tasks = [task for task in tasks if batch_length < task.deadline]
+        batched_tasks = generate_batch_tasks(valid_tasks, batch_length, time_steps)
+        flattened_tasks = [task for tasks in batched_tasks for task in tasks]
 
-            algorithm_results = {}
-            for task_priority, server_selection, resource_allocation in [
-                (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), ProductResources(), SumPowPercentage()),
-                (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), ProductResources(True), SumPowPercentage()),
+        for task_priority, server_selection, resource_allocation in [
+            (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), ProductResources(), SumPowPercentage()),
+            (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), ProductResources(True), SumPowPercentage()),
 
-                (UtilityDeadlinePerResourcePriority(ResourceProductPriority()), ProductResources(), SumPowPercentage()),
-                (UtilityDeadlinePerResourcePriority(ResourceProductPriority()), ProductResources(True), SumPowPercentage()),
+            (UtilityDeadlinePerResourcePriority(ResourceProductPriority()), ProductResources(), SumPowPercentage()),
+            (UtilityDeadlinePerResourcePriority(ResourceProductPriority()), ProductResources(True), SumPowPercentage()),
 
-                (ValuePriority(), ProductResources(), SumPowPercentage()),
-                (ValuePriority(), ProductResources(), SumPowPercentage()),
+            (ValuePriority(), ProductResources(), SumPowPercentage()),
+            (ValuePriority(), ProductResources(), SumPowPercentage()),
 
-                (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), SumResources(), SumPowPercentage()),
-                (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), SumResources(True), SumPowPercentage())
-            ]:
-                greedy_name = f'Greedy {task_priority.name}, {server_selection.name}, ' \
-                              f'{resource_allocation.name}'
-                greedy_result = online_batch_solver(batched_tasks, servers, batch_length, greedy_name,
-                                                    greedy_algorithm, task_priority=task_priority,
-                                                    server_selection=server_selection,
-                                                    resource_allocation=resource_allocation)
-                algorithm_results[greedy_result.algorithm] = greedy_result.store()
-                print(greedy_name)
-                reset_model(flattened_tasks, servers)
+            (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), SumResources(), SumPowPercentage()),
+            (UtilityDeadlinePerResourcePriority(ResourceSumPriority()), SumResources(True), SumPowPercentage())
+        ]:
+            greedy_name = f'Greedy {task_priority.name}, {server_selection.name}, ' \
+                          f'{resource_allocation.name}'
+            greedy_result = online_batch_solver(batched_tasks, servers, batch_length, greedy_name,
+                                                greedy_algorithm, task_priority=task_priority,
+                                                server_selection=server_selection,
+                                                resource_allocation=resource_allocation)
+            algorithm_results[greedy_result.algorithm] = greedy_result.store()
+            print(greedy_name)
+            reset_model(flattened_tasks, servers)
 
-            # Add the results to the data
-            batch_results[f'batch length {batch_length}'] = algorithm_results
-
-        model_results.append(batch_results)
+        model_results.append(algorithm_results)
 
         # Save the results to the file
         with open(filename, 'w') as file:
@@ -160,19 +144,19 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.model == 'alibaba':
-        batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                         time_steps=500, mean_arrival_rate=1.5, std_arrival_rate=1, batch_lengths=(1, 10, 20))
+        online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                          time_steps=500, mean_arrival_rate=1.5, std_arrival_rate=1)
     elif args.model == 'synthetic':
-        batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                         time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
+        online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                          time_steps=250, mean_arrival_rate=3, std_arrival_rate=1)
     else:
         if args.extra == 'greedy':
             print(f'Running greedy permutations for {args.model}')
             if args.model == 'alibaba':
                 greedy_permutations(get_model(args.model, args.tasks, args.servers), args.repeat, time_steps=500,
-                                    mean_arrival_rate=1.5, std_arrival_rate=1, batch_lengths=(1, 10, 20))
+                                    mean_arrival_rate=1.5, std_arrival_rate=1)
             elif args.model == 'synthetic':
-                batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                                 time_steps=250, mean_arrival_rate=3, std_arrival_rate=1, batch_lengths=(1, 3, 6))
+                online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                                  time_steps=250, mean_arrival_rate=3, std_arrival_rate=1)
         else:
-            batch_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
+            online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
