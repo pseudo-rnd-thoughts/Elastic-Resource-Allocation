@@ -1,16 +1,17 @@
 """
 For online resource allocation using any resource allocation mechanism (optimal, greedy, fixed, etc)
 """
+
 import sys
 from math import ceil
 from time import time
 from typing import List
 
-from core.server import Server
-from core.elastic_task import ElasticTask
-from extra.result import Result, resource_usage
-from extra.visualise import minimal_allocated_resources_solver
-from optimal.elastic_optimal import elastic_optimal_solver
+from src.core.server import Server
+from src.core.elastic_task import ElasticTask
+from src.extra.result import Result, resource_usage
+from src.extra.visualise import minimal_allocated_resources_solver
+from src.optimal.elastic_optimal import elastic_optimal_solver
 
 
 def online_batch_solver(batched_tasks: List[List[ElasticTask]], servers: List[Server], batch_length: int,
