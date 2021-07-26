@@ -111,6 +111,34 @@ def lower_bound_testing(model_dist: ModelDist, repeat_num: int, repeats: int = 5
     print('Finished running')
 
 
+def algorithm_sizes(model_dist: ModelDist, repeat_num: int, repeats: int = 30):
+    """
+    Runs the greedy algorithm for a range of model sizes
+
+    :param model_dist: The model distributions
+    :param repeat_num: The repeat number
+    :param repeats: The number of repeats for each model size
+    """
+    pretty_printer, scale_results = PrettyPrinter(), {}
+    filename = results_filename('greedy_model_sizes', model_dist, repeat_num)
+    for num_tasks, num_servers in ((10, 2), (15, 3), (20, 4), (30, 6), (40, 8), (80, 16), (160, 32)):
+        model_dist.num_tasks = num_tasks
+        model_dist.num_servers = num_servers
+
+        model_results = []
+        for _ in range(repeats):
+            tasks, servers = model_dist.generate_oneshot()
+            algorithm_results = {}
+            greedy_permutations(tasks, servers, algorithm_results)
+            model_results.append(algorithm_results)
+
+        scale_results[f'{num_tasks} tasks, {num_servers} servers'] = model_results
+
+        # Save the results to the file
+        with open(filename, 'w') as file:
+            json.dump(model_results, file)
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -128,3 +156,5 @@ if __name__ == "__main__":
                           run_elastic_optimal=False, run_non_elastic_optimal=False, run_server_relaxed_optimal=False)
     elif args.extra == 'lower bound':
         lower_bound_testing(get_model(args.model, args.tasks, args.servers), args.repeat)
+    elif args.scaling == 'model sizes':
+        algorithm_sizes(get_model(args.model, args.tasks, args.servers), args.repeat)
