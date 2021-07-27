@@ -8,8 +8,8 @@
             "name": "large",
             "probability": 1,
             "storage mean": 750, "storage std": 30,
-            "computation mean": 60, "computation std": 10,
-            "bandwidth mean": 120, "bandwidth std": 15
+            "computation mean": 50, "computation std": 10,
+            "bandwidth mean": 130, "bandwidth std": 15
         }
     ]
 }
