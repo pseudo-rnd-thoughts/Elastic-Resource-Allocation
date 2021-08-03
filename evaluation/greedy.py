@@ -159,5 +159,5 @@ if __name__ == "__main__":
                           run_elastic_optimal=False, run_non_elastic_optimal=False, run_server_relaxed_optimal=False)
     elif args.extra == 'lower bound':
         lower_bound_testing(get_model(args.model, args.tasks, args.servers), args.repeat)
-    elif args.scaling == 'model sizes':
+    elif args.extra == 'model sizes':
         algorithm_sizes(get_model(args.model, args.tasks, args.servers), args.repeat)
