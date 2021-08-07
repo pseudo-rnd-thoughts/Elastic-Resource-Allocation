@@ -6,7 +6,6 @@ All of the other evaluation scripts test the algorithm within a static / one-sho
 from __future__ import annotations
 
 import json
-import pprint
 
 from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
@@ -42,7 +41,6 @@ def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate} with std: {std_arrival_rate}')
     model_results = []
-    pp = pprint.PrettyPrinter()
 
     filename = results_filename('batch_online', model_dist, repeat_num)
     greedy_name = f'Greedy {task_priority.name}, {server_selection.name}, {resource_allocation.name}'
@@ -90,11 +88,21 @@ def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
 
 
 def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 20, time_steps: int = 1000,
-                        mean_arrival_rate: float = 2, std_arrival_rate: float = 2):
-    print(f'Evaluates difference in performance between different greedy permutations and batch lengths')
+                        mean_arrival_rate: float = 2, std_arrival_rate: float = 2, batch_length: int = 1):
+    """
+    Evaluates the performance between greedy algorithms with different module functions
+
+    :param model_dist: The model distribution used to test with
+    :param repeat_num: The repeat number of this script
+    :param repeats: The number of testing repeats that are computed
+    :param time_steps: The total number of time steps for tasks to arrive at
+    :param mean_arrival_rate: The mean arrival rate of tasks
+    :param std_arrival_rate: The standard deviation of the arrival rate for the task
+    :param batch_length: The batch length of the testing setting
+    """
+    print(f'Evaluates performance between different greedy permutations')
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate}, std: {std_arrival_rate}')
     model_results = []
-    batch_length = 1
 
     filename = results_filename('online_greedy_permutations', model_dist, repeat_num)
     for repeat in range(repeats):
