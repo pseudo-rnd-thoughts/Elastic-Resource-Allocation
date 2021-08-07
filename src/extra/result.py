@@ -6,14 +6,20 @@ import pprint
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import List, Literal
 
     from src.core.server import Server
     from src.core.elastic_task import ElasticTask
 
 
-def resource_usage(server, resource):
-    """Resource usage of a server with a particular resource"""
+def resource_usage(server: Server, resource: Literal['storage', 'computation', 'bandwidth']) -> float:
+    """
+    Percentage usage by the server of a particular resource
+
+    :param server: The server for which the particular resource usage is calculated for
+    :param resource: One of the resources in the server
+    :return: The percentage resource usage by the server
+    """
     return round(1 - getattr(server, f'available_{resource}') / getattr(server, f'{resource}_capacity'), 3)
 
 
@@ -57,6 +63,9 @@ class Result:
                 },
                 'server bandwidth usage': {
                     server.name: 1 - server.available_bandwidth / server.bandwidth_capacity for server in servers
+                },
+                'server num tasks allocated': {
+                    server.name: len(server.allocated_tasks) for server in servers
                 }
             })
 
