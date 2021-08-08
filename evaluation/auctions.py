@@ -18,13 +18,12 @@ from src.greedy.server_selection import server_selection_functions
 from src.greedy.task_priority import task_priority_functions
 
 
-def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50, dia_time_limit: int = 3,
+def auction_evaluation(model_dist: ModelDist, repeats: int = 50, dia_time_limit: int = 3,
                        run_elastic: bool = True, run_non_elastic: bool = True):
     """
     Evaluation of different auction algorithms
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param dia_time_limit: Decentralised iterative auction time limit
     :param run_elastic: If to run the elastic vcg auction
@@ -33,7 +32,7 @@ def auction_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50
     print(f'Evaluates the auction algorithms (cva, dia, elastic vcg, non-elastic vcg) for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('auctions', model_dist, repeat_num)
+    filename = results_filename('auctions', model_dist)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -82,11 +81,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'elastic optimal':
-        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                           run_elastic=True, run_non_elastic=True)
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), run_elastic=True, run_non_elastic=True)
     elif args.extra == 'non-elastic optimal':
-        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                           run_elastic=False, run_non_elastic=True)
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), run_elastic=False, run_non_elastic=True)
     elif args.extra == 'greedy':
-        auction_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
-                           run_elastic=False, run_non_elastic=False)
+        auction_evaluation(get_model(args.model, args.tasks, args.servers), run_elastic=False, run_non_elastic=False)

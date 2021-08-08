@@ -20,13 +20,12 @@ from src.optimal.elastic_optimal import elastic_optimal, server_relaxed_elastic_
 
 
 # noinspection DuplicatedCode
-def greedy_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50, run_elastic_optimal: bool = True,
+def greedy_evaluation(model_dist: ModelDist, repeats: int = 50, run_elastic_optimal: bool = True,
                       run_non_elastic_optimal: bool = True, run_server_relaxed_optimal: bool = True):
     """
     Evaluation of different greedy algorithms
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat
     :param repeats: Number of model runs
     :param run_elastic_optimal: If to run the optimal elastic solver
     :param run_non_elastic_optimal: If to run the optimal non-elastic solver
@@ -35,7 +34,7 @@ def greedy_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50,
     print(f'Evaluates the greedy algorithms (plus elastic, non-elastic and server relaxed optimal solutions) '
           f'for {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('greedy', model_dist, repeat_num)
+    filename = results_filename('greedy', model_dist)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -75,18 +74,17 @@ def greedy_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 50,
 
 
 # noinspection DuplicatedCode
-def lower_bound_testing(model_dist: ModelDist, repeat_num: int, repeats: int = 50):
+def lower_bound_testing(model_dist: ModelDist, repeats: int = 50):
     """
     Testing is to compare the lower bound of the greedy to the best greedy algorithm
 
     :param model_dist: Model distribution
-    :param repeat_num: Number of repeats
     :param repeats: Repeat number
     """
     print(f'Evaluates the greedy algorithm for {model_dist.name} model with '
           f'{model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('lower_bound', model_dist, repeat_num)
+    filename = results_filename('lower_bound', model_dist)
 
     lb_task_functions = task_priority_functions + [ValuePriority()]
     for repeat in range(repeats):
@@ -112,16 +110,15 @@ def lower_bound_testing(model_dist: ModelDist, repeat_num: int, repeats: int = 5
     print('Finished running')
 
 
-def algorithm_sizes(model_dist: ModelDist, repeat_num: int, repeats: int = 30):
+def algorithm_sizes(model_dist: ModelDist, repeats: int = 30):
     """
     Runs the greedy algorithm for a range of model sizes
 
     :param model_dist: The model distributions
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats for each model size
     """
     pretty_printer, scale_results = PrettyPrinter(), {}
-    filename = results_filename('greedy_model_sizes', model_dist, repeat_num)
+    filename = results_filename('greedy_model_sizes', model_dist)
     for num_tasks, num_servers in ((10, 2), (15, 3), (20, 4), (30, 6), (40, 8), (80, 16), (160, 32)):
         print(f'Numbers of tasks: {num_tasks}, number of servers: {num_servers}')
         model_dist.num_tasks = num_tasks
@@ -146,18 +143,18 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'elastic optimal':
-        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers),
                           run_elastic_optimal=True, run_non_elastic_optimal=True, run_server_relaxed_optimal=True)
     elif args.extra == 'relaxed optimal':
-        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers),
                           run_elastic_optimal=False, run_server_relaxed_optimal=True, run_non_elastic_optimal=True)
     elif args.extra == 'non-elastic optimal':
-        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers),
                           run_elastic_optimal=False, run_server_relaxed_optimal=False, run_non_elastic_optimal=True)
     elif args.extra == 'greedy':
-        greedy_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        greedy_evaluation(get_model(args.model, args.tasks, args.servers),
                           run_elastic_optimal=False, run_non_elastic_optimal=False, run_server_relaxed_optimal=False)
     elif args.extra == 'lower bound':
-        lower_bound_testing(get_model(args.model, args.tasks, args.servers), args.repeat)
+        lower_bound_testing(get_model(args.model, args.tasks, args.servers))
     elif args.extra == 'model sizes':
-        algorithm_sizes(get_model(args.model, args.tasks, args.servers), args.repeat)
+        algorithm_sizes(get_model(args.model, args.tasks, args.servers))

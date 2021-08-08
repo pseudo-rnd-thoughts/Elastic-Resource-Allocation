@@ -1,5 +1,5 @@
 #!/bin/bash
-        
+
 #SBATCH --time=60:00:00
 
 #Change to the directory that the job was submitted from
@@ -16,6 +16,6 @@ source activate Elastic-Resource-Allocation
 # Run the python script
 echo $PWD
 PYTHONPATH=~/Elastic-Resource-Allocation/src/
-cmd="python -m evaluation.greedy -m='alibaba' -t='30' -s='6' -e='greedy'"
+cmd="python -m evaluation.resource_ratio -m='synthetic' -t='10' -s='2' -e='non-elastic optimal'"
 echo "Running $cmd"
 eval "$cmd"

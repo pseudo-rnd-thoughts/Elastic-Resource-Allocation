@@ -51,18 +51,16 @@ def save_plot(name: str, folder: str = 'figs', additional: str = '', lgd=None, d
             plt.savefig(filename, format='pdf', dpi=dpi, bbox_extra_artists=lgd, bbox_inches='tight')
 
 
-def results_filename(test_name: str, model_dist: ModelDist, repeat: int, save_date: bool = True) -> str:
+def results_filename(test_name: str, model_dist: ModelDist, save_date: bool = True) -> str:
     """
     Generates the save filename for testing results
 
     :param test_name: The test name
     :param model_dist: The model distribution
-    :param repeat: The repeat number
     :param save_date: If to save the date
     :return: The concatenation of the test name, model distribution name and the repeat
     """
-    extra_info = (f'_r{repeat}' if repeat != 0 or repeat is not None else '') + \
-                 (f'_t{model_dist.num_tasks}' if model_dist.num_tasks is not None else '') + \
+    extra_info = (f'_t{model_dist.num_tasks}' if model_dist.num_tasks is not None else '') + \
                  (f'_s{model_dist.num_servers}' if model_dist.num_servers is not None else '') + \
                  (f'_dt{dt.datetime.now().strftime("%m-%d_%H-%M-%S")}' if save_date else '')
     return f'{test_name}_{model_dist.name}{extra_info}.json'
@@ -78,7 +76,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-m', '--model', help='Location of the model file', default='synthetic')
     parser.add_argument('-t', '--tasks', help='Number of tasks', default=None)
     parser.add_argument('-s', '--servers', help='Number of servers', default=None)
-    parser.add_argument('-r', '--repeat', help='Number of repeats', default=0)
     parser.add_argument('-e', '--extra', help='Extra information to pass to the script', default='')
 
     args = parser.parse_args()

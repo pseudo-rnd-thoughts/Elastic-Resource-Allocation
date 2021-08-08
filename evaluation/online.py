@@ -20,7 +20,7 @@ from src.greedy.task_priority import UtilityDeadlinePerResourcePriority, Resourc
 from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
-def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20, time_steps: int = 200,
+def online_evaluation(model_dist: ModelDist, repeats: int = 20, time_steps: int = 200,
                       mean_arrival_rate: float = 1, std_arrival_rate: float = 2,
                       task_priority=UtilityDeadlinePerResourcePriority(ResourceSumPriority()),
                       server_selection=ProductResources(), resource_allocation=SumPowPercentage()):
@@ -28,7 +28,6 @@ def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     Evaluates the batch online
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param time_steps: Total number of time steps
     :param mean_arrival_rate: Mean arrival rate of tasks
@@ -42,7 +41,7 @@ def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate} with std: {std_arrival_rate}')
     model_results = []
 
-    filename = results_filename('batch_online', model_dist, repeat_num)
+    filename = results_filename('online_resource_allocation', model_dist)
     greedy_name = f'Greedy {task_priority.name}, {server_selection.name}, {resource_allocation.name}'
     batch_length = 1
 
@@ -87,13 +86,12 @@ def online_evaluation(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
     print('Finished running')
 
 
-def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 20, time_steps: int = 1000,
+def greedy_permutations(model_dist: ModelDist, repeats: int = 20, time_steps: int = 1000,
                         mean_arrival_rate: float = 2, std_arrival_rate: float = 2, batch_length: int = 1):
     """
     Evaluates the performance between greedy algorithms with different module functions
 
     :param model_dist: The model distribution used to test with
-    :param repeat_num: The repeat number of this script
     :param repeats: The number of testing repeats that are computed
     :param time_steps: The total number of time steps for tasks to arrive at
     :param mean_arrival_rate: The mean arrival rate of tasks
@@ -104,7 +102,7 @@ def greedy_permutations(model_dist: ModelDist, repeat_num: int, repeats: int = 2
     print(f'Settings - Time steps: {time_steps}, mean arrival rate: {mean_arrival_rate}, std: {std_arrival_rate}')
     model_results = []
 
-    filename = results_filename('online_greedy_permutations', model_dist, repeat_num)
+    filename = results_filename('online_greedy_permutations', model_dist)
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
         # Generate the tasks and servers
@@ -152,19 +150,19 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.model == 'alibaba':
-        online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        online_evaluation(get_model(args.model, args.tasks, args.servers),
                           time_steps=500, mean_arrival_rate=1.5, std_arrival_rate=1)
     elif args.model == 'synthetic':
-        online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+        online_evaluation(get_model(args.model, args.tasks, args.servers),
                           time_steps=250, mean_arrival_rate=3, std_arrival_rate=1)
     else:
         if args.extra == 'greedy':
             print(f'Running greedy permutations for {args.model}')
             if args.model == 'alibaba':
-                greedy_permutations(get_model(args.model, args.tasks, args.servers), args.repeat, time_steps=500,
-                                    mean_arrival_rate=1.5, std_arrival_rate=1)
+                greedy_permutations(get_model(args.model, args.tasks, args.servers),
+                                    time_steps=500, mean_arrival_rate=1.5, std_arrival_rate=1)
             elif args.model == 'synthetic':
-                online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat,
+                online_evaluation(get_model(args.model, args.tasks, args.servers),
                                   time_steps=250, mean_arrival_rate=3, std_arrival_rate=1)
         else:
-            online_evaluation(get_model(args.model, args.tasks, args.servers), args.repeat)
+            online_evaluation(get_model(args.model, args.tasks, args.servers))

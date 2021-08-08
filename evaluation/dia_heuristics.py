@@ -18,7 +18,7 @@ from src.extra.io import parse_args, results_filename
 from src.extra.model import ModelDist, get_model, generate_evaluation_model
 
 
-def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: int = 50, time_limit: int = 4,
+def dia_heuristic_grid_search(model_dist: ModelDist, repeats: int = 50, time_limit: int = 4,
                               initial_prices: Iterable[int] = (0, 4, 8, 12),
                               price_changes: Iterable[int] = (1, 2, 4, 6)):
     """
@@ -26,7 +26,6 @@ def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: i
         initial price variables
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param time_limit: The time limit for the DIA Auction
     :param initial_prices: The initial price for auctions
@@ -35,7 +34,7 @@ def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: i
     print(f'DIA Heuristic grid search with initial prices: {initial_prices}, price changes: {price_changes}'
           f'for {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('dia_heuristic_grid_search', model_dist, repeat_num)
+    filename = results_filename('dia_heuristic_grid_search', model_dist)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -60,7 +59,7 @@ def dia_heuristic_grid_search(model_dist: ModelDist, repeat_num: int, repeats: i
     print('Finished running')
 
 
-def non_uniform_server_heuristics(model_dist: ModelDist, repeat_num: int, repeats: int = 20,
+def non_uniform_server_heuristics(model_dist: ModelDist, repeats: int = 20,
                                   time_limit: int = 2, random_repeats: int = 10,
                                   price_change_mean: int = 4, price_change_std: int = 2,
                                   initial_price_mean: int = 25, initial_price_std: int = 4):
@@ -68,7 +67,6 @@ def non_uniform_server_heuristics(model_dist: ModelDist, repeat_num: int, repeat
     Evaluates the effect of the server heuristics when they are non-uniform (all server's dont use the same value)
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param time_limit: The time limit for the decentralised iterative auction
     :param random_repeats: The number of random repeats for each model generated
@@ -81,7 +79,7 @@ def non_uniform_server_heuristics(model_dist: ModelDist, repeat_num: int, repeat
           f'std: {initial_price_std}, price change mean: {price_change_mean} and price change std: {price_change_std}, '
           f'using {model_dist.name} model with {model_dist.num_tasks} tasks and {model_dist.num_servers} servers')
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('dia_non_uniform_heuristic', model_dist, repeat_num)
+    filename = results_filename('dia_non_uniform_heuristic', model_dist)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -114,8 +112,8 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == '' or args.extra == 'heuristic grid search':
-        dia_heuristic_grid_search(get_model(args.model, args.tasks, args.servers), args.repeat)
+        dia_heuristic_grid_search(get_model(args.model, args.tasks, args.servers))
     elif args.extra == 'non uniform heuristics':
-        non_uniform_server_heuristics(get_model(args.model, args.tasks, args.servers), args.repeat)
+        non_uniform_server_heuristics(get_model(args.model, args.tasks, args.servers))
     else:
         raise Exception(f'Unknown extra argument: {args.extra}')

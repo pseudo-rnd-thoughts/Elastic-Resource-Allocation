@@ -14,9 +14,8 @@ from src.optimal.elastic_optimal import elastic_optimal
 from src.optimal.non_elastic_optimal import non_elastic_optimal
 
 
-def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeat_num: int, repeats: int = 50,
-                             run_elastic: bool = False):
-    filename = results_filename('foreknowledge', model_dist, repeat_num)
+def foreknowledge_evaluation(model_dist: AlibabaModelDist, repeats: int = 50, run_elastic: bool = False):
+    filename = results_filename('foreknowledge', model_dist)
     model_results = []
     for _ in range(repeats):
         servers = [model_dist.generate_server(server_id) for server_id in range(model_dist.num_servers)]
@@ -125,9 +124,9 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.extra == 'foreknowledge elastic':
-        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_elastic=True)
+        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), run_elastic=True)
     elif args.extra == 'foreknowledge non-elastic':
-        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), args.repeat, run_elastic=False)
+        foreknowledge_evaluation(AlibabaModelDist(args.tasks, args.servers), run_elastic=False)
     elif args.extra == 'task sizing':
         task_sizing()
     if args.extra == 'server sizing':

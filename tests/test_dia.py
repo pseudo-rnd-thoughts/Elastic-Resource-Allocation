@@ -100,7 +100,7 @@ def dia_social_welfare_test(model_dist: ModelDist, repeat: int, repeats: int = 2
     :param repeats: The number of repeats
     """
     data = []
-    filename = results_filename('testing', model_dist, repeat)
+    filename = results_filename('testing', model_dist)
     for _ in range(repeats):
         tasks, servers = model_dist.generate_oneshot()
         model_results = {}

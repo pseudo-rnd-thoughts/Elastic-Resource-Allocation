@@ -16,6 +16,6 @@ source activate Elastic-Resource-Allocation
 # Run the python script
 echo $PWD
 PYTHONPATH=~/Elastic-Resource-Allocation/src/
-cmd="python -m evaluation.greedy -m='alibaba' -t='30' -s='6' -e='greedy'"
+cmd="python -m evaluation.mutation -m='synthetic' -t='30' -s='6' -e='mutation grid search'"
 echo "Running $cmd"
 eval "$cmd"

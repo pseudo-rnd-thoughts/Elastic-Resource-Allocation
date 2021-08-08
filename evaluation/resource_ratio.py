@@ -17,7 +17,7 @@ from src.optimal.elastic_optimal import elastic_optimal
 
 
 # noinspection DuplicatedCode
-def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int = 25, run_elastic: bool = True,
+def server_resource_ratio(model_dist: ModelDist, repeats: int = 25, run_elastic: bool = True,
                           run_non_elastic: bool = True, non_elastic_time_limit: Optional[int] = None,
                           ratios: Iterable[int] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)):
     """
@@ -25,7 +25,6 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
         different algorithms: greedy, elastic optimal, non-elastic optimal and server relaxed optimal
 
     :param model_dist: The model distribution
-    :param repeat_num: The repeat number
     :param repeats: The number of repeats
     :param run_elastic: If to run the optimal elastic solver
     :param run_non_elastic: If to run the optimal non-elastic solver
@@ -33,7 +32,7 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
     :param ratios: List of ratios to test
     """
     pretty_printer, model_results = PrettyPrinter(), []
-    filename = results_filename('resource_ratio', model_dist, repeat_num)
+    filename = results_filename('resource_ratio', model_dist)
 
     for repeat in range(repeats):
         print(f'\nRepeat: {repeat}')
@@ -78,9 +77,9 @@ def server_resource_ratio(model_dist: ModelDist, repeat_num: int, repeats: int =
 if __name__ == "__main__":
     args = parse_args()
     if args.extra == '' or args.extra == 'elastic optimal':
-        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat)
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers))
     elif args.extra == 'non-elastic optimal':
-        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat, run_elastic=False)
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers), run_elastic=False)
     elif args.extra == 'time limited':
-        server_resource_ratio(get_model(args.model, args.tasks, args.servers), args.repeat,
+        server_resource_ratio(get_model(args.model, args.tasks, args.servers),
                               run_elastic=False, run_non_elastic=True, non_elastic_time_limit=60)
