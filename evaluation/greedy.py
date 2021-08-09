@@ -117,6 +117,8 @@ def algorithm_sizes(model_dist: ModelDist, repeats: int = 30):
     :param model_dist: The model distributions
     :param repeats: The number of repeats for each model size
     """
+    print('Evaluates the greedy algorithm over a range of model sizes')
+
     pretty_printer, scale_results = PrettyPrinter(), {}
     filename = results_filename('greedy_model_sizes', model_dist)
     for num_tasks, num_servers in ((10, 2), (15, 3), (20, 4), (30, 6), (40, 8), (80, 16), (160, 32)):
@@ -156,5 +158,5 @@ if __name__ == "__main__":
                           run_elastic_optimal=False, run_non_elastic_optimal=False, run_server_relaxed_optimal=False)
     elif args.extra == 'lower bound':
         lower_bound_testing(get_model(args.model, args.tasks, args.servers))
-    elif args.extra == 'model sizes':
+    elif args.extra == 'model size':
         algorithm_sizes(get_model(args.model, args.tasks, args.servers))
