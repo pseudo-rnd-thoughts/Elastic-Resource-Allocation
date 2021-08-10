@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 
+from optimal.elastic_optimal import elastic_optimal_solver
 from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import results_filename, parse_args
@@ -64,16 +65,22 @@ def online_evaluation(model_dist: ModelDist, repeats: int = 20, time_steps: int 
         flattened_elastic_tasks = [task for tasks in batched_elastic_tasks for task in tasks]
         flattened_non_elastic_tasks = [task for tasks in batched_non_elastic_tasks for task in tasks]
 
-        non_elastic_optimal_result = online_batch_solver(
-            batched_non_elastic_tasks, servers, batch_length, 'Non-elastic Optimal', non_elastic_optimal_solver,
-            time_limit=None)
+        elastic_optimal_result = online_batch_solver(batched_elastic_tasks, servers, batch_length,
+                                                     'Elastic Optimal', elastic_optimal_solver, time_limit=None)
+        algorithm_results[elastic_optimal_result.algorithm] = elastic_optimal_result.store()
+        reset_model(flattened_elastic_tasks, servers)
+
+        non_elastic_optimal_result = online_batch_solver(batched_non_elastic_tasks, servers, batch_length,
+                                                         'Non-elastic Optimal', non_elastic_optimal_solver,
+                                                         time_limit=None)
         algorithm_results[non_elastic_optimal_result.algorithm] = non_elastic_optimal_result.store()
         reset_model(flattened_non_elastic_tasks, servers)
 
         # Loop over all of the greedy policies permutations
-        greedy_result = online_batch_solver(
-            batched_elastic_tasks, servers, batch_length, greedy_name, greedy_algorithm,
-            task_priority=task_priority, server_selection=server_selection, resource_allocation=resource_allocation)
+        greedy_result = online_batch_solver(batched_elastic_tasks, servers, batch_length,
+                                            greedy_name, greedy_algorithm,
+                                            task_priority=task_priority, server_selection=server_selection,
+                                            resource_allocation=resource_allocation)
         algorithm_results[greedy_result.algorithm] = greedy_result.store()
         reset_model(flattened_elastic_tasks, servers)
 
