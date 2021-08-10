@@ -120,7 +120,7 @@ def algorithm_sizes(model_dist: ModelDist, repeats: int = 30):
     print('Evaluates the greedy algorithm over a range of model sizes')
 
     pretty_printer, scale_results = PrettyPrinter(), {}
-    filename = results_filename('greedy_model_sizes', model_dist)
+    filename = results_filename('model_sizes', model_dist)
     for num_tasks, num_servers in ((10, 2), (15, 3), (20, 4), (30, 6), (40, 8), (80, 16), (160, 32)):
         print(f'Numbers of tasks: {num_tasks}, number of servers: {num_servers}')
         model_dist.num_tasks = num_tasks
@@ -138,7 +138,7 @@ def algorithm_sizes(model_dist: ModelDist, repeats: int = 30):
 
         # Save the results to the file
         with open(filename, 'w') as file:
-            json.dump(model_results, file)
+            json.dump(scale_results, file)
 
 
 if __name__ == "__main__":
