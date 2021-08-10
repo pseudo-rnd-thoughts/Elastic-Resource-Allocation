@@ -9,7 +9,7 @@ cd ~/Elastic-Resource-Allocation/
 module load cplex/20.1.0
 module unload python/3.6.4
 
-# Load python 3.7
+# Load python
 module load conda
 source activate Elastic-Resource-Allocation
 
