@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 
-from optimal.elastic_optimal import elastic_optimal_solver
 from src.core.core import reset_model
 from src.core.non_elastic_task import generate_non_elastic_tasks
 from src.extra.io import results_filename, parse_args
@@ -18,6 +17,7 @@ from src.greedy.resource_allocation import SumPowPercentage
 from src.greedy.server_selection import ProductResources, SumResources
 from src.greedy.task_priority import UtilityDeadlinePerResourcePriority, ResourceSumPriority, ResourceProductPriority, \
     ValuePriority
+from src.optimal.elastic_optimal import elastic_optimal_solver
 from src.optimal.non_elastic_optimal import non_elastic_optimal_solver
 
 
